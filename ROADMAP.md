@@ -215,10 +215,9 @@ dal clock invece di scriverla a mano. Vedi `docs/08-prova-hardware.md`.
 
 Nessun codice x86/ACPI esistente. Solo il BSP Rockchip device-tree.
 
-> **Si sovrappone alla Fase 2, non la segue.** Appena la Serie 1 e' inviata
-> (Fase 5), il GC5035 entra in una fase di attesa fatta di giri di review:
-> quel tempo si usa per scrivere il GC8034. Le fasi sono numerate per
-> dipendenza logica, non per esecuzione seriale.
+> **Si e' sovrapposta alla Fase 2, non l'ha seguita.** I due driver sono stati
+> scritti e provati insieme, e viaggiano nella stessa serie. Le fasi sono
+> numerate per dipendenza logica, non per esecuzione seriale.
 
 - [x] Scheletro da `gc08a3.c` mainline — `patches/wip/gc8034.c`, 897 righe,
       compila, `W=1` e `checkpatch --strict` puliti. **Ora testato.**
@@ -264,39 +263,43 @@ letta. Vanno sistemati prima, non alla terza revisione.
 - [ ] **Identita' reale**: `git config user.name` e `user.email` con nome e
       cognome veri. Pseudonimi e indirizzi usa-e-getta non sono accettati: il
       `Signed-off-by` e' una dichiarazione legale (DCO)
-- [ ] **DCO compreso**: `Documentation/process/submitting-patches.rst`,
-      sezione "Sign your work"
+- [x] **DCO compreso**: `Documentation/process/submitting-patches.rst`,
+      sezione "Sign your work". Letta il 2026-08-11, e la clausola **(b)** ha
+      chiuso un blocco che il progetto credeva di avere: il riuso di codice
+      GPL-2.0 dentro il kernel **non richiede il permesso di nessuno**, basta
+      conservare i copyright e dichiarare la provenienza. Vedi
+      `reference/README.md`, sezione «Cosa serve davvero»
 - [ ] **Email in plain text**, niente HTML, niente riscrittura delle righe,
       niente allegati. `git send-email` funzionante e testato su se' stessi
 - [ ] **`b4` installato** e configurato
 - [ ] Iscrizione a `linux-media@vger.kernel.org`
 
-### Ordine di invio — **non sequenziale**
+### Cosa si invia, e a chi — **tre invii indipendenti**
 
-L'elenco numerato indica le dipendenze, **non un ordine da rispettare uno alla
-volta**. Aspettare che la Serie 2 sia pronta prima di inviare la Serie 1
-significa sommare due timeline invece di sovrapporle, e la Serie 2 e' quella a
-rischio di sforamento (vedi `docs/03-piano-upstream.md`, "Il rischio di
-sforamento"): i registri del GC8034 vengono da un BSP senza datasheet.
+Deciso il 2026-08-11 dopo la revisione pre-invio. Il rischio da evitare e'
+sempre lo stesso: una serie che aspetta un'altra somma due timeline invece di
+sovrapporle, e basta che una si impantani perche' si fermi tutto.
 
-1. [ ] Serie 1 — `media: i2c: Add GC5035 image sensor driver`
-      **Si invia appena e' pronta.** Non attende la Serie 2.
-2. [ ] Serie 2 — `media: i2c: Add GC8034 image sensor driver`
-      In review **in parallelo** alla Serie 1. Se si impantana sui registri,
-      non trascina con se' le altre.
-3. [ ] Serie 3 — `media: ipu-bridge: ...`
-      Unica vera dipendenza. Da sola sarebbe codice morto, quindi si sincronizza
-      con **la prima delle due che entra in `media_stage`**, aggiungendo in quel
-      momento solo la voce del sensore gia' accettato. La seconda voce segue
-      quando la sua serie e' accettata. Vedi sotto.
-4. [ ] Serie 4 — quirk `int3472`, solo se necessaria. Indipendente dalle altre:
-      si invia quando serve, non in coda.
+1. [ ] **Serie media, 5 patch** a `linux-media` — `patches/wip/serie/`.
+      I due binding, i due driver e le due voci di `ipu-bridge`, con cover
+      letter. Le voci di `ipu-bridge` stanno **dentro** la serie e non a
+      parte, perche' senza di loro i driver non sono provabili su IPU6 e la
+      cover letter spiega perche' i numeri sono quelli.
+2. [ ] **`int3472`, 1 patch** a `platform-driver-x86` — `patches/wip/int3472/`.
+      Sottosistema diverso, nessun legame con le altre. Non serve piu' a far
+      funzionare niente: resta perche' corregge un buco vero, cioe' una
+      piattaforma che espone due frequenze e un kernel che ne offre una.
+3. [ ] **Oops di `ipu6-isys`, 1 patch** a `linux-media` — `patches/wip/ipu6-fix/`.
+      Non e' nostro codice: e' un NULL deref di mainline trovato provocandolo.
+      Si invia **subito e da sola**, con il suo `Fixes:`. Una correzione di un
+      crash non deve aspettare una serie di feature.
 
-**Decisione sulla Serie 3 — una patch o due.** Se le Serie 1 e 2 procedono con
-tempi simili, una sola patch con entrambe le voci. Se la Serie 2 rallenta —
-scenario da mettere in conto — si spezza in due patch da una voce ciascuna,
-per non tenere in ostaggio il GC5035. Da decidere al momento, sulla base di
-dove stanno le due serie, non ora.
+Destinatari gia' calcolati in `patches/wip/destinatari.txt`.
+
+**Perche' non piu' "Serie 1, 2, 3, 4".** La numerazione vecchia descriveva
+dipendenze che non esistono piu': la Serie 4 non serve, la Serie 0/int3472
+nemmeno, e le due voci di `ipu-bridge` non sono codice morto perche' i driver
+arrivano nella stessa serie.
 
 Per ciascuna:
 
@@ -375,7 +378,7 @@ Riproduce da zero l'obiettivo dichiarato nel README, senza scorciatoie.
 
 ## Fase 8 — Dopo il merge (manutenzione)
 
-L'accettazione crea un impegno: la voce `MAINTAINERS` delle Serie 1 e 2 e' un
+L'accettazione crea un impegno: la voce `MAINTAINERS` dei due driver e' un
 impegno a rispondere. Non e' facoltativo e non ha scadenza.
 
 - [ ] Rispondere ai bug report sui due driver
@@ -391,7 +394,7 @@ impegno a rispondere. Non e' facoltativo e non ha scadenza.
 |---|---|
 | Serve la Serie 4 (quirk `int3472`)? | **RISOLTA: no.** `C1GP` = 2 e i tipi GPIO usati sono gia' gestiti. Confermato dai fatti: le camere funzionano senza toccare `int3472` |
 | I registri exposure/gain del GC8034 sono ricavabili dal BSP? | **RISOLTA: si'.** Exposure `0x03/0x04`, gain a indice su `0xb6` + tabella a 9 voci, blanking `0x07/0x08`. Guadagno poi **misurato**: 7,66x chiesti, 7,9x ottenuti |
-| Serie 3: una patch con due voci o due patch da una? | da decidere in Fase 5, in base a quanto divergono i tempi di Serie 1 e 2 |
+| Le voci di `ipu-bridge`: patch a se' o dentro la serie? | **RISOLTA: dentro.** Arrivano nella stessa serie dei driver, quindi non sono codice morto e non c'e' niente da sincronizzare |
 | La link frequency del CHUWI coincide con quella della patch Intel? | **RISOLTA: no, e la patch Intel sbaglia.** Misurata 422,4 MHz (`19,2 x 22`) contro i 438 dichiarati. Il GC8034 sta a 268,8 (`19,2 x 14`) contro i 336 del BSP |
 | Come dichiarare la link frequency nei due driver? | **RISOLTA: derivata a runtime** da `clk_get_rate()`, moltiplicatori 22 e 14. Il modello del driver ora prevede il frame rate misurato |
 | Contattare GalaxyCore per i datasheet? | **non serve piu' per far funzionare i sensori.** Resterebbe utile solo per documentare i blob PLL |

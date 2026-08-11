@@ -34,11 +34,11 @@ espone su `\_SB.PC00.LNK1`.
 
 | | Valore ADL-M | Origine |
 |---|---|---|
-| Lane MIPI | 2 | **[IPOTESI]** |
-| Link frequency | 438 000 000 Hz | **[IPOTESI]** — hardcoded nella patch. E' il **clock DDR** = 876 Mbps/lane ÷ 2 |
-| Data rate/lane | 876 Mbps | **[IPOTESI]** |
+| Lane MIPI | 2 | **[MISURATO]** — confermato dalla NVS e dallo streaming |
+| Link frequency | **422 400 000 Hz** | **[MISURATO]** — 19,2 MHz × 22. La patch Intel dichiara 438 000 000 ed **e' sbagliata**: 438 non e' multiplo intero di nessun clock plausibile |
+| Data rate/lane | 844,8 Mbps | derivato dalla misura |
 | Bits per sample | 10 | **[CODICE]** |
-| Pixel rate | 175 200 000 (= freq × 2 × lane / 10) | derivato |
+| Pixel rate | **168 960 000** (= freq × 2 × lane / 10) | **[MISURATO]** — 168,92 MHz dal frame rate, scarto 0,02% |
 | Bus type | `V4L2_MBUS_CSI2_DPHY` | **[CODICE]** |
 | MCLK | 24 MHz nei commenti, 19,2 MHz tipico su ADL-N | **[DSDT]** — conflitto irrisolto, vedi sotto |
 
@@ -104,17 +104,21 @@ i valori vengono dal BSP Rockchip (device-tree).
 | | 2-lane | 4-lane |
 |---|---|---|
 | Risoluzione | 3264×2448 | 3264×2448 |
-| Link frequency | 634 MHz (30 fps) / 336 MHz (15 fps) | 336 MHz |
+| Link frequency | 634 MHz (30 fps) / 336 MHz (15 fps) | 336 MHz a 24 MHz di XVCLK, **268,8 misurati** a 19,2 |
 | HTS | 4272 | 4272 |
 | VTS | 2496 / 2500 | 2496 |
 | Formato | `MEDIA_BUS_FMT_SRGGB10_1X10` | idem |
 
 MCLK del BSP: 24 MHz. **Quante lane usi questa macchina si legge dalla DSDT.**
 
-> Il BSP calcola `pixel_rate = vts × hts × fps` (≈319,9 MHz), che **non
-> concorda** con la formula canonica `link_freq × 2 × lane / bpp` (268,8 MHz a
-> 4 lane / 336 MHz). Nel driver mainline va usata la formula canonica; la
-> discrepanza va verificata sull'hardware.
+> **Verificato sull'hardware il 2026-08-11, e il BSP ha ragione lui.** Le due
+> quantita' non concordano perche' **non sono la stessa cosa**: il rate
+> dell'array e' piu' alto di quello del bus perche' durante il blanking
+> orizzontale sul bus non passa niente. `V4L2_CID_PIXEL_RATE` e' quello
+> dell'array, perche' l'userspace lo usa con HBLANK e VBLANK per calcolare
+> l'intervallo di frame. Il driver usa quindi `hts × vts × fps`, scalato al
+> clock reale: **255 909 888** a 19,2 MHz, contro i 255 803 259 misurati.
+> Scarto 0,04%.
 
 ### Registri di controllo
 
@@ -181,9 +185,16 @@ blob non documentati. Per il GC5035 sono `0xf4`, `0xf5`, `0xf6`, `0xf8`, `0xf9`,
 (`0x02`, `0x03`, `0x15`, `0x18`, `0x21`–`0x2b` = Tlpx, Ths-prepare/zero/trail,
 Tclk-*).
 
-Conseguenza concreta: **non si sa come cambiare la link frequency.** I 438 MHz
-della patch Intel sono un blob, non un calcolo. Se la DSDT del CHUWI dichiara un
-valore diverso, non e' ricavabile quali byte toccare.
+Conseguenza concreta: **non si sa come cambiare la link frequency.** Resta
+vero, e resta senza importanza: non serve cambiarla, serve **dichiararla
+giusta**, e adesso si sa quanto vale perche' e' stata misurata. I 438 MHz
+della patch Intel sono un blob sbagliato, non un calcolo.
+
+> **Superato dai fatti.** Gli scenari qui sotto sono stati scritti prima di
+> poter accendere i sensori. Il verdetto e' che nessuno dei tre si e'
+> avverato: le tabelle funzionano cosi' come sono, a un clock diverso da
+> quello per cui erano nate, e l'unica cosa da correggere erano due costanti.
+> Vedi `docs/08-prova-hardware.md`.
 
 Scenari, in ordine di probabilita' decrescente:
 

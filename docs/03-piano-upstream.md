@@ -70,11 +70,13 @@ sopra la tabella (`ipu-bridge.c:39-50`, verificato verbatim su mainline 7.2):
 
 Tre conseguenze operative:
 
-1. **La fonte canonica e' il driver**, non la DSDT. Il commento ammette
-   esplicitamente che il valore **non** e' ricavabile dall'SSDB. Nel messaggio
-   di commit si cita quindi `gc5035_link_freqs[] = { 438000000 }`, non un campo
-   dell'SSDB. La DSDT resta utile come **conferma incrociata** (numero di lane),
-   non come fonte.
+1. ~~**La fonte canonica e' il driver**, non la DSDT.~~ **Superato: la fonte
+   canonica e' la misura.** Era vero che il valore non si ricava dall'SSDB —
+   `maxlanespeed` su questa macchina e' zero — ma non ne segue che il numero
+   del vendor sia buono. Non lo era: 438 MHz non e' multiplo intero di nessun
+   clock plausibile, e il frame rate dice 422,4 = 19,2 x 22. I driver ora
+   derivano la frequenza dal clock invece di scriverla, e nel messaggio di
+   commit si cita **la misura**, non il vendor.
 2. **Ordinamento alfabetico per HID.** La tabella oggi inizia con `HIMX11B1`
    (riga 53): `GCTI5035` e `GCTI8034` vanno **prima di tutte le voci esistenti**.
 3. *"Do not add an entry for a sensor that is not actually supported"* e' l'unico
@@ -89,12 +91,19 @@ significa far girare la D-PHY dell'ISYS a velocita' doppia rispetto al sensore,
 e non viene mai composto un frame. E' un errore gia' visto upstream (patch
 HM1092) e il sintomo e' esattamente lo `ENOLINK` di questo progetto.
 
-### Il valore puo' essere machine-specific
+### Il valore puo' essere machine-specific — e infatti lo era
 
 Precedente da tenere presente: `fb16c04a538e` cambia la link frequency di
 `ov2740` a 180 MHz per i ThinkPad che usano `ipu-bridge`, mentre sui Chromebook
-— dove il grafo viene da ACPI — resta 360 MHz. **Quindi i 438 MHz sono il
-valore Intel per ADL-M e vanno confermati sul CHUWI**, non dati per buoni.
+— dove il grafo viene da ACPI — resta 360 MHz.
+
+**Il sospetto era fondato e la soluzione e' migliore di un valore per
+macchina.** Misurando si e' visto che la frequenza e' un multiplo intero del
+clock esterno — 22 per il GC5035, 14 per il GC8034 — perche' le tabelle
+registri programmano la PLL una volta sola. Quindi non serve un valore per
+macchina: serve **il moltiplicatore nel driver e il clock dalla piattaforma**.
+Cosi' lo stesso codice e' corretto sui 19,2 MHz di IPU6 e sui 24 MHz di un
+device-tree, senza quirk. Vedi `docs/08-prova-hardware.md`.
 
 ### Quando inviarla
 
