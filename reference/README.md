@@ -139,6 +139,14 @@ mutex propria invece dello state lock del subdev; l'hack `use_independent_gpio`
 in `int3472/discrete.c`, che matcha sul nome del modulo sensore (`CJAK519`) e
 non sull'HID.
 
+> **Correzione della correzione, verificata il 2026-08-11 a tarda sera.**
+> `use_independent_gpio` e `CJAK519` **non esistono in mainline**: zero
+> occorrenze in tutto l'albero 7.2-rc7. Quell'hack vive solo nel tree fuori
+> albero di Intel, quindi non riguarda ne' la nostra serie ne' il
+> comportamento di questa macchina, che infatti funziona con l'`int3472` di
+> mainline non toccato. Il resto della nota resta valido solo come conferma
+> del nome del modulo.
+>
 > **Correzione, 2026-08-11.** Qui c'era scritto che `CJAK519` era «quasi
 > certamente diverso sul CHUWI». **E' falso**: la ACPI NVS di questa macchina
 > riporta `L1M*` = `CJAK519`, identico, per il sensore frontale. L'hack riguarda

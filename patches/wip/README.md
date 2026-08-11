@@ -81,6 +81,9 @@ Destinatari di tutti e tre in `destinatari.txt`, da `get_maintainer.pl`.
 | Tabelle di guadagno verificate a misura | si' — 15,7x su 16 e 7,9x su 7,66 |
 | Link frequency | **derivate dal clock**, 19,2 x 22 e 19,2 x 14 |
 | Frame rate previsto dal driver = misurato | si' — 28,82 e 24,00 |
+| La serie si applica a `torvalds/master` di oggi | **si'** — `ipu-bridge.c` su master e' identico alla nostra base a meno delle due voci |
+| I nomi `gc5035`/`gc8034` sono liberi upstream | **si'** — verificato su `drivers/media/i2c/{Kconfig,Makefile}` di master |
+| Punto d'inserimento alfabetico in Kconfig | corretto — dopo `VIDEO_GC2145` |
 
 Gli strumenti si installano con `scripts/setup-verifica.sh`. Due trappole che
 quello script evita: `dtschema` non compila senza `swig` e `python3-dev` (fallisce

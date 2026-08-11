@@ -245,7 +245,16 @@ risorsa `PNP0C02:02` copre `fd000000-fd68ffff`, che **non include**
 > il clock arriva. Le scritture verso `SBREG_BAR` funzionano anche col P2SB
 > nascosto. Il fallimento silenzioso non c'e' stato.
 
-## 7. `CJAK519`: la nota in reference/README.md era sbagliata
+## 7. `CJAK519`: la nota era sbagliata, la correzione pure
+
+> **Terza versione, e questa e' verificata.** Cercato `CJAK519` e
+> `use_independent_gpio` in **tutto** l'albero 7.2-rc7: **zero occorrenze**.
+> Quell'hack non e' in mainline, e' nel tree fuori albero di Intel. Quindi non
+> c'e' niente da capire prima di scartarlo, e soprattutto non c'e' niente da
+> scartare: i due sensori si accendono e catturano con l'`int3472` di mainline
+> non modificato. Il punto qui sotto resta interessante solo come conferma che
+> il modulo frontale di questa macchina e' davvero un CJAK519.
+
 
 `reference/README.md` elenca fra le cose da non portare in mainline l'hack
 `use_independent_gpio` di `int3472/discrete.c`, che matcha sul **nome del modulo
