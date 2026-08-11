@@ -1,5 +1,18 @@
 # 06 — Azioni che richiedono root
 
+> **Documento in gran parte storico.** E' stato scritto quando la macchina
+> avviava il kernel **7.0 compilato a mano**. Dal 2026-08-11 sera avvia il
+> kernel **Debian 6.12.86**, che ha `pinctrl-alderlake` e con esso l'intera
+> catena camera funzionante: i punti 1, 2, 2-bis e 3 sono chiusi, il 4 e' una
+> procedura fallita e annullata, e il 5 — «installare un kernel di
+> distribuzione» — e' stato fatto ed e' quello che ha sbloccato il progetto.
+>
+> Resta utile per due cose, entrambe difficili da ricostruire: **come si avvia
+> davvero questa macchina** (UEFI Shell, `startup.nsh`, PARTUUID
+> `dc363afc-02`, bzImage contro vmlinux) e **perche' certe deduzioni erano
+> sbagliate**. Per lo stato attuale vedi `docs/08-prova-hardware.md`; per
+> avviare il kernel di debug, `docs/10-kernel-di-debug.md`.
+
 Raccolte qui perche' su questa macchina `sudo` chiede la password e non e'
 automatizzabile. In ordine di dipendenza.
 
@@ -483,7 +496,21 @@ chiavetta.
 
 ---
 
-## 5. Dopo il boot sul kernel nuovo — **decaduto con il punto 4**
+## 5. Kernel di distribuzione — **FATTO, ed e' quello che ha sbloccato tutto**
+
+> **Eseguito il 2026-08-11 sera.** La macchina avvia ora
+> `6.12.86+deb13-amd64`, il kernel Debian. Con lui `pinctrl-alderlake` c'e',
+> il gpiochip `INTC1057` nasce, `int3472-discrete` esce dalla probe rimandata,
+> l'ACPI crea i client I2C dei due sensori e i semafori 1-3 sono passati a
+> `[OK]` per la prima volta. Da li' in poi, in una sera, i driver hanno fatto
+> probe e catturato. Vedi `docs/08-prova-hardware.md`.
+>
+> Il testo qui sotto e' quello scritto **prima**, quando questa strada era
+> ancora un'ipotesi archiviata come "non urgente". Vale la pena rileggerlo per
+> una ragione sola: la conclusione era giusta e la priorita' era sbagliata.
+> Era la cosa piu' importante da fare, ed era in fondo alla lista.
+
+### Il testo originale — decaduto con il punto 4
 
 Prevedeva `collect-diag.sh` con i semafori 1-3 a `[OK]` grazie a
 `PINCTRL_ALDERLAKE` built-in. Senza quel kernel **restano `[KO]`**: niente

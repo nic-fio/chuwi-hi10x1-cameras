@@ -1,4 +1,4 @@
-From a8ea643d96907bae55509c6e9904d9ba687d1440 Mon Sep 17 00:00:00 2001
+From 18a8e7dc6250e073c129b7e22823431023126887 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 21:36:45 +0200
 Subject: [PATCH 5/5] BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034

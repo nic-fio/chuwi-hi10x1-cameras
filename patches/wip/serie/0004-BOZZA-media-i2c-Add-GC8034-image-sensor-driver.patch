@@ -1,4 +1,4 @@
-From 52b2555b810b2181e7d62f0d91c5a4127e65c9f0 Mon Sep 17 00:00:00 2001
+From 5f72c76978b395c05424be1b1cdbac350328363f Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 21:36:45 +0200
 Subject: [PATCH 4/5] BOZZA media: i2c: Add GC8034 image sensor driver
@@ -97,7 +97,7 @@ index de46c13ac..07b4545d3 100644
  obj-$(CONFIG_VIDEO_HI847) += hi847.o
 diff --git a/drivers/media/i2c/gc8034.c b/drivers/media/i2c/gc8034.c
 new file mode 100644
-index 000000000..f32404c50
+index 000000000..c67916ca2
 --- /dev/null
 +++ b/drivers/media/i2c/gc8034.c
 @@ -0,0 +1,1255 @@
@@ -115,10 +115,10 @@ index 000000000..f32404c50
 + * driver for a sensor from the same vendor. The x86/ACPI parts follow
 + * drivers/media/i2c/ov2740.c and t4ka3.c, which run on the same IPU6 chain.
 + *
-+ * The registers and sequences come from the Rockchip BSP driver (GPL-2.0),
-+ * repository rockchip-linux/kernel, branch develop-5.10, commit
-+ * 34690d3be73e98c6b037e24c76b3200fb22b9e79. Attribution to the original
-+ * authors has to be agreed with them before any upstream submission.
++ * The registers and sequences are reproduced from the Rockchip BSP driver,
++ * GPL-2.0, repository rockchip-linux/kernel, branch develop-5.10, commit
++ * 34690d3be73e98c6b037e24c76b3200fb22b9e79, whose copyright line is kept
++ * above. That driver carries no individual author, only the company.
 + */
 +#include <linux/acpi.h>
 +#include <linux/array_size.h>

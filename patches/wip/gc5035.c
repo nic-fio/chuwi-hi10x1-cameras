@@ -18,8 +18,7 @@
  * in intel/ipu6-drivers by liang.wang <liang1.wang@intel.com>, which in turn
  * derives from the ChromeOS series by Tomasz Figa <tfiga@chromium.org>. The
  * three copyright lines above are theirs and are carried over with the
- * tables. Attribution beyond that - Co-developed-by and Signed-off-by tags -
- * has to be agreed with those authors before any submission.
+ * tables.
  */
 #include <linux/acpi.h>
 #include <linux/array_size.h>

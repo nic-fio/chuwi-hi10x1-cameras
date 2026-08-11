@@ -43,9 +43,10 @@ Intel Corporation (2022). `MODULE_AUTHOR`: Zhi Mao, Hao He
 > Intel. Attribuire a Intel sarebbe un errore fattuale che un revisore puo'
 > notare.
 
-**Attribuzione richiesta**: `Co-developed-by:` / `Signed-off-by:` degli autori
-originali, con le loro email vere. Da concordare con loro prima dell'invio —
-non si aggiunge il `Signed-off-by` di qualcun altro senza il suo consenso.
+**Attribuzione richiesta**: mantenere le tre righe di copyright — Bitland,
+Google, Intel — nel file nuovo, e dichiarare la provenienza nel messaggio di
+commit. Fatto entrambi. **Non** serve il loro consenso: vedi la sezione «Cosa
+serve davvero» in fondo.
 
 ## GC8034 — driver BSP Rockchip
 
@@ -66,9 +67,50 @@ Autori dai commit git, candidati per l'attribuzione:
 - Tao Huang \<huangtao@rock-chips.com\> — committer
 
 **Attribuzione richiesta**: mantenere la riga di copyright Rockchip 2017 nel
-file nuovo, aggiungere la propria, e `Co-developed-by:` degli autori sopra.
-GPL-2.0 rende il riuso lecito; la catena di attribuzione lo rende accettabile
-in review.
+file nuovo e aggiungere la propria. Fatto. Gli autori elencati qui sopra non
+compaiono nel file d'origine — che porta solo il copyright aziendale — quindi
+non c'e' nessuno da nominare oltre a Rockchip.
+
+---
+
+## Cosa serve davvero, e cosa no — verificato il 2026-08-11
+
+Questo progetto si e' portato dietro per giorni un blocco che non esiste:
+«attribuzione da concordare con gli autori originali prima dell'invio». Letta
+la documentazione invece di ricordarsela, la situazione e' diversa.
+
+**Il riuso di codice GPL-2.0 dentro il kernel non richiede il permesso di
+nessuno.** Lo dice la DCO stessa, clausola (b), in
+`Documentation/process/submitting-patches.rst`:
+
+> (b) The contribution is based upon previous work that, to the best of my
+> knowledge, is covered under an appropriate open source license and I have
+> the right under that license to submit that work with modifications [...]
+> under the same open source license [...] as indicated in the file
+
+E' esattamente questo caso: sorgente GPL-2.0, destinazione GPL-2.0, licenza
+indicata nel file. Firmando il `Signed-off-by` si certifica la (b), non la
+(a). Non c'e' nessuna autorizzazione da chiedere.
+
+**Quello che serve davvero** sono tre cose, tutte gia' fatte:
+
+1. le righe di copyright degli autori originali, conservate nel file nuovo;
+2. lo stesso SPDX del sorgente, `GPL-2.0`;
+3. la provenienza dichiarata apertamente nel messaggio di commit e nella
+   cover letter, con repository e commit esatti.
+
+**Quello che invece NON si puo' fare senza consenso** e' aggiungere
+`Co-developed-by:`, perche' la documentazione impone che ogni
+`Co-developed-by:` sia immediatamente seguito dal `Signed-off-by:` di quella
+persona. Non e' un tag di ringraziamento: e' una dichiarazione che quella
+persona deve fare in prima persona. Senza la sua firma, semplicemente non si
+usa.
+
+**Cosa resta sensato fare comunque**: mettere in `Cc:` gli autori originali
+all'invio. Non e' un obbligo, e' cortesia — e da' loro modo di chiedere un tag
+se lo vogliono, o di segnalare un errore di attribuzione. Per il GC5035
+conviene farlo davvero: Tomasz Figa aveva gia' portato quel sensore in review
+nel 2020 e la sua serie e' citata nella cover letter.
 
 ## ipu-bridge
 

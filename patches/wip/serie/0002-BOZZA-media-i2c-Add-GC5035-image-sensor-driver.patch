@@ -1,4 +1,4 @@
-From 8ac3373d3548a88e8de979e887774b457aedd03e Mon Sep 17 00:00:00 2001
+From 3b6ef7f0117f1f45e724ec41ab4551b72d77210c Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 21:36:44 +0200
 Subject: [PATCH 2/5] BOZZA media: i2c: Add GC5035 image sensor driver
@@ -37,8 +37,8 @@ ACPI HID GCTI5035 at \_SB.PC00.LNK1.
  MAINTAINERS                |    7 +
  drivers/media/i2c/Kconfig  |   10 +
  drivers/media/i2c/Makefile |    1 +
- drivers/media/i2c/gc5035.c | 1330 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 1348 insertions(+)
+ drivers/media/i2c/gc5035.c | 1329 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 1347 insertions(+)
  create mode 100644 drivers/media/i2c/gc5035.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
@@ -94,10 +94,10 @@ index e45359efe..de46c13ac 100644
  obj-$(CONFIG_VIDEO_HI847) += hi847.o
 diff --git a/drivers/media/i2c/gc5035.c b/drivers/media/i2c/gc5035.c
 new file mode 100644
-index 000000000..b734e40b7
+index 000000000..3a58fb679
 --- /dev/null
 +++ b/drivers/media/i2c/gc5035.c
-@@ -0,0 +1,1330 @@
+@@ -0,0 +1,1329 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Driver for GalaxyCore GC5035 image sensor
@@ -118,8 +118,7 @@ index 000000000..b734e40b7
 + * in intel/ipu6-drivers by liang.wang <liang1.wang@intel.com>, which in turn
 + * derives from the ChromeOS series by Tomasz Figa <tfiga@chromium.org>. The
 + * three copyright lines above are theirs and are carried over with the
-+ * tables. Attribution beyond that - Co-developed-by and Signed-off-by tags -
-+ * has to be agreed with those authors before any submission.
++ * tables.
 + */
 +#include <linux/acpi.h>
 +#include <linux/array_size.h>

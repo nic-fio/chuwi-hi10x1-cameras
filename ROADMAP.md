@@ -187,8 +187,9 @@ Si parte da qui perche' esiste gia' codice Intel da cui prendere i registri.
       `acpi*:GCTI5035:*` corretto. **Non funzionante**: tabelle registri
       segnaposto e guadagno limitato a 1x. Vedi `patches/wip/README.md`
 - [x] Registri e mode dalla patch Intel `gc5035-on-adlm` — importati e
-      **verificati sul silicio**. Resta aperta l'**attribuzione**, che e' una
-      formalita' legale, non tecnica: vedi `reference/README.md`
+      **verificati sul silicio**, con le righe di copyright di Bitland, Google
+      e Intel conservate nel file. L'attribuzione e' a posto: vedi
+      `reference/README.md`, sezione «Cosa serve davvero»
 - [x] Adattamento ADL-M -> ADL-N
 - [x] Controlli V4L2 completi — `ANALOGUE_GAIN` implementato e misurato:
       16x chiesti, 15,7x ottenuti
@@ -224,8 +225,7 @@ Nessun codice x86/ACPI esistente. Solo il BSP Rockchip device-tree.
       `ANALOGUE_GAIN` verificato: 7,66x chiesti, 7,9x misurati
 - [x] Registri dal BSP Rockchip — importati e **funzionanti sul silicio**,
       nonostante siano tarati a 24 MHz e qui l'MCLK sia 19,2. Resta aperta
-      l'**attribuzione** (GPL-2.0: `Co-developed-by` / `Signed-off-by`,
-      credito all'autore originale)
+      la riga di copyright Rockchip, conservata nel file nuovo
 - [x] Stessa checklist della Fase 2 — `v4l2-compliance` 45/46,
       **prima immagine** 3264x2448 SRGGB10 il 2026-08-11
 - [x] Voce `GCTI8034` in `ipu_supported_sensors[]` — bozza applicata al tree

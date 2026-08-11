@@ -18,10 +18,25 @@
 # NON installa nulla: l'installazione richiede root ed e' un passo separato
 # e piu' delicato (vedi in fondo).
 #
-# Uso:  ./scripts/build-kernel.sh [KDIR]
+# Uso:  ./scripts/build-kernel.sh [--debug] [KDIR]
 #       KDIR default: /home/nicfio/linux
+#
+# --debug aggiunge KASAN, UBSAN, lockdep, KMEMLEAK e compagnia. Serve a una
+# cosa sola: cercare nei driver del progetto i difetti che l'ispezione non
+# trova — use-after-free, doppi free, corse, inversioni di lock. Il kernel
+# Debian di distribuzione non ha nessuna di queste opzioni, quindi finche' non
+# si avvia questo, tutto cio' che si dice su memoria e locking e' un'opinione.
+#
+# Costa: build piu' lenta, immagine piu' grande, macchina molto piu' lenta
+# all'uso. E' un kernel da laboratorio, non da tutti i giorni.
 
 set -eu
+
+DEBUG=0
+if [ "${1:-}" = "--debug" ]; then
+    DEBUG=1
+    shift
+fi
 
 KDIR="${1:-/home/nicfio/linux}"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -60,6 +75,29 @@ if [ -r /proc/modules ]; then
     lsmod > /tmp/lsmod-intelcam.txt
     yes '' 2>/dev/null | make LSMOD=/tmp/lsmod-intelcam.txt localmodconfig || true
 fi
+
+# --- fondamenta: la QUARTA trappola di localmodconfig ----------------------
+#
+# Trovata il 2026-08-11 rigenerando la config sul kernel Debian. Qui
+# i2c-designware-platform e' built-in, quindi non compare fra i moduli
+# caricati e localmodconfig lo butta via. Con lui se ne vanno COMMON_CLK e
+# REGULATOR, e da li' crolla tutto il resto in cascata:
+#
+#   COMMON_CLK=n -> HAVE_CLK=n -> VIDEO_CAMERA_SENSOR non e' selezionabile
+#                -> spariscono TUTTI i driver di sensore e V4L2_CCI_I2C
+#   COMMON_CLK=n -> I2C_DESIGNWARE_PLATFORM dipende da (ACPI && COMMON_CLK)
+#                -> nessun bus I2C -> nessun sensore enumerato
+#   COMMON_CLK=n, REGULATOR=n -> INTEL_SKL_INT3472 non e' selezionabile
+#
+# Cinque simboli mancanti, una sola causa. Vanno forzati per primi, perche'
+# tutti gli --enable successivi dipendono da questi.
+./scripts/config --enable COMMON_CLK
+./scripts/config --enable REGULATOR
+./scripts/config --enable REGULATOR_FIXED_VOLTAGE
+./scripts/config --enable LEDS_CLASS
+./scripts/config --enable VIDEO_CAMERA_SENSOR
+./scripts/config --module I2C_DESIGNWARE_CORE
+./scripts/config --module I2C_DESIGNWARE_PLATFORM
 
 # --- catena GPIO: il semaforo 1 della diagnosi -----------------------------
 # INTC1057 (Alder Lake-N) e' mappato su adln_soc_data in
@@ -161,8 +199,39 @@ done
 # e' obbligatorio.
 ./scripts/config --module DRM_I915
 
-# --- distinguibile da uname -r --------------------------------------------
-./scripts/config --set-str LOCALVERSION "-intelcam"
+# --- i due driver del progetto, se il tree li ha ---------------------------
+# localmodconfig non li abilita in modo affidabile e senza di loro il kernel
+# di prova non serve a niente. Su un tree vanilla pulito i simboli non
+# esistono e --enable non fa nulla di male.
+for s in VIDEO_GC5035 VIDEO_GC8034; do
+    grep -q "config ${s#CONFIG_}" drivers/media/i2c/Kconfig 2>/dev/null &&
+        ./scripts/config --module "$s"
+done
+
+# --- strumentazione, solo con --debug --------------------------------------
+#
+# KASAN in modalita' generic (non SW_TAGS, che su x86 non c'e'). KFENCE no:
+# campiona, e qui serve deterministico. PROVE_LOCKING tira dentro lockdep,
+# DEBUG_ATOMIC_SLEEP prende i "sleeping while atomic", KMEMLEAK le perdite che
+# KASAN non vede perche' non sono errori di accesso.
+DEBUG_SYMS="KASAN KASAN_GENERIC KASAN_INLINE UBSAN UBSAN_BOUNDS UBSAN_SHIFT
+            DEBUG_KERNEL PROVE_LOCKING LOCKDEP DEBUG_ATOMIC_SLEEP
+            DEBUG_MUTEXES DEBUG_SPINLOCK DEBUG_LIST DEBUG_OBJECTS
+            DEBUG_OBJECTS_FREE DEBUG_KMEMLEAK DEBUG_SG SCHED_STACK_END_CHECK
+            DEBUG_PLIST DEBUG_WW_MUTEX_SLOWPATH DETECT_HUNG_TASK
+            PANIC_ON_OOPS_VALUE STACKTRACE FRAME_POINTER"
+if [ "$DEBUG" -eq 1 ]; then
+    echo
+    echo "== strumentazione di debug =="
+    for s in $DEBUG_SYMS; do ./scripts/config --enable "$s"; done
+    # Un oops NON deve fermare la macchina: serve leggere il journal dopo.
+    ./scripts/config --disable PANIC_ON_OOPS
+    # KMEMLEAK ha bisogno di spazio per la sua contabilita'.
+    ./scripts/config --set-val DEBUG_KMEMLEAK_MEM_POOL_SIZE 65536
+    ./scripts/config --set-str LOCALVERSION "-intelcam-debug"
+else
+    ./scripts/config --set-str LOCALVERSION "-intelcam"
+fi
 
 make olddefconfig
 
@@ -201,6 +270,37 @@ else
     FAIL=1
 fi
 
+# --- puo' montare la root da solo? ----------------------------------------
+# Questo kernel si avvia SENZA initrd, quindi tutto cio' che serve a montare
+# /dev/sda2 deve essere built-in, non modulo. Se localmodconfig ne trasforma
+# uno in =m — e ext4 e ahci sono moduli sul kernel Debian, quindi puo'
+# succedere — il boot muore con "VFS: Unable to mount root fs" e la macchina
+# va recuperata a mano. Meglio scoprirlo qui.
+echo
+echo "== avvio senza initrd: tutto built-in? =="
+for s in EXT4_FS ATA SATA_AHCI BLK_DEV_SD SCSI MSDOS_PARTITION EFI_STUB; do
+    if grep -qE "^CONFIG_$s=y" .config; then
+        printf "  [OK] %-26s =y\n" "$s"
+    else
+        printf "  [KO] %-26s %s\n" "$s" \
+               "$(grep -E "^CONFIG_$s=" .config || echo 'assente')"
+        echo "       serve =y: senza initrd un modulo qui non e' caricabile."
+        FAIL=1
+    fi
+done
+
+# Con --debug i simboli di strumentazione sono il motivo per cui si compila:
+# se olddefconfig ne ha buttato via qualcuno, meglio saperlo adesso che dopo
+# un'ora di build e un riavvio.
+if [ "$DEBUG" -eq 1 ]; then
+    echo
+    echo "== verifica strumentazione =="
+    for s in KASAN PROVE_LOCKING DEBUG_ATOMIC_SLEEP DEBUG_KMEMLEAK UBSAN \
+             DEBUG_OBJECTS DETECT_HUNG_TASK; do
+        check "$s"
+    done
+fi
+
 [ "$FAIL" -eq 0 ] || { echo; echo "Config incompleta: non compilo."; exit 1; }
 
 # I due driver del progetto non sono in mainline: mancano su un tree pulito.
@@ -225,7 +325,9 @@ else
     echo "  [OK]   IO_STRICT_DEVMEM disabilitato -> ACPI NVS leggibile via /dev/mem"
 fi
 
-cp .config "$PROJECT_DIR/config/intelcam-$(make -s kernelversion).config"
+SUFFIX=""
+[ "$DEBUG" -eq 1 ] && SUFFIX="-debug"
+cp .config "$PROJECT_DIR/config/intelcam-$(make -s kernelversion)$SUFFIX.config"
 
 # ---------------------------------------------------------------------------
 # 4. build

@@ -7,13 +7,16 @@ serve a impedire un invio accidentale.
 
 | File | Cos'e' |
 |---|---|
-| `serie/000*.patch` | la serie completa, generata con `git format-patch` |
-| `gc5035.c`, `gc8034.c` | copie dei due driver |
-| `int3472-clk_and_regulator.c` | copia del file modificato dalla Serie 0 |
-| `galaxycore,gc*.yaml` | copie dei due binding |
+| `serie/` | le cinque patch per `linux-media`, piu' la cover letter |
+| `int3472/` | la patch per `platform-driver-x86` |
+| `ipu6-fix/` | la correzione dell'oops di `ipu6-isys` |
+| `cover-letter.txt` | il testo della cover, modificabile a mano |
+| `destinatari.txt` | output di `get_maintainer.pl` per tutti e tre |
+| `gc5035.c`, `gc8034.c`, `galaxycore,gc*.yaml` | copie di lettura |
+| `int3472-clk_and_regulator.c` | copia del file toccato dalla patch int3472 |
 
 La copia autorevole vive in `/home/nicfio/linux`, dove i sei commit sono
-applicati sopra mainline 7.2-rc7.
+applicati sopra mainline 7.2-rc7. Le copie qui si rigenerano da li'.
 
 ## Tre invii indipendenti, non uno
 
@@ -61,15 +64,17 @@ Destinatari di tutti e tre in `destinatari.txt`, da `get_maintainer.pl`.
 | Compilano su mainline 7.2-rc7 | **si'** |
 | Build `W=1` dei due sottosistemi toccati | **nessun warning** |
 | `checkpatch --strict --max-line-length=80` sui file | **0/0/0** su entrambi i driver |
-| `checkpatch --strict` sulle sei patch | **solo `Missing Signed-off-by`**, voluto |
+| `checkpatch --strict` su tutte le patch | **solo `Missing Signed-off-by`**, voluto |
 | `make dt_binding_check` sui due binding | **pulito** — dtschema 2026.6 |
 | `yamllint` con la config del kernel | **pulito** |
-| `sparse` (`C=1 W=1`) sui tre file | **pulito** — sparse v0.6.5-rc1 |
+| `sparse` (`C=1 W=1`) | **pulito** — sparse v0.6.5-rc1 |
+| `smatch` | **pulito** — 0.6.4, verificato su un caso di prova |
+| `coccinelle`, 69 script con `-D report` | **pulito** |
 | Commenti in inglese | **si'** — tradotti il 2026-08-11 |
 | Nessun carattere non ASCII | **verificato** |
 | Tabelle registri importate | **si'** — GC5035 161+162, GC8034 233+7x14 |
 | Tabelle identiche all'originale | **verificato** con `scripts/regtab-to-cci.py --check` |
-| Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 438 e 336 MHz |
+| Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 422,4 e 268,8 MHz, derivate dal clock |
 | **Eseguiti su hardware** | **SI', 2026-08-11** — entrambi catturano |
 | Chip ID letto sul silicio | `0x5035` e `0x8044` |
 | `v4l2-compliance` | **45/46** su entrambi — vedi `docs/08-prova-hardware.md` |
@@ -179,8 +184,10 @@ Sono le uniche cose rimaste che **non** posso fare io:
   legge
 - `Signed-off-by`: e' una dichiarazione legale, la firma dev'essere di chi
   invia
-- attribuzione da concordare con gli autori originali, che vanno contattati:
-  `reference/README.md`
+L'attribuzione **non** e' piu' in questa lista: la DCO clausola (b) copre il
+riuso GPL-2.0 dentro il kernel senza chiedere permesso a nessuno. Servivano le
+righe di copyright originali e la provenienza dichiarata, e ci sono entrambe.
+Vedi `reference/README.md`, sezione «Cosa serve davvero».
 
 ## Rilievi: cosa e' stato chiuso e cosa no
 

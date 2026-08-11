@@ -12,10 +12,10 @@
  * driver for a sensor from the same vendor. The x86/ACPI parts follow
  * drivers/media/i2c/ov2740.c and t4ka3.c, which run on the same IPU6 chain.
  *
- * The registers and sequences come from the Rockchip BSP driver (GPL-2.0),
- * repository rockchip-linux/kernel, branch develop-5.10, commit
- * 34690d3be73e98c6b037e24c76b3200fb22b9e79. Attribution to the original
- * authors has to be agreed with them before any upstream submission.
+ * The registers and sequences are reproduced from the Rockchip BSP driver,
+ * GPL-2.0, repository rockchip-linux/kernel, branch develop-5.10, commit
+ * 34690d3be73e98c6b037e24c76b3200fb22b9e79, whose copyright line is kept
+ * above. That driver carries no individual author, only the company.
  */
 #include <linux/acpi.h>
 #include <linux/array_size.h>

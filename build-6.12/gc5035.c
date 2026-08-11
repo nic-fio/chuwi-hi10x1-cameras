@@ -2,6 +2,9 @@
 /*
  * Driver for GalaxyCore GC5035 image sensor
  *
+ * Copyright (c) 2020 Bitland Inc.
+ * Copyright 2020 Google LLC.
+ * Copyright (c) 2022 Intel Corporation.
  * Copyright (C) 2026 <TODO: real name and email before upstream submission>
  *
  * Tested on a CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6) on 2026-08-11:
@@ -11,10 +14,11 @@
  * driver for a sensor from the same vendor. The x86/ACPI parts follow
  * drivers/media/i2c/ov2740.c, which runs on the same IPU6 chain.
  *
- * The register tables come from the out-of-tree Alder Lake-M patch in
- * intel/ipu6-drivers, which in turn derives from the ChromeOS series by
- * Tomasz Figa. Attribution has to be agreed with the original authors
- * before any submission.
+ * The register tables are reproduced from the out-of-tree Alder Lake-M patch
+ * in intel/ipu6-drivers by liang.wang <liang1.wang@intel.com>, which in turn
+ * derives from the ChromeOS series by Tomasz Figa <tfiga@chromium.org>. The
+ * three copyright lines above are theirs and are carried over with the
+ * tables.
  */
 #include <linux/acpi.h>
 #include <linux/array_size.h>
@@ -173,7 +177,6 @@ struct gc5035 {
 	unsigned long link_freq_bitmap;
 	u8 data_lanes;
 
-	bool identified;
 	const struct gc5035_mode *cur_mode;
 };
 
@@ -586,14 +589,17 @@ static int gc5035_power_on(struct device *dev)
 
 	ret = regulator_bulk_enable(ARRAY_SIZE(gc5035_supply_name),
 				    gc5035->supplies);
-	if (ret < 0)
-		return dev_err_probe(dev, ret, "failed to enable regulators\n");
+	if (ret < 0) {
+		dev_err(dev, "failed to enable regulators: %d\n", ret);
+		return ret;
+	}
 
 	ret = clk_prepare_enable(gc5035->xclk);
 	if (ret < 0) {
 		regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name),
 				       gc5035->supplies);
-		return dev_err_probe(dev, ret, "failed to enable clock\n");
+		dev_err(dev, "failed to enable clock: %d\n", ret);
+		return ret;
 	}
 
 	fsleep(GC5035_SLEEP_US);
@@ -854,7 +860,12 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 			return ret;
 	}
 
-	if (!pm_runtime_get_if_active(gc5035->dev))
+	/*
+	 * Not just != 0: the call returns -EINVAL when runtime PM is disabled,
+	 * and taking that for success would touch a powered down sensor and
+	 * then drop a reference that was never taken.
+	 */
+	if (pm_runtime_get_if_active(gc5035->dev) <= 0)
 		return 0;
 
 	switch (ctrl->id) {
@@ -886,24 +897,21 @@ static const struct v4l2_ctrl_ops gc5035_ctrl_ops = {
 	.s_ctrl = gc5035_set_ctrl,
 };
 
+/* Only ever called from probe, with the sensor powered up. */
 static int gc5035_identify_module(struct gc5035 *gc5035)
 {
 	u64 val;
 	int ret;
 
-	if (gc5035->identified)
-		return 0;
-
 	ret = cci_read(gc5035->regmap, GC5035_REG_CHIP_ID, &val, NULL);
 	if (ret)
-		return ret;
+		return dev_err_probe(gc5035->dev, ret,
+				     "failed to read chip id\n");
 
 	if (val != GC5035_CHIP_ID)
 		return dev_err_probe(gc5035->dev, -ENXIO,
 				     "chip id mismatch: %x != %llx\n",
 				     GC5035_CHIP_ID, val);
-
-	gc5035->identified = true;
 
 	return 0;
 }
@@ -919,10 +927,6 @@ static int gc5035_enable_streams(struct v4l2_subdev *sd,
 	ret = pm_runtime_resume_and_get(gc5035->dev);
 	if (ret < 0)
 		return ret;
-
-	ret = gc5035_identify_module(gc5035);
-	if (ret)
-		goto err_rpm_put;
 
 	reg_list = &gc5035->cur_mode->reg_list;
 
@@ -1058,7 +1062,7 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 	int ret;
 
 	ctrl_hdlr = &gc5035->ctrls;
-	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 8);
+	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 9);
 	if (ret)
 		return ret;
 
@@ -1163,7 +1167,8 @@ static int gc5035_probe(struct i2c_client *client)
 		return dev_err_probe(dev, -EINVAL,
 				     "external clock rate is unknown\n");
 
-	gc5035->link_freq_menu[0] = freq * GC5035_LINK_FREQ_MULTIPLIER;
+	/* The cast matters on 32 bit: unsigned long is the narrower type. */
+	gc5035->link_freq_menu[0] = (s64)freq * GC5035_LINK_FREQ_MULTIPLIER;
 
 	ret = gc5035_parse_fwnode(gc5035);
 	if (ret)
@@ -1204,9 +1209,24 @@ static int gc5035_probe(struct i2c_client *client)
 
 	gc5035->cur_mode = &gc5035_modes[0];
 
-	ret = gc5035_init_controls(gc5035);
+	/*
+	 * Read the chip id here rather than at first use: a bind that succeeds
+	 * with nothing behind it only moves the failure to the first capture,
+	 * where it is much harder to attribute.
+	 */
+	ret = gc5035_power_on(dev);
 	if (ret)
-		return dev_err_probe(dev, ret, "failed to init controls\n");
+		return ret;
+
+	ret = gc5035_identify_module(gc5035);
+	if (ret)
+		goto err_power_off;
+
+	ret = gc5035_init_controls(gc5035);
+	if (ret) {
+		dev_err_probe(dev, ret, "failed to init controls\n");
+		goto err_power_off;
+	}
 
 	gc5035->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
 	gc5035->pad.flags = MEDIA_PAD_FL_SOURCE;
@@ -1225,10 +1245,11 @@ static int gc5035_probe(struct i2c_client *client)
 		goto err_media_entity_cleanup;
 	}
 
+	/* The sensor is on: say so, or runtime PM would power it up again. */
+	pm_runtime_set_active(dev);
 	pm_runtime_enable(dev);
 	pm_runtime_set_autosuspend_delay(dev, 1000);
 	pm_runtime_use_autosuspend(dev);
-	pm_runtime_idle(dev);
 
 	ret = v4l2_async_register_subdev_sensor(&gc5035->sd);
 	if (ret < 0) {
@@ -1236,11 +1257,15 @@ static int gc5035_probe(struct i2c_client *client)
 		goto err_rpm;
 	}
 
+	/* Hands the sensor over to autosuspend, which powers it back down. */
+	pm_runtime_idle(dev);
+
 	return 0;
 
 err_rpm:
 	pm_runtime_disable(dev);
 	pm_runtime_dont_use_autosuspend(dev);
+	pm_runtime_set_suspended(dev);
 	v4l2_subdev_cleanup(&gc5035->sd);
 
 err_media_entity_cleanup:
@@ -1248,6 +1273,9 @@ err_media_entity_cleanup:
 
 err_ctrl_handler_free:
 	v4l2_ctrl_handler_free(&gc5035->ctrls);
+
+err_power_off:
+	gc5035_power_off(dev);
 
 	return ret;
 }
@@ -1296,5 +1324,6 @@ static struct i2c_driver gc5035_i2c_driver = {
 };
 module_i2c_driver(gc5035_i2c_driver);
 
+MODULE_AUTHOR("TODO: real name and email before upstream submission");
 MODULE_DESCRIPTION("GalaxyCore GC5035 sensor driver");
 MODULE_LICENSE("GPL");

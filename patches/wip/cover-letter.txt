@@ -1,9 +1,9 @@
 Subject: [PATCH 0/5] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
 
 NOTE FOR THE PROJECT, NOT FOR THE LIST: this is a draft. Before sending,
-replace every TODO with a real identity, settle the attribution described
-under "Provenance" with the original authors, and add the Signed-off-by
-tags. See patches/wip/README.md.
+replace every TODO with a real identity and add the Signed-off-by tags, and
+consider Cc'ing the authors named under "Provenance". See
+patches/wip/README.md.
 
 ---
 

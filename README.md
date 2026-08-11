@@ -102,13 +102,16 @@ INTEL-CAMERA/
 │   ├── 05-parametri-sensori.md  registri e parametri, con la provenienza di ognuno
 │   ├── 06-azioni-root.md        i passi che richiedono root, con la motivazione
 │   ├── 07-clock-e-registri.md   il clock di piattaforma e le tabelle registri
-│   └── 08-prova-hardware.md     la prima esecuzione su hardware, con le misure
+│   ├── 08-prova-hardware.md     la prima esecuzione su hardware, con le misure
+│   ├── 09-revisione-preinvio.md revisione avversariale, reperti e verdetto
+│   └── 10-kernel-di-debug.md    KASAN e lockdep: come avviarlo, cosa cercarci
 ├── scripts/
 │   ├── collect-diag.sh          snapshot riproducibile + semafori
 │   ├── dump-dsdt.sh             estrae e decompila la DSDT (la specifica)
 │   ├── cattura.sh               configura la pipeline IPU6 e cattura
 │   ├── raw-to-png.py            da RAW Bayer a PNG guardabile
-│   ├── build-kernel.sh          kernel vanilla di sviluppo, riproducibile
+│   ├── prova-completa.sh        tutte le verifiche su hardware, con verdetto
+│   ├── build-kernel.sh          kernel di sviluppo, con --debug per KASAN
 │   └── fix-pinctrl-alderlake.sh OBSOLETO — vedi l'intestazione del file
 ├── build-6.12/                  build fuori albero per provare sul kernel Debian
 ├── config/                      .config usate, una per versione di kernel

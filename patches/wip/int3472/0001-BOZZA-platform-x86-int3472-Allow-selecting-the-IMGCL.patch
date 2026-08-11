@@ -1,4 +1,4 @@
-From 456c0127b8548deb314dfd117ad16d8848fe9d99 Mon Sep 17 00:00:00 2001
+From c61216fb5a24652bde00c4cf0ca55199e9d22ab4 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 19:30:45 +0200
 Subject: [PATCH] BOZZA platform/x86: int3472: Allow selecting the IMGCLKOUT

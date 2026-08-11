@@ -1,0 +1,115 @@
+# 10 — Il kernel di debug: come avviarlo e cosa cercarci
+
+Serve a chiudere il buco piu' grande della revisione pre-invio: il kernel
+Debian in uso non ha **nessuno** strumento di analisi dinamica, quindi tutto
+quello che si e' detto su memoria e locking dei due driver e' ispezione, non
+misura. Questo kernel li ha tutti.
+
+```bash
+./scripts/build-kernel.sh --debug        # non serve root, ~1-2 ore
+```
+
+Cosa aggiunge, e cosa trova ciascuno:
+
+| Strumento | Trova |
+|---|---|
+| `KASAN` (generic, inline) | use-after-free, doppi free, overflow di slab e di stack |
+| `UBSAN` | overflow di interi, shift fuori range, indici fuori dagli array |
+| `PROVE_LOCKING` (lockdep) | inversioni di lock, ricorsioni, lock presi in contesto sbagliato |
+| `DEBUG_ATOMIC_SLEEP` | dormire dove non si puo' — `usleep_range` in atomico |
+| `DEBUG_KMEMLEAK` | memoria allocata e mai liberata, che KASAN non vede |
+| `DEBUG_OBJECTS` | oggetti usati dopo la distruzione: timer, work, mutex |
+| `DETECT_HUNG_TASK` | task bloccati piu' di 120 s, come quello lasciato dall'oops |
+
+`PANIC_ON_OOPS` e' **disattivato apposta**: se qualcosa esplode, serve che la
+macchina resti in piedi abbastanza da leggere il journal.
+
+## Avviarlo — richiede te davanti alla tastiera
+
+Non lo si puo' rendere il default e non lo si vuole: e' un kernel da
+laboratorio, lento, ed e' costruito a mano. La macchina continua ad avviare il
+kernel Debian da sola, come adesso.
+
+**`startup.nsh` non va toccato.** L'immagine si aggiunge con un nome nuovo e la
+si lancia a mano dalla UEFI Shell. Se non parte, si riavvia e riparte Debian:
+non c'e' niente da ripristinare. E' la stessa procedura che il 2026-08-11 ha
+permesso di recuperare un boot fallito senza chiavetta.
+
+### 1. Installare moduli e immagine
+
+```bash
+sudo make -C /home/nicfio/linux modules_install
+sudo mkdir -p /mnt/esp && sudo mount /dev/sda1 /mnt/esp
+ls -la /mnt/esp                      # guardare PRIMA cosa c'e'
+sudo cp /home/nicfio/linux/arch/x86/boot/bzImage /mnt/esp/vmlinuz-debug
+sync && sudo umount /mnt/esp
+```
+
+Nome nuovo, `vmlinuz-debug`: **non** sovrascrive `vmlinuz`, che e' il kernel
+Debian con cui la macchina si avvia.
+
+### 2. Al riavvio
+
+Alla comparsa della UEFI Shell, premere **ESC** entro il countdown per saltare
+`startup.nsh`, poi al prompt `Shell>`:
+
+```
+fs0:
+vmlinuz-debug root=PARTUUID=dc363afc-02 rw
+```
+
+Tre dettagli, e sono i tre modi realistici di non fare boot:
+
+- **`root=PARTUUID=`, non `root=UUID=`.** Questo kernel parte senza initrd e
+  senza udev non risolve gli UUID di filesystem. Il disco e' MBR, quindi il
+  PARTUUID e' firma-disco piu' numero di partizione: **`dc363afc-02`**
+- **niente `initrd=`, niente `quiet`.** L'initrd non serve — `EXT4_FS`, `ATA`,
+  `SATA_AHCI`, `BLK_DEV_SD` e `MSDOS_PARTITION` sono tutti `=y`, e
+  `build-kernel.sh` si rifiuta di compilare se cosi' non fosse — e i messaggi
+  al primo avvio vanno visti
+- **`bzImage`, non `vmlinux`.** Lo stub EFI e' nel `bzImage`
+
+### 3. Se non parte
+
+Riavviare e lasciar scorrere `startup.nsh`. Torna Debian. Nessun file e' stato
+modificato.
+
+## Cosa fare una volta dentro
+
+```bash
+cd /home/nicfio/linux && sudo make modules_install     # se non gia' fatto
+sudo modprobe gc5035 gc8034                            # ora sono IN-TREE
+sudo ./scripts/prova-completa.sh
+```
+
+Qui i driver sono compilati **dentro** il kernel di prova, non fuori albero:
+sparisce anche l'ultimo dubbio residuo, cioe' che l'header di compatibilita'
+di `build-6.12/` mascheri qualcosa.
+
+Poi, in ordine di quanto sono informativi:
+
+1. **Ripetere tutto il ciclo normale** — carica, cattura, guadagno,
+   compliance, bind/unbind — e guardare `dmesg`. Con KASAN e lockdep attivi,
+   un difetto che prima passava inosservato adesso stampa.
+2. **`unbind` durante lo streaming.** Prima applicare
+   `patches/wip/ipu6-fix/`, altrimenti si riproduce solo l'oops gia' noto.
+   Con la patch applicata, e' il test che dice se i **nostri** driver reggono
+   quello scenario.
+3. **KMEMLEAK dopo un ciclo completo**:
+
+   ```bash
+   echo scan | sudo tee /sys/kernel/debug/kmemleak
+   sudo cat /sys/kernel/debug/kmemleak
+   ```
+
+   Da fare dopo dieci cicli di bind/unbind: e' li' che una perdita si accumula
+   abbastanza da vedersi.
+4. **Cercare i messaggi che contano**:
+
+   ```bash
+   sudo dmesg | grep -E "KASAN|UBSAN|lockdep|BUG:|WARNING:|possible recursive"
+   ```
+
+Se dopo tutto questo non esce niente, allora — e solo allora — si puo' scrivere
+in una cover letter che i driver sono stati provati con KASAN e lockdep. Prima
+no.
