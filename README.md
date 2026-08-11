@@ -126,6 +126,32 @@ I sorgenti kernel vanilla stanno **fuori** dal progetto, in `/home/nicfio/linux`
 
 ## Uso quotidiano
 
+### Dopo ogni riavvio, per riavere le fotocamere
+
+I driver non sono installati: sono moduli fuori albero caricati a mano, e un
+riavvio li porta via. E' voluto — l'obiettivo e' mainline, non una macchina che
+funziona in locale.
+
+```bash
+cd build-6.12 && make && sudo ./carica.sh
+```
+
+Poi, per verificare che sia tutto ancora vero — non "sembra funzionare", ma
+ogni misura confrontata con il valore che il driver dichiara:
+
+```bash
+sudo ./scripts/prova-completa.sh
+```
+
+Per una singola cattura:
+
+```bash
+./scripts/cattura.sh gc5035 5                    # oppure gc8034
+./scripts/raw-to-png.py gc5035.raw 2592 1944 grbg
+```
+
+### Stato della macchina
+
 ```bash
 sudo ./scripts/collect-diag.sh      # stato attuale + semafori
 cat data/latest/SOMMARIO.txt
