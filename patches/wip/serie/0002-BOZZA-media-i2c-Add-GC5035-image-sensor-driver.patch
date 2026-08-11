@@ -1,4 +1,4 @@
-From 0a2fffcb0187941e7058183205fcbbc03f129021 Mon Sep 17 00:00:00 2001
+From 1c5d1c37c152fa055c7c790e5ad92614301002d8 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 14:24:16 +0200
 Subject: [PATCH 2/6] BOZZA media: i2c: Add GC5035 image sensor driver
@@ -22,8 +22,8 @@ ACPI HID GCTI5035 at \_SB.PC00.LNK1.
  MAINTAINERS                |    7 +
  drivers/media/i2c/Kconfig  |   10 +
  drivers/media/i2c/Makefile |    1 +
- drivers/media/i2c/gc5035.c | 1288 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 1306 insertions(+)
+ drivers/media/i2c/gc5035.c | 1289 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 1307 insertions(+)
  create mode 100644 drivers/media/i2c/gc5035.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
@@ -79,10 +79,10 @@ index e45359efe..de46c13ac 100644
  obj-$(CONFIG_VIDEO_HI847) += hi847.o
 diff --git a/drivers/media/i2c/gc5035.c b/drivers/media/i2c/gc5035.c
 new file mode 100644
-index 000000000..6c5518207
+index 000000000..321810732
 --- /dev/null
 +++ b/drivers/media/i2c/gc5035.c
-@@ -0,0 +1,1288 @@
+@@ -0,0 +1,1289 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Driver for GalaxyCore GC5035 image sensor
@@ -958,7 +958,7 @@ index 000000000..6c5518207
 +		break;
 +	}
 +
-+	pm_runtime_put(gc5035->dev);
++	pm_runtime_put_autosuspend(gc5035->dev);
 +
 +	return ret;
 +}
@@ -1027,7 +1027,7 @@ index 000000000..6c5518207
 +	return 0;
 +
 +err_rpm_put:
-+	pm_runtime_put(gc5035->dev);
++	pm_runtime_put_autosuspend(gc5035->dev);
 +
 +	return ret;
 +}
@@ -1042,7 +1042,7 @@ index 000000000..6c5518207
 +	ret = cci_write(gc5035->regmap, GC5035_REG_STREAM,
 +			GC5035_STREAM_OFF, NULL);
 +
-+	pm_runtime_put(gc5035->dev);
++	pm_runtime_put_autosuspend(gc5035->dev);
 +
 +	return ret;
 +}
@@ -1314,6 +1314,7 @@ index 000000000..6c5518207
 +
 +err_rpm:
 +	pm_runtime_disable(dev);
++	pm_runtime_dont_use_autosuspend(dev);
 +	v4l2_subdev_cleanup(&gc5035->sd);
 +
 +err_media_entity_cleanup:

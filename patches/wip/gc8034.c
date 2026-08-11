@@ -161,6 +161,39 @@ static const u16 gc8034_again_level[] = {
 #define GC8034_AGAIN_MAX		490	/* 7.66x in Q6 */
 #define GC8034_DGAIN_UNITY		256	/* 1.00x in Q8 */
 
+/*
+ * Each analogue gain step also needs a set of analogue bias registers to be
+ * rewritten. The addresses are fixed and the values depend on the gain index;
+ * the sequence selects its own page as it goes, which is why register 0xfe
+ * appears three times.
+ *
+ * These values are undocumented. They affect image quality rather than
+ * whether the control works at all.
+ */
+static const u16 gc8034_agc_bias_reg[] = {
+	0xfe, 0x20, 0x33, 0xfe, 0xdf, 0xe7, 0xe8,
+	0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xfe,
+};
+
+static const u8 gc8034_agc_bias[][ARRAY_SIZE(gc8034_agc_bias_reg)] = {
+	{ 0x00, 0x55, 0x83, 0x01, 0x06, 0x18, 0x20,
+	  0x16, 0x17, 0x50, 0x6c, 0x9b, 0xd8, 0x00 },
+	{ 0x00, 0x55, 0x83, 0x01, 0x06, 0x18, 0x20,
+	  0x16, 0x17, 0x50, 0x6c, 0x9b, 0xd8, 0x00 },
+	{ 0x00, 0x4e, 0x84, 0x01, 0x0c, 0x2e, 0x2d,
+	  0x15, 0x19, 0x47, 0x70, 0x9f, 0xd8, 0x00 },
+	{ 0x00, 0x51, 0x80, 0x01, 0x07, 0x28, 0x32,
+	  0x22, 0x20, 0x49, 0x70, 0x91, 0xd9, 0x00 },
+	{ 0x00, 0x4d, 0x83, 0x01, 0x0f, 0x3b, 0x3b,
+	  0x1c, 0x1f, 0x47, 0x6f, 0x9b, 0xd3, 0x00 },
+	{ 0x00, 0x50, 0x83, 0x01, 0x08, 0x35, 0x46,
+	  0x1e, 0x22, 0x4c, 0x70, 0x9a, 0xd2, 0x00 },
+	{ 0x00, 0x52, 0x80, 0x01, 0x0c, 0x35, 0x3a,
+	  0x2b, 0x2d, 0x4c, 0x67, 0x8d, 0xc0, 0x00 },
+};
+
+static_assert(ARRAY_SIZE(gc8034_agc_bias) == ARRAY_SIZE(gc8034_again_level));
+
 struct gc8034 {
 	struct device *dev;
 	struct v4l2_subdev sd;
@@ -701,7 +734,7 @@ static int gc8034_init_state(struct v4l2_subdev *sd,
  */
 static int gc8034_set_analogue_gain(struct gc8034 *gc8034, u32 a_gain)
 {
-	unsigned int idx;
+	unsigned int i, idx;
 	u32 dgain;
 	int ret = 0;
 
@@ -719,12 +752,9 @@ static int gc8034_set_analogue_gain(struct gc8034 *gc8034, u32 a_gain)
 	cci_write(gc8034->regmap, GC8034_REG_DIGITAL_GAIN_FRAC,
 		  dgain & 0xff, &ret);
 
-	/*
-	 * BLOCKING TODO: the BSP also rewrites 14 analogue bias registers from
-	 * agc_register[9][14] on every index change. They are undocumented but
-	 * small and well structured values, needed for image quality rather
-	 * than for the control to work. They still have to be imported.
-	 */
+	for (i = 0; i < ARRAY_SIZE(gc8034_agc_bias_reg); i++)
+		cci_write(gc8034->regmap, CCI_REG8(gc8034_agc_bias_reg[i]),
+			  gc8034_agc_bias[idx][i], &ret);
 
 	return ret;
 }
@@ -768,7 +798,7 @@ static int gc8034_set_ctrl(struct v4l2_ctrl *ctrl)
 		break;
 	}
 
-	pm_runtime_put(gc8034->dev);
+	pm_runtime_put_autosuspend(gc8034->dev);
 
 	return ret;
 }
@@ -839,7 +869,7 @@ static int gc8034_enable_streams(struct v4l2_subdev *sd,
 	return 0;
 
 err_rpm_put:
-	pm_runtime_put(gc8034->dev);
+	pm_runtime_put_autosuspend(gc8034->dev);
 
 	return ret;
 }
@@ -854,7 +884,7 @@ static int gc8034_disable_streams(struct v4l2_subdev *sd,
 	ret = cci_write(gc8034->regmap, GC8034_REG_STREAM,
 			GC8034_STREAM_OFF, NULL);
 
-	pm_runtime_put(gc8034->dev);
+	pm_runtime_put_autosuspend(gc8034->dev);
 
 	return ret;
 }
@@ -1101,6 +1131,7 @@ static int gc8034_probe(struct i2c_client *client)
 
 err_rpm:
 	pm_runtime_disable(dev);
+	pm_runtime_dont_use_autosuspend(dev);
 	v4l2_subdev_cleanup(&gc8034->sd);
 
 err_media_entity_cleanup:

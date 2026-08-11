@@ -1,4 +1,4 @@
-From 730f78666fb0ed8fc6bb73ef620d0c3138249fed Mon Sep 17 00:00:00 2001
+From fd41bd9dbf38a1987ee9789a79819e70e8f76543 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 19:30:45 +0200
 Subject: [PATCH 6/6] BOZZA platform/x86: int3472: Allow selecting the

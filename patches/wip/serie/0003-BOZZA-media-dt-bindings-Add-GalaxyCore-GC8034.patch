@@ -1,4 +1,4 @@
-From 9cc8d24b5dc080887362bf5a6e224b9d591667cf Mon Sep 17 00:00:00 2001
+From 40d6fc440f12a8a090273364a2058edd97c316de Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 14:24:49 +0200
 Subject: [PATCH 3/6] BOZZA media: dt-bindings: Add GalaxyCore GC8034

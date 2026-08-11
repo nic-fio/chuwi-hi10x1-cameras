@@ -42,11 +42,21 @@ sottosistema diverso (`platform-driver-x86`, non `linux-media`).
 | Build `W=1` dei due sottosistemi toccati | **nessun warning** |
 | `checkpatch --strict --max-line-length=80` sui file | **0/0/0** su entrambi i driver |
 | `checkpatch --strict` sulle sei patch | **solo `Missing Signed-off-by`**, voluto |
+| `make dt_binding_check` sui due binding | **pulito** — dtschema 2026.6 |
+| `yamllint` con la config del kernel | **pulito** |
+| `sparse` (`C=1 W=1`) sui tre file | **pulito** — sparse v0.6.5-rc1 |
 | Commenti in inglese | **si'** — tradotti il 2026-08-11 |
 | Nessun carattere non ASCII | **verificato** |
-| Tabelle registri importate | **si'** — GC5035 161+162, GC8034 233 |
+| Tabelle registri importate | **si'** — GC5035 161+162, GC8034 233+7x14 |
 | Tabelle identiche all'originale | **verificato** con `scripts/regtab-to-cci.py --check` |
+| Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 438 e 336 MHz |
 | **Eseguiti su hardware** | **MAI** — il kernel che li contiene non e' mai stato avviato |
+
+Gli strumenti si installano con `scripts/setup-verifica.sh`. Due trappole che
+quello script evita: `dtschema` non compila senza `swig` e `python3-dev` (fallisce
+su `pylibfdt`), e la `sparse` di Debian e' troppo vecchia — il kernel la rifiuta
+e **prosegue lo stesso**, stampando un warning che si perde nell'output, cosi'
+`C=1` sembra aver funzionato senza aver controllato niente.
 
 L'unico errore di checkpatch e' `Missing Signed-off-by`. **E' corretto che ci
 sia**: il DCO e' una dichiarazione legale e la firma deve essere di una persona
@@ -78,6 +88,14 @@ anche il binding sta nel commit del driver.
   digitale su `0xb1`/`0xb2`. Il range esposto ora e' 1x…16x. Nota: il codice
   vendor scala il digitale per un rapporto letto dall'OTP; qui l'OTP non si
   legge, quindi quel rapporto e' unitario, e il commento nel driver lo dice.
+- **Bias analogico del GC8034 importato.** Erano i 14 registri per indice di
+  guadagno del BSP: indirizzi fissi, valori dipendenti dall'indice, con la
+  sequenza che si sceglie da sola la pagina — per questo `0xfe` compare tre
+  volte. Importate 7 righe su 9, tante quante gli indici raggiungibili, con uno
+  `static_assert` che lega le due tabelle cosi' che non possano scollarsi.
+- **Binding validati** con `make dt_binding_check`, **sparse pulito**, e
+  aggiunto `scripts/setup-verifica.sh` per rifare l'ambiente.
+- **Due difetti di PM runtime corretti**, emersi dal confronto con `t4ka3.c`.
 
 ## Cosa manca — in ordine di quanto blocca
 
@@ -93,37 +111,42 @@ I driver non sono mai stati eseguiti. Serve `pinctrl-alderlake`, che nel kernel
 - verificare la polarita' del reset GPIO
 - far girare `v4l2-compliance`
 
-### 2. Bias analogico del GC8034
+### 2. Formalita'
 
-Il guadagno analogico e' implementato su **entrambi** i driver. Sul GC8034
-resta pero' una lacuna di qualita': il BSP riscrive 14 registri di bias
-analogico da `agc_register[9][14]` a ogni cambio di indice, e quelli non sono
-ancora importati. Sono valori non documentati ma piccoli e strutturati: servono
-alla resa dell'immagine, non a far funzionare il controllo.
-
-Non e' bloccato dall'hardware, si puo' fare in qualunque momento.
-
-### 3. Formalita'
+Sono le uniche cose rimaste che **non** posso fare io:
 
 - nome, email e copyright reali al posto dei `TODO` (2 punti per driver)
-- `Signed-off-by`
-- attribuzione da concordare con gli autori originali: `reference/README.md`
-- validazione dei binding: `pip install dtschema yamllint`, poi
-  `make dt_binding_check`
+- `Signed-off-by`: e' una dichiarazione legale, la firma dev'essere di chi
+  invia
+- attribuzione da concordare con gli autori originali, che vanno contattati:
+  `reference/README.md`
 
-## Rilievi noti, non ancora affrontati
+## Rilievi: cosa e' stato chiuso e cosa no
 
-- **`cur_mode` nella struct del device.** Sakari chiede di derivarlo dallo
-  state con `v4l2_find_nearest_size()`. Presente in entrambi, ereditato dai
-  template.
-- **Polarita' del reset GPIO.** `gpiod_set_value_cansleep(reset, 1)` significa
-  reset *attivo*. Da verificare che la convenzione del driver combaci con
-  quella dichiarata da INT3472.
-- **Link frequency del GC8034 incoerente nel BSP**: il driver dichiara 336 MHz,
-  il commento sopra la tabella dice 656 Mbps per lane, che sarebbero 328. Il
-  commento nel nostro driver lo dice apertamente invece di nasconderlo.
-- Confrontare tutto con **`drivers/media/i2c/t4ka3.c`**, il modello ACPI-only
-  piu' recente accettato in mainline.
+**Confronto con `t4ka3.c`** — fatto il 2026-08-11. E' il driver ACPI-only piu'
+recente accettato in mainline. Ne sono usciti due difetti reali, corretti:
+
+- `pm_runtime_use_autosuspend()` era chiamato ma mai accoppiato a
+  `pm_runtime_put_autosuspend()`: il driver usava `pm_runtime_put()` liscio,
+  quindi il ritardo di 1000 ms non entrava mai in gioco e il sensore veniva
+  spento subito a ogni stop. Corretto in 4 punti per driver.
+- il percorso d'errore della probe faceva `pm_runtime_disable()` senza
+  `pm_runtime_dont_use_autosuspend()`, lasciando lo stato a meta'.
+
+**`cur_mode` nella struct del device** — verificato, e si tiene. `t4ka3` deriva
+tutto dallo state, ma `gc08a3`, `gc05a2` e `ov2740` — tutti mainline, e i primi
+due sono proprio i template di questi driver — mantengono `cur_mode`. Non e'
+quindi un blocco. Controllato il caso che sarebbe stato un bug vero: `set_format`
+aggiorna `cur_mode` **solo** per `V4L2_SUBDEV_FORMAT_ACTIVE`, mai per `TRY`.
+
+**Polarita' del reset GPIO** — resta aperto, ma serve l'hardware.
+`gpiod_set_value_cansleep(reset, 1)` significa reset *attivo*: va verificato che
+la convenzione del driver combaci con quella dichiarata da INT3472.
+
+**Link frequency del GC8034 incoerente nel BSP** — resta aperto: il driver
+dichiara 336 MHz, il commento sopra la sua tabella dice 656 Mbps per lane, che
+sarebbero 328. Il commento nel nostro driver lo dice apertamente invece di
+nasconderlo. Si chiude solo misurando.
 
 ## Nota sul PIXEL_RATE — i due driver fanno scelte diverse, apposta
 

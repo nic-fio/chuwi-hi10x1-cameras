@@ -873,7 +873,7 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 		break;
 	}
 
-	pm_runtime_put(gc5035->dev);
+	pm_runtime_put_autosuspend(gc5035->dev);
 
 	return ret;
 }
@@ -942,7 +942,7 @@ static int gc5035_enable_streams(struct v4l2_subdev *sd,
 	return 0;
 
 err_rpm_put:
-	pm_runtime_put(gc5035->dev);
+	pm_runtime_put_autosuspend(gc5035->dev);
 
 	return ret;
 }
@@ -957,7 +957,7 @@ static int gc5035_disable_streams(struct v4l2_subdev *sd,
 	ret = cci_write(gc5035->regmap, GC5035_REG_STREAM,
 			GC5035_STREAM_OFF, NULL);
 
-	pm_runtime_put(gc5035->dev);
+	pm_runtime_put_autosuspend(gc5035->dev);
 
 	return ret;
 }
@@ -1229,6 +1229,7 @@ static int gc5035_probe(struct i2c_client *client)
 
 err_rpm:
 	pm_runtime_disable(dev);
+	pm_runtime_dont_use_autosuspend(dev);
 	v4l2_subdev_cleanup(&gc5035->sd);
 
 err_media_entity_cleanup:
