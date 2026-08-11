@@ -1,0 +1,21 @@
+INTEL-CAMERA — snapshot 20260811-201501
+kernel: 6.12.86+deb13-amd64
+
+Semafori (OK = risolto, KO = ancora bloccante):
+  [OK] pinctrl-alderlake compilato
+  [OK] gpiochip presente
+  [OK] INT3472:01 agganciato
+  [KO] ipu-bridge senza voci GCTI -> nessun grafo fwnode CSI-2
+  [KO] gc5035/gc8034 ASSENTI      -> nessun subdev sensore
+
+File raccolti:
+00-system.txt
+01-acpi.txt
+02-ipu6.txt
+03-drivers.txt
+04-gpio-int3472.txt
+05-capture-test.txt
+06-dmesg-full.txt
+07-journal-full.txt
+08-journal-camera.txt
+SOMMARIO.txt

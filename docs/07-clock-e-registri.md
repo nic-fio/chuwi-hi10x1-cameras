@@ -1,12 +1,32 @@
 # Clock di piattaforma e tabelle registri — 2026-08-11
 
+> ## La risposta e' arrivata la sera stessa, ed e' «si'»
+>
+> Questo documento e' stato scritto **prima** di poter accendere i sensori, e
+> la sua conclusione — «le tabelle a 24 MHz non sono utilizzabili cosi' come
+> sono» — e' **sbagliata**. Alle 20:24 il GC8034 ha prodotto un fotogramma da
+> 8 MP perfettamente riconoscibile, con le tabelle Rockchip **non modificate**,
+> a 19,2 MHz. Nessun frame corrotto, nessun timeout CSI-2.
+>
+> Ne' l'ipotesi A (ritarare i quattro registri) ne' l'ipotesi B (forzare i
+> 24 MHz): **tutti i tempi scalano semplicemente di 19,2/24 = 0,8**, misurato
+> sul frame rate con quattro cifre di accordo. La Serie 0 resta una correzione
+> valida di un buco di mainline, ma non serve piu' a questo hardware.
+>
+> Cio' che invece e' emerso e conta: **le link frequency dichiarate sono
+> sbagliate su entrambi i sensori**. Vedi `docs/08-prova-hardware.md`.
+>
+> Il documento resta com'era perche' e' il ragionamento che ha portato alla
+> misura giusta — e perche' i punti 1, 2, 3, 5 e 7 restano veri.
+
 Analisi svolta dopo la lettura della ACPI NVS, per rispondere a una domanda
 sola: **le tabelle registri del GC8034 disponibili sono utilizzabili su questa
 macchina?**
 
-Risposta breve: **no, non cosi' come sono**, e le due scorciatoie sperate sono
-entrambe chiuse. Ma il problema si e' ristretto da "tutto il blob" a **quattro
-registri**, e la catena di alimentazione e clock e' risultata sana.
+Risposta breve dell'epoca: **no, non cosi' come sono** (poi smentita, vedi
+sopra), e le due scorciatoie sperate sono entrambe chiuse. Ma il problema si e'
+ristretto da "tutto il blob" a **quattro registri**, e la catena di
+alimentazione e clock e' risultata sana.
 
 ---
 
@@ -219,6 +239,11 @@ risorsa `PNP0C02:02` copre `fd000000-fd68ffff`, che **non include**
 > con un fallimento silenzioso, senza messaggi d'errore, che assomiglierebbe a
 > un problema di tabelle registri pur non essendolo. Prima di dare la colpa ai
 > registri, verificare che il clock ci sia.
+>
+> **Ricontrollato, e il timore era infondato.** I sensori rispondono sull'I2C
+> solo con l'XVCLK attivo: che rispondano — `0x5035` e `0x8044` — dimostra che
+> il clock arriva. Le scritture verso `SBREG_BAR` funzionano anche col P2SB
+> nascosto. Il fallimento silenzioso non c'e' stato.
 
 ## 7. `CJAK519`: la nota in reference/README.md era sbagliata
 
@@ -278,6 +303,13 @@ una sola riga, e comunque il codice a monte resta quello Rockchip, con la
 catena di attribuzione descritta in `reference/README.md`.
 
 ## Dove lascia il progetto
+
+> **Superato dalla prova su hardware.** Le piste 1 e 2 sono state percorse
+> entrambe la sera del 2026-08-11 e hanno dato lo stesso esito: le tabelle
+> Rockchip funzionano a 19,2 MHz senza modifiche. Le piste 3, 4 e 5 —
+> altri BSP, il driver Windows, il register guide GalaxyCore — **non servono
+> piu'**. Restano qui perche' sono ancora le uniche strade se un giorno
+> servisse capire *cosa* fanno quei registri, invece che limitarsi a usarli.
 
 | | Stato |
 |---|---|

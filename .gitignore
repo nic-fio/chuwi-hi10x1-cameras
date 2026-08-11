@@ -12,6 +12,18 @@ modules.order
 *.log.gz
 *.tar.xz
 *.deb
+.*.cmd
+.*.d
+modules.builtin*
+build-6.12/.tmp*
+
+# Fotogrammi grezzi: 10-16 MB l'uno, si rigenerano con scripts/cattura.sh
+*.raw
+
+# Ritrae una persona. Resta sul disco come prova che il sensore da 8 MP
+# produce un'immagine riconoscibile, ma pubblicarla e' una scelta di chi ci
+# sta dentro, non l'effetto collaterale di un commit.
+data/prima-cattura-2026-08-11/gc8034-scrivania.png
 
 # Editor e sistema
 *~

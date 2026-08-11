@@ -50,7 +50,10 @@ sottosistema diverso (`platform-driver-x86`, non `linux-media`).
 | Tabelle registri importate | **si'** — GC5035 161+162, GC8034 233+7x14 |
 | Tabelle identiche all'originale | **verificato** con `scripts/regtab-to-cci.py --check` |
 | Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 438 e 336 MHz |
-| **Eseguiti su hardware** | **MAI** — il kernel che li contiene non e' mai stato avviato |
+| **Eseguiti su hardware** | **SI', 2026-08-11** — entrambi catturano |
+| Chip ID letto sul silicio | `0x5035` e `0x8044` |
+| `v4l2-compliance` | **45/46** su entrambi — vedi `docs/08-prova-hardware.md` |
+| Tabelle di guadagno verificate a misura | si' — 15,7x su 16 e 7,9x su 7,66 |
 
 Gli strumenti si installano con `scripts/setup-verifica.sh`. Due trappole che
 quello script evita: `dtschema` non compila senza `swig` e `python3-dev` (fallisce
@@ -99,19 +102,31 @@ anche il binding sta nel commit del driver.
 
 ## Cosa manca — in ordine di quanto blocca
 
-### 1. Provare su hardware (blocca tutto il resto)
+### 1. ~~Provare su hardware~~ — **FATTO il 2026-08-11**
 
-I driver non sono mai stati eseguiti. Serve `pinctrl-alderlake`, che nel kernel
-7.0 locale non e' compilato, quindi serve un kernel di distribuzione, quindi
-**serve un riavvio**. Fino a li' non e' possibile:
+Il riavvio sul kernel Debian ha sbloccato tutto in una sera. Delle quattro
+domande che erano appese qui:
 
-- sapere se il GC8034 aggancia la PLL a 19,2 MHz con tabelle da 24 (ipotesi A
-  contro ipotesi B in `docs/07-clock-e-registri.md`)
-- confermare le due link frequency, 438 e 336 MHz
-- verificare la polarita' del reset GPIO
-- far girare `v4l2-compliance`
+- **il GC8034 con tabelle da 24 MHz a 19,2**: funziona, con i tempi scalati di
+  0,8. Ne' ipotesi A ne' ipotesi B
+- **le due link frequency**: **non confermate, smentite.** Le vere sono
+  422,4 MHz (non 438) e 268,8 MHz (non 336), misurate dal frame rate
+- **la polarita' del reset GPIO**: giusta, i sensori escono dal reset
+- **`v4l2-compliance`**: 45/46, con il 46° condiviso con tutto il mainline
+  recente
 
-### 2. Formalita'
+Tutto in `docs/08-prova-hardware.md`, per rifarlo `build-6.12/README.md`.
+
+### 2. Correggere le link frequency — **ora e' questo a bloccare**
+
+Le costanti nei due driver **e** le voci corrispondenti in `ipu-bridge` vanno
+cambiate insieme, altrimenti la probe fallisce sulla validazione
+dell'endpoint. Per il GC8034 c'e' prima una decisione da prendere: costante
+fissa (giusta su x86, sbagliata su device-tree a 24 MHz) o valore derivato a
+runtime da `clk_get_rate()`. La seconda e' la sola difendibile in review, e
+vale anche per il GC5035.
+
+### 3. Formalita'
 
 Sono le uniche cose rimaste che **non** posso fare io:
 
@@ -139,14 +154,15 @@ due sono proprio i template di questi driver — mantengono `cur_mode`. Non e'
 quindi un blocco. Controllato il caso che sarebbe stato un bug vero: `set_format`
 aggiorna `cur_mode` **solo** per `V4L2_SUBDEV_FORMAT_ACTIVE`, mai per `TRY`.
 
-**Polarita' del reset GPIO** — resta aperto, ma serve l'hardware.
-`gpiod_set_value_cansleep(reset, 1)` significa reset *attivo*: va verificato che
-la convenzione del driver combaci con quella dichiarata da INT3472.
+**Polarita' del reset GPIO** — **chiuso il 2026-08-11**: giusta. Con
+`gpiod_set_value_cansleep(reset, 0)` i sensori escono dal reset e rispondono
+all'I2C, quindi la convenzione del driver e quella di INT3472 combaciano.
 
-**Link frequency del GC8034 incoerente nel BSP** — resta aperto: il driver
-dichiara 336 MHz, il commento sopra la sua tabella dice 656 Mbps per lane, che
-sarebbero 328. Il commento nel nostro driver lo dice apertamente invece di
-nasconderlo. Si chiude solo misurando.
+**Link frequency del GC8034 incoerente nel BSP** — **chiuso misurando**, come
+previsto. Il driver dichiarava 336 MHz e il commento del BSP 656 Mbps per lane
+(cioe' 328): sbagliati tutti e due. Il valore vero su questa piattaforma e'
+**268,8 MHz**, cioe' `19,2 x 14`, e i 336 sono lo stesso moltiplicatore
+applicato ai 24 MHz di Rockchip.
 
 ## Nota sul PIXEL_RATE — i due driver fanno scelte diverse, apposta
 

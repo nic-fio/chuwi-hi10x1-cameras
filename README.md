@@ -55,36 +55,38 @@ in mainline e gia' pacchettizzato.
 
 ## Stato
 
-Cinque semafori, aggiornati da `collect-diag.sh`. Snapshot iniziale
-(2026-08-11, kernel 7.0 locale):
+**Le due fotocamere funzionano.** Il 2026-08-11, sul kernel Debian 6.12.86,
+entrambi i driver hanno fatto probe, i sensori hanno risposto con il loro chip
+ID e hanno prodotto fotogrammi riconoscibili — 5 MP la frontale, 8 MP la
+posteriore — senza un solo errore del kernel. `v4l2-compliance`: 45 su 46 per
+entrambi, e il 46° fallisce anche su tutti i driver di sensore mainline
+recenti. Prove e misure in **`docs/08-prova-hardware.md`**.
+
+Questo **non** e' il traguardo: e' il passaggio intermedio descritto qui sopra.
+Il codice gira con patch locali, non e' nel tree di Linus.
+
+Cinque semafori, aggiornati da `collect-diag.sh` (`data/20260811-201501/`):
 
 | # | Semaforo | Stato | Dove si risolve |
 |---|---|---|---|
-| 1 | `pinctrl-alderlake` compilato | KO | **locale** — `.config` |
-| 2 | `gpiochip` presente | KO | conseguenza di 1 |
-| 3 | `INT3472:01/:02` agganciati | KO | conseguenza di 1 |
-| 4 | `ipu-bridge` conosce i `GCTI*` | KO* | **upstream** — Serie 3 |
+| 1 | `pinctrl-alderlake` compilato | **OK** | risolto dal kernel Debian |
+| 2 | `gpiochip` presente | **OK** | conseguenza di 1 |
+| 3 | `INT3472:01/:02` agganciati | **OK** | conseguenza di 1 |
+| 4 | `ipu-bridge` conosce i `GCTI*` | KO | **upstream** — Serie 3 |
 | 5 | driver `gc5035`/`gc8034` presenti | KO | **upstream** — Serie 1 e 2 |
 
-\* Il semaforo 4 e' `KO` sul 7.0, ma la patch e' **gia' dimostrata funzionante**:
-nel boot di prova del kernel 7.2 (2026-08-11) `ipu-bridge` ha riconosciuto
-entrambi gli `_HID` e ha dichiarato `Connected 2 cameras`. Vedi
-`data/boot-7.2-fallito.log` e `docs/06-azioni-root.md`, punto 4.
+I semafori 1-3 erano un difetto del kernel 7.0 compilato a mano, **non**
+materiale da mandare a mainline: `CONFIG_PINCTRL_ALDERLAKE` e' in mainline
+dalla 5.18 e chi ha compilato quel kernel l'ha saltato. Il tentativo di
+risolverli con un kernel vanilla costruito in casa era fallito (Fase 1,
+abbandonata); la strada giusta era il kernel di distribuzione, ed e' quella che
+ha funzionato.
 
-I semafori 1-3 sono un difetto del kernel locale, **non** materiale da inviare
-a mainline: `CONFIG_PINCTRL_ALDERLAKE` e' in mainline dalla 5.18 e chi ha
-compilato questo kernel l'ha saltato. Senza GPIO i sensori non si alimentano,
-quindi finche' restano `[KO]` i driver **non sono testabili su questa
-macchina**. Il tentativo di risolverli con un kernel compilato a mano e' fallito
-il 2026-08-11 (Fase 1, abbandonata); la strada che resta e' un kernel di
-distribuzione, e non e' sulla via critica — il codice si scrive e si invia
-contro `/home/nicfio/linux` indipendentemente.
-
-I semafori 4-5 sono il progetto vero. Attenzione pero': i semafori misurano solo
-**la macchina locale**. Diventano `[OK]` gia' applicando le patch in locale, che
-non e' l'obiettivo. Il traguardo vero e' il sesto criterio, non misurabile da
-`collect-diag.sh`: **il codice nel tree di Linus**, con i cinque semafori `[OK]`
-su un kernel vanilla senza patch.
+I semafori 4-5 restano `[KO]` perche' misurano il kernel **installato**, e i
+driver girano come moduli fuori albero caricati a mano (`build-6.12/`). Il
+traguardo vero e' comunque il sesto criterio, che `collect-diag.sh` non puo'
+misurare: **il codice nel tree di Linus**, con i cinque semafori `[OK]` su un
+kernel vanilla senza patch.
 
 ## Struttura
 
@@ -99,12 +101,16 @@ INTEL-CAMERA/
 │   ├── 04-riferimenti.md        template, sorgenti registri, canali, maintainer
 │   ├── 05-parametri-sensori.md  registri e parametri, con la provenienza di ognuno
 │   ├── 06-azioni-root.md        i passi che richiedono root, con la motivazione
-│   └── 07-clock-e-registri.md   perche' il GC8034 non ha ancora tabelle usabili
+│   ├── 07-clock-e-registri.md   il clock di piattaforma e le tabelle registri
+│   └── 08-prova-hardware.md     la prima esecuzione su hardware, con le misure
 ├── scripts/
 │   ├── collect-diag.sh          snapshot riproducibile + semafori
 │   ├── dump-dsdt.sh             estrae e decompila la DSDT (la specifica)
+│   ├── cattura.sh               configura la pipeline IPU6 e cattura
+│   ├── raw-to-png.py            da RAW Bayer a PNG guardabile
 │   ├── build-kernel.sh          kernel vanilla di sviluppo, riproducibile
 │   └── fix-pinctrl-alderlake.sh OBSOLETO — vedi l'intestazione del file
+├── build-6.12/                  build fuori albero per provare sul kernel Debian
 ├── config/                      .config usate, una per versione di kernel
 ├── reference/                   codice di terze parti + vincoli di attribuzione
 ├── data/                        snapshot datati; data/latest -> ultimo
@@ -186,7 +192,21 @@ duplicato non morde. E tutti i tipi GPIO usati (`0x00 RESET`, `0x0b
 POWER_ENABLE`) sono gia' gestiti da `int3472-discrete`. Due patch in meno da
 scrivere e da far accettare.
 
-### Il rischio PLL: ridotto a meta'
+### Il rischio PLL: risolto la sera stessa, misurando
+
+> **Aggiornamento del 2026-08-11, ore 20.** Tutto il paragrafo che segue e'
+> stato scritto prima di poter accendere i sensori. La prova su hardware l'ha
+> superato: **le tabelle Rockchip a 24 MHz funzionano a 19,2 MHz cosi' come
+> sono**, con tutti i tempi scalati di 0,8 e nessuna corruzione. Non servono i
+> quattro registri ritarati, e non serve forzare i 24 MHz.
+>
+> In compenso la misura del frame rate ha smascherato due costanti sbagliate:
+> le link frequency vere sono **422,4 MHz** per il GC5035 (dichiarata 438) e
+> **268,8 MHz** per il GC8034 (dichiarata 336), entrambe multipli interi dei
+> 19,2 MHz. Vedi `docs/08-prova-hardware.md`.
+>
+> Il testo resta perche' e' il ragionamento che ha portato a fare la misura
+> giusta.
 
 Era "non si sa se i blob PLL di nessuno dei due sensori valgono qui". Ora:
 

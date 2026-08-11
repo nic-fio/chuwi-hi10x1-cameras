@@ -1,0 +1,21 @@
+
+User Controls
+
+                       exposure 0x00980911 (int)    : min=4 max=1992 step=1 default=1992 value=1992
+
+Camera Controls
+
+             camera_orientation 0x009a0922 (menu)   : min=0 max=2 default=0 value=0 (Front) flags=read-only
+         camera_sensor_rotation 0x009a0923 (int)    : min=0 max=0 step=1 default=0 value=0 flags=read-only
+
+Image Source Controls
+
+              vertical_blanking 0x009e0901 (int)    : min=64 max=14439 step=1 default=64 value=64
+            horizontal_blanking 0x009e0902 (int)    : min=328 max=328 step=1 default=328 value=328 flags=read-only
+                  analogue_gain 0x009e0903 (int)    : min=256 max=4096 step=1 default=256 value=256
+
+Image Processing Controls
+
+                 link_frequency 0x009f0901 (intmenu): min=0 max=0 default=0 value=0 (438000000 0x1a1b5980) flags=read-only
+                     pixel_rate 0x009f0902 (int64)  : min=0 max=175200000 step=1 default=175200000 value=175200000 flags=read-only
+                   test_pattern 0x009f0903 (menu)   : min=0 max=1 default=0 value=1 (Color Bar)

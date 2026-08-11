@@ -1,0 +1,72 @@
+
+===== SENSOR DRIVER PRESENTI IN drivers/media/i2c =====
+adv7170.ko.xz
+adv7175.ko.xz
+bt819.ko.xz
+bt856.ko.xz
+cs3308.ko.xz
+cs5345.ko.xz
+cs53l32a.ko.xz
+cx25840
+hi556.ko.xz
+ir-kbd-i2c.ko.xz
+ks0127.ko.xz
+m52790.ko.xz
+msp3400.ko.xz
+mt9v011.ko.xz
+ov01a10.ko.xz
+ov08x40.ko.xz
+ov13b10.ko.xz
+ov2640.ko.xz
+ov2680.ko.xz
+ov2740.ko.xz
+ov5670.ko.xz
+ov5693.ko.xz
+ov7251.ko.xz
+ov7670.ko.xz
+ov8856.ko.xz
+ov8865.ko.xz
+saa6588.ko.xz
+saa6752hs.ko.xz
+saa7110.ko.xz
+saa7115.ko.xz
+saa7127.ko.xz
+saa717x.ko.xz
+saa7185.ko.xz
+tda7432.ko.xz
+tda9840.ko.xz
+tea6415c.ko.xz
+tea6420.ko.xz
+tlv320aic23b.ko.xz
+tvaudio.ko.xz
+tvp5150.ko.xz
+upd64031a.ko.xz
+upd64083.ko.xz
+vp27smpx.ko.xz
+vpx3220.ko.xz
+wm8739.ko.xz
+wm8775.ko.xz
+--- totale: 46
+
+===== CERCA I DRIVER CHE SERVONO (gc5035 / gc8034) =====
+ASSENTI: nessun modulo/builtin per gc5035 o gc8034
+
+===== HID SUPPORTATI DA ipu-bridge =====
+--- GCTI presenti nella tabella?
+NO: ipu-bridge non conosce GCTI5035 / GCTI8034
+
+===== PINCTRL: chi rivendica INTC1057? =====
+alias acpi*:INTC1085:* pinctrl_alderlake
+alias acpi*:INTC1057:* pinctrl_alderlake
+alias acpi*:INTC1056:* pinctrl_alderlake
+--- driver pinctrl intel compilati:
+pinctrl-alderlake.ko.xz
+pinctrl-elkhartlake.ko.xz
+pinctrl-emmitsburg.ko.xz
+pinctrl-intel-platform.ko.xz
+pinctrl-jasperlake.ko.xz
+pinctrl-lakefield.ko.xz
+pinctrl-meteorlake.ko.xz
+pinctrl-meteorpoint.ko.xz
+--- pinctrl-alderlake presente?
+/lib/modules/6.12.86+deb13-amd64/kernel/drivers/pinctrl/intel/pinctrl-alderlake.ko.xz

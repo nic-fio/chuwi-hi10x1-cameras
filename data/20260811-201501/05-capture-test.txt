@@ -1,0 +1,7 @@
+
+===== TEST CATTURA /dev/video0 =====
+atteso allo stato attuale: ENOLINK 'Link has been severed'
+[video4linux2,v4l2 @ 0x5591cbb61240] ioctl(VIDIOC_STREAMON): Link has been severed
+[in#0 @ 0x5591cbb60f80] Error opening input: Link has been severed
+Error opening input file /dev/video0.
+Error opening input files: Link has been severed

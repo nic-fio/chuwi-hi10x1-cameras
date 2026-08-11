@@ -29,42 +29,43 @@ Senza questo non e' possibile testare nulla.
       sono tutti parametrizzati da variabili (`L1NL`, `L1CK`, `L1A0`, `L1DI`,
       `C1F*`…) che il BIOS scrive in **ACPI NVS** al boot. Nella DSDT sono solo
       dichiarate
-- [ ] **Leggere i valori dalla ACPI NVS** — `sudo ./scripts/read-camera-nvs.py`
+- [x] **Leggere i valori dalla ACPI NVS** — `sudo ./scripts/read-camera-nvs.py`
       preceduto da **un boot del 7.0 con `iomem=relaxed`**. Primo tentativo
       fallito (`/dev/mem` -> `EPERM` per `IO_STRICT_DEVMEM=y`, `/proc/kcore` non
       copre la memoria E820-reserved, `acpidbg` non compilato, `acpi_call` non
       costruibile), ma la conclusione che ne era stata tratta — "serve un kernel
       nuovo" — era **sbagliata**: basta un parametro di boot sul kernel che c'e'
       gia'. Dimostrazione dal sorgente in `docs/06-azioni-root.md`, punto 2-bis
-- [ ] **Decidere se serve la Serie 4** (quirk `int3472`) — dipende dai tipi
-      GPIO in NVS, che lo script gia' confronta con `int3472.h`
+- [x] **Decidere se serve la Serie 4** (quirk `int3472`) — **no**. `C1GP` = 2,
+      sotto la soglia di 6 del bug del `_DSM` duplicato, e i tipi GPIO usati
+      (`0x00 RESET`, `0x0b POWER_ENABLE`) sono gia' gestiti da
+      `int3472-discrete`. Confermato dai fatti: i sensori si accendono e
+      catturano senza alcuna modifica a `int3472`
 
-**Completa quando**: i parametri CSI-2 di entrambi i sensori sono documentati in
-`docs/05-parametri-sensori.md` — il file esiste gia', con le sezioni **[DSDT]**
-ancora vuote — e il verdetto sullo scenario PLL e sulla Serie 4 e' scritto.
-I semafori 1-3 si risolvono in Fase 1, non piu' qui.
+**COMPLETA** — 2026-08-11. I parametri CSI-2 di entrambi i sensori sono in
+`docs/05-parametri-sensori.md`, il verdetto sulla Serie 4 e' «non serve», e
+quello sullo scenario PLL e' in `docs/08-prova-hardware.md`: le tabelle a
+24 MHz funzionano a 19,2 MHz, con i tempi scalati di 0,8.
 
-> **Questa fase torna a essere la prima.** Dal 2026-08-11 non dipende piu' dalla
-> Fase 1, che e' stata abbandonata: per leggere la NVS serve `iomem=relaxed`,
-> non un kernel diverso. L'ordine di esecuzione reale e'
-> **Fase 0 -> Fase 2/3 -> Fase 5**.
+### Sospetto chiuso: i sensori hanno eccome la risorsa I2C
 
-### Sospetto aperto: i sensori potrebbero non avere risorsa I2C
+Era il rischio piu' grosso della fase — «i sensori sono dichiarati presenti ma
+senza `I2cSerialBus`, quindi nessun driver potrebbe mai agganciarsi». Nasceva
+dall'assenza di client I2C sul 7.0, e dal fatto che nel `_CRS` di `LNK1`
+esisteva un ramo (`L1DI == Zero`) che restituiva un buffer vuoto.
 
-Raccolto da sysfs sul 7.0, senza root:
+**Smentito due volte.** La NVS dice `L0DI` = 2 e `L1DI` = 1, non zero. E sul
+kernel Debian i client ci sono:
 
-- `GCTI5035:00` e `GCTI8034:00` esistono, `_STA` = `0x0F` (presente, abilitato,
-  funzionante). `_HID` e' `HCID(One)`, calcolata da `L1SM`: che il kernel ne
-  ricavi `GCTI5035` **dimostra che la NVS e' popolata** e coerente
-- i sei bus `Synopsys DesignWare` (`i2c-10`..`i2c-15`) sono registrati
-- `intel_skl_int3472_discrete` e' caricato
-- **nessun client I2C**: `/sys/bus/i2c/devices/` non ha voci `N-00XX`
+```
+/sys/bus/i2c/devices/i2c-GCTI5035:00   -> i2c-3, 0x3f
+/sys/bus/i2c/devices/i2c-GCTI8034:00   -> i2c-2, 0x37
+```
 
-Nel `_CRS` di `LNK1` (`data/dsdt-analisi/LNK1.dsl:136`) l'unico ramo che
-restituisce un buffer vuoto e' `L1DI == Zero`. Se la NVS conferma `L*DI = 0`,
-il firmware dichiara i sensori presenti **senza risorsa I2C**: nessun client,
-nessun aggancio possibile, per qualunque driver. Da chiarire **prima** di
-lavorare sulle tabelle registri.
+La causa dell'assenza sul 7.0 era una sola, ed era `pinctrl-alderlake`: niente
+gpiochip `INTC1057` -> `int3472-discrete` in probe rimandata per sempre -> la
+`_DEP` dei `GCTI*` mai soddisfatta -> nessuna enumerazione I2C. Un difetto di
+`.config`, non di firmware.
 
 ---
 
@@ -185,20 +186,27 @@ Si parte da qui perche' esiste gia' codice Intel da cui prendere i registri.
       compila su 7.2, `W=1` pulito, `checkpatch --strict` pulito, alias ACPI
       `acpi*:GCTI5035:*` corretto. **Non funzionante**: tabelle registri
       segnaposto e guadagno limitato a 1x. Vedi `patches/wip/README.md`
-- [ ] Registri e mode dalla patch Intel `gc5035-on-adlm` — **bloccato
-      sull'attribuzione**, vedi `reference/README.md`
-- [ ] Adattamento ADL-M -> ADL-N
-- [ ] Controlli V4L2 completi (vedi `docs/03-piano-upstream.md`) — manca solo
-      `ANALOGUE_GAIN`, oggi limitato a 1x perche' manca la tabella AGC
+- [x] Registri e mode dalla patch Intel `gc5035-on-adlm` — importati e
+      **verificati sul silicio**. Resta aperta l'**attribuzione**, che e' una
+      formalita' legale, non tecnica: vedi `reference/README.md`
+- [x] Adattamento ADL-M -> ADL-N
+- [x] Controlli V4L2 completi — `ANALOGUE_GAIN` implementato e misurato:
+      16x chiesti, 15,7x ottenuti
 - [x] Runtime PM, helper CCI, match table ACPI + OF
-- [x] Binding YAML — scritto, **non validato**: manca `dtschema`
+- [x] Binding YAML — scritto e validato con `make dt_binding_check`
 - [x] Voce `GCTI5035` in `ipu_supported_sensors[]` — bozza applicata al tree
-- [ ] **Prima immagine catturata** da `/dev/video*`
-- [ ] `v4l2-compliance` pulito
-- [ ] `checkpatch.pl --strict` pulito
+- [x] **Prima immagine catturata** — 2026-08-11, 2592x1944 SGRBG10,
+      `data/prima-cattura-2026-08-11/gc5035-soffitto.png`
+- [x] `v4l2-compliance` — 45/46. L'unico fallimento (eventi sui controlli)
+      e' condiviso con `gc05a2`, `gc08a3`, `ov2740`, `ov08x40` e `t4ka3`
+- [x] `checkpatch.pl --strict` pulito
 
-**Completa quando**: si cattura un fotogramma riconoscibile dalla frontale su
-kernel vanilla + patch locali.
+**COMPLETA** — 2026-08-11: fotogramma riconoscibile dalla frontale, su kernel
+Debian 6.12 con i driver caricati come moduli fuori albero (`build-6.12/`).
+
+Resta una correzione da fare prima dell'invio: la link frequency vera e'
+**422,4 MHz**, non i 438 dichiarati dalla patch Intel. Misurata dal frame rate,
+e' `19,2 MHz x 22` esatti. Vedi `docs/08-prova-hardware.md`.
 
 ---
 
@@ -212,14 +220,25 @@ Nessun codice x86/ACPI esistente. Solo il BSP Rockchip device-tree.
 > dipendenza logica, non per esecuzione seriale.
 
 - [x] Scheletro da `gc08a3.c` mainline — `patches/wip/gc8034.c`, 897 righe,
-      compila, `W=1` e `checkpatch --strict` puliti. **Non testato.**
-      `ANALOGUE_GAIN` qui e' gia' implementato davvero, non un segnaposto
-- [ ] Registri dal BSP Rockchip, **con attribuzione corretta** (GPL-2.0:
-      `Co-developed-by` / `Signed-off-by`, credito all'autore originale)
-- [ ] Stessa checklist della Fase 2
+      compila, `W=1` e `checkpatch --strict` puliti. **Ora testato.**
+      `ANALOGUE_GAIN` verificato: 7,66x chiesti, 7,9x misurati
+- [x] Registri dal BSP Rockchip — importati e **funzionanti sul silicio**,
+      nonostante siano tarati a 24 MHz e qui l'MCLK sia 19,2. Resta aperta
+      l'**attribuzione** (GPL-2.0: `Co-developed-by` / `Signed-off-by`,
+      credito all'autore originale)
+- [x] Stessa checklist della Fase 2 — `v4l2-compliance` 45/46,
+      **prima immagine** 3264x2448 SRGGB10 il 2026-08-11
 - [x] Voce `GCTI8034` in `ipu_supported_sensors[]` — bozza applicata al tree
+- [ ] **Decidere come dichiarare la link frequency.** Quella vera qui e'
+      268,8 MHz (`19,2 x 14`), non i 336 del BSP (`24 x 14`). Un valore fisso
+      sarebbe giusto su x86 e sbagliato su device-tree a 24 MHz: la proposta e'
+      derivarla a runtime da `clk_get_rate()`. Vedi `docs/08-prova-hardware.md`
 
-**Completa quando**: si cattura un fotogramma dalla posteriore.
+**COMPLETA** — 2026-08-11: fotogramma riconoscibile dalla posteriore a 8 MP.
+
+Il rischio numero uno del progetto — «le uniche tabelle disponibili sono a
+24 MHz e questa piattaforma da' 19,2» — si e' rivelato **inesistente**: le
+tabelle funzionano cosi' come sono, con tutti i tempi scalati di 0,8.
 
 ---
 
@@ -369,25 +388,26 @@ impegno a rispondere. Non e' facoltativo e non ha scadenza.
 
 | Questione | Stato |
 |---|---|
-| Serve la Serie 4 (quirk `int3472`)? | dipende dai `_DSM` nella DSDT — Fase 0 |
-| I registri exposure/gain del GC8034 sono ricavabili dal BSP? | **RISOLTA: si'.** Exposure `0x03/0x04`, gain a indice su `0xb6` + tabella a 9 voci, blanking `0x07/0x08`. Vedi `docs/05-parametri-sensori.md` |
+| Serve la Serie 4 (quirk `int3472`)? | **RISOLTA: no.** `C1GP` = 2 e i tipi GPIO usati sono gia' gestiti. Confermato dai fatti: le camere funzionano senza toccare `int3472` |
+| I registri exposure/gain del GC8034 sono ricavabili dal BSP? | **RISOLTA: si'.** Exposure `0x03/0x04`, gain a indice su `0xb6` + tabella a 9 voci, blanking `0x07/0x08`. Guadagno poi **misurato**: 7,66x chiesti, 7,9x ottenuti |
 | Serie 3: una patch con due voci o due patch da una? | da decidere in Fase 5, in base a quanto divergono i tempi di Serie 1 e 2 |
-| La link frequency del CHUWI coincide con quella della patch Intel? | **da cui dipende tutto** — vedi Rischi. Si sa solo dopo la DSDT |
-| Contattare GalaxyCore per i datasheet? | da valutare se i registri restano opachi |
+| La link frequency del CHUWI coincide con quella della patch Intel? | **RISOLTA: no, e la patch Intel sbaglia.** Misurata 422,4 MHz (`19,2 x 22`) contro i 438 dichiarati. Il GC8034 sta a 268,8 (`19,2 x 14`) contro i 336 del BSP |
+| Come dichiarare la link frequency nei due driver? | **APERTA, e ora e' la principale.** Costante giusta per x86 o derivata a runtime da `clk_get_rate()`? Vedi `docs/08-prova-hardware.md` |
+| Contattare GalaxyCore per i datasheet? | **non serve piu' per far funzionare i sensori.** Resterebbe utile solo per documentare i blob PLL |
 | Un solo maintainer per entrambi i driver? | proposta: si', l'autore del progetto |
 
 ## Rischi noti
 
-- **Le PLL non sono documentate — rischio tecnico numero uno.** Per entrambi i
-  sensori i registri che determinano PLL e timing D-PHY sono blob senza
-  commenti (GC5035: `0xf4`, `0xf5`, `0xf6`, `0xf8`, `0xf9`, `0xd3`, `0xee` e il
-  blocco MIPI in pagina 3). Conseguenza concreta: **non si sa come cambiare la
-  link frequency.** I 438 MHz della patch Intel sono un blob, non un calcolo.
-  Se la DSDT del CHUWI dichiara un valore diverso — o un numero di lane diverso
-  — non e' ricavabile quali byte toccare. Si scopre in quale scenario siamo
-  solo estraendo la DSDT. Vedi `docs/05-parametri-sensori.md`.
-- **Nessun datasheet pubblico GalaxyCore.** Mitigazione: confronto tra mode
-  table, driver esistenti dello stesso vendor, eventuale contatto col vendor.
+- ~~**Le PLL non sono documentate — rischio tecnico numero uno.**~~
+  **RIENTRATO il 2026-08-11.** Restano blob non commentati, ma non serve
+  toccarli: le tabelle producono immagini corrette su questa piattaforma cosi'
+  come sono. Non sapere *come* cambiare la link frequency non e' piu' un
+  problema, perche' non c'e' motivo di cambiarla — basta **dichiararla giusta**,
+  e ora si sa quanto vale perche' e' stata misurata. Vedi
+  `docs/08-prova-hardware.md`.
+- **Nessun datasheet pubblico GalaxyCore.** Non blocca piu' il funzionamento;
+  resta un limite per la documentazione dei blob e per rispondere a un revisore
+  che chieda «cosa fa questo registro».
 - **Review lunga.** 5-15 revisioni per serie e' la norma su linux-media, non un
   segnale di errore.
 - **Adattamento x86/ACPI.** I template mainline assumono device-tree e

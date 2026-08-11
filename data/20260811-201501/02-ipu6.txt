@@ -1,0 +1,102 @@
+
+===== PCI (IPU6 = classe 0480 / device 8086:462e) =====
+00:00.0 Host bridge [0600]: Intel Corporation Alder Lake-N Processor Host Bridge/DRAM Registers [8086:461c]
+00:02.0 VGA compatible controller [0300]: Intel Corporation Alder Lake-N [UHD Graphics] [8086:46d1]
+00:04.0 Signal processing controller [1180]: Intel Corporation Alder Lake Innovation Platform Framework Processor Participant [8086:461d]
+00:05.0 Multimedia controller [0480]: Intel Corporation Device [8086:462e]
+00:0a.0 Signal processing controller [1180]: Intel Corporation Platform Monitoring Technology [8086:467d] (rev 01)
+00:12.0 Serial controller [0700]: Intel Corporation Alder Lake-N Integrated Sensor Hub [8086:54fc]
+00:12.6 Serial bus controller [0c80]: Intel Corporation Alder Lake-N Generic SPI (GSPI) Controller [8086:54fb]
+00:14.0 USB controller [0c03]: Intel Corporation Alder Lake-N PCH USB 3.2 xHCI Host Controller [8086:54ed]
+00:14.2 RAM memory [0500]: Intel Corporation Alder Lake-N PCH Shared SRAM [8086:54ef]
+00:14.3 Network controller [0280]: Intel Corporation CNVi: Wi-Fi [8086:54f0]
+00:15.0 Serial bus controller [0c80]: Intel Corporation Alder Lake-N PCH I2C Controller [8086:54e8]
+00:15.1 Serial bus controller [0c80]: Intel Corporation Alder Lake-N PCH I2C Controller [8086:54e9]
+00:15.2 Serial bus controller [0c80]: Intel Corporation Alder Lake-N PCH I2C Controller [8086:54ea]
+00:15.3 Serial bus controller [0c80]: Intel Corporation Alder Lake-N PCH I2C Controller [8086:54eb]
+00:16.0 Communication controller [0780]: Intel Corporation Alder Lake-N PCH HECI Controller [8086:54e0]
+00:17.0 SATA controller [0106]: Intel Corporation Alder Lake-N SATA AHCI Controller [8086:54d3]
+00:19.0 Serial bus controller [0c80]: Intel Corporation Alder Lake-N I2C Controller [8086:54c5]
+00:19.1 Serial bus controller [0c80]: Intel Corporation Alder Lake-N I2C Controller [8086:54c6]
+00:1f.0 ISA bridge [0601]: Intel Corporation Alder Lake-N PCH eSPI Controller [8086:5481]
+00:1f.3 Audio device [0403]: Intel Corporation Alder Lake-N PCH High Definition Audio Controller [8086:54c8]
+00:1f.4 SMBus [0c05]: Intel Corporation Alder Lake-N SMBus [8086:54a3]
+00:1f.5 Serial bus controller [0c80]: Intel Corporation Alder Lake-N SPI (flash) Controller [8086:54a4]
+
+===== IPU6 DRIVER BINDING =====
+../../../bus/pci/drivers/intel-ipu6
+DRIVER=intel-ipu6
+PCI_CLASS=48000
+PCI_ID=8086:462E
+PCI_SUBSYS_ID=0000:0000
+PCI_SLOT_NAME=0000:00:05.0
+MODALIAS=pci:v00008086d0000462Esv00000000sd00000000bc04sc80i00
+
+===== V4L2 NODES =====
+v4l-subdev0: Intel IPU6 CSI2 0
+v4l-subdev1: Intel IPU6 CSI2 1
+v4l-subdev2: Intel IPU6 CSI2 2
+v4l-subdev3: Intel IPU6 CSI2 3
+video0: Intel IPU6 ISYS Capture 0
+video1: Intel IPU6 ISYS Capture 1
+video2: Intel IPU6 ISYS Capture 2
+video3: Intel IPU6 ISYS Capture 3
+video4: Intel IPU6 ISYS Capture 4
+video5: Intel IPU6 ISYS Capture 5
+video6: Intel IPU6 ISYS Capture 6
+video7: Intel IPU6 ISYS Capture 7
+video8: Intel IPU6 ISYS Capture 8
+video9: Intel IPU6 ISYS Capture 9
+video10: Intel IPU6 ISYS Capture 10
+video11: Intel IPU6 ISYS Capture 11
+video12: Intel IPU6 ISYS Capture 12
+video13: Intel IPU6 ISYS Capture 13
+video14: Intel IPU6 ISYS Capture 14
+video15: Intel IPU6 ISYS Capture 15
+video16: Intel IPU6 ISYS Capture 16
+video17: Intel IPU6 ISYS Capture 17
+video18: Intel IPU6 ISYS Capture 18
+video19: Intel IPU6 ISYS Capture 19
+video20: Intel IPU6 ISYS Capture 20
+video21: Intel IPU6 ISYS Capture 21
+video22: Intel IPU6 ISYS Capture 22
+video23: Intel IPU6 ISYS Capture 23
+video24: Intel IPU6 ISYS Capture 24
+video25: Intel IPU6 ISYS Capture 25
+video26: Intel IPU6 ISYS Capture 26
+video27: Intel IPU6 ISYS Capture 27
+video28: Intel IPU6 ISYS Capture 28
+video29: Intel IPU6 ISYS Capture 29
+video30: Intel IPU6 ISYS Capture 30
+video31: Intel IPU6 ISYS Capture 31
+--- subdev sensore presenti? (atteso: nessuno finche' mancano i driver)
+NESSUN subdev sensore
+
+===== MEDIA DEVICES =====
+crw-rw----+ 1 root video 239, 0 ago 11 20:11 /dev/media0
+
+===== FIRMWARE IPU =====
+total 3388
+-rw-r--r-- 1 root root  466944 apr 24  2025 ipu6epadln_fw.bin
+-rw-r--r-- 1 root root  466944 apr 24  2025 ipu6ep_fw.bin
+-rw-r--r-- 1 root root  466944 apr 24  2025 ipu6epmtl_fw.bin
+-rw-r--r-- 1 root root  471040 apr 24  2025 ipu6_fw.bin
+-rw-r--r-- 1 root root  380928 apr 24  2025 ipu6se_fw.bin
+-rw-r--r-- 1 root root 1212984 apr 24  2025 irci_irci_ecr-master_20161208_0213_20170112_1500.bin
+
+===== MODULI CARICATI (camera chain) =====
+intel_ipu6_isys       122880  0
+v4l2_fwnode            32768  1 intel_ipu6_isys
+v4l2_async             32768  2 v4l2_fwnode,intel_ipu6_isys
+videobuf2_dma_sg       20480  1 intel_ipu6_isys
+videobuf2_memops       16384  1 videobuf2_dma_sg
+videobuf2_v4l2         36864  1 intel_ipu6_isys
+videodev              368640  4 v4l2_async,v4l2_fwnode,videobuf2_v4l2,intel_ipu6_isys
+videobuf2_common       81920  4 videobuf2_v4l2,intel_ipu6_isys,videobuf2_dma_sg,videobuf2_memops
+mc                     94208  5 v4l2_async,videodev,videobuf2_v4l2,intel_ipu6_isys,videobuf2_common
+intel_ipu6             77824  1 intel_ipu6_isys
+ipu_bridge             16384  2 intel_ipu6,intel_ipu6_isys
+intel_skl_int3472_tps68470    20480  0
+intel_skl_int3472_discrete    28672  0
+intel_skl_int3472_common    12288  2 intel_skl_int3472_tps68470,intel_skl_int3472_discrete
+pinctrl_alderlake      32768  2

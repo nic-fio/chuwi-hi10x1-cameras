@@ -1,0 +1,10 @@
+ago 11 20:11:03 CHUWI kernel: pinctrl core: initialized pinctrl subsystem
+ago 11 20:11:04 CHUWI kernel: int3472-discrete INT3472:02: reset \_SB.GPI0 pin number mismatch _DSM 239 resource 175
+ago 11 20:11:04 CHUWI kernel: int3472-discrete INT3472:02: power-enable \_SB.GPI0 pin number mismatch _DSM 207 resource 335
+ago 11 20:11:04 CHUWI kernel: intel-ipu6 0000:00:05.0: enabling device (0000 -> 0002)
+ago 11 20:11:04 CHUWI kernel: intel-ipu6 0000:00:05.0: IPU6 in secure mode touch 0x0 mask 0xff
+ago 11 20:11:04 CHUWI kernel: intel-ipu6 0000:00:05.0: FW version: 20230925
+ago 11 20:11:04 CHUWI kernel: intel-ipu6 0000:00:05.0: Sending BOOT_LOAD to CSE
+ago 11 20:11:04 CHUWI kernel: intel-ipu6 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+ago 11 20:11:04 CHUWI kernel: intel-ipu6 0000:00:05.0: CSE authenticate_run done
+ago 11 20:11:04 CHUWI kernel: intel-ipu6 0000:00:05.0: IPU6-v3[462e] hardware version 5
