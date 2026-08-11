@@ -107,13 +107,71 @@ Percorso completo, verificato nel sorgente e nella DSDT:
    (`clk_and_regulator.c`, `args[2].integer.value = 1`).
 
 La selezione di frequenza e' quindi **un singolo bit**, con due valori
-possibili, e mainline ne sceglie uno fisso. Poiche' lo stesso codice riporta
-come rate il valore dell'`SSDB`, la lettura coerente e' che `bit0 = 1`
-corrisponda ai 19,2 MHz dichiarati.
+possibili, e mainline ne sceglie uno fisso.
 
-**Non esiste un percorso supportato per ottenere 24 MHz su questa piattaforma.**
-Il GC8034 dovra' funzionare a 19,2 MHz, e le tabelle vanno ritarate: non e' una
-preferenza, e' un vincolo.
+### Quale bit corrisponde a quale frequenza: risposta certa
+
+Non serve dedurlo. Il codice di riferimento Intel lo dichiara, e per **Alder
+Lake specificamente**: `coreboot`,
+`src/soc/intel/alderlake/acpi/camera_clock_ctl.asl`, licenza GPL-2.0-or-later.
+
+```c
+#define R_ICLK_PCR_CAMERA1      0x8000
+#define B_ICLK_PCR_FREQUENCY    0x1
+#define B_ICLK_PCR_REQUEST      0x2
+/* The clock control registers for each IMGCLK are offset by 0xC */
+#define B_ICLK_PCR_OFFSET       0xC
+
+/*
+ * Arg0: Clock source select (0 .. 5 => IMGCLKOUT_0 .. IMGCLKOUT_5)
+ * Arg1: Frequency select (0: 24MHz, 1: 19.2MHz)
+ */
+```
+
+Combacia in ogni dettaglio con la DSDT del CHUWI: registro base `0x8000`, passo
+`0x0C` fra un clock e il successivo, bit 0 frequenza (`CLKF`), bit 1 richiesta
+(`CLKC`). E dice quello che serve sapere:
+
+> **`1` = 19,2 MHz, `0` = 24 MHz.**
+
+Il kernel passa `1`. Quindi il sensore riceve **19,2 MHz**, confermato da fonte
+autorevole e non per inferenza. Le tabelle Rockchip a 24 MHz sono effettivamente
+inadatte a questa piattaforma cosi' come sono.
+
+### Ma i 24 MHz sono raggiungibili: e' una scelta software, non un limite hardware
+
+Questo e' il punto piu' importante di tutta l'analisi, ed e' emerso solo qui.
+
+Lo IMGCLKOUT **sa fare 24 MHz**: basta scrivere `0` nel bit 0. Non e' il
+silicio a impedirlo, e' `int3472` che non lo chiede mai — il valore `1` e'
+scritto a mano nel sorgente, e il clock registrato dal driver espone solo
+`.recalc_rate`, senza `.set_rate` ne' `.determine_rate`. Un driver di sensore
+che chiami `clk_set_rate(24 MHz)` non ottiene 24 MHz: ottiene silenzio, e poi un
+`clk_get_rate()` che continua a rispondere con il valore dell'`SSDB`.
+
+E' un buco vero in mainline, non una peculiarita' di questa macchina: la
+piattaforma dichiara due frequenze e il kernel ne espone una sola, senza modo di
+scegliere. Apre una via che prima non c'era:
+
+> **Serie 0 (possibile): dare al clock di `int3472` un `.determine_rate` e un
+> `.set_rate` che programmino il bit 0 via `_DSM`.** Se passa, il GC8034
+> funziona con le tabelle Rockchip **cosi' come sono**, e il problema dei
+> quattro registri non si pone piu'.
+
+Con un'avvertenza da non nascondere in review: l'`SSDB` di **questa** macchina
+dichiara 19,2 MHz per entrambi i sensori. Il firmware, cioe', dice che la
+scheda e' pensata per 19,2. Forzare 24 MHz sarebbe andare contro quella
+dichiarazione, e va verificato sperimentalmente prima di proporlo come
+soluzione. Restano due ipotesi concorrenti, **entrambe verificabili** appena i
+GPIO funzioneranno:
+
+| | Ipotesi | Come si verifica |
+|---|---|---|
+| **A** | Il modulo e' davvero a 19,2 MHz e servono tabelle ritarate | le tabelle a 24 MHz danno frame corrotti o timeout CSI-2 |
+| **B** | Il modulo vuole 24 MHz e l'`SSDB` riporta un default del template AMI | forzando `bit0 = 0` le tabelle Rockchip funzionano |
+
+Prima di questa analisi l'unica strada sembrava "procurarsi il register guide
+GalaxyCore". Ora ci sono due esperimenti da fare in casa.
 
 ## 5. Buona notizia: la catena clock del GC8034 non e' rotta
 
@@ -175,6 +233,50 @@ di scartarlo. (Il modulo posteriore si chiama invece `GC8034`.)
 
 ---
 
+## 8. Lavoro anteriore: esiste, ma non risolve il problema
+
+Cercando chi si agganci all'`_HID` ACPI — chiunque lo faccia e' per definizione
+su una piattaforma IPU a 19,2 MHz — sono emersi tre repository di **pdamonte**,
+tutti aggiornati al 2026-06-22, zero stelle, nessuna issue:
+
+| Repo | Cosa contiene |
+|---|---|
+| `pdamonte/gc8034-dkms` | driver GC8034 con `_HID` `GCTI8034`, pacchetto DKMS |
+| `pdamonte/gc5035-dkms` | idem per `GCTI5035` (file `gti5035.c`) |
+| `pdamonte/ipu-bridge-gc-cameras-akmod` | akmod Fedora con le voci `ipu-bridge` |
+
+Il README del primo suggerisce esattamente la riga che serve a noi:
+
+```c
+IPU_SENSOR_CONFIG("GCTI8034", 1, 336000000),
+```
+
+**Ma il problema del clock non e' risolto**, verificato confrontando i sorgenti
+e non i README:
+
+- `gc8034_global_regs_4lane` e' **identica byte per byte** a quella del BSP
+  Rockchip: 233 registri, nessuno modificato.
+- `GC8034_XVCLK_FREQ` vale ancora `24000000`; idem `GC5035_XVCLK_FREQ` nel
+  companion, che quindi **non** deriva dalla patch Intel ma anch'esso da
+  Rockchip.
+- Sul disallineamento il codice si limita a un avviso:
+  `dev_warn(dev, "xvclk mismatched, modes are based on 24MHz")`.
+
+Sono quindi port del BSP Rockchip con incollata la glue ACPI, che dichiarano
+336 MHz all'IPU mentre la PLL riceve 19,2 MHz invece dei 24 per cui i blob sono
+tarati. Se davvero funzionassero, sarebbe **l'ipotesi B** del punto 4 a essere
+vera — ma non c'e' alcuna prova che siano stati provati: nessuna stella,
+nessuna issue, un solo commit visibile, e quel `dev_warn` suggerisce che
+l'autore avesse notato il problema senza affrontarlo.
+
+Utili comunque come **riferimento per la glue ACPI**, e come conferma che
+qualcun altro ha incontrato lo stesso muro. Non come sorgente di valori.
+
+Attenzione in caso di riuso: i tre repo non dichiarano una licenza nei metadati
+GitHub, pur includendo un file `LICENSE`. Da chiarire prima di prendere anche
+una sola riga, e comunque il codice a monte resta quello Rockchip, con la
+catena di attribuzione descritta in `reference/README.md`.
+
 ## Dove lascia il progetto
 
 | | Stato |
@@ -182,12 +284,23 @@ di scartarlo. (Il modulo posteriore si chiama invece `GC8034`.)
 | GC5035 frontale | **Nessun ostacolo noto.** 2 lane = 2, tabelle gia' a 19,2 MHz |
 | GC8034 posteriore | **Ostacolo reale.** 4 lane = 4, ma tabelle solo a 24 MHz |
 
-Piste per il GC8034, in ordine di costo crescente:
+Piste per il GC8034, riordinate dopo l'analisi del clock:
 
-1. Un altro BSP dello stesso sensore tarato a 19,2 MHz — vale la pena cercare
-   fra i kernel vendor Amlogic, Allwinner, Unisoc, Spreadtrum e MediaTek.
-2. Il driver Windows di **questo** tablet: se contiene le tabelle, sono per
-   definizione quelle giuste per questo modulo, questo clock e queste lane.
-3. Tentativo empirico sui quattro registri del punto 3, una volta che la
-   macchina sara' in grado di alimentare i sensori.
-4. Register guide GalaxyCore, da chiedere al produttore.
+1. **Provare l'ipotesi B**: forzare `bit0 = 0` (24 MHz) e usare le tabelle
+   Rockchip cosi' come sono. Se funziona, il problema sparisce e la patch da
+   scrivere e' quella al clock di `int3472`, non alle tabelle del sensore.
+   Richiede prima i GPIO, quindi `pinctrl-alderlake`.
+2. **Provare l'ipotesi A**: tabelle Rockchip a 19,2 MHz senza modifiche. Se i
+   frame sono corrotti o il CSI-2 va in timeout, servono i quattro registri
+   ritarati.
+3. Un altro BSP dello stesso sensore tarato a 19,2 MHz — restano da cercare i
+   kernel vendor Amlogic, Allwinner, Unisoc, Spreadtrum e MediaTek. La ricerca
+   su GitHub per `gc8034` restituisce **solo** fork del driver Rockchip, e
+   `gc8034 19200000` non da' alcun risultato.
+4. Il driver Windows di **questo** tablet. Da notare: sul disco non ne resta
+   traccia — la partizione originale e' stata sovrascritta, `sda` ha solo una
+   ESP e una ext4 — quindi andrebbe scaricato dal supporto CHUWI.
+5. Register guide GalaxyCore, da chiedere al produttore.
+
+Le prime due sono esperimenti da fare in casa, e non erano disponibili prima di
+sapere che lo IMGCLKOUT ha due frequenze.

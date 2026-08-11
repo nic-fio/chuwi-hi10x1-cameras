@@ -198,15 +198,22 @@ Era "non si sa se i blob PLL di nessuno dei due sensori valgono qui". Ora:
   sul disallineamento emette solo un `dev_warn`. Quindi i blob sono stati
   tarati a **19,2 MHz**, esattamente quello che dichiara questo firmware.
   Scenario 1.
-- **GC8034 — il rischio si concentra qui, ed e' confermato.** Le lane tornano
-  (4 = 4), ma le uniche tabelle disponibili sono il BSP Rockchip a **XVCLK 24
-  MHz**, mentre qui l'MCLK e' 19,2 — e la piattaforma **non puo' dare 24 MHz**:
-  la frequenza e' un singolo bit nel `_DSM` del clock, e mainline lo fissa. Le
-  due scorciatoie sperate sono chiuse: `gc08a3`, benche' mainline e della stessa
-  famiglia, usa una mappa registri di generazione diversa (16 bit piatti contro
-  8 bit paginati), e il GC5035 usa gli stessi indirizzi con semantica diversa.
-  Il problema si riduce pero' a **quattro registri** — `0xf4`, `0xf5`, `0xf7`,
-  `0xfa` — che sono gli unici a cambiare fra le configurazioni 2 e 4 lane.
+- **GC8034 — il rischio si concentra qui, ma ora e' aggredibile.** Le lane
+  tornano (4 = 4), mentre le uniche tabelle disponibili sono il BSP Rockchip a
+  **XVCLK 24 MHz** e qui l'MCLK e' 19,2. Le due scorciatoie sperate sono chiuse:
+  `gc08a3`, benche' mainline e della stessa famiglia, usa una mappa registri di
+  generazione diversa (16 bit piatti contro 8 bit paginati), e il GC5035 usa gli
+  stessi indirizzi con semantica diversa. Il problema si riduce pero' a
+  **quattro registri** — `0xf4`, `0xf5`, `0xf7`, `0xfa`, gli unici a cambiare
+  fra le configurazioni 2 e 4 lane.
+
+  **E c'e' una via che prima non si vedeva.** Lo IMGCLKOUT della piattaforma sa
+  fare **entrambe** le frequenze: `coreboot`, per Alder Lake, documenta il bit 0
+  del registro `ICLK` come *«0: 24MHz, 1: 19.2MHz»*. Il kernel scrive sempre `1`
+  e il clock di `int3472` non espone `.set_rate`, quindi i 24 MHz sono
+  irraggiungibili **per una scelta software, non per un limite hardware**.
+  Insegnare a `int3472` a programmare quel bit renderebbe valide le tabelle
+  Rockchip senza toccarle.
 
 Analisi completa, con le prove e le piste rimaste, in
 `docs/07-clock-e-registri.md`. La sequenza in `ROADMAP.md`.
