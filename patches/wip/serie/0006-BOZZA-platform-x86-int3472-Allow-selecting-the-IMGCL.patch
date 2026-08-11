@@ -1,0 +1,131 @@
+From 730f78666fb0ed8fc6bb73ef620d0c3138249fed Mon Sep 17 00:00:00 2001
+From: INTEL-CAMERA WIP <wip@localhost>
+Date: Tue, 11 Aug 2026 19:30:45 +0200
+Subject: [PATCH 6/6] BOZZA platform/x86: int3472: Allow selecting the
+ IMGCLKOUT frequency
+
+The PCH IMGCLKOUT outputs feeding a camera sensor can be driven at either
+24 MHz or 19.2 MHz. Which one is used is bit 0 of the clock control
+register, and function 1 of the img-clk _DSM takes the value for that bit
+as its third argument. The encoding is documented in the coreboot camera
+clock control code, e.g. src/soc/intel/alderlake/acpi/camera_clock_ctl.asl:
+
+	Arg1: Frequency select (0: 24MHz, 1: 19.2MHz)
+
+The driver passes a hardcoded 1 for that argument, so the clock always
+comes out at 19.2 MHz, while .recalc_rate reports whatever mclkspeed the
+ACPI SSDB declares. On a machine whose SSDB declares 24 MHz the two
+disagree and the rate reported to the sensor driver is simply wrong.
+
+Derive the argument from the requested rate instead, and add
+.determine_rate and .set_rate so that a sensor driver whose register
+tables were computed for the other rate can ask for it. A GPIO gated
+clock only switches an externally provided signal, so it keeps offering
+the single rate firmware described.
+
+Not tested on hardware yet: on the machine this was developed against the
+GPIO controller driver is missing, so INT3472 never finishes probing.
+---
+ .../x86/intel/int3472/clk_and_regulator.c     | 66 ++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+index 9e052b164..0db4e0e83 100644
+--- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
++++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+@@ -19,6 +19,21 @@ static const guid_t img_clk_guid =
+ 	GUID_INIT(0x82c0d13a, 0x78c5, 0x4244,
+ 		  0x9b, 0xb1, 0xeb, 0x8b, 0x53, 0x9a, 0x8d, 0x11);
+ 
++/*
++ * The PCH IMGCLKOUT outputs can be driven at either of two rates, selected by
++ * bit 0 of the corresponding clock control register. Function 1 of the _DSM
++ * above takes the value for that bit as its third argument. The encoding is
++ * documented in the coreboot camera clock control code, for instance
++ * src/soc/intel/alderlake/acpi/camera_clock_ctl.asl:
++ *
++ *	Arg1: Frequency select (0: 24MHz, 1: 19.2MHz)
++ */
++#define INT3472_IMGCLK_19_2_MHZ			19200000
++#define INT3472_IMGCLK_24_MHZ			24000000
++
++#define INT3472_DSM_CLK_FREQ_24_MHZ		0
++#define INT3472_DSM_CLK_FREQ_19_2_MHZ		1
++
+ static void skl_int3472_enable_clk(struct int3472_clock *clk, int enable)
+ {
+ 	struct int3472_discrete_device *int3472 = to_int3472_device(clk);
+@@ -35,7 +50,9 @@ static void skl_int3472_enable_clk(struct int3472_clock *clk, int enable)
+ 	args[1].integer.type = ACPI_TYPE_INTEGER;
+ 	args[1].integer.value = enable;
+ 	args[2].integer.type = ACPI_TYPE_INTEGER;
+-	args[2].integer.value = 1;
++	args[2].integer.value = clk->frequency == INT3472_IMGCLK_24_MHZ ?
++			       INT3472_DSM_CLK_FREQ_24_MHZ :
++			       INT3472_DSM_CLK_FREQ_19_2_MHZ;
+ 
+ 	argv4.type = ACPI_TYPE_PACKAGE;
+ 	argv4.package.count = 3;
+@@ -108,12 +125,59 @@ static unsigned long skl_int3472_clk_recalc_rate(struct clk_hw *hw,
+ 	return clk->frequency;
+ }
+ 
++static int skl_int3472_clk_determine_rate(struct clk_hw *hw,
++					  struct clk_rate_request *req)
++{
++	struct int3472_clock *clk = to_int3472_clk(hw);
++
++	/*
++	 * A GPIO gated clock only switches an externally provided signal on
++	 * and off, so whatever firmware described is the only rate on offer.
++	 */
++	if (clk->ena_gpio) {
++		req->rate = clk->frequency;
++		return 0;
++	}
++
++	req->rate = req->rate >= (INT3472_IMGCLK_19_2_MHZ +
++				  INT3472_IMGCLK_24_MHZ) / 2 ?
++		    INT3472_IMGCLK_24_MHZ : INT3472_IMGCLK_19_2_MHZ;
++
++	return 0;
++}
++
++static int skl_int3472_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	struct int3472_clock *clk = to_int3472_clk(hw);
++
++	if (clk->ena_gpio)
++		return rate == clk->frequency ? 0 : -EINVAL;
++
++	if (rate != INT3472_IMGCLK_19_2_MHZ && rate != INT3472_IMGCLK_24_MHZ)
++		return -EINVAL;
++
++	clk->frequency = rate;
++
++	/*
++	 * The _DSM programs the frequency and the enable bit in a single call,
++	 * so a clock which is already running has to be programmed again for
++	 * the new rate to take effect.
++	 */
++	if (clk_hw_is_prepared(hw))
++		skl_int3472_enable_clk(clk, 1);
++
++	return 0;
++}
++
+ static const struct clk_ops skl_int3472_clock_ops = {
+ 	.prepare = skl_int3472_clk_prepare,
+ 	.unprepare = skl_int3472_clk_unprepare,
+ 	.enable = skl_int3472_clk_enable,
+ 	.disable = skl_int3472_clk_disable,
+ 	.recalc_rate = skl_int3472_clk_recalc_rate,
++	.determine_rate = skl_int3472_clk_determine_rate,
++	.set_rate = skl_int3472_clk_set_rate,
+ };
+ 
+ static int skl_int3472_register_clock(struct int3472_discrete_device *int3472)
+-- 
+2.47.3
+

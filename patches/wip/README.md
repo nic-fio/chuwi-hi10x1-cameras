@@ -9,9 +9,10 @@ serve a impedire un invio accidentale.
 |---|---|
 | `serie/000*.patch` | la serie completa, generata con `git format-patch` |
 | `gc5035.c`, `gc8034.c` | copie dei due driver |
-| `galaxycore,gc5035.yaml`, `galaxycore,gc8034.yaml` | copie dei due binding |
+| `int3472-clk_and_regulator.c` | copia del file modificato dalla Serie 0 |
+| `galaxycore,gc*.yaml` | copie dei due binding |
 
-La copia autorevole vive in `/home/nicfio/linux`, dove i cinque commit sono
+La copia autorevole vive in `/home/nicfio/linux`, dove i sei commit sono
 applicati sopra mainline 7.2-rc7.
 
 ## La serie
@@ -22,21 +23,29 @@ applicati sopra mainline 7.2-rc7.
 0003  media: dt-bindings: Add GalaxyCore GC8034
 0004  media: i2c: Add GC8034 image sensor driver     (+ Kconfig, Makefile, MAINTAINERS)
 0005  media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+0006  platform/x86: int3472: Allow selecting the IMGCLKOUT frequency
 ```
 
 Binding prima del driver, `MAINTAINERS` **nello stesso commit** del driver:
 e' la forma che i revisori si aspettano.
+
+La 0006 e' nata il 2026-08-11 dall'analisi in `docs/07-clock-e-registri.md` ed
+e' **indipendente dalle altre cinque**: si regge da sola come correzione a
+`int3472`, e puo' essere inviata separatamente. Anzi conviene, perche' va a un
+sottosistema diverso (`platform-driver-x86`, non `linux-media`).
 
 ## Stato verificato, non dichiarato
 
 | Verifica | Esito |
 |---|---|
 | Compilano su mainline 7.2-rc7 | **si'** |
-| Build `W=1` | **nessun warning** |
-| `checkpatch --strict --max-line-length=80` sui file | **0/0/0** su entrambi |
-| `checkpatch --strict` sulle patch | **1 solo errore, voluto** — vedi sotto |
-| Sottosistema media completo | **nessuna regressione** |
-| Alias ACPI | `acpi*:GCTI5035:*`, `acpi*:GCTI8034:*` |
+| Build `W=1` dei due sottosistemi toccati | **nessun warning** |
+| `checkpatch --strict --max-line-length=80` sui file | **0/0/0** su entrambi i driver |
+| `checkpatch --strict` sulle sei patch | **solo `Missing Signed-off-by`**, voluto |
+| Commenti in inglese | **si'** — tradotti il 2026-08-11 |
+| Nessun carattere non ASCII | **verificato** |
+| Tabelle registri importate | **si'** — GC5035 161+162, GC8034 233 |
+| Tabelle identiche all'originale | **verificato** con `scripts/regtab-to-cci.py --check` |
 | **Eseguiti su hardware** | **MAI** — il kernel che li contiene non e' mai stato avviato |
 
 L'unico errore di checkpatch e' `Missing Signed-off-by`. **E' corretto che ci
@@ -47,59 +56,72 @@ Sulle due patch di binding resta un warning *"added file(s), does MAINTAINERS
 need updating?"*: e' un falso positivo noto, la voce `MAINTAINERS` che copre
 anche il binding sta nel commit del driver.
 
+## Fatto il 2026-08-11
+
+- **Tabelle registri importate.** Non piu' segnaposto. La conversione da
+  `{0xNN, 0xNN}` a `{ CCI_REG8(0xNN), 0xNN }` e' fatta da
+  `scripts/regtab-to-cci.py`, che ha anche una modalita' `--check`: rilegge il
+  file generato e lo confronta registro per registro con l'originale. Serve a
+  poter dire in review che la riscrittura e' **puramente sintattica**, senza
+  doverlo far verificare a mano al revisore.
+- **Commenti tradotti in inglese.** Erano in italiano: da soli sarebbero
+  bastati a far respingere la serie.
+- **MCLK corretto da 24 a 19,2 MHz**, con la motivazione nel commento. Vedi
+  `docs/07-clock-e-registri.md`.
+- **Serie 0 scritta** (`0006`): `.determine_rate` e `.set_rate` per il clock di
+  `int3472`.
+- **Corretto un dato sbagliato** nel commento sui GPIO del GC5035: diceva
+  pin 175, la NVS dice 239.
+- **Guadagno analogico del GC5035 implementato.** Era `-EOPNOTSUPP` con range
+  bloccato a 1x. Importata la tabella a 17 voci dalla patch Intel: il registro
+  `0xb6` prende un indice, non un moltiplicatore, e il resto si compensa in
+  digitale su `0xb1`/`0xb2`. Il range esposto ora e' 1x…16x. Nota: il codice
+  vendor scala il digitale per un rapporto letto dall'OTP; qui l'OTP non si
+  legge, quindi quel rapporto e' unitario, e il commento nel driver lo dice.
+
 ## Cosa manca — in ordine di quanto blocca
 
-### 1. Le tabelle registri (blocca tutto)
+### 1. Provare su hardware (blocca tutto il resto)
 
-Entrambi i driver hanno una `reg_list` con **una sola voce segnaposto**. Le
-sequenze vere sono ~600 righe per il GC5035 (patch Intel) e ~880 per il GC8034
-(BSP Rockchip), in `reference/`.
+I driver non sono mai stati eseguiti. Serve `pinctrl-alderlake`, che nel kernel
+7.0 locale non e' compilato, quindi serve un kernel di distribuzione, quindi
+**serve un riavvio**. Fino a li' non e' possibile:
 
-Non e' un copia-incolla:
+- sapere se il GC8034 aggancia la PLL a 19,2 MHz con tabelle da 24 (ipotesi A
+  contro ipotesi B in `docs/07-clock-e-registri.md`)
+- confermare le due link frequency, 438 e 336 MHz
+- verificare la polarita' del reset GPIO
+- far girare `v4l2-compliance`
 
-- va sciolta l'**attribuzione** (vedi `reference/README.md`): la patch Intel
-  deriva dalla serie ChromeOS di Tomasz Figa, il BSP e' Rockchip GPL-2.0
-- vanno spezzate in tre liste — power-on, clock e link frequency, mode — come
-  chiedono i revisori
-- per il GC8034 va tolto tutto il codice OTP e gli ioctl Rockchip
+### 2. Bias analogico del GC8034
 
-### 2. Guadagno analogico
+Il guadagno analogico e' implementato su **entrambi** i driver. Sul GC8034
+resta pero' una lacuna di qualita': il BSP riscrive 14 registri di bias
+analogico da `agc_register[9][14]` a ogni cambio di indice, e quelli non sono
+ancora importati. Sono valori non documentati ma piccoli e strutturati: servono
+alla resa dell'immagine, non a far funzionare il controllo.
 
-- **GC5035**: `V4L2_CID_ANALOGUE_GAIN` e' dichiarato con range 1x…1x e
-  `s_ctrl` ritorna `-EOPNOTSUPP`. Manca la tabella `GC5035_AGC_Param[17][2]`.
-  E' una limitazione **dichiarata**, non un bug nascosto.
-- **GC8034**: qui il guadagno **e' implementato** — indice in
-  `gc8034_again_level[]` piu' compensazione digitale. Mancano solo i 14
-  registri di bias analogico per step (`agc_register[9][14]`), che servono alla
-  qualita' dell'immagine, non alla funzione.
+Non e' bloccato dall'hardware, si puo' fare in qualunque momento.
 
-### 3. Valori da confermare sull'hardware
+### 3. Formalita'
 
-| Valore | Ora | Da dove verra' |
-|---|---|---|
-| Link frequency GC5035 | 438 MHz (ADL-M) | dal driver stesso — **non e' nell'SSDB**, verificato |
-| Link frequency GC8034 | 336 MHz (BSP Rockchip) | idem |
-| Lane MIPI | 2 e 4 | fwnode costruito da `ipu-bridge` |
-| MCLK | 24 MHz | `clk_get_rate()` |
-
-### 4. Formalita'
-
-- nome, email e copyright reali al posto dei `TODO` (3 punti per driver)
+- nome, email e copyright reali al posto dei `TODO` (2 punti per driver)
 - `Signed-off-by`
-- validazione dei binding: serve `pip install dtschema yamllint`, poi
+- attribuzione da concordare con gli autori originali: `reference/README.md`
+- validazione dei binding: `pip install dtschema yamllint`, poi
   `make dt_binding_check`
-- `v4l2-compliance` pulito — richiede il kernel avviato e `apt install v4l-utils`
 
 ## Rilievi noti, non ancora affrontati
-
-Cose che i revisori chiedono sistematicamente e che questi scheletri non fanno:
 
 - **`cur_mode` nella struct del device.** Sakari chiede di derivarlo dallo
   state con `v4l2_find_nearest_size()`. Presente in entrambi, ereditato dai
   template.
 - **Polarita' del reset GPIO.** `gpiod_set_value_cansleep(reset, 1)` significa
-  reset *attivo*. Su questa macchina INT3472 dichiara `reset` **active-low**
-  (pin 175): da verificare che la convenzione del driver combaci.
+  reset *attivo*. Da verificare che la convenzione del driver combaci con
+  quella dichiarata da INT3472.
+- **Link frequency del GC8034 incoerente nel BSP**: il driver dichiara 336 MHz,
+  il commento sopra la tabella dice 656 Mbps per lane, che sarebbero 328. Il
+  commento nel nostro driver lo dice apertamente invece di nasconderlo.
 - Confrontare tutto con **`drivers/media/i2c/t4ka3.c`**, il modello ACPI-only
   piu' recente accettato in mainline.
 

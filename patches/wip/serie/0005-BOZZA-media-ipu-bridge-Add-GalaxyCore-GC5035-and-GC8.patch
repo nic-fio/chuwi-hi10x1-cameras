@@ -1,7 +1,7 @@
-From effb39a5b9a0a7e320d8a2a79d4ad9a74b8c8d36 Mon Sep 17 00:00:00 2001
+From 47dd56afb1e5a11050c085af3691dcee152e5056 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 14:24:50 +0200
-Subject: [PATCH 5/5] BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+Subject: [PATCH 5/6] BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
 
 NON INVIABILE: le link frequency non sono confermate su questa
 macchina. Vengono dalla patch Intel per Alder Lake-M (GC5035) e dal BSP

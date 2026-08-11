@@ -3,19 +3,18 @@
  * Driver for GalaxyCore GC8034 image sensor
  *
  * Copyright (C) 2017 Fuzhou Rockchip Electronics Co., Ltd.
- * Copyright (C) 2026 <TODO: nome e email reali prima dell'invio upstream>
+ * Copyright (C) 2026 <TODO: real name and email before upstream submission>
  *
- * SCHELETRO — NON FUNZIONANTE. Vedi i TODO marcati "BLOCCANTE".
+ * NOT YET TESTED ON HARDWARE. See the TODO comments marked "BLOCKING".
  *
- * Struttura basata su drivers/media/i2c/gc08a3.c (Zhi Mao, MediaTek), stesso
- * produttore di sensori. Adattamento x86/ACPI basato su
- * drivers/media/i2c/ov2740.c e t4ka3.c, che girano sulla stessa catena IPU6.
+ * The structure follows drivers/media/i2c/gc08a3.c (Zhi Mao, MediaTek), a
+ * driver for a sensor from the same vendor. The x86/ACPI parts follow
+ * drivers/media/i2c/ov2740.c and t4ka3.c, which run on the same IPU6 chain.
  *
- * Registri e sequenze derivati dal driver BSP Rockchip (GPL-2.0), repo
- * rockchip-linux/kernel branch develop-5.10, commit
- * 34690d3be73e98c6b037e24c76b3200fb22b9e79. L'attribuzione agli autori
- * originali va concordata prima di qualsiasi invio upstream: vedi
- * reference/README.md nel progetto.
+ * The registers and sequences come from the Rockchip BSP driver (GPL-2.0),
+ * repository rockchip-linux/kernel, branch develop-5.10, commit
+ * 34690d3be73e98c6b037e24c76b3200fb22b9e79. Attribution to the original
+ * authors has to be agreed with them before any upstream submission.
  */
 #include <linux/acpi.h>
 #include <linux/array_size.h>
@@ -41,16 +40,16 @@
 #include <media/v4l2-subdev.h>
 
 /*
- * Come il GC5035, il GC8034 usa indirizzi di registro a 8 bit con banchi di
- * pagina selezionati dal registro 0xfe. E' la differenza architetturale
- * principale rispetto al template gc08a3, che e' flat a 16 bit.
+ * Like the GC5035, the GC8034 uses 8 bit register addresses with banked
+ * pages selected by register 0xfe. That is the main architectural difference
+ * from gc08a3, which this driver is modelled on and which is flat 16 bit.
  */
 #define GC8034_REG_PAGE_SELECT		CCI_REG8(0xfe)
 #define GC8034_PAGE_0			0x00
 
-/* leggibili in qualsiasi pagina */
+/* readable on any page */
 #define GC8034_REG_CHIP_ID		CCI_REG16(0xf0)
-#define GC8034_CHIP_ID			0x8044	/* non 0x8034 */
+#define GC8034_CHIP_ID			0x8044	/* not 0x8034 */
 
 #define GC8034_REG_EXPOSURE		CCI_REG16(0x03)
 #define GC8034_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
@@ -66,45 +65,55 @@
 #define GC8034_NATIVE_HEIGHT		2448
 
 /*
- * Il registro 0x07/0x08 NON contiene la VTS: contiene un offset.
- * Verificato sui default del blob Rockchip: reg = 16 -> VTS = 2500 = 0x09c4,
- * coerente con il vts_def dichiarato.
+ * Register 0x07/0x08 does NOT hold the VTS, it holds an offset. Checked
+ * against the defaults of the Rockchip blob: reg = 16 gives VTS = 2500 =
+ * 0x09c4, consistent with the vts_def declared below.
  *
  *     VTS = reg + GC8034_VTS_OFFSET
  *     reg = height + vblank - GC8034_VTS_OFFSET
  *
- * dove 2484 = 2448 righe attive + 36 di overhead fisso.
+ * where 2484 = 2448 active lines + 36 lines of fixed overhead.
  */
 #define GC8034_VTS_OFFSET		2484
 #define GC8034_VTS_MAX			0x1fff
 
 /*
- * Il sensore non accetta shutter dispari: il BSP arrotonda al pari e compensa
- * il bit perso con un rapporto di guadagno digitale. Dichiarare step = 2 e'
- * equivalente e molto piu' pulito da leggere.
+ * The sensor does not accept an odd shutter value: the BSP rounds it down to
+ * even and compensates the lost bit with a digital gain ratio. Declaring a
+ * step of 2 is equivalent and much easier to read.
  */
 #define GC8034_EXP_MIN			4
 #define GC8034_EXP_STEP			2
 #define GC8034_EXP_MARGIN		4
 
 /*
- * TODO BLOCCANTE: valori dal BSP Rockchip, piattaforma completamente diversa.
- * Vanno confermati sul CHUWI Hi10 X1. Il numero di lane arriva dal fwnode che
- * ipu-bridge costruisce leggendo l'SSDB; la link frequency invece NON e'
- * ricavabile dal firmware (maxlanespeed resta a zero, verificato) e deve
- * corrispondere a quella per cui sono calcolate le tabelle registri.
+ * The lane count is taken from the fwnode that ipu-bridge builds out of the
+ * ACPI SSDB, and matches the four lanes the tables below configure. The link
+ * frequency cannot be derived from firmware - maxlanespeed reads back as zero
+ * on this platform - so it has to match the value the register tables were
+ * computed for. The Rockchip BSP declares 336 MHz for this mode, while the
+ * comment above its table says 656 Mbps per lane, which would be 328 MHz;
+ * the discrepancy is unresolved and has to be settled by measurement.
  */
 #define GC8034_LINK_FREQ_336MHZ		(336 * HZ_PER_MHZ)
 #define GC8034_DATA_LANES		4
 #define GC8034_RGB_DEPTH		10
 
-/* TODO: confermare dal _DSD clock-frequency. Il BSP usa 24 MHz. */
-#define GC8034_MCLK_DEFAULT		(24 * HZ_PER_MHZ)
+/*
+ * UNRESOLVED: the register tables below come from the Rockchip BSP and were
+ * computed for a 24 MHz external clock, but on an Alder Lake IPU6 platform the
+ * INT3472 clock driver always programs 19.2 MHz: the frequency is a single bit
+ * of the PCH IMGCLKOUT control register, hardcoded on the enable path, and the
+ * clock exposes no .set_rate to change it. The sensor therefore runs its PLL
+ * from a rate the tables were not computed for. Whether the part still locks,
+ * and at which link frequency, has to be measured on hardware.
+ */
+#define GC8034_MCLK_DEFAULT		(19200 * HZ_PER_KHZ)
 
 /*
- * Timing del BSP, piu' lenti di quelli del template gc08a3 (2 ms + 2 ms):
- * 6 ms dopo il rilascio del reset, poi 8192 cicli di xvclk (~341 us a 24 MHz)
- * prima della prima transazione I2C.
+ * Timings taken from the BSP, slower than those of gc08a3 (2 ms + 2 ms):
+ * 6 ms after reset is released, then 8192 xvclk cycles before the first I2C
+ * transaction, which is about 427 us at 19.2 MHz.
  */
 #define GC8034_RESET_SETTLE_US		6000
 #define GC8034_I2C_SETTLE_US		350
@@ -112,10 +121,10 @@
 #define GC8034_MBUS_CODE		MEDIA_BUS_FMT_SRGGB10_1X10
 
 /*
- * Nessun V4L2_CID_TEST_PATTERN: il BSP Rockchip non ne espone uno e il
- * registro corrispondente non e' documentato. Da aggiungere solo se lo si
- * individua sull'hardware — meglio un controllo assente che uno che scrive
- * un registro sbagliato.
+ * No V4L2_CID_TEST_PATTERN: the Rockchip BSP does not expose one and the
+ * corresponding register is undocumented. To be added only once it has been
+ * identified on hardware; a missing control is better than one which writes
+ * the wrong register.
  */
 
 static const s64 gc8034_link_freq_menu_items[] = {
@@ -129,28 +138,28 @@ static const char * const gc8034_supply_name[] = {
 };
 
 /*
- * Il registro 0xb6 non prende un moltiplicatore, prende un INDICE in questa
- * tabella. Il resto del guadagno richiesto viene compensato in digitale su
- * 0xb1/0xb2. Unita': 0x40 = 64 = 1,00x (Q6).
+ * Register 0xb6 does not take a multiplier, it takes an INDEX into this
+ * table. The remainder of the requested gain is compensated digitally in
+ * 0xb1/0xb2. Unit: 0x40 = 64 = 1.00x, Q6 fixed point.
  *
- * Il BSP usa solo i primi 7 indici (MEAG_INDEX = 7): le ultime due voci sono
- * codice morto la' dentro. Qui sono tenute perche' il sensore le accetta, ma
- * il range del controllo si ferma comunque all'ultima voce usata finche' non
- * si puo' verificare sull'hardware.
+ * The BSP only uses the first 7 indices (MEAG_INDEX = 7); its last two
+ * entries are dead code there. They are kept here because the sensor accepts
+ * them, but the control range still stops at the last entry actually used,
+ * until this can be checked on hardware.
  */
 static const u16 gc8034_again_level[] = {
-	0x0040,	/*  1,000x */
-	0x0058,	/*  1,375x */
-	0x007d,	/*  1,950x */
-	0x00ad,	/*  2,700x */
-	0x00f3,	/*  3,800x */
-	0x0159,	/*  5,400x */
-	0x01ea,	/*  7,660x */
+	0x0040,	/*  1.000x */
+	0x0058,	/*  1.375x */
+	0x007d,	/*  1.950x */
+	0x00ad,	/*  2.700x */
+	0x00f3,	/*  3.800x */
+	0x0159,	/*  5.400x */
+	0x01ea,	/*  7.660x */
 };
 
-#define GC8034_AGAIN_MIN		64	/* 1,00x in Q6 */
-#define GC8034_AGAIN_MAX		490	/* 7,66x in Q6 */
-#define GC8034_DGAIN_UNITY		256	/* 1,00x in Q8 */
+#define GC8034_AGAIN_MIN		64	/* 1.00x in Q6 */
+#define GC8034_AGAIN_MAX		490	/* 7.66x in Q6 */
+#define GC8034_DGAIN_UNITY		256	/* 1.00x in Q8 */
 
 struct gc8034 {
 	struct device *dev;
@@ -183,15 +192,269 @@ struct gc8034_reg_list {
 };
 
 /*
- * TODO BLOCCANTE: importare le sequenze dal BSP Rockchip
- * (reference/gc8034-rockchip-bsp.c, ~879 righe di tabelle fra global e mode).
+ * Register sequence below is reproduced verbatim from the vendor code.
  *
- * Non e' un copia-incolla: vanno separate in tre liste come chiedono i
- * revisori (power-on / clock e link frequency / mode), va tolto tutto il
- * codice OTP e gli ioctl Rockchip, e va sciolta l'attribuzione.
+ * Origin: the Rockchip BSP driver, Copyright (C) 2017 Fuzhou Rockchip
+ * Electronics Co., Ltd. That driver splits the four lane configuration into
+ * a "global" list plus a per-mode list which is empty; since there is only
+ * one four lane mode, they are merged here.
+ *
+ * The PLL and D-PHY timing registers are undocumented vendor blobs and are
+ * kept unmodified. Note that they were computed for a 24 MHz external clock,
+ * see the comment at GC8034_MCLK_DEFAULT.
  */
 static const struct cci_reg_sequence gc8034_mode_3264x2448[] = {
-	{ GC8034_REG_PAGE_SELECT, GC8034_PAGE_0 },
+	/* SYS */
+	{ CCI_REG8(0xf2), 0x00 },
+	{ CCI_REG8(0xf4), 0x80 },
+	{ CCI_REG8(0xf5), 0x19 },
+	{ CCI_REG8(0xf6), 0x44 },
+	{ CCI_REG8(0xf8), 0x63 },
+	{ CCI_REG8(0xfa), 0x45 },
+	{ CCI_REG8(0xf9), 0x00 },
+	{ CCI_REG8(0xf7), 0x9d },
+	{ CCI_REG8(0xfc), 0x00 },
+	{ CCI_REG8(0xfc), 0x00 },
+	{ CCI_REG8(0xfc), 0xea },
+	{ CCI_REG8(0xfe), 0x03 },
+	{ CCI_REG8(0x03), 0x9a },
+	{ CCI_REG8(0x18), 0x07 },
+	{ CCI_REG8(0x01), 0x07 },
+	{ CCI_REG8(0xfc), 0xee },
+	/* Cisctl&Analog */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x03), 0x08 },
+	{ CCI_REG8(0x04), 0xc6 },
+	{ CCI_REG8(0x05), 0x02 },
+	{ CCI_REG8(0x06), 0x16 },
+	{ CCI_REG8(0x07), 0x00 },
+	{ CCI_REG8(0x08), 0x10 },
+	{ CCI_REG8(0x0a), 0x3a },
+	{ CCI_REG8(0x0b), 0x00 },
+	{ CCI_REG8(0x0c), 0x04 },
+	{ CCI_REG8(0x0d), 0x09 },
+	{ CCI_REG8(0x0e), 0xa0 },
+	{ CCI_REG8(0x0f), 0x0c },
+	{ CCI_REG8(0x10), 0xd4 },
+	{ CCI_REG8(0x17), 0xc0 },
+	{ CCI_REG8(0x18), 0x02 },
+	{ CCI_REG8(0x19), 0x17 },
+	{ CCI_REG8(0x1e), 0x50 },
+	{ CCI_REG8(0x1f), 0x80 },
+	{ CCI_REG8(0x21), 0x4c },
+	{ CCI_REG8(0x25), 0x00 },
+	{ CCI_REG8(0x28), 0x4a },
+	{ CCI_REG8(0x2d), 0x89 },
+	{ CCI_REG8(0xca), 0x02 },
+	{ CCI_REG8(0xcb), 0x00 },
+	{ CCI_REG8(0xcc), 0x39 },
+	{ CCI_REG8(0xce), 0xd0 },
+	{ CCI_REG8(0xcf), 0x93 },
+	{ CCI_REG8(0xd0), 0x19 },
+	{ CCI_REG8(0xd1), 0xaa },
+	{ CCI_REG8(0xd2), 0xcb },
+	{ CCI_REG8(0xd8), 0x40 },
+	{ CCI_REG8(0xd9), 0xff },
+	{ CCI_REG8(0xda), 0x0e },
+	{ CCI_REG8(0xdb), 0xb0 },
+	{ CCI_REG8(0xdc), 0x0e },
+	{ CCI_REG8(0xde), 0x08 },
+	{ CCI_REG8(0xe4), 0xc6 },
+	{ CCI_REG8(0xe5), 0x08 },
+	{ CCI_REG8(0xe6), 0x10 },
+	{ CCI_REG8(0xed), 0x2a },
+	{ CCI_REG8(0xfe), 0x02 },
+	{ CCI_REG8(0x59), 0x02 },
+	{ CCI_REG8(0x5a), 0x04 },
+	{ CCI_REG8(0x5b), 0x08 },
+	{ CCI_REG8(0x5c), 0x20 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x1a), 0x09 },
+	{ CCI_REG8(0x1d), 0x13 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	/* Gamma */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x20), 0x55 },
+	{ CCI_REG8(0x33), 0x83 },
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0xdf), 0x06 },
+	{ CCI_REG8(0xe7), 0x18 },
+	{ CCI_REG8(0xe8), 0x20 },
+	{ CCI_REG8(0xe9), 0x16 },
+	{ CCI_REG8(0xea), 0x17 },
+	{ CCI_REG8(0xeb), 0x50 },
+	{ CCI_REG8(0xec), 0x6c },
+	{ CCI_REG8(0xed), 0x9b },
+	{ CCI_REG8(0xee), 0xd8 },
+	/* ISP */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x80), 0x10 },
+	{ CCI_REG8(0x84), 0x01 },
+	{ CCI_REG8(0x88), 0x03 },
+	{ CCI_REG8(0x89), 0x03 },
+	{ CCI_REG8(0x8d), 0x03 },
+	{ CCI_REG8(0x8f), 0x14 },
+	{ CCI_REG8(0xad), 0x30 },
+	{ CCI_REG8(0x66), 0x2c },
+	{ CCI_REG8(0xbc), 0x49 },
+	{ CCI_REG8(0xc2), 0x7f },
+	{ CCI_REG8(0xc3), 0xff },
+	/* Crop window */
+	{ CCI_REG8(0x90), 0x01 },
+	{ CCI_REG8(0x92), 0x08 },
+	{ CCI_REG8(0x94), 0x09 },
+	{ CCI_REG8(0x95), 0x04 },
+	{ CCI_REG8(0x96), 0xc8 },
+	{ CCI_REG8(0x97), 0x06 },
+	{ CCI_REG8(0x98), 0x60 },
+	/* Gain */
+	{ CCI_REG8(0xb0), 0x90 },
+	{ CCI_REG8(0xb1), 0x01 },
+	{ CCI_REG8(0xb2), 0x00 },
+	{ CCI_REG8(0xb6), 0x00 },
+	/* BLK */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x40), 0x22 },
+	{ CCI_REG8(0x41), 0x20 },
+	{ CCI_REG8(0x42), 0x02 },
+	{ CCI_REG8(0x43), 0x08 },
+	{ CCI_REG8(0x4e), 0x0f },
+	{ CCI_REG8(0x4f), 0xf0 },
+	{ CCI_REG8(0x58), 0x80 },
+	{ CCI_REG8(0x59), 0x80 },
+	{ CCI_REG8(0x5a), 0x80 },
+	{ CCI_REG8(0x5b), 0x80 },
+	{ CCI_REG8(0x5c), 0x00 },
+	{ CCI_REG8(0x5d), 0x00 },
+	{ CCI_REG8(0x5e), 0x00 },
+	{ CCI_REG8(0x5f), 0x00 },
+	{ CCI_REG8(0x6b), 0x01 },
+	{ CCI_REG8(0x6c), 0x00 },
+	{ CCI_REG8(0x6d), 0x0c },
+	/* WB offset */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0xbf), 0x40 },
+	/* Dark Sun */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x68), 0x77 },
+	/* DPC */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x60), 0x00 },
+	{ CCI_REG8(0x61), 0x10 },
+	{ CCI_REG8(0x62), 0x28 },
+	{ CCI_REG8(0x63), 0x10 },
+	{ CCI_REG8(0x64), 0x02 },
+	/* LSC */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0xa8), 0x60 },
+	{ CCI_REG8(0xa2), 0xd1 },
+	{ CCI_REG8(0xc8), 0x57 },
+	{ CCI_REG8(0xa1), 0xb8 },
+	{ CCI_REG8(0xa3), 0x91 },
+	{ CCI_REG8(0xc0), 0x50 },
+	{ CCI_REG8(0xd0), 0x05 },
+	{ CCI_REG8(0xd1), 0xb2 },
+	{ CCI_REG8(0xd2), 0x1f },
+	{ CCI_REG8(0xd3), 0x00 },
+	{ CCI_REG8(0xd4), 0x00 },
+	{ CCI_REG8(0xd5), 0x00 },
+	{ CCI_REG8(0xd6), 0x00 },
+	{ CCI_REG8(0xd7), 0x00 },
+	{ CCI_REG8(0xd8), 0x00 },
+	{ CCI_REG8(0xd9), 0x00 },
+	{ CCI_REG8(0xa4), 0x10 },
+	{ CCI_REG8(0xa5), 0x20 },
+	{ CCI_REG8(0xa6), 0x60 },
+	{ CCI_REG8(0xa7), 0x80 },
+	{ CCI_REG8(0xab), 0x18 },
+	{ CCI_REG8(0xc7), 0xc0 },
+	/* ABB */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x20), 0x02 },
+	{ CCI_REG8(0x21), 0x02 },
+	{ CCI_REG8(0x23), 0x42 },
+	/* MIPI */
+	{ CCI_REG8(0xfe), 0x03 },
+	{ CCI_REG8(0x02), 0x03 },
+	{ CCI_REG8(0x04), 0x80 },
+	{ CCI_REG8(0x11), 0x2b },
+	{ CCI_REG8(0x12), 0xf8 },
+	{ CCI_REG8(0x13), 0x07 },
+	{ CCI_REG8(0x15), 0x10 },
+	{ CCI_REG8(0x16), 0x29 },
+	{ CCI_REG8(0x17), 0xff },
+	{ CCI_REG8(0x19), 0xaa },
+	{ CCI_REG8(0x1a), 0x02 },
+	{ CCI_REG8(0x21), 0x02 },
+	{ CCI_REG8(0x22), 0x03 },
+	{ CCI_REG8(0x23), 0x0a },
+	{ CCI_REG8(0x24), 0x00 },
+	{ CCI_REG8(0x25), 0x12 },
+	{ CCI_REG8(0x26), 0x04 },
+	{ CCI_REG8(0x29), 0x04 },
+	{ CCI_REG8(0x2a), 0x02 },
+	{ CCI_REG8(0x2b), 0x04 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x3f), 0x00 },
+	/* SYS */
+	{ CCI_REG8(0xf2), 0x00 },
+	{ CCI_REG8(0xf4), 0x80 },
+	{ CCI_REG8(0xf5), 0x19 },
+	{ CCI_REG8(0xf6), 0x44 },
+	{ CCI_REG8(0xf8), 0x63 },
+	{ CCI_REG8(0xfa), 0x45 },
+	{ CCI_REG8(0xf9), 0x00 },
+	{ CCI_REG8(0xf7), 0x95 },
+	{ CCI_REG8(0xfc), 0x00 },
+	{ CCI_REG8(0xfc), 0x00 },
+	{ CCI_REG8(0xfc), 0xea },
+	{ CCI_REG8(0xfe), 0x03 },
+	{ CCI_REG8(0x03), 0x9a },
+	{ CCI_REG8(0x18), 0x07 },
+	{ CCI_REG8(0x01), 0x07 },
+	{ CCI_REG8(0xfc), 0xee },
+	/* ISP */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x80), 0x13 },
+	{ CCI_REG8(0xad), 0x00 },
+	/* Crop window */
+	{ CCI_REG8(0x90), 0x01 },
+	{ CCI_REG8(0x92), 0x08 },
+	{ CCI_REG8(0x94), 0x09 },
+	{ CCI_REG8(0x95), 0x09 },
+	{ CCI_REG8(0x96), 0x90 },
+	{ CCI_REG8(0x97), 0x0c },
+	{ CCI_REG8(0x98), 0xc0 },
+	/* DPC */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x62), 0x60 },
+	{ CCI_REG8(0x63), 0x48 },
+	/* MIPI */
+	{ CCI_REG8(0xfe), 0x03 },
+	{ CCI_REG8(0x02), 0x03 },
+	{ CCI_REG8(0x04), 0x80 },
+	{ CCI_REG8(0x11), 0x2b },
+	{ CCI_REG8(0x12), 0xf0 },
+	{ CCI_REG8(0x13), 0x0f },
+	{ CCI_REG8(0x15), 0x10 },
+	{ CCI_REG8(0x16), 0x29 },
+	{ CCI_REG8(0x17), 0xff },
+	{ CCI_REG8(0x19), 0xaa },
+	{ CCI_REG8(0x1a), 0x02 },
+	{ CCI_REG8(0x21), 0x05 },
+	{ CCI_REG8(0x22), 0x06 },
+	{ CCI_REG8(0x23), 0x2b },
+	{ CCI_REG8(0x24), 0x00 },
+	{ CCI_REG8(0x25), 0x12 },
+	{ CCI_REG8(0x26), 0x07 },
+	{ CCI_REG8(0x29), 0x07 },
+	{ CCI_REG8(0x2a), 0x12 },
+	{ CCI_REG8(0x2b), 0x07 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x3f), 0x00 },
 };
 
 struct gc8034_mode {
@@ -246,9 +509,9 @@ static int gc8034_power_on(struct device *dev)
 	gpiod_set_value_cansleep(gc8034->powerdown_gpio, 0);
 	gpiod_set_value_cansleep(gc8034->reset_gpio, 0);
 
-	/* Il sensore vuole 6 ms dopo il rilascio del reset... */
+	/* The sensor wants 6 ms after reset is released... */
 	usleep_range(GC8034_RESET_SETTLE_US, GC8034_RESET_SETTLE_US + 1000);
-	/* ...e 8192 cicli di xvclk prima del primo accesso I2C. */
+	/* ...and 8192 xvclk cycles before the first I2C access. */
 	usleep_range(GC8034_I2C_SETTLE_US, GC8034_I2C_SETTLE_US + 100);
 
 	return 0;
@@ -312,24 +575,24 @@ static void gc8034_update_pad_format(const struct gc8034_mode *mode,
 }
 
 /*
- * V4L2_CID_PIXEL_RATE e' il rate del PIXEL ARRAY, non del bus CSI-2, perche'
- * viene usato con HBLANK/VBLANK per calcolare il frame interval:
+ * V4L2_CID_PIXEL_RATE is the rate of the PIXEL ARRAY, not of the CSI-2 bus,
+ * because it is used together with HBLANK and VBLANK to compute the frame
+ * interval:
  *
  *     frame_interval = (width + HBLANK) * (height + VBLANK) / PIXEL_RATE
  *
- * Qui le due grandezze divergono, al contrario del GC5035 dove coincidono
- * quasi esattamente:
+ * Here the two quantities diverge, unlike in the GC5035 where they nearly
+ * coincide:
  *
- *     hts * vts * fps          = 4272 * 2496 * 30 = 319,9 MHz  <- questo
- *     link_freq * 2 * lanes / bpp = 336e6 * 2 * 4 / 10 = 268,8 MHz
+ *     hts * vts * fps            = 4272 * 2496 * 30 = 319.9 MHz  <- this one
+ *     link_freq * 2 * lanes / bpp = 336e6 * 2 * 4 / 10 = 268.8 MHz
  *
- * La differenza e' attesa: durante il blanking orizzontale non si trasmette
- * nulla sul bus, quindi il rate del pixel array e' piu' alto di quello del
- * bus. Il valore corretto per il controllo e' il primo.
+ * The difference is expected: nothing is transmitted on the bus during
+ * horizontal blanking, so the pixel array rate is higher than the bus rate.
+ * The correct value for the control is the first one.
  *
- * TODO: verificare sull'hardware. Il BSP calcolava vts*hts*fps ma dichiarava
- * anche una GC8034_PIXEL_RATE 288000000 inutilizzata e incoerente con
- * entrambi.
+ * TODO: check on hardware. The BSP computed vts * hts * fps but also declared
+ * an unused GC8034_PIXEL_RATE of 288000000, inconsistent with both.
  */
 static u64 gc8034_to_pixel_rate(const struct gc8034_mode *mode)
 {
@@ -431,8 +694,8 @@ static int gc8034_init_state(struct v4l2_subdev *sd,
 }
 
 /*
- * Sceglie l'indice di guadagno analogico piu' alto che non superi il valore
- * richiesto, e compensa il resto in digitale:
+ * Pick the highest analogue gain index that does not exceed the requested
+ * value, and compensate the remainder digitally:
  *
  *     dgain = 256 * a_gain / again_level[idx]
  */
@@ -457,10 +720,10 @@ static int gc8034_set_analogue_gain(struct gc8034 *gc8034, u32 a_gain)
 		  dgain & 0xff, &ret);
 
 	/*
-	 * TODO BLOCCANTE: il BSP riscrive anche 14 registri di bias analogico
-	 * da agc_register[9][14] a ogni cambio di indice. Sono valori non
-	 * documentati ma piccoli e strutturati, necessari per la qualita'
-	 * dell'immagine. Vanno importati dal BSP insieme alle tabelle mode.
+	 * BLOCKING TODO: the BSP also rewrites 14 analogue bias registers from
+	 * agc_register[9][14] on every index change. They are undocumented but
+	 * small and well structured values, needed for image quality rather
+	 * than for the control to work. They still have to be imported.
 	 */
 
 	return ret;
@@ -495,7 +758,7 @@ static int gc8034_set_ctrl(struct v4l2_ctrl *ctrl)
 		ret = gc8034_set_analogue_gain(gc8034, ctrl->val);
 		break;
 	case V4L2_CID_VBLANK:
-		/* Il registro contiene un offset, non la VTS. */
+		/* The register holds an offset, not the VTS. */
 		ret = cci_write(gc8034->regmap, GC8034_REG_BLANKING,
 				gc8034->cur_mode->height + ctrl->val -
 				GC8034_VTS_OFFSET, NULL);
@@ -565,7 +828,7 @@ static int gc8034_enable_streams(struct v4l2_subdev *sd,
 	if (ret)
 		goto err_rpm_put;
 
-	/* Il valore di start streaming dipende dal numero di lane. */
+	/* The start streaming value depends on the lane count. */
 	stream_on = gc8034->data_lanes == 4 ? GC8034_STREAM_ON_4LANE :
 					      GC8034_STREAM_ON_2LANE;
 
@@ -629,8 +892,8 @@ static int gc8034_parse_fwnode(struct gc8034 *gc8034)
 	int ret;
 
 	/*
-	 * -EPROBE_DEFER, non -EINVAL: su IPU6 il grafo lo sintetizza
-	 * ipu-bridge e il sensore puo' fare probe prima che sia pronto.
+	 * -EPROBE_DEFER rather than -EINVAL: on IPU6 the graph is synthesised
+	 * by ipu-bridge and the sensor can probe before it is ready.
 	 */
 	endpoint = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev), 0, 0,
 						   FWNODE_GRAPH_ENDPOINT_NEXT);
