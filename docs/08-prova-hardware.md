@@ -158,39 +158,69 @@ Verifica incrociata sul pixel rate, che chiude il cerchio:
 | GC5035 | 175 200 000 | 168 923 402 | 168 960 000 (0,02%) |
 | GC8034 | 319 887 360 | 255 803 259 | 255 909 888 (0,04%) |
 
-### Le correzioni da fare
+### Le correzioni, fatte la sera stessa
 
-Non sono cosmetiche: `V4L2_CID_LINK_FREQ` e `V4L2_CID_PIXEL_RATE` sono i valori
-su cui l'userspace calcola l'esposizione e su cui il ricevitore CSI-2 dimensiona
-la D-PHY. Che l'IPU6 sia stato tollerante non li rende giusti.
+Non erano cosmetiche: `V4L2_CID_LINK_FREQ` e `V4L2_CID_PIXEL_RATE` sono i
+valori su cui l'userspace calcola l'esposizione e su cui il ricevitore CSI-2
+dimensiona la D-PHY. Che l'IPU6 sia stato tollerante non li rendeva giusti.
 
-| File | Da | A |
+**Decisione presa: derivare a runtime da `clk_get_rate()`.** Le alternative
+erano fissare i valori misurati — giusto qui, sbagliato su device-tree a
+24 MHz — oppure tirare in ballo la Serie 0 per forzare i 24 MHz, cioe' una
+dipendenza da un altro sottosistema per un problema che non si presenta piu'.
+Derivare e' la verita' fisica: **il moltiplicatore di PLL sta nella tabella
+registri, il clock d'ingresso no.** Un driver, due piattaforme, nessuna
+costante da indovinare.
+
+Nei due driver:
+
+```c
+#define GC5035_LINK_FREQ_MULTIPLIER	22	/* 19,2 MHz -> 422,4 */
+#define GC8034_LINK_FREQ_MULTIPLIER	14	/* 19,2 MHz -> 268,8; 24 -> 336 */
+```
+
+Il menu di `V4L2_CID_LINK_FREQ` non e' piu' un array statico ma un campo della
+struct del device, riempito in probe. Da qui una modifica d'ordine che vale la
+pena notare: **il clock va risolto prima di leggere il fwnode**, perche' e'
+`parse_fwnode()` a validare la frequenza offerta contro quella che il firmware
+dichiara. Se il clock non c'e', la probe fallisce con un messaggio esplicito
+invece di ereditare uno zero.
+
+Il pixel rate segue per strade diverse nei due, come gia' documentato:
+
+- **GC5035**: formula di bus sulla link frequency derivata, perche' rate di
+  bus e rate d'array coincidono.
+- **GC8034**: rate d'array, `hts x vts x fps`, dove `fps` e' tabulato per
+  `GC8034_MCLK_REFERENCE` (24 MHz) e viene scalato al clock reale.
+
+E in `ipu-bridge`, che pubblica le `link-frequencies` sull'endpoint e va
+cambiato **insieme** ai driver, o la validazione fallisce e la probe non passa:
+
+```c
+IPU_SENSOR_CONFIG("GCTI5035", 1, 422400000),
+IPU_SENSOR_CONFIG("GCTI8034", 1, 268800000),
+```
+
+### La verifica: ora il modello prevede la misura
+
+E' il controllo che chiude il cerchio. Prima della correzione il driver
+prevedeva un frame rate che il sensore non aveva; dopo, con 200 fotogrammi:
+
+| | previsto dal driver | misurato |
 |---|---|---|
-| `gc5035.c` `GC5035_LINK_FREQ_438MHZ` | 438 MHz | 422,4 MHz |
-| `gc8034.c` `GC8034_LINK_FREQ_336MHZ` | 336 MHz | 268,8 MHz |
-| `ipu-bridge.c` `IPU_SENSOR_CONFIG("GCTI5035", …)` | 438000000 | 422400000 |
-| `ipu-bridge.c` `IPU_SENSOR_CONFIG("GCTI8034", …)` | 336000000 | 268800000 |
+| GC5035 | 28,82 fps | **28,82** |
+| GC8034 | 24,00 fps | **24,01** |
 
-Le due coppie vanno cambiate **insieme**: il driver valida la propria lista
-contro le `link-frequencies` che `ipu-bridge` pubblica sull'endpoint, e un
-disallineamento fa fallire la probe.
+Entrambi i sensori catturano ancora, `v4l2-compliance` resta 45/46, e i
+controlli riportano `422400000` / `168960000` e `268800000` / `255909888`.
 
-**Decisione di progetto ancora da prendere, per il GC8034.** Un valore fisso
-sarebbe giusto qui e sbagliato su una piattaforma device-tree che dia 24 MHz,
-dove le stesse tabelle producono davvero 336 MHz. Tre strade:
+### Un dettaglio della stessa famiglia
 
-1. **Derivare a runtime**: `link_freq = 14 × clk_get_rate(xclk)`, e il pixel
-   rate di conseguenza. Corretto su entrambe le piattaforme, ed e' la verita'
-   fisica: il moltiplicatore di PLL sta nella tabella, il clock d'ingresso no.
-   Costa un `V4L2_CID_LINK_FREQ` a un solo elemento calcolato in probe.
-2. **Fissare 268,8 MHz** e rifiutare la probe con MCLK diverso da 19,2. Onesto,
-   ma chiude il driver a x86/IPU6.
-3. **Serie 0** e forzare i 24 MHz, cosi' i numeri Rockchip tornano veri.
-   Ora e' la strada peggiore: aggiunge una dipendenza da una patch a un altro
-   sottosistema per risolvere un problema che non si presenta piu'.
-
-La 1 e' la sola difendibile in review. Vale anche per il GC5035, dove il
-moltiplicatore e' 22.
+Il GC8034 aspettava `350 us` prima del primo accesso I2C. Sono gli 8192 cicli
+di XVCLK che il BSP chiede, **ma contati a 24 MHz**: a 19,2 MHz gli stessi
+cicli durano 427 us, quindi l'attesa era troppo corta. Ora e' espressa in
+cicli e divisa per il clock reale. Funzionava lo stesso, ma per fortuna, non
+per costruzione.
 
 ## `v4l2-compliance`: 45 su 46, e il 46° non e' nostro
 
@@ -234,15 +264,24 @@ costa quattro righe.
   revisore.
 - **Il VCM del posteriore esiste** e viene istanziato (`dw9714` @ `0x0c`),
   coerente con `L0DI = 2` della NVS. Il fuoco non e' stato provato.
-- **Sei righe di errore CSI-2 viste una volta sola.** Sulla porta del GC5035:
-  `csi2-2 error: Transfer FIFO overflow` e `Inter-frame long/short packet
-  discarded`, in due gruppi. Poi **non piu' riprodotte** in una decina di
-  catture successive fatte apposta per cercarle — 2 e 100 fotogrammi, su file
-  e su `/dev/null`, subito dopo il ricaricamento dei moduli e a freddo. Le
-  immagini di quel momento erano comunque integre. Sta scritto qui perche' un
-  evento non riprodotto non e' un evento smentito: se ricompare, il primo
-  sospetto e' la link frequency dichiarata sbagliata (438 contro 422,4), che
-  fa dimensionare male la D-PHY del ricevitore.
+- **Errori CSI-2 intermittenti, solo sul GC5035.** `csi2-2 error: Transfer
+  FIFO overflow` e `Inter-frame long/short packet discarded`, da 4 a 14 righe
+  per stream. Cosa si sa, dopo una ventina di prove:
+
+  | | |
+  |---|---|
+  | Porta | solo `csi2-2`, il GC5035. Mai visto sul GC8034 |
+  | Quando | ai bordi dello stream, mai durante |
+  | Frequenza | intermittente: stessa sequenza, a volte 0 e a volte 6 |
+  | Uno stream lungo isolato | **0 errori**, sempre |
+  | Uno stream corto seguito da un altro | quasi sempre errori |
+  | Pausa di 2 s fra i due | **non aiuta** |
+  | Immagini | integre, frame rate stabile |
+
+  Non e' una regressione della correzione sulla link frequency: la prima
+  comparsa e' precedente, con i valori vecchi. La pausa che non aiuta esclude
+  anche il dato in volo dallo stream precedente — con l'autosuspend a 1 s il
+  sensore in mezzo si spegne del tutto. Resta aperto.
 
 ## Come rifare tutto
 

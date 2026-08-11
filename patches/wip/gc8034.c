@@ -5,7 +5,8 @@
  * Copyright (C) 2017 Fuzhou Rockchip Electronics Co., Ltd.
  * Copyright (C) 2026 <TODO: real name and email before upstream submission>
  *
- * NOT YET TESTED ON HARDWARE. See the TODO comments marked "BLOCKING".
+ * Tested on a CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6) on 2026-08-11:
+ * captures at 3264x2448 and passes v4l2-compliance.
  *
  * The structure follows drivers/media/i2c/gc08a3.c (Zhi Mao, MediaTek), a
  * driver for a sensor from the same vendor. The x86/ACPI parts follow
@@ -88,35 +89,46 @@
 
 /*
  * The lane count is taken from the fwnode that ipu-bridge builds out of the
- * ACPI SSDB, and matches the four lanes the tables below configure. The link
- * frequency cannot be derived from firmware - maxlanespeed reads back as zero
- * on this platform - so it has to match the value the register tables were
- * computed for. The Rockchip BSP declares 336 MHz for this mode, while the
- * comment above its table says 656 Mbps per lane, which would be 328 MHz;
- * the discrepancy is unresolved and has to be settled by measurement.
+ * ACPI SSDB, and matches the four lanes the tables below configure.
+ *
+ * The link frequency cannot be read from firmware - maxlanespeed reads back
+ * as zero on this platform - but it does not have to be: the register tables
+ * program the PLL once and never touch it again, so it is a fixed multiple of
+ * the external clock and is derived from the clock at probe time. That keeps
+ * one driver correct on two platforms which clock the same part differently.
+ *
+ * The Rockchip BSP, whose tables these are, declares 336 MHz with a 24 MHz
+ * external clock, which is a multiplier of 14. Measured on a CHUWI Hi10 X1,
+ * where the INT3472 clock runs at 19.2 MHz, the frame rate is 23.99 fps
+ * against the 30.00 fps those numbers predict: a ratio of 0.7997 where
+ * 19.2/24 is 0.8000. The multiplier is therefore confirmed, and the link
+ * frequency here is 268.8 MHz rather than 336.
+ *
+ * This also settles the discrepancy in the BSP, whose table comment claims
+ * 656 Mbps per lane, that is 328 MHz: that figure is simply wrong.
  */
-#define GC8034_LINK_FREQ_336MHZ		(336 * HZ_PER_MHZ)
+#define GC8034_LINK_FREQ_MULTIPLIER	14
 #define GC8034_DATA_LANES		4
 #define GC8034_RGB_DEPTH		10
 
 /*
- * UNRESOLVED: the register tables below come from the Rockchip BSP and were
- * computed for a 24 MHz external clock, but on an Alder Lake IPU6 platform the
- * INT3472 clock driver always programs 19.2 MHz: the frequency is a single bit
- * of the PCH IMGCLKOUT control register, hardcoded on the enable path, and the
- * clock exposes no .set_rate to change it. The sensor therefore runs its PLL
- * from a rate the tables were not computed for. Whether the part still locks,
- * and at which link frequency, has to be measured on hardware.
+ * The external clock the BSP register tables were computed for. Nothing is
+ * programmed with it: it is only the reference the tabulated frame rate
+ * belongs to, so that the pixel array rate can be scaled to whichever clock
+ * the sensor is really given. See gc8034_to_pixel_rate().
  */
-#define GC8034_MCLK_DEFAULT		(19200 * HZ_PER_KHZ)
+#define GC8034_MCLK_REFERENCE		(24 * HZ_PER_MHZ)
 
 /*
  * Timings taken from the BSP, slower than those of gc08a3 (2 ms + 2 ms):
  * 6 ms after reset is released, then 8192 xvclk cycles before the first I2C
- * transaction, which is about 427 us at 19.2 MHz.
+ * transaction. The second one is expressed in clock cycles and not in
+ * microseconds on purpose: the BSP hardcoded 350 us, which is those 8192
+ * cycles at its own 24 MHz and too short at the 19.2 MHz an IPU6 platform
+ * provides, where the same count is 427 us.
  */
 #define GC8034_RESET_SETTLE_US		6000
-#define GC8034_I2C_SETTLE_US		350
+#define GC8034_I2C_SETTLE_CYCLES	8192
 
 #define GC8034_MBUS_CODE		MEDIA_BUS_FMT_SRGGB10_1X10
 
@@ -126,10 +138,6 @@
  * identified on hardware; a missing control is better than one which writes
  * the wrong register.
  */
-
-static const s64 gc8034_link_freq_menu_items[] = {
-	GC8034_LINK_FREQ_336MHZ,
-};
 
 static const char * const gc8034_supply_name[] = {
 	"avdd",
@@ -212,7 +220,14 @@ struct gc8034 {
 	struct v4l2_ctrl *hblank;
 
 	struct regmap *regmap;
+	/*
+	 * Derived from the external clock in probe, so it cannot be the usual
+	 * static const array. v4l2_ctrl_new_int_menu() keeps the pointer, so
+	 * this has to live as long as the device does.
+	 */
+	s64 link_freq_menu[1];
 	unsigned long link_freq_bitmap;
+	unsigned long xclk_rate;
 	u8 data_lanes;
 
 	bool identified;
@@ -498,6 +513,7 @@ struct gc8034_mode {
 	u32 hts;
 	u32 vts_def;
 	u32 vts_min;
+	/* At GC8034_MCLK_REFERENCE, not at whatever clock this board has. */
 	u32 fps;
 };
 
@@ -525,6 +541,7 @@ static int gc8034_power_on(struct device *dev)
 {
 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
 	struct gc8034 *gc8034 = to_gc8034(sd);
+	unsigned long settle_us;
 	int ret;
 
 	ret = regulator_bulk_enable(ARRAY_SIZE(gc8034_supply_name),
@@ -545,7 +562,9 @@ static int gc8034_power_on(struct device *dev)
 	/* The sensor wants 6 ms after reset is released... */
 	usleep_range(GC8034_RESET_SETTLE_US, GC8034_RESET_SETTLE_US + 1000);
 	/* ...and 8192 xvclk cycles before the first I2C access. */
-	usleep_range(GC8034_I2C_SETTLE_US, GC8034_I2C_SETTLE_US + 100);
+	settle_us = DIV_ROUND_UP(GC8034_I2C_SETTLE_CYCLES * USEC_PER_SEC,
+				 gc8034->xclk_rate);
+	usleep_range(settle_us, settle_us + 100);
 
 	return 0;
 }
@@ -615,7 +634,7 @@ static void gc8034_update_pad_format(const struct gc8034_mode *mode,
  *     frame_interval = (width + HBLANK) * (height + VBLANK) / PIXEL_RATE
  *
  * Here the two quantities diverge, unlike in the GC5035 where they nearly
- * coincide:
+ * coincide. At the 24 MHz the BSP tables were computed for:
  *
  *     hts * vts * fps            = 4272 * 2496 * 30 = 319.9 MHz  <- this one
  *     link_freq * 2 * lanes / bpp = 336e6 * 2 * 4 / 10 = 268.8 MHz
@@ -624,12 +643,20 @@ static void gc8034_update_pad_format(const struct gc8034_mode *mode,
  * horizontal blanking, so the pixel array rate is higher than the bus rate.
  * The correct value for the control is the first one.
  *
- * TODO: check on hardware. The BSP computed vts * hts * fps but also declared
- * an unused GC8034_PIXEL_RATE of 288000000, inconsistent with both.
+ * The tabulated fps belongs to GC8034_MCLK_REFERENCE, so it has to be scaled
+ * to the clock the sensor is actually given, exactly as the link frequency
+ * is. At 19.2 MHz this gives 255 909 888, and the measured 23.99 fps over 200
+ * frames works out at 255 803 259, a 0.04% agreement.
+ *
+ * Note in passing that the BSP also declared an unused GC8034_PIXEL_RATE of
+ * 288000000, which matches neither quantity at either clock rate.
  */
-static u64 gc8034_to_pixel_rate(const struct gc8034_mode *mode)
+static u64 gc8034_to_pixel_rate(struct gc8034 *gc8034,
+				const struct gc8034_mode *mode)
 {
-	return (u64)mode->hts * mode->vts_def * mode->fps;
+	u64 rate = (u64)mode->hts * mode->vts_def * mode->fps;
+
+	return div_u64(rate * gc8034->xclk_rate, GC8034_MCLK_REFERENCE);
 }
 
 static int gc8034_update_cur_mode_controls(struct gc8034 *gc8034,
@@ -948,8 +975,8 @@ static int gc8034_parse_fwnode(struct gc8034 *gc8034)
 
 	ret = v4l2_link_freq_to_bitmap(dev, bus_cfg.link_frequencies,
 				       bus_cfg.nr_of_link_frequencies,
-				       gc8034_link_freq_menu_items,
-				       ARRAY_SIZE(gc8034_link_freq_menu_items),
+				       gc8034->link_freq_menu,
+				       ARRAY_SIZE(gc8034->link_freq_menu),
 				       &gc8034->link_freq_bitmap);
 
 done:
@@ -976,13 +1003,12 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 	gc8034->link_freq =
 		v4l2_ctrl_new_int_menu(ctrl_hdlr, &gc8034_ctrl_ops,
 				       V4L2_CID_LINK_FREQ,
-				       ARRAY_SIZE(gc8034_link_freq_menu_items)
-				       - 1,
-				       0, gc8034_link_freq_menu_items);
+				       ARRAY_SIZE(gc8034->link_freq_menu) - 1,
+				       0, gc8034->link_freq_menu);
 	if (gc8034->link_freq)
 		gc8034->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
-	pixel_rate = gc8034_to_pixel_rate(mode);
+	pixel_rate = gc8034_to_pixel_rate(gc8034, mode);
 	gc8034->pixel_rate =
 		v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops,
 				  V4L2_CID_PIXEL_RATE, 0, pixel_rate, 1,
@@ -1041,7 +1067,6 @@ static int gc8034_probe(struct i2c_client *client)
 {
 	struct device *dev = &client->dev;
 	struct gc8034 *gc8034;
-	unsigned long freq;
 	unsigned int i;
 	int ret;
 
@@ -1053,6 +1078,25 @@ static int gc8034_probe(struct i2c_client *client)
 
 	v4l2_i2c_subdev_init(&gc8034->sd, client, &gc8034_subdev_ops);
 	gc8034->sd.internal_ops = &gc8034_internal_ops;
+
+	/*
+	 * The clock has to be resolved before the fwnode is parsed: the link
+	 * frequency this driver can offer is derived from its rate, and
+	 * gc8034_parse_fwnode() validates that frequency against the one
+	 * firmware declares.
+	 */
+	gc8034->xclk = devm_v4l2_sensor_clk_get(dev, "clk");
+	if (IS_ERR(gc8034->xclk))
+		return dev_err_probe(dev, PTR_ERR(gc8034->xclk),
+				     "failed to get clock\n");
+
+	gc8034->xclk_rate = clk_get_rate(gc8034->xclk);
+	if (!gc8034->xclk_rate)
+		return dev_err_probe(dev, -EINVAL,
+				     "external clock rate is unknown\n");
+
+	gc8034->link_freq_menu[0] =
+		gc8034->xclk_rate * GC8034_LINK_FREQ_MULTIPLIER;
 
 	ret = gc8034_parse_fwnode(gc8034);
 	if (ret)
@@ -1074,16 +1118,6 @@ static int gc8034_probe(struct i2c_client *client)
 	if (IS_ERR(gc8034->powerdown_gpio))
 		return dev_err_probe(dev, PTR_ERR(gc8034->powerdown_gpio),
 				     "failed to get powerdown GPIO\n");
-
-	gc8034->xclk = devm_v4l2_sensor_clk_get(dev, "clk");
-	if (IS_ERR(gc8034->xclk))
-		return dev_err_probe(dev, PTR_ERR(gc8034->xclk),
-				     "failed to get clock\n");
-
-	freq = clk_get_rate(gc8034->xclk);
-	if (freq != GC8034_MCLK_DEFAULT)
-		dev_warn(dev, "external clock %lu, expected %lu\n", freq,
-			 (unsigned long)GC8034_MCLK_DEFAULT);
 
 	for (i = 0; i < ARRAY_SIZE(gc8034_supply_name); i++)
 		gc8034->supplies[i].supply = gc8034_supply_name[i];

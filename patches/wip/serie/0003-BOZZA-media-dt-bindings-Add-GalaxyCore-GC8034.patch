@@ -1,4 +1,4 @@
-From 40d6fc440f12a8a090273364a2058edd97c316de Mon Sep 17 00:00:00 2001
+From e80fff44d7a755ec4a3d351ec6233349ab0e1098 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 14:24:49 +0200
 Subject: [PATCH 3/6] BOZZA media: dt-bindings: Add GalaxyCore GC8034
@@ -9,16 +9,16 @@ Signed-off-by, binding non validato (dtschema assente).
 Add device tree bindings for the GalaxyCore GC8034 8 Mpixel raw image
 sensor, modelled on the already accepted galaxycore,gc05a2.yaml.
 ---
- .../bindings/media/i2c/galaxycore,gc8034.yaml | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
+ .../bindings/media/i2c/galaxycore,gc8034.yaml | 115 ++++++++++++++++++
+ 1 file changed, 115 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/i2c/galaxycore,gc8034.yaml
 
 diff --git a/Documentation/devicetree/bindings/media/i2c/galaxycore,gc8034.yaml b/Documentation/devicetree/bindings/media/i2c/galaxycore,gc8034.yaml
 new file mode 100644
-index 000000000..5f01c1707
+index 000000000..e6b8cf22e
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/media/i2c/galaxycore,gc8034.yaml
-@@ -0,0 +1,114 @@
+@@ -0,0 +1,115 @@
 +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 +%YAML 1.2
 +---
@@ -125,6 +125,7 @@ index 000000000..5f01c1707
 +            port {
 +                sensor_out: endpoint {
 +                    data-lanes = <1 2 3 4>;
++                    /* 14 times the external clock, 24 MHz here */
 +                    link-frequencies = /bits/ 64 <336000000>;
 +                    remote-endpoint = <&csi_in>;
 +                };

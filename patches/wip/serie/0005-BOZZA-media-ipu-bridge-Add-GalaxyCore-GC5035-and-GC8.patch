@@ -1,11 +1,17 @@
-From 6e0f33ad5c487bd3abc7c67291e22dbf5a04b030 Mon Sep 17 00:00:00 2001
+From ad58a1b73d1f2db075c8b7aef73b2d9831583f9c Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
-Date: Tue, 11 Aug 2026 14:24:50 +0200
+Date: Tue, 11 Aug 2026 21:36:45 +0200
 Subject: [PATCH 5/6] BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
 
-NON INVIABILE: le link frequency non sono confermate su questa
-macchina. Vengono dalla patch Intel per Alder Lake-M (GC5035) e dal BSP
-Rockchip (GC8034), entrambe piattaforme diverse. Manca il Signed-off-by.
+NON INVIABILE: manca il Signed-off-by.
+
+Both link frequencies were measured on a CHUWI Hi10 X1 rather than
+taken from vendor code, which declares 438 MHz for the GC5035 and
+336 MHz for the GC8034 and is wrong on both counts. Deriving them from
+the frame rate gives 422.4 MHz and 268.8 MHz, which are 19.2 MHz times
+22 and 14, the external clock this platform provides. The two sensor
+drivers derive the same values from the clock at probe time, so the
+numbers here and there have to be changed together.
 
 Verificato che l'SSDB di questa macchina NON contiene la link
 frequency: il campo maxlanespeed non viene popolato dal BIOS e resta a
@@ -15,7 +21,7 @@ zero, coerentemente con il commento in testa alla tabella.
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-index 88581a4c0..6ac1bb9e9 100644
+index 88581a4c0..3047abd41 100644
 --- a/drivers/media/pci/intel/ipu-bridge.c
 +++ b/drivers/media/pci/intel/ipu-bridge.c
 @@ -49,6 +49,10 @@
@@ -23,9 +29,9 @@ index 88581a4c0..6ac1bb9e9 100644
   */
  static const struct ipu_sensor_config ipu_supported_sensors[] = {
 +	/* GalaxyCore GC5035 */
-+	IPU_SENSOR_CONFIG("GCTI5035", 1, 438000000),
++	IPU_SENSOR_CONFIG("GCTI5035", 1, 422400000),
 +	/* GalaxyCore GC8034 */
-+	IPU_SENSOR_CONFIG("GCTI8034", 1, 336000000),
++	IPU_SENSOR_CONFIG("GCTI8034", 1, 268800000),
  	/* Himax HM11B1 */
  	IPU_SENSOR_CONFIG("HIMX11B1", 1, 384000000),
  	/* Himax HM2170 */

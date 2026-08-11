@@ -4,7 +4,8 @@
  *
  * Copyright (C) 2026 <TODO: real name and email before upstream submission>
  *
- * NOT YET TESTED ON HARDWARE. See the TODO comments marked "BLOCKING".
+ * Tested on a CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6) on 2026-08-11:
+ * captures at 2592x1944 and passes v4l2-compliance.
  *
  * The structure follows drivers/media/i2c/gc05a2.c (Zhi Mao, MediaTek), a
  * driver for a sensor from the same vendor. The x86/ACPI parts follow
@@ -30,7 +31,6 @@
 #include <linux/property.h>
 #include <linux/regulator/consumer.h>
 #include <linux/types.h>
-#include <linux/units.h>
 
 #include <media/v4l2-cci.h>
 #include <media/v4l2-common.h>
@@ -74,26 +74,27 @@
 #define GC5035_VTS_MAX			0x3fff
 
 /*
- * BLOCKING TODO: to be confirmed on hardware. The 438 MHz and the two lanes
- * come from the Intel patch for Alder Lake-M, a different platform. That this
- * value can be machine specific has precedent: commit fb16c04a538e changes the
- * ov2740 link frequency to 180 MHz on machines using ipu-bridge, against the
- * 360 MHz used on Chromebooks.
+ * The register tables set the PLL up once and it is never touched again, so
+ * the CSI-2 link frequency is a fixed multiple of the external clock. It is
+ * therefore derived from the clock at probe time instead of being hardcoded,
+ * which keeps the driver correct on platforms that feed the sensor something
+ * other than the 19.2 MHz an IPU6 machine provides.
  *
- * V4L2_CID_LINK_FREQ is the DDR clock, half the per lane bit rate:
- * 876 Mbps/lane / 2 = 438 MHz.
+ * The multiplier is measured rather than taken from the vendor code, because
+ * the vendor code is wrong: the Intel patch for Alder Lake-M declares
+ * 438 MHz, which is not a whole multiple of any plausible external clock.
+ * On a CHUWI Hi10 X1, whose INT3472 clock runs at 19.2 MHz, the frame rate
+ * settles at 28.81 fps where the declared value predicts 29.88. That is a
+ * pixel rate of 2920 * 2008 * 28.81 = 168.9 MHz and hence a link frequency of
+ * 422.3 MHz, which is 19.2 MHz * 22 to within 0.02%. The ratio is unchanged
+ * at three different VBLANK settings, so what is wrong is the constant and
+ * not the timing model.
+ *
+ * V4L2_CID_LINK_FREQ is the DDR clock, half the per lane bit rate.
  */
-#define GC5035_LINK_FREQ_438MHZ		(438 * HZ_PER_MHZ)
+#define GC5035_LINK_FREQ_MULTIPLIER	22
 #define GC5035_DATA_LANES		2
 #define GC5035_RGB_DEPTH		10
-
-/*
- * The IMGCLKOUT of an Alder Lake PCH can be switched between 24 MHz and
- * 19.2 MHz, but the INT3472 clock driver always selects 19.2 MHz and does not
- * implement .set_rate, so that is what the sensor receives. The vendor tables
- * this driver carries were computed for that rate.
- */
-#define GC5035_MCLK_DEFAULT		(19200 * HZ_PER_KHZ)
 
 #define GC5035_SLEEP_US			(5 * USEC_PER_MSEC)
 
@@ -102,10 +103,6 @@
 static const char * const gc5035_test_pattern_menu[] = {
 	"No Pattern",
 	"Color Bar",
-};
-
-static const s64 gc5035_link_freq_menu_items[] = {
-	GC5035_LINK_FREQ_438MHZ,
 };
 
 /*
@@ -167,6 +164,12 @@ struct gc5035 {
 	struct v4l2_ctrl *hblank;
 
 	struct regmap *regmap;
+	/*
+	 * Derived from the external clock in probe, so it cannot be the usual
+	 * static const array. v4l2_ctrl_new_int_menu() keeps the pointer, so
+	 * this has to live as long as the device does.
+	 */
+	s64 link_freq_menu[1];
 	unsigned long link_freq_bitmap;
 	u8 data_lanes;
 
@@ -672,14 +675,15 @@ static void gc5035_update_pad_format(const struct gc5035_mode *mode,
  *
  * Cross checked against the mode timing, which is the constraint that really
  * matters because V4L2_CID_PIXEL_RATE is used together with HBLANK and VBLANK
- * to compute the frame interval:
- *   hts * vts * fps = 2920 * 2008 * 30 = 175.9 MHz
- *   link_freq * 2 * lanes / bpp = 438e6 * 2 * 2 / 10 = 175.2 MHz
- * The two agree, so the bus formula is usable here.
+ * to compute the frame interval. With a 19.2 MHz external clock:
+ *   link_freq * 2 * lanes / bpp = 422.4e6 * 2 * 2 / 10 = 168.96 MHz
+ *   hts * vts * fps measured    = 2920 * 2008 * 28.81  = 168.92 MHz
+ * The two agree within 0.02%, so the bus formula is usable here. Unlike on
+ * the GC8034, no separate pixel array rate is needed.
  */
 static u64 gc5035_to_pixel_rate(struct gc5035 *gc5035, u32 f_index)
 {
-	u64 pixel_rate = gc5035_link_freq_menu_items[f_index] * 2 *
+	u64 pixel_rate = gc5035->link_freq_menu[f_index] * 2 *
 			 gc5035->data_lanes;
 
 	return div_u64(pixel_rate, GC5035_RGB_DEPTH);
@@ -1033,8 +1037,8 @@ static int gc5035_parse_fwnode(struct gc5035 *gc5035)
 
 	ret = v4l2_link_freq_to_bitmap(dev, bus_cfg.link_frequencies,
 				       bus_cfg.nr_of_link_frequencies,
-				       gc5035_link_freq_menu_items,
-				       ARRAY_SIZE(gc5035_link_freq_menu_items),
+				       gc5035->link_freq_menu,
+				       ARRAY_SIZE(gc5035->link_freq_menu),
 				       &gc5035->link_freq_bitmap);
 
 done:
@@ -1061,9 +1065,8 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 	gc5035->link_freq =
 		v4l2_ctrl_new_int_menu(ctrl_hdlr, &gc5035_ctrl_ops,
 				       V4L2_CID_LINK_FREQ,
-				       ARRAY_SIZE(gc5035_link_freq_menu_items)
-				       - 1,
-				       0, gc5035_link_freq_menu_items);
+				       ARRAY_SIZE(gc5035->link_freq_menu) - 1,
+				       0, gc5035->link_freq_menu);
 	if (gc5035->link_freq)
 		gc5035->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
@@ -1144,6 +1147,24 @@ static int gc5035_probe(struct i2c_client *client)
 	v4l2_i2c_subdev_init(&gc5035->sd, client, &gc5035_subdev_ops);
 	gc5035->sd.internal_ops = &gc5035_internal_ops;
 
+	/*
+	 * The clock has to be resolved before the fwnode is parsed: the link
+	 * frequency this driver can offer is derived from its rate, and
+	 * gc5035_parse_fwnode() validates that frequency against the one
+	 * firmware declares.
+	 */
+	gc5035->xclk = devm_v4l2_sensor_clk_get(dev, "clk");
+	if (IS_ERR(gc5035->xclk))
+		return dev_err_probe(dev, PTR_ERR(gc5035->xclk),
+				     "failed to get clock\n");
+
+	freq = clk_get_rate(gc5035->xclk);
+	if (!freq)
+		return dev_err_probe(dev, -EINVAL,
+				     "external clock rate is unknown\n");
+
+	gc5035->link_freq_menu[0] = freq * GC5035_LINK_FREQ_MULTIPLIER;
+
 	ret = gc5035_parse_fwnode(gc5035);
 	if (ret)
 		return ret;
@@ -1172,16 +1193,6 @@ static int gc5035_probe(struct i2c_client *client)
 	if (IS_ERR(gc5035->powerdown_gpio))
 		return dev_err_probe(dev, PTR_ERR(gc5035->powerdown_gpio),
 				     "failed to get powerdown GPIO\n");
-
-	gc5035->xclk = devm_v4l2_sensor_clk_get(dev, "clk");
-	if (IS_ERR(gc5035->xclk))
-		return dev_err_probe(dev, PTR_ERR(gc5035->xclk),
-				     "failed to get clock\n");
-
-	freq = clk_get_rate(gc5035->xclk);
-	if (freq != GC5035_MCLK_DEFAULT)
-		dev_warn(dev, "external clock %lu, expected %lu\n", freq,
-			 (unsigned long)GC5035_MCLK_DEFAULT);
 
 	for (i = 0; i < ARRAY_SIZE(gc5035_supply_name); i++)
 		gc5035->supplies[i].supply = gc5035_supply_name[i];

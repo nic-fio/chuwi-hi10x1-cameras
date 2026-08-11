@@ -203,7 +203,11 @@ scrivere e da far accettare.
 > In compenso la misura del frame rate ha smascherato due costanti sbagliate:
 > le link frequency vere sono **422,4 MHz** per il GC5035 (dichiarata 438) e
 > **268,8 MHz** per il GC8034 (dichiarata 336), entrambe multipli interi dei
-> 19,2 MHz. Vedi `docs/08-prova-hardware.md`.
+> 19,2 MHz — per 22 e per 14. I driver ora non le scrivono piu' a mano: le
+> **ricavano dal clock**, perche' il moltiplicatore di PLL sta nella tabella
+> registri mentre il clock d'ingresso dipende dalla piattaforma. Il frame rate
+> che il driver prevede coincide adesso con quello misurato.
+> Vedi `docs/08-prova-hardware.md`.
 >
 > Il testo resta perche' e' il ragionamento che ha portato a fare la misura
 > giusta.

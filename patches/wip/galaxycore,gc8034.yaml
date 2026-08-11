@@ -104,6 +104,7 @@ examples:
             port {
                 sensor_out: endpoint {
                     data-lanes = <1 2 3 4>;
+                    /* 14 times the external clock, 24 MHz here */
                     link-frequencies = /bits/ 64 <336000000>;
                     remote-endpoint = <&csi_in>;
                 };

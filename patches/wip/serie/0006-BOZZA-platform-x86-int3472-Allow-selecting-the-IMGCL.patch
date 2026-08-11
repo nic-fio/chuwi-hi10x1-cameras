@@ -1,4 +1,4 @@
-From fd41bd9dbf38a1987ee9789a79819e70e8f76543 Mon Sep 17 00:00:00 2001
+From 909c3ae8b697796473b66108a1b655fe40c63272 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 19:30:45 +0200
 Subject: [PATCH 6/6] BOZZA platform/x86: int3472: Allow selecting the
@@ -23,8 +23,13 @@ tables were computed for the other rate can ask for it. A GPIO gated
 clock only switches an externally provided signal, so it keeps offering
 the single rate firmware described.
 
-Not tested on hardware yet: on the machine this was developed against the
-GPIO controller driver is missing, so INT3472 never finishes probing.
+Still not tested on hardware, but no longer for want of a working
+INT3472: on the machine this was developed against it now probes and
+drives both sensors. The reason is that nothing asks for the other
+rate any more. The GC8034 register tables, computed for 24 MHz, turned
+out to capture correctly at 19.2 MHz with every timing scaled by 0.8,
+so forcing 24 MHz is no longer needed to make that sensor work and the
+new .set_rate path stays unexercised.
 ---
  .../x86/intel/int3472/clk_and_regulator.c     | 66 ++++++++++++++++++-
  1 file changed, 65 insertions(+), 1 deletion(-)

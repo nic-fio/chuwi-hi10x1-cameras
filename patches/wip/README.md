@@ -54,6 +54,8 @@ sottosistema diverso (`platform-driver-x86`, non `linux-media`).
 | Chip ID letto sul silicio | `0x5035` e `0x8044` |
 | `v4l2-compliance` | **45/46** su entrambi — vedi `docs/08-prova-hardware.md` |
 | Tabelle di guadagno verificate a misura | si' — 15,7x su 16 e 7,9x su 7,66 |
+| Link frequency | **derivate dal clock**, 19,2 x 22 e 19,2 x 14 |
+| Frame rate previsto dal driver = misurato | si' — 28,82 e 24,00 |
 
 Gli strumenti si installano con `scripts/setup-verifica.sh`. Due trappole che
 quello script evita: `dtschema` non compila senza `swig` e `python3-dev` (fallisce
@@ -117,14 +119,18 @@ domande che erano appese qui:
 
 Tutto in `docs/08-prova-hardware.md`, per rifarlo `build-6.12/README.md`.
 
-### 2. Correggere le link frequency — **ora e' questo a bloccare**
+### 2. ~~Correggere le link frequency~~ — **FATTO il 2026-08-11**
 
-Le costanti nei due driver **e** le voci corrispondenti in `ipu-bridge` vanno
-cambiate insieme, altrimenti la probe fallisce sulla validazione
-dell'endpoint. Per il GC8034 c'e' prima una decisione da prendere: costante
-fissa (giusta su x86, sbagliata su device-tree a 24 MHz) o valore derivato a
-runtime da `clk_get_rate()`. La seconda e' la sola difendibile in review, e
-vale anche per il GC5035.
+Scelta la strada del valore **derivato a runtime** da `clk_get_rate()`, non
+della costante: il moltiplicatore di PLL sta nella tabella registri, il clock
+d'ingresso no, quindi lo stesso driver resta corretto sia sui 19,2 MHz di una
+piattaforma IPU6 sia sui 24 MHz di un device-tree.
+
+Moltiplicatori misurati: **22** per il GC5035, **14** per il GC8034. Le voci
+di `ipu-bridge` sono state cambiate insieme ai driver, come devono.
+
+Controprova: il frame rate previsto dal driver ora coincide con quello
+misurato — 28,82 contro 28,82 e 24,00 contro 24,01.
 
 ### 3. Formalita'
 

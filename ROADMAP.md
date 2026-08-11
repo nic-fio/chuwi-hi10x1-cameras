@@ -204,9 +204,9 @@ Si parte da qui perche' esiste gia' codice Intel da cui prendere i registri.
 **COMPLETA** — 2026-08-11: fotogramma riconoscibile dalla frontale, su kernel
 Debian 6.12 con i driver caricati come moduli fuori albero (`build-6.12/`).
 
-Resta una correzione da fare prima dell'invio: la link frequency vera e'
-**422,4 MHz**, non i 438 dichiarati dalla patch Intel. Misurata dal frame rate,
-e' `19,2 MHz x 22` esatti. Vedi `docs/08-prova-hardware.md`.
+Corretta anche la link frequency, che la patch Intel dichiarava a 438 MHz:
+quella vera e' **422,4 MHz**, cioe' `19,2 MHz x 22`, e il driver ora la ricava
+dal clock invece di scriverla a mano. Vedi `docs/08-prova-hardware.md`.
 
 ---
 
@@ -229,10 +229,11 @@ Nessun codice x86/ACPI esistente. Solo il BSP Rockchip device-tree.
 - [x] Stessa checklist della Fase 2 — `v4l2-compliance` 45/46,
       **prima immagine** 3264x2448 SRGGB10 il 2026-08-11
 - [x] Voce `GCTI8034` in `ipu_supported_sensors[]` — bozza applicata al tree
-- [ ] **Decidere come dichiarare la link frequency.** Quella vera qui e'
-      268,8 MHz (`19,2 x 14`), non i 336 del BSP (`24 x 14`). Un valore fisso
-      sarebbe giusto su x86 e sbagliato su device-tree a 24 MHz: la proposta e'
-      derivarla a runtime da `clk_get_rate()`. Vedi `docs/08-prova-hardware.md`
+- [x] **Deciso come dichiarare la link frequency: derivata a runtime** da
+      `clk_get_rate()`, moltiplicatore 14. Cosi' lo stesso driver vale sui
+      19,2 MHz di IPU6 e sui 24 MHz di un device-tree. Scalato allo stesso modo
+      il pixel rate d'array e l'attesa di 8192 cicli prima del primo I2C, che
+      il BSP aveva fissato in microsecondi a 24 MHz
 
 **COMPLETA** — 2026-08-11: fotogramma riconoscibile dalla posteriore a 8 MP.
 
@@ -392,7 +393,7 @@ impegno a rispondere. Non e' facoltativo e non ha scadenza.
 | I registri exposure/gain del GC8034 sono ricavabili dal BSP? | **RISOLTA: si'.** Exposure `0x03/0x04`, gain a indice su `0xb6` + tabella a 9 voci, blanking `0x07/0x08`. Guadagno poi **misurato**: 7,66x chiesti, 7,9x ottenuti |
 | Serie 3: una patch con due voci o due patch da una? | da decidere in Fase 5, in base a quanto divergono i tempi di Serie 1 e 2 |
 | La link frequency del CHUWI coincide con quella della patch Intel? | **RISOLTA: no, e la patch Intel sbaglia.** Misurata 422,4 MHz (`19,2 x 22`) contro i 438 dichiarati. Il GC8034 sta a 268,8 (`19,2 x 14`) contro i 336 del BSP |
-| Come dichiarare la link frequency nei due driver? | **APERTA, e ora e' la principale.** Costante giusta per x86 o derivata a runtime da `clk_get_rate()`? Vedi `docs/08-prova-hardware.md` |
+| Come dichiarare la link frequency nei due driver? | **RISOLTA: derivata a runtime** da `clk_get_rate()`, moltiplicatori 22 e 14. Il modello del driver ora prevede il frame rate misurato |
 | Contattare GalaxyCore per i datasheet? | **non serve piu' per far funzionare i sensori.** Resterebbe utile solo per documentare i blob PLL |
 | Un solo maintainer per entrambi i driver? | proposta: si', l'autore del progetto |
 
