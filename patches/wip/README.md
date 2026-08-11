@@ -73,7 +73,7 @@ Destinatari di tutti e tre in `destinatari.txt`, da `get_maintainer.pl`.
 | Commenti in inglese | **si'** — tradotti il 2026-08-11 |
 | Nessun carattere non ASCII | **verificato** |
 | Tabelle registri importate | **si'** — GC5035 161+162, GC8034 233+7x14 |
-| Tabelle identiche all'originale | **verificato** con `scripts/regtab-to-cci.py --check` |
+| Tabelle identiche all'originale | **verificato**, comandi qui sotto |
 | Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 422,4 e 268,8 MHz, derivate dal clock |
 | **Eseguiti su hardware** | **SI', 2026-08-11** — entrambi catturano |
 | Chip ID letto sul silicio | `0x5035` e `0x8044` |
@@ -84,6 +84,29 @@ Destinatari di tutti e tre in `destinatari.txt`, da `get_maintainer.pl`.
 | La serie si applica a `torvalds/master` di oggi | **si'** — `ipu-bridge.c` su master e' identico alla nostra base a meno delle due voci |
 | I nomi `gc5035`/`gc8034` sono liberi upstream | **si'** — verificato su `drivers/media/i2c/{Kconfig,Makefile}` di master |
 | Punto d'inserimento alfabetico in Kconfig | corretto — dopo `VIDEO_GC2145` |
+
+### Rifare la verifica delle tabelle
+
+E' la domanda che un revisore fa per prima quando vede 400 righe di registri
+copiati: «come faccio a sapere che non hai cambiato un valore per sbaglio?».
+La risposta e' che si ricontrolla in tre comandi, uno per tabella:
+
+```bash
+L=/home/nicfio/linux/drivers/media/i2c
+python3 scripts/regtab-to-cci.py --check \
+        reference/gc8034-rockchip-bsp.c gc8034_global_regs_4lane \
+        $L/gc8034.c gc8034_mode_3264x2448        # 233 registri
+python3 scripts/regtab-to-cci.py --check \
+        reference/gc5035-intel.c gc5035_global_regs \
+        $L/gc5035.c gc5035_init_regs             # 161 registri
+python3 scripts/regtab-to-cci.py --check \
+        reference/gc5035-intel.c gc5035_2592x1944_regs \
+        $L/gc5035.c gc5035_mode_2592x1944        # 162 registri
+```
+
+Rilegge entrambe le liste e le confronta coppia per coppia. Ultima esecuzione
+2026-08-11 a fine giornata, dopo tutte le correzioni della revisione: **tre
+`OK`**.
 
 Gli strumenti si installano con `scripts/setup-verifica.sh`. Due trappole che
 quello script evita: `dtschema` non compila senza `swig` e `python3-dev` (fallisce
