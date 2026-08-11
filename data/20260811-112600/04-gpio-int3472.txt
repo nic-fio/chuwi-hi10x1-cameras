@@ -1,0 +1,39 @@
+
+===== GPIO CHIP PRESENTI =====
+(atteso finche' manca pinctrl-alderlake: nessuno)
+
+===== INT3472 PLATFORM DEVICES =====
+--- /sys/bus/platform/devices/INT3472:01
+path:   \_SB_.PC00.DSC0
+status: 15
+driver: 
+--- /sys/bus/platform/devices/INT3472:02
+path:   \_SB_.PC00.DSC1
+status: 15
+driver: 
+
+===== INTC1057 (GPIO controller ADL-N) =====
+driver: 
+
+===== I2C CLIENTS =====
+total 0
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-0 -> ../../../devices/pci0000:00/0000:00:1f.4/i2c-0
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-1 -> ../../../devices/pci0000:00/0000:00:15.0/i2c_designware.1/i2c-1
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-10 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-10
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-11 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-11
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-12 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-12
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-13 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-13
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-14 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-14
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-15 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-15
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-16 -> ../../../devices/pci0000:00/0000:00:02.0/drm/card0/card0-DP-1/i2c-16
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-17 -> ../../../devices/pci0000:00/0000:00:02.0/drm/card0/card0-DP-2/i2c-17
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-18 -> ../../../devices/pci0000:00/0000:00:02.0/drm/card0/card0-DP-3/i2c-18
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-2 -> ../../../devices/pci0000:00/0000:00:15.1/i2c_designware.2/i2c-2
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-3 -> ../../../devices/pci0000:00/0000:00:15.2/i2c_designware.3/i2c-3
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-4 -> ../../../devices/pci0000:00/0000:00:15.3/i2c_designware.4/i2c-4
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-5 -> ../../../devices/pci0000:00/0000:00:19.0/i2c_designware.5/i2c-5
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-6 -> ../../../devices/pci0000:00/0000:00:19.1/i2c_designware.6/i2c-6
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-7 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-7
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-8 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-8
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-9 -> ../../../devices/pci0000:00/0000:00:02.0/i2c-9
+lrwxrwxrwx 1 root root 0 ago 11 08:55 i2c-NSA2513:00 -> ../../../devices/pci0000:00/0000:00:19.1/i2c_designware.6/i2c-6/i2c-NSA2513:00

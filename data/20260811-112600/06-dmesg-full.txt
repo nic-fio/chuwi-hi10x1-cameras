@@ -1,0 +1,1054 @@
+[18553.587264]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18553.587312]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18553.587357] CPU: 2 UID: 0 PID: 44183 Comm: kworker/2:2 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18553.587361] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18553.587362] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18553.587364] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18553.587466] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18553.587553] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18553.587555] RSP: 0018:ffffcb380eeb3c50 EFLAGS: 00010282
+[18553.587557] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18553.587558] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18553.587559] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18553.587560] R10: 0000000000000002 R11: 0000000000000001 R12: 0000000000000019
+[18553.587561] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18553.587562] FS:  0000000000000000(0000) GS:ffff8b0867982000(0000) knlGS:0000000000000000
+[18553.587564] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18553.587565] CR2: 00007f76b8c49000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18553.587566] PKRU: 55555554
+[18553.587567] Call Trace:
+[18553.587571]  <TASK>
+[18553.587574]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18553.587655]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18553.587737]  intel_digital_port_connected+0x29/0x90 [i915]
+[18553.587819]  intel_dp_detect+0xe9/0x870 [i915]
+[18553.587920]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18553.587934]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18553.588019]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18553.588108]  process_one_work+0x19a/0x2c0
+[18553.588117]  worker_thread+0x1a8/0x310
+[18553.588120]  ? __pfx_worker_thread+0x10/0x10
+[18553.588122]  kthread+0xcc/0x100
+[18553.588124]  ? __pfx_kthread+0x10/0x10
+[18553.588125]  ret_from_fork+0x1aa/0x2a0
+[18553.588128]  ? __pfx_kthread+0x10/0x10
+[18553.588129]  ret_from_fork_asm+0x1a/0x30
+[18553.588132]  </TASK>
+[18553.588133] ---[ end trace 0000000000000000 ]---
+[18554.088958] ------------[ cut here ]------------
+[18554.088972] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18554.088978] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#2: kworker/2:2/44183
+[18554.089441] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18554.089553]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18554.089679]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18554.089790] CPU: 2 UID: 0 PID: 44183 Comm: kworker/2:2 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18554.089804] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18554.089808] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18554.089813] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18554.090212] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18554.090580] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18554.090588] RSP: 0018:ffffcb380eeb3bf0 EFLAGS: 00010282
+[18554.090596] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18554.090601] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18554.090605] RBP: ffff8b069728e000 R08: 0000000000000100 R09: 0000000000000001
+[18554.090610] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8b0681dfa440
+[18554.090614] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18554.090620] FS:  0000000000000000(0000) GS:ffff8b0867982000(0000) knlGS:0000000000000000
+[18554.090626] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18554.090631] CR2: 00007f76b8c49000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18554.090637] PKRU: 55555554
+[18554.090640] Call Trace:
+[18554.090649]  <TASK>
+[18554.090657]  read_pin_configuration+0xe/0x1f0 [i915]
+[18554.091010]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18554.091360]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18554.091720]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18554.092066]  intel_digital_port_connected+0x29/0x90 [i915]
+[18554.092346]  intel_dp_detect+0xe9/0x870 [i915]
+[18554.092614]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18554.092645]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18554.092982]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18554.093299]  process_one_work+0x19a/0x2c0
+[18554.093311]  worker_thread+0x1a8/0x310
+[18554.093319]  ? __pfx_worker_thread+0x10/0x10
+[18554.093326]  kthread+0xcc/0x100
+[18554.093332]  ? __pfx_kthread+0x10/0x10
+[18554.093336]  ret_from_fork+0x1aa/0x2a0
+[18554.093343]  ? __pfx_kthread+0x10/0x10
+[18554.093346]  ret_from_fork_asm+0x1a/0x30
+[18554.093357]  </TASK>
+[18554.093359] ---[ end trace 0000000000000000 ]---
+[18554.093368] ------------[ cut here ]------------
+[18554.093370] Missing case (pin_assignment == 15)
+[18554.093374] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#2: kworker/2:2/44183
+[18554.093652] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18554.093734]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18554.093826]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18554.093906] CPU: 2 UID: 0 PID: 44183 Comm: kworker/2:2 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18554.093915] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18554.093917] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18554.093920] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18554.094213] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18554.094428] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18554.094430] RSP: 0018:ffffcb380eeb3bf0 EFLAGS: 00010206
+[18554.094431] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18554.094432] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18554.094433] RBP: ffff8b069728e000 R08: 0000000000000100 R09: 0000000000000001
+[18554.094434] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000f
+[18554.094435] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18554.094436] FS:  0000000000000000(0000) GS:ffff8b0867982000(0000) knlGS:0000000000000000
+[18554.094437] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18554.094438] CR2: 00007f76b8c49000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18554.094439] PKRU: 55555554
+[18554.094439] Call Trace:
+[18554.094440]  <TASK>
+[18554.094441]  read_pin_configuration+0xe/0x1f0 [i915]
+[18554.094518]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18554.094590]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18554.094661]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18554.094731]  intel_digital_port_connected+0x29/0x90 [i915]
+[18554.094792]  intel_dp_detect+0xe9/0x870 [i915]
+[18554.094853]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18554.094859]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18554.094937]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18554.095015]  process_one_work+0x19a/0x2c0
+[18554.095017]  worker_thread+0x1a8/0x310
+[18554.095019]  ? __pfx_worker_thread+0x10/0x10
+[18554.095021]  kthread+0xcc/0x100
+[18554.095022]  ? __pfx_kthread+0x10/0x10
+[18554.095023]  ret_from_fork+0x1aa/0x2a0
+[18554.095024]  ? __pfx_kthread+0x10/0x10
+[18554.095025]  ret_from_fork_asm+0x1a/0x30
+[18554.095027]  </TASK>
+[18554.095028] ---[ end trace 0000000000000000 ]---
+[18578.006037] ------------[ cut here ]------------
+[18578.006042] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[18578.006045] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:934 at adlp_tc_phy_connect+0xf5/0x1d0 [i915], CPU#1: kworker/1:1/33456
+[18578.006176] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18578.006219]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18578.006266]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18578.006309] CPU: 1 UID: 0 PID: 33456 Comm: kworker/1:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18578.006312] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18578.006313] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18578.006315] Workqueue: events output_poll_execute [drm_kms_helper]
+[18578.006326] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18578.006422] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18578.006424] RSP: 0018:ffffcb3807e17c80 EFLAGS: 00010282
+[18578.006426] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18578.006428] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18578.006429] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18578.006430] R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000019
+[18578.006431] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18578.006432] FS:  0000000000000000(0000) GS:ffff8b0867902000(0000) knlGS:0000000000000000
+[18578.006434] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18578.006435] CR2: 0000031e12653000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18578.006436] PKRU: 55555554
+[18578.006437] Call Trace:
+[18578.006442]  <TASK>
+[18578.006445]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18578.006532]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18578.006617]  intel_digital_port_connected+0x29/0x90 [i915]
+[18578.006691]  intel_dp_detect+0xe9/0x870 [i915]
+[18578.006762]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18578.006770]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18578.006777]  process_one_work+0x19a/0x2c0
+[18578.006782]  worker_thread+0x1a8/0x310
+[18578.006785]  ? __pfx_worker_thread+0x10/0x10
+[18578.006787]  kthread+0xcc/0x100
+[18578.006789]  ? __pfx_kthread+0x10/0x10
+[18578.006790]  ret_from_fork+0x1aa/0x2a0
+[18578.006793]  ? __pfx_kthread+0x10/0x10
+[18578.006794]  ret_from_fork_asm+0x1a/0x30
+[18578.006798]  </TASK>
+[18578.006798] ---[ end trace 0000000000000000 ]---
+[18578.509446] ------------[ cut here ]------------
+[18578.509459] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18578.509466] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#1: kworker/1:1/33456
+[18578.509898] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18578.510020]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18578.510157]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18578.510278] CPU: 1 UID: 0 PID: 33456 Comm: kworker/1:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18578.510292] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18578.510296] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18578.510302] Workqueue: events output_poll_execute [drm_kms_helper]
+[18578.510336] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18578.510714] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18578.510721] RSP: 0018:ffffcb3807e17c20 EFLAGS: 00010282
+[18578.510729] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18578.510734] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18578.510738] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000054
+[18578.510743] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8b0681dfa440
+[18578.510748] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18578.510753] FS:  0000000000000000(0000) GS:ffff8b0867902000(0000) knlGS:0000000000000000
+[18578.510759] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18578.510764] CR2: 0000031e12653000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18578.510769] PKRU: 55555554
+[18578.510773] Call Trace:
+[18578.510782]  <TASK>
+[18578.510790]  read_pin_configuration+0xe/0x1f0 [i915]
+[18578.511148]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18578.511511]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18578.511864]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18578.512211]  intel_digital_port_connected+0x29/0x90 [i915]
+[18578.512525]  intel_dp_detect+0xe9/0x870 [i915]
+[18578.512823]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18578.512854]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18578.512883]  process_one_work+0x19a/0x2c0
+[18578.512897]  worker_thread+0x1a8/0x310
+[18578.512907]  ? __pfx_worker_thread+0x10/0x10
+[18578.512918]  kthread+0xcc/0x100
+[18578.512923]  ? __pfx_kthread+0x10/0x10
+[18578.512929]  ret_from_fork+0x1aa/0x2a0
+[18578.512938]  ? __pfx_kthread+0x10/0x10
+[18578.512943]  ret_from_fork_asm+0x1a/0x30
+[18578.512957]  </TASK>
+[18578.512960] ---[ end trace 0000000000000000 ]---
+[18578.512971] ------------[ cut here ]------------
+[18578.512974] Missing case (pin_assignment == 15)
+[18578.512978] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#1: kworker/1:1/33456
+[18578.513305] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18578.513402]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18578.513506]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18578.513596] CPU: 1 UID: 0 PID: 33456 Comm: kworker/1:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18578.513605] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18578.513608] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18578.513612] Workqueue: events output_poll_execute [drm_kms_helper]
+[18578.513638] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18578.513942] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18578.513947] RSP: 0018:ffffcb3807e17c20 EFLAGS: 00010206
+[18578.513953] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18578.513956] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18578.513960] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000054
+[18578.513964] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000f
+[18578.513967] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18578.513970] FS:  0000000000000000(0000) GS:ffff8b0867902000(0000) knlGS:0000000000000000
+[18578.513975] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18578.513979] CR2: 0000031e12653000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18578.513983] PKRU: 55555554
+[18578.513985] Call Trace:
+[18578.513990]  <TASK>
+[18578.513994]  read_pin_configuration+0xe/0x1f0 [i915]
+[18578.514280]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18578.514557]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18578.514751]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18578.514822]  intel_digital_port_connected+0x29/0x90 [i915]
+[18578.514883]  intel_dp_detect+0xe9/0x870 [i915]
+[18578.514944]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18578.514950]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18578.514956]  process_one_work+0x19a/0x2c0
+[18578.514958]  worker_thread+0x1a8/0x310
+[18578.514960]  ? __pfx_worker_thread+0x10/0x10
+[18578.514962]  kthread+0xcc/0x100
+[18578.514963]  ? __pfx_kthread+0x10/0x10
+[18578.514964]  ret_from_fork+0x1aa/0x2a0
+[18578.514965]  ? __pfx_kthread+0x10/0x10
+[18578.514966]  ret_from_fork_asm+0x1a/0x30
+[18578.514969]  </TASK>
+[18578.514969] ---[ end trace 0000000000000000 ]---
+[18600.533138] ------------[ cut here ]------------
+[18600.533143] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[18600.533145] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:934 at adlp_tc_phy_connect+0xf5/0x1d0 [i915], CPU#3: kworker/3:0/43950
+[18600.533276] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18600.533318]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18600.533366]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18600.533409] CPU: 3 UID: 0 PID: 43950 Comm: kworker/3:0 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18600.533413] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18600.533414] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18600.533416] Workqueue: events output_poll_execute [drm_kms_helper]
+[18600.533427] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18600.533522] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18600.533525] RSP: 0018:ffffcb380dc87c80 EFLAGS: 00010282
+[18600.533527] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18600.533528] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18600.533529] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18600.533530] R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000019
+[18600.533531] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18600.533533] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18600.533534] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18600.533536] CR2: 0000203f5b195000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18600.533537] PKRU: 55555554
+[18600.533538] Call Trace:
+[18600.533543]  <TASK>
+[18600.533547]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18600.533634]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18600.533719]  intel_digital_port_connected+0x29/0x90 [i915]
+[18600.533794]  intel_dp_detect+0xe9/0x870 [i915]
+[18600.533867]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18600.533875]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18600.533882]  process_one_work+0x19a/0x2c0
+[18600.533888]  worker_thread+0x1a8/0x310
+[18600.533890]  ? __pfx_worker_thread+0x10/0x10
+[18600.533893]  kthread+0xcc/0x100
+[18600.533895]  ? __pfx_kthread+0x10/0x10
+[18600.533896]  ret_from_fork+0x1aa/0x2a0
+[18600.533899]  ? __pfx_kthread+0x10/0x10
+[18600.533900]  ret_from_fork_asm+0x1a/0x30
+[18600.533905]  </TASK>
+[18600.533906] ---[ end trace 0000000000000000 ]---
+[18601.034576] ------------[ cut here ]------------
+[18601.034590] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18601.034596] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#3: kworker/3:0/43950
+[18601.035028] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18601.035149]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18601.035286]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18601.035405] CPU: 3 UID: 0 PID: 43950 Comm: kworker/3:0 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18601.035420] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18601.035423] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18601.035429] Workqueue: events output_poll_execute [drm_kms_helper]
+[18601.035497] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18601.035867] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18601.035874] RSP: 0018:ffffcb380dc87c20 EFLAGS: 00010282
+[18601.035882] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18601.035887] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18601.035892] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000054
+[18601.035897] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8b0681dfa440
+[18601.035901] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18601.035906] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18601.035912] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18601.035918] CR2: 0000203f5b195000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18601.035923] PKRU: 55555554
+[18601.035927] Call Trace:
+[18601.035935]  <TASK>
+[18601.035943]  read_pin_configuration+0xe/0x1f0 [i915]
+[18601.036299]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18601.036665]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18601.037015]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18601.037361]  intel_digital_port_connected+0x29/0x90 [i915]
+[18601.037673]  intel_dp_detect+0xe9/0x870 [i915]
+[18601.037974]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18601.038006]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18601.038034]  process_one_work+0x19a/0x2c0
+[18601.038048]  worker_thread+0x1a8/0x310
+[18601.038058]  ? __pfx_worker_thread+0x10/0x10
+[18601.038068]  kthread+0xcc/0x100
+[18601.038074]  ? __pfx_kthread+0x10/0x10
+[18601.038080]  ret_from_fork+0x1aa/0x2a0
+[18601.038089]  ? __pfx_kthread+0x10/0x10
+[18601.038094]  ret_from_fork_asm+0x1a/0x30
+[18601.038107]  </TASK>
+[18601.038109] ---[ end trace 0000000000000000 ]---
+[18601.038119] ------------[ cut here ]------------
+[18601.038122] Missing case (pin_assignment == 15)
+[18601.038126] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#3: kworker/3:0/43950
+[18601.038434] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18601.038535]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18601.038639]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18601.038728] CPU: 3 UID: 0 PID: 43950 Comm: kworker/3:0 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18601.038738] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18601.038740] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18601.038744] Workqueue: events output_poll_execute [drm_kms_helper]
+[18601.038770] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18601.039076] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18601.039081] RSP: 0018:ffffcb380dc87c20 EFLAGS: 00010206
+[18601.039086] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18601.039089] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18601.039093] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000054
+[18601.039096] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000f
+[18601.039099] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18601.039102] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18601.039106] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18601.039110] CR2: 0000203f5b195000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18601.039114] PKRU: 55555554
+[18601.039116] Call Trace:
+[18601.039120]  <TASK>
+[18601.039123]  read_pin_configuration+0xe/0x1f0 [i915]
+[18601.039342]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18601.039414]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18601.039487]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18601.039558]  intel_digital_port_connected+0x29/0x90 [i915]
+[18601.039619]  intel_dp_detect+0xe9/0x870 [i915]
+[18601.039679]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18601.039686]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18601.039691]  process_one_work+0x19a/0x2c0
+[18601.039693]  worker_thread+0x1a8/0x310
+[18601.039695]  ? __pfx_worker_thread+0x10/0x10
+[18601.039697]  kthread+0xcc/0x100
+[18601.039698]  ? __pfx_kthread+0x10/0x10
+[18601.039699]  ret_from_fork+0x1aa/0x2a0
+[18601.039700]  ? __pfx_kthread+0x10/0x10
+[18601.039701]  ret_from_fork_asm+0x1a/0x30
+[18601.039704]  </TASK>
+[18601.039704] ---[ end trace 0000000000000000 ]---
+[18613.582035] ------------[ cut here ]------------
+[18613.582041] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[18613.582043] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:934 at adlp_tc_phy_connect+0xf5/0x1d0 [i915], CPU#3: kworker/3:1/33630
+[18613.582189] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18613.582234]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18613.582285]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18613.582330] CPU: 3 UID: 0 PID: 33630 Comm: kworker/3:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18613.582334] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18613.582336] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18613.582338] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18613.582437] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18613.582524] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18613.582526] RSP: 0018:ffffcb3807f7fc50 EFLAGS: 00010282
+[18613.582528] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18613.582529] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18613.582530] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18613.582531] R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000019
+[18613.582532] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18613.582534] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18613.582535] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18613.582537] CR2: 00007f76b8c29000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18613.582538] PKRU: 55555554
+[18613.582539] Call Trace:
+[18613.582544]  <TASK>
+[18613.582547]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18613.582634]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18613.582718]  intel_digital_port_connected+0x29/0x90 [i915]
+[18613.582793]  intel_dp_detect+0xe9/0x870 [i915]
+[18613.582866]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18613.582875]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18613.582975]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18613.583069]  process_one_work+0x19a/0x2c0
+[18613.583073]  worker_thread+0x1a8/0x310
+[18613.583076]  ? __pfx_worker_thread+0x10/0x10
+[18613.583078]  kthread+0xcc/0x100
+[18613.583080]  ? __pfx_kthread+0x10/0x10
+[18613.583081]  ret_from_fork+0x1aa/0x2a0
+[18613.583084]  ? __pfx_kthread+0x10/0x10
+[18613.583085]  ret_from_fork_asm+0x1a/0x30
+[18613.583088]  </TASK>
+[18613.583089] ---[ end trace 0000000000000000 ]---
+[18614.085634] ------------[ cut here ]------------
+[18614.085648] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18614.085654] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#3: kworker/3:1/33630
+[18614.086128] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18614.086248]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18614.086383]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18614.086503] CPU: 3 UID: 0 PID: 33630 Comm: kworker/3:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18614.086517] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18614.086521] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18614.086527] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18614.086935] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18614.087292] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18614.087300] RSP: 0018:ffffcb3807f7fbf0 EFLAGS: 00010282
+[18614.087307] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18614.087313] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18614.087317] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000001
+[18614.087322] R10: 0000000000000003 R11: 0000000000000001 R12: ffff8b0681dfa440
+[18614.087326] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18614.087330] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18614.087337] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18614.087342] CR2: 00007f76b8c29000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18614.087347] PKRU: 55555554
+[18614.087351] Call Trace:
+[18614.087360]  <TASK>
+[18614.087369]  read_pin_configuration+0xe/0x1f0 [i915]
+[18614.087720]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18614.088078]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18614.088427]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18614.088772]  intel_digital_port_connected+0x29/0x90 [i915]
+[18614.089046]  intel_dp_detect+0xe9/0x870 [i915]
+[18614.089307]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18614.089337]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18614.089671]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18614.089981]  process_one_work+0x19a/0x2c0
+[18614.089994]  worker_thread+0x1a8/0x310
+[18614.090002]  ? __pfx_worker_thread+0x10/0x10
+[18614.090010]  kthread+0xcc/0x100
+[18614.090015]  ? __pfx_kthread+0x10/0x10
+[18614.090019]  ret_from_fork+0x1aa/0x2a0
+[18614.090027]  ? __pfx_kthread+0x10/0x10
+[18614.090030]  ret_from_fork_asm+0x1a/0x30
+[18614.090042]  </TASK>
+[18614.090045] ---[ end trace 0000000000000000 ]---
+[18614.090054] ------------[ cut here ]------------
+[18614.090057] Missing case (pin_assignment == 15)
+[18614.090060] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#3: kworker/3:1/33630
+[18614.090334] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18614.090416]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18614.090509]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18614.090589] CPU: 3 UID: 0 PID: 33630 Comm: kworker/3:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18614.090597] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18614.090600] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18614.090604] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18614.090798] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18614.090870] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18614.090872] RSP: 0018:ffffcb3807f7fbf0 EFLAGS: 00010206
+[18614.090873] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18614.090874] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18614.090875] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000001
+[18614.090875] R10: 0000000000000003 R11: 0000000000000001 R12: 000000000000000f
+[18614.090876] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18614.090877] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18614.090878] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18614.090879] CR2: 00007f76b8c29000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18614.090880] PKRU: 55555554
+[18614.090881] Call Trace:
+[18614.090882]  <TASK>
+[18614.090883]  read_pin_configuration+0xe/0x1f0 [i915]
+[18614.090958]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18614.091040]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18614.091112]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18614.091183]  intel_digital_port_connected+0x29/0x90 [i915]
+[18614.091244]  intel_dp_detect+0xe9/0x870 [i915]
+[18614.091305]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18614.091311]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18614.091390]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18614.091468]  process_one_work+0x19a/0x2c0
+[18614.091470]  worker_thread+0x1a8/0x310
+[18614.091472]  ? __pfx_worker_thread+0x10/0x10
+[18614.091473]  kthread+0xcc/0x100
+[18614.091474]  ? __pfx_kthread+0x10/0x10
+[18614.091475]  ret_from_fork+0x1aa/0x2a0
+[18614.091477]  ? __pfx_kthread+0x10/0x10
+[18614.091478]  ret_from_fork_asm+0x1a/0x30
+[18614.091480]  </TASK>
+[18614.091481] ---[ end trace 0000000000000000 ]---
+[18637.907833] ------------[ cut here ]------------
+[18637.907838] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[18637.907841] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:934 at adlp_tc_phy_connect+0xf5/0x1d0 [i915], CPU#3: kworker/3:1/33630
+[18637.907972] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18637.908017]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18637.908064]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18637.908106] CPU: 3 UID: 0 PID: 33630 Comm: kworker/3:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18637.908110] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18637.908111] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18637.908113] Workqueue: events output_poll_execute [drm_kms_helper]
+[18637.908124] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18637.908209] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18637.908211] RSP: 0018:ffffcb3807f7fc80 EFLAGS: 00010282
+[18637.908213] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18637.908215] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18637.908216] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18637.908217] R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000019
+[18637.908218] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18637.908219] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18637.908220] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18637.908221] CR2: 0000558d727d0838 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18637.908223] PKRU: 55555554
+[18637.908224] Call Trace:
+[18637.908228]  <TASK>
+[18637.908232]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18637.908314]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18637.908394]  intel_digital_port_connected+0x29/0x90 [i915]
+[18637.908464]  intel_dp_detect+0xe9/0x870 [i915]
+[18637.908533]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18637.908551]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18637.908557]  process_one_work+0x19a/0x2c0
+[18637.908561]  worker_thread+0x1a8/0x310
+[18637.908564]  ? __pfx_worker_thread+0x10/0x10
+[18637.908566]  kthread+0xcc/0x100
+[18637.908568]  ? __pfx_kthread+0x10/0x10
+[18637.908569]  ret_from_fork+0x1aa/0x2a0
+[18637.908571]  ? __pfx_kthread+0x10/0x10
+[18637.908572]  ret_from_fork_asm+0x1a/0x30
+[18637.908576]  </TASK>
+[18637.908577] ---[ end trace 0000000000000000 ]---
+[18638.409439] ------------[ cut here ]------------
+[18638.409453] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18638.409459] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#3: kworker/3:1/33630
+[18638.409913] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18638.410028]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18638.410156]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18638.410270] CPU: 3 UID: 0 PID: 33630 Comm: kworker/3:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18638.410284] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18638.410287] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18638.410293] Workqueue: events output_poll_execute [drm_kms_helper]
+[18638.410327] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18638.410695] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18638.410702] RSP: 0018:ffffcb3807f7fc20 EFLAGS: 00010282
+[18638.410710] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18638.410715] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18638.410719] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000054
+[18638.410724] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8b0681dfa440
+[18638.410728] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18638.410733] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18638.410739] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18638.410745] CR2: 0000558d727d0838 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18638.410750] PKRU: 55555554
+[18638.410753] Call Trace:
+[18638.410761]  <TASK>
+[18638.410769]  read_pin_configuration+0xe/0x1f0 [i915]
+[18638.411139]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18638.411493]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18638.411840]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18638.412193]  intel_digital_port_connected+0x29/0x90 [i915]
+[18638.412502]  intel_dp_detect+0xe9/0x870 [i915]
+[18638.412765]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18638.412793]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18638.412818]  process_one_work+0x19a/0x2c0
+[18638.412830]  worker_thread+0x1a8/0x310
+[18638.412838]  ? __pfx_worker_thread+0x10/0x10
+[18638.412847]  kthread+0xcc/0x100
+[18638.412852]  ? __pfx_kthread+0x10/0x10
+[18638.412856]  ret_from_fork+0x1aa/0x2a0
+[18638.412863]  ? __pfx_kthread+0x10/0x10
+[18638.412867]  ret_from_fork_asm+0x1a/0x30
+[18638.412887]  </TASK>
+[18638.412890] ---[ end trace 0000000000000000 ]---
+[18638.412900] ------------[ cut here ]------------
+[18638.412903] Missing case (pin_assignment == 15)
+[18638.412906] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#3: kworker/3:1/33630
+[18638.413218] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18638.413310]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18638.413414]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18638.413503] CPU: 3 UID: 0 PID: 33630 Comm: kworker/3:1 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18638.413512] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18638.413515] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18638.413519] Workqueue: events output_poll_execute [drm_kms_helper]
+[18638.413542] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18638.413814] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18638.413819] RSP: 0018:ffffcb3807f7fc20 EFLAGS: 00010206
+[18638.413824] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18638.413827] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18638.413830] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000054
+[18638.413833] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000f
+[18638.413836] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18638.413839] FS:  0000000000000000(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18638.413844] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18638.413847] CR2: 0000558d727d0838 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18638.413851] PKRU: 55555554
+[18638.413853] Call Trace:
+[18638.413857]  <TASK>
+[18638.413861]  read_pin_configuration+0xe/0x1f0 [i915]
+[18638.414042]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18638.414114]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18638.414186]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18638.414256]  intel_digital_port_connected+0x29/0x90 [i915]
+[18638.414317]  intel_dp_detect+0xe9/0x870 [i915]
+[18638.414378]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18638.414384]  output_poll_execute+0x11f/0x2d0 [drm_kms_helper]
+[18638.414390]  process_one_work+0x19a/0x2c0
+[18638.414392]  worker_thread+0x1a8/0x310
+[18638.414394]  ? __pfx_worker_thread+0x10/0x10
+[18638.414395]  kthread+0xcc/0x100
+[18638.414396]  ? __pfx_kthread+0x10/0x10
+[18638.414397]  ret_from_fork+0x1aa/0x2a0
+[18638.414399]  ? __pfx_kthread+0x10/0x10
+[18638.414400]  ret_from_fork_asm+0x1a/0x30
+[18638.414402]  </TASK>
+[18638.414402] ---[ end trace 0000000000000000 ]---
+[18747.562338] i915 0000:00:02.0: [drm] *ERROR* AUX USBC1/DDI TC1/PHY TC1: did not complete or timeout within 10ms (status 0xad40023f)
+[18747.574350] i915 0000:00:02.0: [drm] *ERROR* AUX USBC1/DDI TC1/PHY TC1: did not complete or timeout within 10ms (status 0xad40023f)
+[18747.586333] i915 0000:00:02.0: [drm] *ERROR* AUX USBC1/DDI TC1/PHY TC1: did not complete or timeout within 10ms (status 0xad40023f)
+[18747.599330] i915 0000:00:02.0: [drm] *ERROR* AUX USBC1/DDI TC1/PHY TC1: did not complete or timeout within 10ms (status 0xad40023f)
+[18747.612413] i915 0000:00:02.0: [drm] *ERROR* AUX USBC1/DDI TC1/PHY TC1: did not complete or timeout within 10ms (status 0xad40023f)
+[18747.612420] i915 0000:00:02.0: [drm] *ERROR* AUX USBC1/DDI TC1/PHY TC1: not done (status 0xad40023f)
+[18747.803240] ------------[ cut here ]------------
+[18747.803244] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[18747.803246] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:934 at adlp_tc_phy_connect+0xf5/0x1d0 [i915], CPU#0: kworker/0:0/40626
+[18747.803381] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18747.803421]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18747.803465]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18747.803507] CPU: 0 UID: 0 PID: 40626 Comm: kworker/0:0 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18747.803511] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18747.803512] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18747.803514] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18747.803602] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18747.803677] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18747.803679] RSP: 0018:ffffcb380c497c50 EFLAGS: 00010282
+[18747.803681] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18747.803683] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18747.803683] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18747.803684] R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000019
+[18747.803685] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18747.803686] FS:  0000000000000000(0000) GS:ffff8b0867882000(0000) knlGS:0000000000000000
+[18747.803688] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18747.803689] CR2: 00007f76b8c49000 CR3: 000000010efea000 CR4: 0000000000752ef0
+[18747.803690] PKRU: 55555554
+[18747.803691] Call Trace:
+[18747.803695]  <TASK>
+[18747.803698]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18747.803772]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18747.803845]  intel_digital_port_connected+0x29/0x90 [i915]
+[18747.803909]  intel_dp_detect+0xe9/0x870 [i915]
+[18747.803972]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18747.803988]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18747.804069]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18747.804148]  process_one_work+0x19a/0x2c0
+[18747.804152]  worker_thread+0x1a8/0x310
+[18747.804154]  ? __pfx_worker_thread+0x10/0x10
+[18747.804156]  kthread+0xcc/0x100
+[18747.804158]  ? __pfx_kthread+0x10/0x10
+[18747.804159]  ret_from_fork+0x1aa/0x2a0
+[18747.804161]  ? __pfx_kthread+0x10/0x10
+[18747.804162]  ret_from_fork_asm+0x1a/0x30
+[18747.804166]  </TASK>
+[18747.804166] ---[ end trace 0000000000000000 ]---
+[18748.306820] ------------[ cut here ]------------
+[18748.306833] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18748.306840] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#0: kworker/0:0/40626
+[18748.307273] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18748.307432]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18748.307570]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18748.307693] CPU: 0 UID: 0 PID: 40626 Comm: kworker/0:0 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18748.307707] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18748.307711] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18748.307717] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18748.308115] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18748.308480] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18748.308488] RSP: 0018:ffffcb380c497bf0 EFLAGS: 00010282
+[18748.308496] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18748.308501] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18748.308505] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000001
+[18748.308510] R10: 0000000000000000 R11: 0000000000000001 R12: ffff8b0681dfa440
+[18748.308514] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18748.308519] FS:  0000000000000000(0000) GS:ffff8b0867882000(0000) knlGS:0000000000000000
+[18748.308525] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18748.308530] CR2: 00007f76b8c49000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18748.308536] PKRU: 55555554
+[18748.308539] Call Trace:
+[18748.308549]  <TASK>
+[18748.308557]  read_pin_configuration+0xe/0x1f0 [i915]
+[18748.308910]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18748.309259]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18748.309614]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18748.309960]  intel_digital_port_connected+0x29/0x90 [i915]
+[18748.310264]  intel_dp_detect+0xe9/0x870 [i915]
+[18748.310570]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18748.310604]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18748.310990]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18748.311328]  process_one_work+0x19a/0x2c0
+[18748.311341]  worker_thread+0x1a8/0x310
+[18748.311350]  ? __pfx_worker_thread+0x10/0x10
+[18748.311359]  kthread+0xcc/0x100
+[18748.311364]  ? __pfx_kthread+0x10/0x10
+[18748.311369]  ret_from_fork+0x1aa/0x2a0
+[18748.311376]  ? __pfx_kthread+0x10/0x10
+[18748.311380]  ret_from_fork_asm+0x1a/0x30
+[18748.311393]  </TASK>
+[18748.311396] ---[ end trace 0000000000000000 ]---
+[18748.311407] ------------[ cut here ]------------
+[18748.311409] Missing case (pin_assignment == 15)
+[18748.311413] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#0: kworker/0:0/40626
+[18748.311514] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18748.311535]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18748.311560]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18748.311581] CPU: 0 UID: 0 PID: 40626 Comm: kworker/0:0 Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18748.311583] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18748.311583] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18748.311585] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[18748.311663] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18748.311735] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18748.311736] RSP: 0018:ffffcb380c497bf0 EFLAGS: 00010206
+[18748.311737] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18748.311738] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18748.311739] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000001
+[18748.311740] R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000000f
+[18748.311741] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18748.311741] FS:  0000000000000000(0000) GS:ffff8b0867882000(0000) knlGS:0000000000000000
+[18748.311742] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18748.311743] CR2: 00007f76b8c49000 CR3: 000000005082e000 CR4: 0000000000752ef0
+[18748.311744] PKRU: 55555554
+[18748.311745] Call Trace:
+[18748.311746]  <TASK>
+[18748.311747]  read_pin_configuration+0xe/0x1f0 [i915]
+[18748.311818]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18748.311890]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18748.311961]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18748.312031]  intel_digital_port_connected+0x29/0x90 [i915]
+[18748.312092]  intel_dp_detect+0xe9/0x870 [i915]
+[18748.312153]  drm_helper_probe_detect_ctx+0x60/0xc0 [drm_kms_helper]
+[18748.312159]  intel_hotplug_detect_connector+0x3e/0x110 [i915]
+[18748.312237]  i915_hpd_poll_init_work+0x1bf/0x270 [i915]
+[18748.312319]  process_one_work+0x19a/0x2c0
+[18748.312321]  worker_thread+0x1a8/0x310
+[18748.312323]  ? __pfx_worker_thread+0x10/0x10
+[18748.312325]  kthread+0xcc/0x100
+[18748.312326]  ? __pfx_kthread+0x10/0x10
+[18748.312327]  ret_from_fork+0x1aa/0x2a0
+[18748.312328]  ? __pfx_kthread+0x10/0x10
+[18748.312329]  ret_from_fork_asm+0x1a/0x30
+[18748.312332]  </TASK>
+[18748.312333] ---[ end trace 0000000000000000 ]---
+[18751.369061] ------------[ cut here ]------------
+[18751.369068] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[18751.369071] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:934 at adlp_tc_phy_connect+0xf5/0x1d0 [i915], CPU#1: KMS thread/2612
+[18751.369326] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18751.369405]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18751.369490]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18751.369565] CPU: 1 UID: 103 PID: 2612 Comm: KMS thread Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18751.369574] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18751.369576] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18751.369579] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18751.369788] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18751.369793] RSP: 0018:ffffcb3804e4fb10 EFLAGS: 00010282
+[18751.369798] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18751.369801] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18751.369803] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18751.369805] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000019
+[18751.369808] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18751.369811] FS:  00007f0391b266c0(0000) GS:ffff8b0867902000(0000) knlGS:0000000000000000
+[18751.369814] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18751.369817] CR2: 000055c25fed8190 CR3: 0000000111b90000 CR4: 0000000000752ef0
+[18751.369820] PKRU: 55555554
+[18751.369822] Call Trace:
+[18751.369828]  <TASK>
+[18751.369833]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18751.370036]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18751.370239]  intel_digital_port_connected+0x29/0x90 [i915]
+[18751.370411]  intel_dp_detect+0xe9/0x870 [i915]
+[18751.370578]  drm_helper_probe_single_connector_modes+0x415/0x680 [drm_kms_helper]
+[18751.370595]  ? drm_atomic_get_property+0x153/0x220
+[18751.370606]  drm_mode_getconnector+0x388/0x490
+[18751.370613]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18751.370617]  drm_ioctl_kernel+0x9d/0xf0
+[18751.370623]  drm_ioctl+0x266/0x510
+[18751.370628]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18751.370633]  ? __sys_sendmsg+0xa7/0xc0
+[18751.370638]  __x64_sys_ioctl+0x8d/0xe0
+[18751.370646]  do_syscall_64+0xe4/0x5e0
+[18751.370652]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[18751.370657] RIP: 0033:0x7f039dd1891b
+[18751.370661] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[18751.370665] RSP: 002b:00007f0391b252c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[18751.370669] RAX: ffffffffffffffda RBX: 00007f036c02b580 RCX: 00007f039dd1891b
+[18751.370672] RDX: 00007f0391b25360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[18751.370674] RBP: 00007f0391b25360 R08: 0000000000000060 R09: 0000000000000008
+[18751.370676] R10: 00007f036c02f140 R11: 0000000000000246 R12: 00000000c05064a7
+[18751.370679] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f0391b25360
+[18751.370684]  </TASK>
+[18751.370686] ---[ end trace 0000000000000000 ]---
+[18751.873064] ------------[ cut here ]------------
+[18751.873078] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18751.873085] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#2: KMS thread/2612
+[18751.873560] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18751.873684]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18751.873826]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18751.873950] CPU: 2 UID: 103 PID: 2612 Comm: KMS thread Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18751.873964] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18751.873968] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18751.873972] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18751.874352] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18751.874360] RSP: 0018:ffffcb3804e4fab0 EFLAGS: 00010282
+[18751.874368] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18751.874373] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18751.874378] RBP: ffff8b069728e000 R08: ffff8b069723e8a0 R09: 000000000000007b
+[18751.874382] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8b0681dfa440
+[18751.874386] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18751.874391] FS:  00007f0391b266c0(0000) GS:ffff8b0867982000(0000) knlGS:0000000000000000
+[18751.874398] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18751.874403] CR2: 00007fe331e41000 CR3: 0000000111b90000 CR4: 0000000000752ef0
+[18751.874408] PKRU: 55555554
+[18751.874412] Call Trace:
+[18751.874421]  <TASK>
+[18751.874429]  read_pin_configuration+0xe/0x1f0 [i915]
+[18751.874785]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18751.875134]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18751.875503]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18751.875851]  intel_digital_port_connected+0x29/0x90 [i915]
+[18751.876164]  intel_dp_detect+0xe9/0x870 [i915]
+[18751.876464]  drm_helper_probe_single_connector_modes+0x415/0x680 [drm_kms_helper]
+[18751.876495]  ? drm_atomic_get_property+0x153/0x220
+[18751.876512]  drm_mode_getconnector+0x388/0x490
+[18751.876523]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18751.876531]  drm_ioctl_kernel+0x9d/0xf0
+[18751.876542]  drm_ioctl+0x266/0x510
+[18751.876551]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18751.876559]  ? __sys_sendmsg+0xa7/0xc0
+[18751.876569]  __x64_sys_ioctl+0x8d/0xe0
+[18751.876583]  do_syscall_64+0xe4/0x5e0
+[18751.876592]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[18751.876602] RIP: 0033:0x7f039dd1891b
+[18751.876610] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[18751.876616] RSP: 002b:00007f0391b252c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[18751.876625] RAX: ffffffffffffffda RBX: 00007f036c02b580 RCX: 00007f039dd1891b
+[18751.876629] RDX: 00007f0391b25360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[18751.876633] RBP: 00007f0391b25360 R08: 0000000000000060 R09: 0000000000000008
+[18751.876637] R10: 00007f036c02f140 R11: 0000000000000246 R12: 00000000c05064a7
+[18751.876642] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f0391b25360
+[18751.876651]  </TASK>
+[18751.876654] ---[ end trace 0000000000000000 ]---
+[18751.876664] ------------[ cut here ]------------
+[18751.876667] Missing case (pin_assignment == 15)
+[18751.876670] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#2: KMS thread/2612
+[18751.876979] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18751.877069]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18751.877185]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18751.877276] CPU: 2 UID: 103 PID: 2612 Comm: KMS thread Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18751.877285] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18751.877288] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18751.877292] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18751.877598] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18751.877603] RSP: 0018:ffffcb3804e4fab0 EFLAGS: 00010206
+[18751.877608] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18751.877612] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18751.877615] RBP: ffff8b069728e000 R08: ffff8b069723e8a0 R09: 000000000000007b
+[18751.877618] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000f
+[18751.877621] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18751.877625] FS:  00007f0391b266c0(0000) GS:ffff8b0867982000(0000) knlGS:0000000000000000
+[18751.877630] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18751.877634] CR2: 00007fe331e41000 CR3: 0000000111b90000 CR4: 0000000000752ef0
+[18751.877638] PKRU: 55555554
+[18751.877640] Call Trace:
+[18751.877644]  <TASK>
+[18751.877649]  read_pin_configuration+0xe/0x1f0 [i915]
+[18751.877920]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18751.878200]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18751.878472]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18751.878732]  intel_digital_port_connected+0x29/0x90 [i915]
+[18751.878941]  intel_dp_detect+0xe9/0x870 [i915]
+[18751.879149]  drm_helper_probe_single_connector_modes+0x415/0x680 [drm_kms_helper]
+[18751.879174]  ? drm_atomic_get_property+0x153/0x220
+[18751.879184]  drm_mode_getconnector+0x388/0x490
+[18751.879191]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18751.879196]  drm_ioctl_kernel+0x9d/0xf0
+[18751.879202]  drm_ioctl+0x266/0x510
+[18751.879209]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18751.879214]  ? __sys_sendmsg+0xa7/0xc0
+[18751.879220]  __x64_sys_ioctl+0x8d/0xe0
+[18751.879228]  do_syscall_64+0xe4/0x5e0
+[18751.879234]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[18751.879238] RIP: 0033:0x7f039dd1891b
+[18751.879242] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[18751.879246] RSP: 002b:00007f0391b252c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[18751.879251] RAX: ffffffffffffffda RBX: 00007f036c02b580 RCX: 00007f039dd1891b
+[18751.879254] RDX: 00007f0391b25360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[18751.879256] RBP: 00007f0391b25360 R08: 0000000000000060 R09: 0000000000000008
+[18751.879259] R10: 00007f036c02f140 R11: 0000000000000246 R12: 00000000c05064a7
+[18751.879262] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f0391b25360
+[18751.879267]  </TASK>
+[18751.879269] ---[ end trace 0000000000000000 ]---
+[18754.935043] ------------[ cut here ]------------
+[18754.935050] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[18754.935053] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:934 at adlp_tc_phy_connect+0xf5/0x1d0 [i915], CPU#3: KMS thread/2612
+[18754.935281] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18754.935350]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18754.935428]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18754.935498] CPU: 3 UID: 103 PID: 2612 Comm: KMS thread Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18754.935505] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18754.935507] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18754.935509] RIP: 0010:adlp_tc_phy_connect+0xff/0x1d0 [i915]
+[18754.935691] Code: 08 4c 8b 76 50 4d 85 f6 0f 84 da 00 00 00 48 89 f7 e8 85 32 82 cd 48 89 c6 48 8d 3d ab bb ce ff 48 c7 c1 a0 65 66 c1 4c 89 f2 <67> 48 0f b9 3a 48 8b 03 4c 8b 30 4d 85 f6 74 0b 4c 89 f7 e8 b9 89
+[18754.935694] RSP: 0018:ffffcb3804e4fb10 EFLAGS: 00010282
+[18754.935708] RAX: ffffffffc16845d1 RBX: ffff8b069728e000 RCX: ffffffffc16665a0
+[18754.935710] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236670
+[18754.935712] RBP: ffff8b068360a000 R08: ffff8b068360c758 R09: ffff8b068360a000
+[18754.935714] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000019
+[18754.935716] R13: 0000000000000001 R14: ffff8b0681dfa440 R15: 0000000000000001
+[18754.935718] FS:  00007f0391b266c0(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18754.935721] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18754.935724] CR2: 00007fcc75252000 CR3: 0000000111b90000 CR4: 0000000000752ef0
+[18754.935726] PKRU: 55555554
+[18754.935728] Call Trace:
+[18754.935733]  <TASK>
+[18754.935738]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18754.935905]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18754.936076]  intel_digital_port_connected+0x29/0x90 [i915]
+[18754.936217]  intel_dp_detect+0xe9/0x870 [i915]
+[18754.936352]  drm_helper_probe_single_connector_modes+0x415/0x680 [drm_kms_helper]
+[18754.936366]  ? drm_atomic_get_property+0x153/0x220
+[18754.936374]  drm_mode_getconnector+0x388/0x490
+[18754.936379]  ? __drm_mode_object_find+0x96/0xf0
+[18754.936383]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18754.936386]  drm_ioctl_kernel+0x9d/0xf0
+[18754.936391]  drm_ioctl+0x266/0x510
+[18754.936395]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18754.936399]  ? ktime_get+0x32/0xd0
+[18754.936404]  __x64_sys_ioctl+0x8d/0xe0
+[18754.936411]  do_syscall_64+0xe4/0x5e0
+[18754.936416]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[18754.936420] RIP: 0033:0x7f039dd1891b
+[18754.936424] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[18754.936426] RSP: 002b:00007f0391b252c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[18754.936430] RAX: ffffffffffffffda RBX: 00007f036c02b580 RCX: 00007f039dd1891b
+[18754.936432] RDX: 00007f0391b25360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[18754.936434] RBP: 00007f0391b25360 R08: 0000000000000060 R09: 0000000000000002
+[18754.936436] R10: 00007f036c0307e0 R11: 0000000000000246 R12: 00000000c05064a7
+[18754.936438] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f0391b25360
+[18754.936446]  </TASK>
+[18754.936447] ---[ end trace 0000000000000000 ]---
+[18755.438110] ------------[ cut here ]------------
+[18755.438126] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[18755.438133] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:316 at get_pin_assignment+0x19a/0x1f0 [i915], CPU#3: KMS thread/2612
+[18755.438620] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18755.438750]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18755.438894]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18755.439045] CPU: 3 UID: 103 PID: 2612 Comm: KMS thread Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18755.439059] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18755.439063] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18755.439068] RIP: 0010:get_pin_assignment+0x1a4/0x1f0 [i915]
+[18755.439456] Code: 85 ff 74 04 48 8b 7f 08 4c 8b 67 50 4d 85 e4 74 23 e8 40 3a 82 cd 48 89 c6 48 8d 3d f6 c2 ce ff 48 c7 c1 c8 64 66 c1 4c 89 e2 <67> 48 0f b9 3a e9 38 ff ff ff 4c 8b 27 eb d8 48 8b 3b 48 85 ff 74
+[18755.439465] RSP: 0018:ffffcb3804e4fab0 EFLAGS: 00010282
+[18755.439473] RAX: ffffffffc16845d1 RBX: ffff8b068360a000 RCX: ffffffffc16664c8
+[18755.439479] RDX: ffff8b0681dfa440 RSI: ffffffffc16845d1 RDI: ffffffffc1236600
+[18755.439483] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000079
+[18755.439488] R10: 0000000000000000 R11: 0000000000000001 R12: ffff8b0681dfa440
+[18755.439493] R13: 00000000ffffffff R14: 000000000000000f R15: 000000000000000f
+[18755.439498] FS:  00007f0391b266c0(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18755.439504] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18755.439509] CR2: 00007fcc75252000 CR3: 0000000111b90000 CR4: 0000000000752ef0
+[18755.439514] PKRU: 55555554
+[18755.439518] Call Trace:
+[18755.439529]  <TASK>
+[18755.439538]  read_pin_configuration+0xe/0x1f0 [i915]
+[18755.439920]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18755.440316]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18755.440667]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18755.440991]  intel_digital_port_connected+0x29/0x90 [i915]
+[18755.441291]  intel_dp_detect+0xe9/0x870 [i915]
+[18755.441556]  drm_helper_probe_single_connector_modes+0x415/0x680 [drm_kms_helper]
+[18755.441564]  ? drm_atomic_get_property+0x153/0x220
+[18755.441569]  drm_mode_getconnector+0x388/0x490
+[18755.441572]  ? __drm_mode_object_find+0x96/0xf0
+[18755.441574]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18755.441576]  drm_ioctl_kernel+0x9d/0xf0
+[18755.441579]  drm_ioctl+0x266/0x510
+[18755.441581]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18755.441583]  ? ktime_get+0x32/0xd0
+[18755.441586]  __x64_sys_ioctl+0x8d/0xe0
+[18755.441590]  do_syscall_64+0xe4/0x5e0
+[18755.441592]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[18755.441595] RIP: 0033:0x7f039dd1891b
+[18755.441597] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[18755.441599] RSP: 002b:00007f0391b252c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[18755.441601] RAX: ffffffffffffffda RBX: 00007f036c02b580 RCX: 00007f039dd1891b
+[18755.441602] RDX: 00007f0391b25360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[18755.441603] RBP: 00007f0391b25360 R08: 0000000000000060 R09: 0000000000000002
+[18755.441604] R10: 00007f036c0307e0 R11: 0000000000000246 R12: 00000000c05064a7
+[18755.441605] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f0391b25360
+[18755.441608]  </TASK>
+[18755.441609] ---[ end trace 0000000000000000 ]---
+[18755.441613] ------------[ cut here ]------------
+[18755.441614] Missing case (pin_assignment == 15)
+[18755.441615] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:333 at get_pin_assignment+0x155/0x1f0 [i915], CPU#3: KMS thread/2612
+[18755.441703] Modules linked in: tcp_diag inet_diag ccm snd_seq_dummy snd_hrtimer snd_seq snd_seq_device nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat x_tables snd_hda_codec_intelhdmi snd_hda_codec_hdmi snd_hda_codec_alc269 snd_hda_codec_realtek_lib snd_hda_scodec_component snd_hda_codec_generic uhid rfcomm cmac nf_tables bnep binfmt_misc snd_hda_intel snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp snd_sof snd_sof_utils snd_soc_acpi_intel_match snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation snd_soc_sdw_utils snd_soc_acpi crc8 soundwire_bus snd_soc_sdca snd_soc_avs snd_soc_hda_codec snd_hda_ext_core intel_ipu6_isys snd_hda_codec v4l2_fwnode snd_hda_core v4l2_async videobuf2_dma_sg
+[18755.441734]  videobuf2_memops snd_intel_dspcfg videobuf2_v4l2 x86_pkg_temp_thermal intel_powerclamp videodev snd_intel_sdw_acpi coretemp snd_hwdep videobuf2_common snd_soc_core joydev mc snd_compress i915 ac97_bus kvm_intel snd_pcm_dmaengine kvm snd_pcm btusb btbcm iTCO_wdt btmtk irqbypass snd_timer processor_thermal_device_pci btrtl hid_multitouch intel_pmc_bxt spi_pxa2xx_platform snd processor_thermal_device btintel dw_dmac rapl intel_rapl_msr i2c_designware_platform i2c_designware_core spi_pxa2xx_core wmi_bmof bluetooth intel_cstate pcspkr hid_generic soundcore processor_thermal_wt_hint iwlmvm drm_buddy platform_temperature_control i2c_i801 i2c_smbus ttm mac80211 processor_thermal_soc_slider intel_skl_int3472_tps68470 ptp intel_pmc_core da280 i2c_algo_bit clk_tps68470 platform_profile pps_core industrialio libarc4 drm_display_helper pmt_telemetry battery iwlwifi pmt_discovery cec processor_thermal_rfim processor_thermal_rapl drm_client_lib tpm_crb pmt_class intel_hid drm_kms_helper intel_skl_int3472_discrete
+[18755.441769]  tpm_tis int3400_thermal intel_rapl_common intel_skl_int3472_common processor_thermal_wt_req intel_gtt sparse_keymap intel_pmc_ssram_telemetry acpi_pad mei_me acpi_thermal_rel tpm_tis_core processor_thermal_power_floor acpi_tad intel_ish_ipc video cfg80211 intel_ipu6 mei processor_thermal_mbox wmi ac intel_ishtp intel_lpss_pci intel_vsec int340x_thermal_zone rfkill ipu_bridge button igen6_edac intel_lpss evdev serio_raw parport_pc ppdev lp parport fuse configfs nfnetlink tpm libaescfb rng_core overlay squashfs ext2 nls_utf8 nls_iso8859_1 nls_cp437 vfat fat ata_generic ahci libahci usb_storage uhci_hcd ohci_pci ohci_hcd xhci_pci xhci_hcd ehci_pci ehci_hcd sg sr_mod cdrom sd_mod
+[18755.441801] CPU: 3 UID: 103 PID: 2612 Comm: KMS thread Tainted: G S      W           7.0 #1 PREEMPT(full) 
+[18755.441803] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[18755.441804] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[18755.441805] RIP: 0010:get_pin_assignment+0x15f/0x1f0 [i915]
+[18755.441890] Code: 16 00 41 be 00 00 00 1e 41 bf 00 00 00 1e e9 37 ff ff ff 41 83 fd 06 74 c1 48 8d 3d 2b c3 ce ff 48 c7 c6 92 d7 68 c1 44 89 ea <67> 48 0f b9 3a 5b 44 89 e0 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc
+[18755.441892] RSP: 0018:ffffcb3804e4fab0 EFLAGS: 00010206
+[18755.441893] RAX: 0000000000000001 RBX: ffff8b068360a000 RCX: 0000000000000000
+[18755.441894] RDX: 000000000000000f RSI: ffffffffc168d792 RDI: ffffffffc12365f0
+[18755.441895] RBP: ffff8b069728e000 R08: 0000000000000000 R09: 0000000000000079
+[18755.441896] R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000000f
+[18755.441897] R13: 000000000000000f R14: 000000000000000f R15: 000000000000000f
+[18755.441898] FS:  00007f0391b266c0(0000) GS:ffff8b0867a02000(0000) knlGS:0000000000000000
+[18755.441899] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[18755.441900] CR2: 00007fcc75252000 CR3: 0000000111b90000 CR4: 0000000000752ef0
+[18755.441901] PKRU: 55555554
+[18755.441902] Call Trace:
+[18755.441903]  <TASK>
+[18755.441904]  read_pin_configuration+0xe/0x1f0 [i915]
+[18755.441987]  adlp_tc_phy_connect+0x13f/0x1d0 [i915]
+[18755.442072]  intel_tc_port_reset_mode+0x23a/0x350 [i915]
+[18755.442155]  __intel_tc_port_lock+0xc3/0x120 [i915]
+[18755.442237]  intel_digital_port_connected+0x29/0x90 [i915]
+[18755.442310]  intel_dp_detect+0xe9/0x870 [i915]
+[18755.442381]  drm_helper_probe_single_connector_modes+0x415/0x680 [drm_kms_helper]
+[18755.442390]  ? drm_atomic_get_property+0x153/0x220
+[18755.442394]  drm_mode_getconnector+0x388/0x490
+[18755.442396]  ? __drm_mode_object_find+0x96/0xf0
+[18755.442398]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18755.442399]  drm_ioctl_kernel+0x9d/0xf0
+[18755.442402]  drm_ioctl+0x266/0x510
+[18755.442404]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[18755.442406]  ? ktime_get+0x32/0xd0
+[18755.442409]  __x64_sys_ioctl+0x8d/0xe0
+[18755.442412]  do_syscall_64+0xe4/0x5e0
+[18755.442415]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[18755.442417] RIP: 0033:0x7f039dd1891b
+[18755.442418] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[18755.442420] RSP: 002b:00007f0391b252c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[18755.442421] RAX: ffffffffffffffda RBX: 00007f036c02b580 RCX: 00007f039dd1891b
+[18755.442422] RDX: 00007f0391b25360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[18755.442423] RBP: 00007f0391b25360 R08: 0000000000000060 R09: 0000000000000002
+[18755.442424] R10: 00007f036c0307e0 R11: 0000000000000246 R12: 00000000c05064a7
+[18755.442425] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f0391b25360
+[18755.442427]  </TASK>
+[18755.442428] ---[ end trace 0000000000000000 ]---

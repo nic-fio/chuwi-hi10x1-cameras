@@ -1,0 +1,19 @@
+ago 11 05:34:50 CHUWI kernel: intel-ipu6 0000:00:05.0: enabling device (0000 -> 0002)
+ago 11 05:34:50 CHUWI kernel: intel-ipu6 0000:00:05.0: Sending BOOT_LOAD to CSE
+ago 11 05:34:50 CHUWI kernel: intel-ipu6 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+ago 11 05:34:50 CHUWI kernel: int3472-discrete INT3472:01: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:50 CHUWI kernel: int3472-discrete INT3472:02: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:50 CHUWI kernel: intel-ipu6 0000:00:05.0: CSE authenticate_run done
+ago 11 05:34:50 CHUWI kernel: intel-ipu6 0000:00:05.0: IPU6-v3[462e] hardware version 5
+ago 11 05:34:51 CHUWI kernel: int3472-discrete INT3472:02: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:51 CHUWI kernel: int3472-discrete INT3472:01: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:52 CHUWI kernel: int3472-discrete INT3472:01: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:52 CHUWI kernel: int3472-discrete INT3472:02: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:53 CHUWI kernel: int3472-discrete INT3472:01: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:53 CHUWI kernel: int3472-discrete INT3472:02: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:54 CHUWI kernel: int3472-discrete INT3472:01: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:34:54 CHUWI kernel: int3472-discrete INT3472:02: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:35:11 CHUWI kernel: int3472-discrete INT3472:02: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:35:11 CHUWI kernel: int3472-discrete INT3472:01: cannot find GPIO chip INTC1057:00, deferring
+ago 11 05:35:11 CHUWI kernel: platform INT3472:02: deferred probe pending: int3472-discrete: Failed to get GPIO
+ago 11 05:35:11 CHUWI kernel: platform INT3472:01: deferred probe pending: int3472-discrete: Failed to get GPIO

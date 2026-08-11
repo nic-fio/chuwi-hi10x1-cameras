@@ -1,0 +1,971 @@
+From 0bdb102afd9d95ad3721d2469d667eb6df36e70a Mon Sep 17 00:00:00 2001
+From: INTEL-CAMERA WIP <wip@localhost>
+Date: Tue, 11 Aug 2026 14:24:16 +0200
+Subject: [PATCH 2/5] BOZZA media: i2c: Add GC5035 image sensor driver
+
+NON INVIABILE: tabelle registri segnaposto, V4L2_CID_ANALOGUE_GAIN
+limitato a 1x, attribuzione non sciolta, manca il Signed-off-by.
+Vedi patches/wip/README.md nel progetto.
+
+NON TESTATO su hardware: compila e passa checkpatch, nulla di piu'.
+Il kernel che lo contiene non e' mai stato avviato.
+
+Skeleton driver for the GalaxyCore GC5035, structured after gc05a2.c
+with the x86/ACPI adaptations used by ov2740.c and t4ka3.c: ACPI match
+table, optional reset/powerdown GPIOs, devm_v4l2_sensor_clk_get(),
+8-bit CCI regmap with page banking via register 0xfe, and
+enable_streams/disable_streams instead of the deprecated s_stream.
+
+Target hardware: CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6),
+ACPI HID GCTI5035 at \_SB.PC00.LNK1.
+---
+ MAINTAINERS                |   7 +
+ drivers/media/i2c/Kconfig  |  10 +
+ drivers/media/i2c/Makefile |   1 +
+ drivers/media/i2c/gc5035.c | 883 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 901 insertions(+)
+ create mode 100644 drivers/media/i2c/gc5035.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8014b9f82..165a18928 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10794,6 +10794,13 @@ T:	git git://linuxtv.org/media.git
+ F:	Documentation/devicetree/bindings/media/i2c/galaxycore,gc2145.yaml
+ F:	drivers/media/i2c/gc2145.c
+ 
++GALAXYCORE GC5035 CAMERA SENSOR DRIVER
++M:	TODO Nome Cognome <email@reale>
++L:	linux-media@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/media/i2c/galaxycore,gc5035.yaml
++F:	drivers/media/i2c/gc5035.c
++
+ GATEWORKS SYSTEM CONTROLLER (GSC) DRIVER
+ M:	Tim Harvey <tharvey@gateworks.com>
+ S:	Maintained
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 5d173e0ec..b793906c3 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -110,6 +110,16 @@ config VIDEO_GC2145
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called gc2145.
+ 
++config VIDEO_GC5035
++	tristate "GalaxyCore GC5035 sensor support"
++	select V4L2_CCI_I2C
++	help
++	  This is a Video4Linux2 sensor driver for the GalaxyCore GC5035
++	  5 Mpixel camera.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called gc5035.
++
+ config VIDEO_HI556
+ 	tristate "Hynix Hi-556 sensor support"
+ 	help
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index e45359efe..de46c13ac 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -42,6 +42,7 @@ obj-$(CONFIG_VIDEO_GC0310) += gc0310.o
+ obj-$(CONFIG_VIDEO_GC05A2) += gc05a2.o
+ obj-$(CONFIG_VIDEO_GC08A3) += gc08a3.o
+ obj-$(CONFIG_VIDEO_GC2145) += gc2145.o
++obj-$(CONFIG_VIDEO_GC5035) += gc5035.o
+ obj-$(CONFIG_VIDEO_HI556) += hi556.o
+ obj-$(CONFIG_VIDEO_HI846) += hi846.o
+ obj-$(CONFIG_VIDEO_HI847) += hi847.o
+diff --git a/drivers/media/i2c/gc5035.c b/drivers/media/i2c/gc5035.c
+new file mode 100644
+index 000000000..ed8ed27a4
+--- /dev/null
++++ b/drivers/media/i2c/gc5035.c
+@@ -0,0 +1,883 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for GalaxyCore GC5035 image sensor
++ *
++ * Copyright (C) 2026 <TODO: nome e email reali prima dell'invio upstream>
++ *
++ * SCHELETRO — NON FUNZIONANTE. Vedi i TODO marcati "BLOCCANTE".
++ *
++ * Struttura basata su drivers/media/i2c/gc05a2.c (Zhi Mao, MediaTek),
++ * stesso produttore di sensori. Adattamento x86/ACPI basato su
++ * drivers/media/i2c/ov2740.c, che gira sulla stessa catena IPU6.
++ *
++ * Registri derivati dalla patch out-of-tree per Alder Lake-M in
++ * intel/ipu6-drivers, che a sua volta deriva dalla serie ChromeOS di
++ * Tomasz Figa. L'attribuzione va concordata prima di qualsiasi invio:
++ * vedi reference/README.md nel progetto.
++ */
++#include <linux/acpi.h>
++#include <linux/array_size.h>
++#include <linux/bits.h>
++#include <linux/clk.h>
++#include <linux/container_of.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/math64.h>
++#include <linux/pm_runtime.h>
++#include <linux/property.h>
++#include <linux/regulator/consumer.h>
++#include <linux/types.h>
++#include <linux/units.h>
++
++#include <media/v4l2-cci.h>
++#include <media/v4l2-common.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-fwnode.h>
++#include <media/v4l2-subdev.h>
++
++/*
++ * Il GC5035 usa indirizzi di registro a 8 bit con banchi di pagina:
++ * il registro 0xfe seleziona la pagina. Tutti i registri sotto sono in
++ * pagina 0 salvo dove indicato.
++ */
++#define GC5035_REG_PAGE_SELECT		CCI_REG8(0xfe)
++#define GC5035_PAGE_0			0x00
++#define GC5035_PAGE_1			0x01
++
++/* leggibili in qualsiasi pagina */
++#define GC5035_REG_CHIP_ID		CCI_REG16(0xf0)
++#define GC5035_CHIP_ID			0x5035
++
++#define GC5035_REG_EXPOSURE		CCI_REG16(0x03)
++#define GC5035_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
++#define GC5035_REG_DIGITAL_GAIN_INT	CCI_REG8(0xb1)
++#define GC5035_REG_DIGITAL_GAIN_FRAC	CCI_REG8(0xb2)
++#define GC5035_REG_FRAME_LENGTH		CCI_REG16(0x41)
++#define GC5035_REG_STREAM		CCI_REG8(0x3e)
++#define GC5035_STREAM_ON		0x91
++#define GC5035_STREAM_OFF		0x01
++
++/* pagina 1 */
++#define GC5035_REG_TEST_PATTERN		CCI_REG8(0x8c)
++#define GC5035_TEST_PATTERN_ON		0x11
++#define GC5035_TEST_PATTERN_OFF		0x10
++
++#define GC5035_NATIVE_WIDTH		2592
++#define GC5035_NATIVE_HEIGHT		1944
++
++#define GC5035_EXP_MIN			4
++#define GC5035_EXP_STEP			1
++#define GC5035_EXP_MARGIN		16
++#define GC5035_VTS_MAX			0x3fff
++
++/*
++ * TODO BLOCCANTE: confermare dalla DSDT del CHUWI Hi10 X1.
++ * 438 MHz e 2 lane vengono dalla patch Intel per Alder Lake-M, piattaforma
++ * diversa. Precedente che dimostra che il valore puo' essere machine-specific:
++ * commit fb16c04a538e cambia la link frequency di ov2740 a 180 MHz sulle
++ * macchine che usano ipu-bridge, contro i 360 MHz dei Chromebook.
++ *
++ * V4L2_CID_LINK_FREQ e' il clock DDR, meta' del bit rate per lane:
++ * 876 Mbps/lane / 2 = 438 MHz.
++ */
++#define GC5035_LINK_FREQ_438MHZ		(438 * HZ_PER_MHZ)
++#define GC5035_DATA_LANES		2
++#define GC5035_RGB_DEPTH		10
++
++/* TODO: confermare dal _DSD clock-frequency. Su ADL-N e' spesso 19.2 MHz. */
++#define GC5035_MCLK_DEFAULT		(24 * HZ_PER_MHZ)
++
++#define GC5035_SLEEP_US			(5 * USEC_PER_MSEC)
++
++#define GC5035_MBUS_CODE		MEDIA_BUS_FMT_SGRBG10_1X10
++
++static const char * const gc5035_test_pattern_menu[] = {
++	"No Pattern",
++	"Color Bar",
++};
++
++static const s64 gc5035_link_freq_menu_items[] = {
++	GC5035_LINK_FREQ_438MHZ,
++};
++
++/*
++ * Su x86 questi regolatori li fornisce INT3472 quando i pin corrispondenti
++ * sono descritti nei _DSM. Se non lo sono, il core restituisce dei dummy e
++ * il bulk_get riesce comunque.
++ */
++static const char * const gc5035_supply_name[] = {
++	"avdd",
++	"dvdd",
++	"dovdd",
++};
++
++struct gc5035 {
++	struct device *dev;
++	struct v4l2_subdev sd;
++	struct media_pad pad;
++
++	struct clk *xclk;
++	struct regulator_bulk_data supplies[ARRAY_SIZE(gc5035_supply_name)];
++	struct gpio_desc *reset_gpio;
++	struct gpio_desc *powerdown_gpio;
++
++	struct v4l2_ctrl_handler ctrls;
++	struct v4l2_ctrl *pixel_rate;
++	struct v4l2_ctrl *link_freq;
++	struct v4l2_ctrl *exposure;
++	struct v4l2_ctrl *vblank;
++	struct v4l2_ctrl *hblank;
++
++	struct regmap *regmap;
++	unsigned long link_freq_bitmap;
++	u8 data_lanes;
++
++	bool identified;
++	const struct gc5035_mode *cur_mode;
++};
++
++struct gc5035_reg_list {
++	u32 num_of_regs;
++	const struct cci_reg_sequence *regs;
++};
++
++/*
++ * TODO BLOCCANTE: importare la sequenza completa dalla patch Intel
++ * (reference/gc5035-intel-adlm.patch, ~600 righe di tabelle).
++ *
++ * Non e' un copia-incolla: i registri di PLL e timing D-PHY sono blob non
++ * documentati, calcolati per la link frequency di ADL-M. Se la DSDT del CHUWI
++ * dichiara valori diversi non si sa quali byte cambiare — vedi
++ * docs/05-parametri-sensori.md, "Rischio aperto".
++ *
++ * L'attribuzione va concordata prima: reference/README.md.
++ */
++static const struct cci_reg_sequence gc5035_mode_2592x1944[] = {
++	{ GC5035_REG_PAGE_SELECT, GC5035_PAGE_0 },
++};
++
++struct gc5035_mode {
++	u32 width;
++	u32 height;
++	const struct gc5035_reg_list reg_list;
++
++	u32 hts;
++	u32 vts_def;
++	u32 vts_min;
++};
++
++/*
++ * Solo la full resolution. Le mode binned della patch Intel (1296x972 e
++ * 1280x720) dichiarano hts 1460 e 1896 ma scrivono lo stesso line length di
++ * 2920 nei registri: l'HBLANK esposto sarebbe sbagliato. Vanno aggiunte solo
++ * dopo aver verificato i registri reali sull'hardware.
++ */
++static const struct gc5035_mode gc5035_modes[] = {
++	{
++		.width = GC5035_NATIVE_WIDTH,
++		.height = GC5035_NATIVE_HEIGHT,
++		.reg_list = {
++			.num_of_regs = ARRAY_SIZE(gc5035_mode_2592x1944),
++			.regs = gc5035_mode_2592x1944,
++		},
++		.hts = 2920,
++		.vts_def = 2008,
++		.vts_min = 2008,
++	},
++};
++
++static inline struct gc5035 *to_gc5035(struct v4l2_subdev *sd)
++{
++	return container_of(sd, struct gc5035, sd);
++}
++
++static int gc5035_set_page(struct gc5035 *gc5035, u8 page)
++{
++	return cci_write(gc5035->regmap, GC5035_REG_PAGE_SELECT, page, NULL);
++}
++
++static int gc5035_power_on(struct device *dev)
++{
++	struct v4l2_subdev *sd = dev_get_drvdata(dev);
++	struct gc5035 *gc5035 = to_gc5035(sd);
++	int ret;
++
++	ret = regulator_bulk_enable(ARRAY_SIZE(gc5035_supply_name),
++				    gc5035->supplies);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "failed to enable regulators\n");
++
++	ret = clk_prepare_enable(gc5035->xclk);
++	if (ret < 0) {
++		regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name),
++				       gc5035->supplies);
++		return dev_err_probe(dev, ret, "failed to enable clock\n");
++	}
++
++	fsleep(GC5035_SLEEP_US);
++
++	gpiod_set_value_cansleep(gc5035->powerdown_gpio, 0);
++	gpiod_set_value_cansleep(gc5035->reset_gpio, 0);
++
++	fsleep(GC5035_SLEEP_US);
++
++	return 0;
++}
++
++static int gc5035_power_off(struct device *dev)
++{
++	struct v4l2_subdev *sd = dev_get_drvdata(dev);
++	struct gc5035 *gc5035 = to_gc5035(sd);
++
++	/*
++	 * Ordine invertito rispetto a gc05a2: su INT3472 il clock e' spesso un
++	 * clk-gpio che coincide con l'enable del modulo, quindi va spento dopo
++	 * aver asserito reset e powerdown.
++	 */
++	gpiod_set_value_cansleep(gc5035->reset_gpio, 1);
++	gpiod_set_value_cansleep(gc5035->powerdown_gpio, 1);
++	clk_disable_unprepare(gc5035->xclk);
++	regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name),
++			       gc5035->supplies);
++
++	return 0;
++}
++
++static int gc5035_enum_mbus_code(struct v4l2_subdev *sd,
++				 struct v4l2_subdev_state *sd_state,
++				 struct v4l2_subdev_mbus_code_enum *code)
++{
++	if (code->index > 0)
++		return -EINVAL;
++
++	code->code = GC5035_MBUS_CODE;
++
++	return 0;
++}
++
++static int gc5035_enum_frame_size(struct v4l2_subdev *sd,
++				  struct v4l2_subdev_state *sd_state,
++				  struct v4l2_subdev_frame_size_enum *fse)
++{
++	if (fse->code != GC5035_MBUS_CODE)
++		return -EINVAL;
++
++	if (fse->index >= ARRAY_SIZE(gc5035_modes))
++		return -EINVAL;
++
++	fse->min_width = gc5035_modes[fse->index].width;
++	fse->max_width = gc5035_modes[fse->index].width;
++	fse->min_height = gc5035_modes[fse->index].height;
++	fse->max_height = gc5035_modes[fse->index].height;
++
++	return 0;
++}
++
++static void gc5035_update_pad_format(const struct gc5035_mode *mode,
++				     struct v4l2_mbus_framefmt *fmt)
++{
++	fmt->width = mode->width;
++	fmt->height = mode->height;
++	fmt->code = GC5035_MBUS_CODE;
++	fmt->field = V4L2_FIELD_NONE;
++	fmt->colorspace = V4L2_COLORSPACE_RAW;
++	fmt->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(fmt->colorspace);
++	fmt->quantization = V4L2_QUANTIZATION_FULL_RANGE;
++	fmt->xfer_func = V4L2_XFER_FUNC_NONE;
++}
++
++/*
++ * Documentation/driver-api/media/tx-rx.rst:
++ *   pixel_rate = link_freq * 2 * nr_lanes * 16 / k / bpp,  k = 16 per D-PHY
++ * cioe' link_freq * 2 * lanes / bpp.
++ *
++ * Controprova con il timing del mode, che e' il vincolo che conta davvero
++ * perche' V4L2_CID_PIXEL_RATE viene usato insieme a HBLANK/VBLANK per
++ * calcolare il frame interval:
++ *   hts * vts * fps = 2920 * 2008 * 30 = 175,9 MHz
++ *   link_freq * 2 * lanes / bpp = 438e6 * 2 * 2 / 10 = 175,2 MHz
++ * I due valori concordano, quindi la formula del bus e' utilizzabile qui.
++ */
++static u64 gc5035_to_pixel_rate(struct gc5035 *gc5035, u32 f_index)
++{
++	u64 pixel_rate = gc5035_link_freq_menu_items[f_index] * 2 *
++			 gc5035->data_lanes;
++
++	return div_u64(pixel_rate, GC5035_RGB_DEPTH);
++}
++
++static int gc5035_update_cur_mode_controls(struct gc5035 *gc5035,
++					   const struct gc5035_mode *mode)
++{
++	s64 exposure_max, h_blank;
++	int ret;
++
++	ret = __v4l2_ctrl_modify_range(gc5035->vblank,
++				       mode->vts_min - mode->height,
++				       GC5035_VTS_MAX - mode->height, 1,
++				       mode->vts_def - mode->height);
++	if (ret)
++		return ret;
++
++	h_blank = mode->hts - mode->width;
++	ret = __v4l2_ctrl_modify_range(gc5035->hblank, h_blank, h_blank, 1,
++				       h_blank);
++	if (ret)
++		return ret;
++
++	exposure_max = mode->vts_def - GC5035_EXP_MARGIN;
++
++	return __v4l2_ctrl_modify_range(gc5035->exposure, GC5035_EXP_MIN,
++					exposure_max, GC5035_EXP_STEP,
++					exposure_max);
++}
++
++static int gc5035_set_format(struct v4l2_subdev *sd,
++			     struct v4l2_subdev_state *state,
++			     struct v4l2_subdev_format *fmt)
++{
++	struct gc5035 *gc5035 = to_gc5035(sd);
++	struct v4l2_mbus_framefmt *mbus_fmt;
++	const struct gc5035_mode *mode;
++	struct v4l2_rect *crop;
++
++	mode = v4l2_find_nearest_size(gc5035_modes, ARRAY_SIZE(gc5035_modes),
++				      width, height, fmt->format.width,
++				      fmt->format.height);
++
++	crop = v4l2_subdev_state_get_crop(state, 0);
++	crop->width = mode->width;
++	crop->height = mode->height;
++
++	gc5035_update_pad_format(mode, &fmt->format);
++	mbus_fmt = v4l2_subdev_state_get_format(state, 0);
++	*mbus_fmt = fmt->format;
++
++	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY)
++		return 0;
++
++	gc5035->cur_mode = mode;
++
++	return gc5035_update_cur_mode_controls(gc5035, mode);
++}
++
++static int gc5035_get_selection(struct v4l2_subdev *sd,
++				struct v4l2_subdev_state *state,
++				struct v4l2_subdev_selection *sel)
++{
++	switch (sel->target) {
++	case V4L2_SEL_TGT_CROP_DEFAULT:
++	case V4L2_SEL_TGT_CROP:
++		sel->r = *v4l2_subdev_state_get_crop(state, 0);
++		break;
++	case V4L2_SEL_TGT_CROP_BOUNDS:
++	case V4L2_SEL_TGT_NATIVE_SIZE:
++		sel->r.top = 0;
++		sel->r.left = 0;
++		sel->r.width = GC5035_NATIVE_WIDTH;
++		sel->r.height = GC5035_NATIVE_HEIGHT;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int gc5035_init_state(struct v4l2_subdev *sd,
++			     struct v4l2_subdev_state *state)
++{
++	struct v4l2_subdev_format fmt = {
++		.which = V4L2_SUBDEV_FORMAT_TRY,
++		.pad = 0,
++		.format = {
++			.code = GC5035_MBUS_CODE,
++			.width = gc5035_modes[0].width,
++			.height = gc5035_modes[0].height,
++		},
++	};
++
++	return gc5035_set_format(sd, state, &fmt);
++}
++
++static int gc5035_test_pattern(struct gc5035 *gc5035, u32 pattern)
++{
++	int ret;
++
++	ret = gc5035_set_page(gc5035, GC5035_PAGE_1);
++	if (ret)
++		return ret;
++
++	ret = cci_write(gc5035->regmap, GC5035_REG_TEST_PATTERN,
++			pattern ? GC5035_TEST_PATTERN_ON :
++				  GC5035_TEST_PATTERN_OFF, NULL);
++	if (ret)
++		return ret;
++
++	return gc5035_set_page(gc5035, GC5035_PAGE_0);
++}
++
++static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
++{
++	struct gc5035 *gc5035 =
++		container_of(ctrl->handler, struct gc5035, ctrls);
++	s64 exposure_max;
++	int ret = 0;
++
++	if (ctrl->id == V4L2_CID_VBLANK) {
++		exposure_max = gc5035->cur_mode->height + ctrl->val -
++			       GC5035_EXP_MARGIN;
++		ret = __v4l2_ctrl_modify_range(gc5035->exposure,
++					       GC5035_EXP_MIN, exposure_max,
++					       GC5035_EXP_STEP, exposure_max);
++		if (ret)
++			return ret;
++	}
++
++	if (!pm_runtime_get_if_active(gc5035->dev))
++		return 0;
++
++	switch (ctrl->id) {
++	case V4L2_CID_EXPOSURE:
++		ret = cci_write(gc5035->regmap, GC5035_REG_EXPOSURE,
++				ctrl->val, NULL);
++		break;
++	case V4L2_CID_ANALOGUE_GAIN:
++		/*
++		 * TODO BLOCCANTE: 0xb6 non prende un moltiplicatore, prende un
++		 * INDICE in GC5035_AGC_Param[17][2] (soglia -> codice), e il
++		 * resto va compensato in digital gain su 0xb1/0xb2. La tabella
++		 * va importata dalla patch Intel. Finche' non c'e', il
++		 * controllo e' limitato a 1x in init_controls.
++		 */
++		ret = -EOPNOTSUPP;
++		break;
++	case V4L2_CID_VBLANK:
++		ret = cci_write(gc5035->regmap, GC5035_REG_FRAME_LENGTH,
++				gc5035->cur_mode->height + ctrl->val, NULL);
++		break;
++	case V4L2_CID_TEST_PATTERN:
++		ret = gc5035_test_pattern(gc5035, ctrl->val);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	pm_runtime_put(gc5035->dev);
++
++	return ret;
++}
++
++static const struct v4l2_ctrl_ops gc5035_ctrl_ops = {
++	.s_ctrl = gc5035_set_ctrl,
++};
++
++static int gc5035_identify_module(struct gc5035 *gc5035)
++{
++	u64 val;
++	int ret;
++
++	if (gc5035->identified)
++		return 0;
++
++	ret = cci_read(gc5035->regmap, GC5035_REG_CHIP_ID, &val, NULL);
++	if (ret)
++		return ret;
++
++	if (val != GC5035_CHIP_ID)
++		return dev_err_probe(gc5035->dev, -ENXIO,
++				     "chip id mismatch: %x != %llx\n",
++				     GC5035_CHIP_ID, val);
++
++	gc5035->identified = true;
++
++	return 0;
++}
++
++static int gc5035_enable_streams(struct v4l2_subdev *sd,
++				 struct v4l2_subdev_state *state,
++				 u32 pad, u64 streams_mask)
++{
++	struct gc5035 *gc5035 = to_gc5035(sd);
++	const struct gc5035_reg_list *reg_list;
++	int ret;
++
++	ret = pm_runtime_resume_and_get(gc5035->dev);
++	if (ret < 0)
++		return ret;
++
++	ret = gc5035_identify_module(gc5035);
++	if (ret)
++		goto err_rpm_put;
++
++	reg_list = &gc5035->cur_mode->reg_list;
++
++	cci_write(gc5035->regmap, GC5035_REG_PAGE_SELECT, GC5035_PAGE_0, &ret);
++	cci_multi_reg_write(gc5035->regmap, reg_list->regs,
++			    reg_list->num_of_regs, &ret);
++	if (ret)
++		goto err_rpm_put;
++
++	ret = __v4l2_ctrl_handler_setup(&gc5035->ctrls);
++	if (ret)
++		goto err_rpm_put;
++
++	ret = cci_write(gc5035->regmap, GC5035_REG_STREAM,
++			GC5035_STREAM_ON, NULL);
++	if (ret)
++		goto err_rpm_put;
++
++	return 0;
++
++err_rpm_put:
++	pm_runtime_put(gc5035->dev);
++
++	return ret;
++}
++
++static int gc5035_disable_streams(struct v4l2_subdev *sd,
++				  struct v4l2_subdev_state *state,
++				  u32 pad, u64 streams_mask)
++{
++	struct gc5035 *gc5035 = to_gc5035(sd);
++	int ret;
++
++	ret = cci_write(gc5035->regmap, GC5035_REG_STREAM,
++			GC5035_STREAM_OFF, NULL);
++
++	pm_runtime_put(gc5035->dev);
++
++	return ret;
++}
++
++static const struct v4l2_subdev_video_ops gc5035_video_ops = {
++	.s_stream = v4l2_subdev_s_stream_helper,
++};
++
++static const struct v4l2_subdev_pad_ops gc5035_pad_ops = {
++	.enum_mbus_code = gc5035_enum_mbus_code,
++	.enum_frame_size = gc5035_enum_frame_size,
++	.get_fmt = v4l2_subdev_get_fmt,
++	.set_fmt = gc5035_set_format,
++	.get_selection = gc5035_get_selection,
++	.enable_streams = gc5035_enable_streams,
++	.disable_streams = gc5035_disable_streams,
++};
++
++static const struct v4l2_subdev_ops gc5035_subdev_ops = {
++	.video = &gc5035_video_ops,
++	.pad = &gc5035_pad_ops,
++};
++
++static const struct v4l2_subdev_internal_ops gc5035_internal_ops = {
++	.init_state = gc5035_init_state,
++};
++
++static int gc5035_parse_fwnode(struct gc5035 *gc5035)
++{
++	struct v4l2_fwnode_endpoint bus_cfg = {
++		.bus_type = V4L2_MBUS_CSI2_DPHY,
++	};
++	struct device *dev = gc5035->dev;
++	struct fwnode_handle *endpoint;
++	int ret;
++
++	/*
++	 * Su IPU6 questo grafo non viene dall'ACPI: lo sintetizza ipu-bridge,
++	 * ma solo per gli HID presenti in ipu_supported_sensors[].
++	 *
++	 * -EPROBE_DEFER, non -EINVAL: il sensore puo' fare probe prima che
++	 * ipu-bridge abbia costruito il grafo. Fallire qui in modo definitivo
++	 * rende il driver non caricabile per una pura questione di ordine di
++	 * probe. Stesso rimedio usato da ov2680 su x86.
++	 */
++	endpoint = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev), 0, 0,
++						   FWNODE_GRAPH_ENDPOINT_NEXT);
++	if (!endpoint)
++		return dev_err_probe(dev, -EPROBE_DEFER,
++				     "waiting for endpoint node\n");
++
++	ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &bus_cfg);
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to parse endpoint\n");
++		goto done;
++	}
++
++	/*
++	 * Le tabelle registri configurano il blocco MIPI in pagina 3 per un
++	 * numero fisso di lane, quindi qui non si puo' accettare qualunque
++	 * valore: si verifica che il firmware dichiari quello per cui le
++	 * tabelle sono scritte. Il conteggio viene poi conservato e usato per
++	 * il calcolo del pixel rate, invece di essere riassunto in una
++	 * costante.
++	 */
++	if (bus_cfg.bus.mipi_csi2.num_data_lanes != GC5035_DATA_LANES) {
++		ret = dev_err_probe(dev, -EINVAL,
++				    "unsupported number of data lanes %u\n",
++				    bus_cfg.bus.mipi_csi2.num_data_lanes);
++		goto done;
++	}
++
++	gc5035->data_lanes = bus_cfg.bus.mipi_csi2.num_data_lanes;
++
++	ret = v4l2_link_freq_to_bitmap(dev, bus_cfg.link_frequencies,
++				       bus_cfg.nr_of_link_frequencies,
++				       gc5035_link_freq_menu_items,
++				       ARRAY_SIZE(gc5035_link_freq_menu_items),
++				       &gc5035->link_freq_bitmap);
++
++done:
++	v4l2_fwnode_endpoint_free(&bus_cfg);
++	fwnode_handle_put(endpoint);
++
++	return ret;
++}
++
++static int gc5035_init_controls(struct gc5035 *gc5035)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(&gc5035->sd);
++	const struct gc5035_mode *mode = &gc5035_modes[0];
++	struct v4l2_fwnode_device_properties props;
++	struct v4l2_ctrl_handler *ctrl_hdlr;
++	s64 exposure_max, h_blank;
++	int ret;
++
++	ctrl_hdlr = &gc5035->ctrls;
++	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 8);
++	if (ret)
++		return ret;
++
++	gc5035->link_freq =
++		v4l2_ctrl_new_int_menu(ctrl_hdlr, &gc5035_ctrl_ops,
++				       V4L2_CID_LINK_FREQ,
++				       ARRAY_SIZE(gc5035_link_freq_menu_items)
++				       - 1,
++				       0, gc5035_link_freq_menu_items);
++	if (gc5035->link_freq)
++		gc5035->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
++
++	gc5035->pixel_rate =
++		v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops,
++				  V4L2_CID_PIXEL_RATE, 0,
++				  gc5035_to_pixel_rate(gc5035, 0), 1,
++				  gc5035_to_pixel_rate(gc5035, 0));
++	if (gc5035->pixel_rate)
++		gc5035->pixel_rate->flags |= V4L2_CTRL_FLAG_READ_ONLY;
++
++	gc5035->vblank =
++		v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_VBLANK,
++				  mode->vts_min - mode->height,
++				  GC5035_VTS_MAX - mode->height, 1,
++				  mode->vts_def - mode->height);
++
++	h_blank = mode->hts - mode->width;
++	gc5035->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops,
++					   V4L2_CID_HBLANK, h_blank, h_blank,
++					   1, h_blank);
++	if (gc5035->hblank)
++		gc5035->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
++
++	exposure_max = mode->vts_def - GC5035_EXP_MARGIN;
++	gc5035->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops,
++					     V4L2_CID_EXPOSURE, GC5035_EXP_MIN,
++					     exposure_max, GC5035_EXP_STEP,
++					     exposure_max);
++
++	/*
++	 * TODO BLOCCANTE: range limitato a 1x finche' la tabella
++	 * GC5035_AGC_Param non e' importata. Vedi gc5035_set_ctrl().
++	 */
++	v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
++			  256, 256, 1, 256);
++
++	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &gc5035_ctrl_ops,
++				     V4L2_CID_TEST_PATTERN,
++				     ARRAY_SIZE(gc5035_test_pattern_menu) - 1,
++				     0, 0, gc5035_test_pattern_menu);
++
++	ret = v4l2_fwnode_device_parse(&client->dev, &props);
++	if (ret)
++		goto error_ctrls;
++
++	ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &gc5035_ctrl_ops,
++					      &props);
++	if (ret)
++		goto error_ctrls;
++
++	if (ctrl_hdlr->error) {
++		ret = ctrl_hdlr->error;
++		goto error_ctrls;
++	}
++
++	gc5035->sd.ctrl_handler = ctrl_hdlr;
++
++	return 0;
++
++error_ctrls:
++	v4l2_ctrl_handler_free(ctrl_hdlr);
++
++	return ret;
++}
++
++static int gc5035_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct gc5035 *gc5035;
++	unsigned long freq;
++	unsigned int i;
++	int ret;
++
++	gc5035 = devm_kzalloc(dev, sizeof(*gc5035), GFP_KERNEL);
++	if (!gc5035)
++		return -ENOMEM;
++
++	gc5035->dev = dev;
++
++	v4l2_i2c_subdev_init(&gc5035->sd, client, &gc5035_subdev_ops);
++	gc5035->sd.internal_ops = &gc5035_internal_ops;
++
++	ret = gc5035_parse_fwnode(gc5035);
++	if (ret)
++		return ret;
++
++	gc5035->regmap = devm_cci_regmap_init_i2c(client, 8);
++	if (IS_ERR(gc5035->regmap))
++		return dev_err_probe(dev, PTR_ERR(gc5035->regmap),
++				     "failed to init CCI\n");
++
++	/*
++	 * Su x86 li fornisce INT3472 e possono non esserci entrambi.
++	 * Verificato sul CHUWI Hi10 X1 leggendo INT3472:02 a runtime:
++	 * "reset" c'e' (pin 175, active-low, tipo RESET 0x00), e c'e' un
++	 * POWER_ENABLE mappato a regolatore "avdd". Nessun "powerdown"
++	 * osservato finora, da cui _optional su entrambi.
++	 */
++	gc5035->reset_gpio = devm_gpiod_get_optional(dev, "reset",
++						     GPIOD_OUT_HIGH);
++	if (IS_ERR(gc5035->reset_gpio))
++		return dev_err_probe(dev, PTR_ERR(gc5035->reset_gpio),
++				     "failed to get reset GPIO\n");
++
++	gc5035->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
++							 GPIOD_OUT_HIGH);
++	if (IS_ERR(gc5035->powerdown_gpio))
++		return dev_err_probe(dev, PTR_ERR(gc5035->powerdown_gpio),
++				     "failed to get powerdown GPIO\n");
++
++	gc5035->xclk = devm_v4l2_sensor_clk_get(dev, "clk");
++	if (IS_ERR(gc5035->xclk))
++		return dev_err_probe(dev, PTR_ERR(gc5035->xclk),
++				     "failed to get clock\n");
++
++	freq = clk_get_rate(gc5035->xclk);
++	if (freq != GC5035_MCLK_DEFAULT)
++		dev_warn(dev, "external clock %lu, expected %lu\n", freq,
++			 (unsigned long)GC5035_MCLK_DEFAULT);
++
++	for (i = 0; i < ARRAY_SIZE(gc5035_supply_name); i++)
++		gc5035->supplies[i].supply = gc5035_supply_name[i];
++
++	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(gc5035_supply_name),
++				      gc5035->supplies);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to get regulators\n");
++
++	gc5035->cur_mode = &gc5035_modes[0];
++
++	ret = gc5035_init_controls(gc5035);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to init controls\n");
++
++	gc5035->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
++	gc5035->pad.flags = MEDIA_PAD_FL_SOURCE;
++	gc5035->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
++
++	ret = media_entity_pads_init(&gc5035->sd.entity, 1, &gc5035->pad);
++	if (ret < 0) {
++		dev_err_probe(dev, ret, "failed to init media entity\n");
++		goto err_ctrl_handler_free;
++	}
++
++	gc5035->sd.state_lock = gc5035->ctrls.lock;
++	ret = v4l2_subdev_init_finalize(&gc5035->sd);
++	if (ret < 0) {
++		dev_err_probe(dev, ret, "failed to finalize subdev\n");
++		goto err_media_entity_cleanup;
++	}
++
++	pm_runtime_enable(dev);
++	pm_runtime_set_autosuspend_delay(dev, 1000);
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_idle(dev);
++
++	ret = v4l2_async_register_subdev_sensor(&gc5035->sd);
++	if (ret < 0) {
++		dev_err_probe(dev, ret, "failed to register subdev\n");
++		goto err_rpm;
++	}
++
++	return 0;
++
++err_rpm:
++	pm_runtime_disable(dev);
++	v4l2_subdev_cleanup(&gc5035->sd);
++
++err_media_entity_cleanup:
++	media_entity_cleanup(&gc5035->sd.entity);
++
++err_ctrl_handler_free:
++	v4l2_ctrl_handler_free(&gc5035->ctrls);
++
++	return ret;
++}
++
++static void gc5035_remove(struct i2c_client *client)
++{
++	struct v4l2_subdev *sd = i2c_get_clientdata(client);
++	struct gc5035 *gc5035 = to_gc5035(sd);
++
++	v4l2_async_unregister_subdev(sd);
++	v4l2_subdev_cleanup(sd);
++	media_entity_cleanup(&sd->entity);
++	v4l2_ctrl_handler_free(&gc5035->ctrls);
++
++	pm_runtime_disable(&client->dev);
++	if (!pm_runtime_status_suspended(&client->dev))
++		gc5035_power_off(&client->dev);
++	pm_runtime_set_suspended(&client->dev);
++	pm_runtime_dont_use_autosuspend(&client->dev);
++}
++
++static DEFINE_RUNTIME_DEV_PM_OPS(gc5035_pm_ops, gc5035_power_off,
++				 gc5035_power_on, NULL);
++
++static const struct acpi_device_id gc5035_acpi_ids[] = {
++	{ "GCTI5035" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, gc5035_acpi_ids);
++
++static const struct of_device_id gc5035_of_match[] = {
++	{ .compatible = "galaxycore,gc5035" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, gc5035_of_match);
++
++static struct i2c_driver gc5035_i2c_driver = {
++	.driver = {
++		.name = "gc5035",
++		.acpi_match_table = gc5035_acpi_ids,
++		.of_match_table = gc5035_of_match,
++		.pm = pm_ptr(&gc5035_pm_ops),
++	},
++	.probe = gc5035_probe,
++	.remove = gc5035_remove,
++};
++module_i2c_driver(gc5035_i2c_driver);
++
++MODULE_DESCRIPTION("GalaxyCore GC5035 sensor driver");
++MODULE_LICENSE("GPL");
+-- 
+2.47.3
+

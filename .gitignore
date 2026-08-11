@@ -1,0 +1,19 @@
+# Sorgenti kernel: stanno fuori dal progetto, in /home/nicfio/linux
+linux/
+*.ko
+*.o
+*.mod
+*.mod.c
+.tmp_versions/
+Module.symvers
+modules.order
+
+# Artefatti di build
+*.log.gz
+*.tar.xz
+*.deb
+
+# Editor e sistema
+*~
+*.swp
+.DS_Store

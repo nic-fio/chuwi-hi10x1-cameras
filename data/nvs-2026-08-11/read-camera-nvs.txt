@@ -1,0 +1,44 @@
+[letto via /dev/mem]
+
+ACPI NVS @ 0x75886000, 3297 byte letti
+
+====================================================================
+SENSORE 0 — GC8034 posteriore (GCTI8034)  ->  \_SB.PC00.LNK0
+====================================================================
+  modello (L0SM)        : 0xff
+  device I2C (L0DI)     : 2
+  bus I2C (L0BS)        : 1
+  indirizzo I2C (L0A0)  : 0x37
+  LANE MIPI (L0NL)      : 4
+  MCLK (L0CK)           : 19200000 Hz  (= 19.2 MHz)
+  control logic (L0CL)  : 0
+
+  INT3472 / DSC0:
+    numero GPIO (C0GP)  : 1
+    clock source (C0CS) : 0
+    GPIO 0: func=0x0b POWER_ENABLE                          pin=85
+
+====================================================================
+SENSORE 1 — GC5035 frontale (GCTI5035)  ->  \_SB.PC00.LNK1
+====================================================================
+  modello (L1SM)        : 0xff
+  device I2C (L1DI)     : 1
+  bus I2C (L1BS)        : 2
+  indirizzo I2C (L1A0)  : 0x3f
+  LANE MIPI (L1NL)      : 2
+  MCLK (L1CK)           : 19200000 Hz  (= 19.2 MHz)
+  control logic (L1CL)  : 1
+
+  INT3472 / DSC1:
+    numero GPIO (C1GP)  : 2
+    clock source (C1CS) : 1
+    GPIO 0: func=0x00 RESET                                 pin=239
+    GPIO 1: func=0x0b POWER_ENABLE                          pin=463
+
+====================================================================
+VERDETTI
+====================================================================
+  [ok] C1GP = 2 (<6): il bug del _DSM duplicato non ha effetto.
+  [ok] tutti i tipi GPIO sono gestiti da int3472-discrete:
+       la Serie 4 (quirk int3472) NON serve.
+

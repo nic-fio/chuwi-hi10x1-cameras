@@ -1,0 +1,19 @@
+INTEL-CAMERA — snapshot 20260811-112600
+kernel: 7.0
+
+Semafori (OK = risolto, KO = ancora bloccante):
+  [KO] pinctrl-alderlake ASSENTE  -> INTC1057 senza driver
+  [KO] nessun gpiochip           -> int3472 non puo' agganciarsi
+  [KO] INT3472:01 NON agganciato -> niente clock/reset ai sensori
+  [KO] ipu-bridge senza voci GCTI -> nessun grafo fwnode CSI-2
+  [KO] gc5035/gc8034 ASSENTI      -> nessun subdev sensore
+
+File raccolti:
+00-system.txt
+01-acpi.txt
+02-ipu6.txt
+03-drivers.txt
+04-gpio-int3472.txt
+05-capture-test.txt
+06-kernel-log-MANCANTE.txt
+SOMMARIO.txt

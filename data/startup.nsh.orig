@@ -1,0 +1,2 @@
+#vmlinuz initrd=initrd.img boot=live quiet hostname=CHUWI
+vmlinuz initrd=initrd.img root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI

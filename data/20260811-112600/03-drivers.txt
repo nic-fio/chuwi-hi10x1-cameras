@@ -1,0 +1,94 @@
+
+===== SENSOR DRIVER PRESENTI IN drivers/media/i2c =====
+adv748x
+adv7511-v4l2.ko
+adv7604.ko
+adv7842.ko
+cs3308.ko
+cs5345.ko
+cs53l32a.ko
+cx25840
+ds90ub913.ko
+ds90ub953.ko
+ds90ub960.ko
+dw9768.ko
+ir-kbd-i2c.ko
+isl7998x.ko
+m52790.ko
+max9286.ko
+max96714.ko
+max96717.ko
+msp3400.ko
+saa6588.ko
+saa6752hs.ko
+saa7115.ko
+saa7127.ko
+saa717x.ko
+sony-btf-mpx.ko
+tc358746.ko
+tda7432.ko
+tda9840.ko
+tea6415c.ko
+tea6420.ko
+tvaudio.ko
+tvp5150.ko
+tw2804.ko
+tw9900.ko
+tw9903.ko
+tw9906.ko
+uda1342.ko
+upd64031a.ko
+upd64083.ko
+vp27smpx.ko
+wm8739.ko
+wm8775.ko
+--- totale: 42
+
+===== CERCA I DRIVER CHE SERVONO (gc5035 / gc8034) =====
+ASSENTI: nessun modulo/builtin per gc5035 o gc8034
+
+===== HID SUPPORTATI DA ipu-bridge =====
+HIMX11B1
+HIMX2170
+HIMX2172
+INTC100A
+INTC1059
+INTC1095
+INTC10C5
+INTC10CF
+OVTI01A0
+OVTI01AS
+OVTI02C1
+OVTI02E1
+OVTI05C1
+OVTI08A1
+OVTI08F4
+OVTI13B1
+OVTI2680
+OVTI8856
+OVTIDB10
+SONY471A
+XMCC0003
+--- GCTI presenti nella tabella?
+NO: ipu-bridge non conosce GCTI5035 / GCTI8034
+
+===== PINCTRL: chi rivendica INTC1057? =====
+alias acpi*:INTC1055:* pinctrl_tigerlake
+alias acpi*:INT34C6:* pinctrl_tigerlake
+alias acpi*:INT34C5:* pinctrl_tigerlake
+--- driver pinctrl intel compilati:
+pinctrl-broxton.ko
+pinctrl-cannonlake.ko
+pinctrl-cedarfork.ko
+pinctrl-cherryview.ko
+pinctrl-denverton.ko
+pinctrl-emmitsburg.ko
+pinctrl-geminilake.ko
+pinctrl-icelake.ko
+pinctrl-jasperlake.ko
+pinctrl-lewisburg.ko
+pinctrl-meteorlake.ko
+pinctrl-sunrisepoint.ko
+pinctrl-tigerlake.ko
+--- pinctrl-alderlake presente?
+ASSENTE: CONFIG_PINCTRL_ALDERLAKE non compilato
