@@ -9,6 +9,20 @@ misura. Questo kernel li ha tutti.
 ./scripts/build-kernel.sh --debug        # non serve root, ~1-2 ore
 ```
 
+**Gia' costruito il 2026-08-11 sera.** Non serve rifarlo:
+
+| | |
+|---|---|
+| Versione | `7.2.0-rc7-intelcam-debug-gc61216fb5a24` |
+| Immagine | `/home/nicfio/linux/arch/x86/boot/bzImage`, 29 MB |
+| Avviabile da EFI | si', entry point handoff a 32 e 64 bit verificati |
+| Driver | `gc5035.ko` e `gc8034.ko` costruiti **in albero**, non fuori |
+| Config archiviata | `config/intelcam-7.2.0-rc7-debug.config` |
+
+Contiene i due driver nella versione finale, con tutte le correzioni della
+revisione. **Non** contiene la patch a `ipu6-isys`: quella sta su un branch a
+parte, `ipu6-npd-fix`, perche' e' un invio separato.
+
 Cosa aggiunge, e cosa trova ciascuno:
 
 | Strumento | Trova |

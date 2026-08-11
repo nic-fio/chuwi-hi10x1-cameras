@@ -199,7 +199,49 @@ il cui `-EINVAL` portava a un `put` sbilanciato, ramo a 2 lane irraggiungibile
 nel GC8034, moltiplicazione a 32 bit assegnata a un `s64`, due commenti che
 dicevano il falso, `MODULE_AUTHOR` assente, `u16` dove bastava `u8`.
 
-### 4. Formalita'
+### 4. Come si invia, quando sara' il momento
+
+Tre invii separati, in quest'ordine. Il primo e' quello che non ha
+dipendenze da niente e corregge un crash, quindi non ha motivo di aspettare.
+
+```bash
+# 0. una volta sola: identita' vera, non il segnaposto
+git -C /home/nicfio/linux config user.name  "Nome Cognome"
+git -C /home/nicfio/linux config user.email "indirizzo@vero"
+
+# 1. rifirmare la serie con l'identita' nuova, togliendo BOZZA dai subject
+#    (git rebase --exec, oppure rigenerare i commit: sono sei)
+
+# 2. l'oops di ipu6, da solo, subito
+git send-email --to=linux-media@vger.kernel.org \
+    --cc=sakari.ailus@linux.intel.com --cc=bingbu.cao@intel.com \
+    --cc=tian.shu.qiu@intel.com \
+    patches/wip/ipu6-fix/*.patch
+
+# 3. la serie dei due driver, con cover letter
+git send-email --to=linux-media@vger.kernel.org \
+    --cc=mchehab@kernel.org --cc=sakari.ailus@linux.intel.com \
+    --cc=robh@kernel.org --cc=krzk+dt@kernel.org --cc=conor+dt@kernel.org \
+    --cc=devicetree@vger.kernel.org \
+    --cc=tfiga@chromium.org --cc=liang1.wang@intel.com \
+    patches/wip/serie/*.patch
+
+# 4. int3472, altro sottosistema
+git send-email --to=platform-driver-x86@vger.kernel.org \
+    --cc=dan.scally@ideasonboard.com --cc=hansg@kernel.org \
+    --cc=ilpo.jarvinen@linux.intel.com --cc=sakari.ailus@linux.intel.com \
+    patches/wip/int3472/*.patch
+```
+
+I `--cc` vengono da `destinatari.txt`, cioe' da `get_maintainer.pl`, tranne
+`tfiga@chromium.org` e `liang1.wang@intel.com`: quelli sono gli autori del
+codice riusato, e ci vanno per cortesia — vedi `reference/README.md`.
+
+**Provare `git send-email` su se' stessi prima.** Un client che riscrive le
+righe o manda HTML rende la patch inapplicabile e la serie viene ignorata
+senza che nessuno spieghi perche'.
+
+### 5. Formalita'
 
 Sono le uniche cose rimaste che **non** posso fare io:
 
