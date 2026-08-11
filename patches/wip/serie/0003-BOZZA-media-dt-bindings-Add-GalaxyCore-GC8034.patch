@@ -1,7 +1,7 @@
-From e80fff44d7a755ec4a3d351ec6233349ab0e1098 Mon Sep 17 00:00:00 2001
+From 91e0dbbf1bc5c1749848b80be9ec0866d9f32afa Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 14:24:49 +0200
-Subject: [PATCH 3/6] BOZZA media: dt-bindings: Add GalaxyCore GC8034
+Subject: [PATCH 3/5] BOZZA media: dt-bindings: Add GalaxyCore GC8034
 
 NON INVIABILE: manutentore ed email sono segnaposto, manca il
 Signed-off-by, binding non validato (dtschema assente).

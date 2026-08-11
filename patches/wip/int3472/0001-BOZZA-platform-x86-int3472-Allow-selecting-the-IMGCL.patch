@@ -1,8 +1,8 @@
-From 909c3ae8b697796473b66108a1b655fe40c63272 Mon Sep 17 00:00:00 2001
+From 456c0127b8548deb314dfd117ad16d8848fe9d99 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 19:30:45 +0200
-Subject: [PATCH 6/6] BOZZA platform/x86: int3472: Allow selecting the
- IMGCLKOUT frequency
+Subject: [PATCH] BOZZA platform/x86: int3472: Allow selecting the IMGCLKOUT
+ frequency
 
 The PCH IMGCLKOUT outputs feeding a camera sensor can be driven at either
 24 MHz or 19.2 MHz. Which one is used is bit 0 of the clock control

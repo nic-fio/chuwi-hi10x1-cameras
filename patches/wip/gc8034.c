@@ -58,22 +58,31 @@
 #define GC8034_REG_DIGITAL_GAIN_FRAC	CCI_REG8(0xb2)
 #define GC8034_REG_BLANKING		CCI_REG16(0x07)
 #define GC8034_REG_STREAM		CCI_REG8(0x3f)
-#define GC8034_STREAM_ON_2LANE		0x91
-#define GC8034_STREAM_ON_4LANE		0xd0
+/*
+ * Only the four lane value is defined: gc8034_parse_fwnode() refuses any
+ * other lane count, because the register tables below configure the MIPI
+ * block for four and no two lane table was available to import.
+ */
+#define GC8034_STREAM_ON		0xd0
 #define GC8034_STREAM_OFF		0x00
 
 #define GC8034_NATIVE_WIDTH		3264
 #define GC8034_NATIVE_HEIGHT		2448
 
 /*
- * Register 0x07/0x08 does NOT hold the VTS, it holds an offset. Checked
- * against the defaults of the Rockchip blob: reg = 16 gives VTS = 2500 =
- * 0x09c4, consistent with the vts_def declared below.
+ * Register 0x07/0x08 does NOT hold the VTS, it holds an offset:
  *
  *     VTS = reg + GC8034_VTS_OFFSET
  *     reg = height + vblank - GC8034_VTS_OFFSET
  *
- * where 2484 = 2448 active lines + 36 lines of fixed overhead.
+ * where 2484 is 2448 active lines plus 36 of fixed overhead.
+ *
+ * The offset is INFERRED from the Rockchip BSP defaults, which pair a
+ * register value of 12 with the vts_def of 2496 declared below, and it has
+ * not been confirmed on hardware: an error of a few lines here shifts the
+ * frame rate by about 0.1%, below what can be measured, and varying VBLANK
+ * does not discriminate because the error cancels. Treat it as the best
+ * available reading of the vendor code, not as a measurement.
  */
 #define GC8034_VTS_OFFSET		2484
 #define GC8034_VTS_MAX			0x1fff
@@ -150,10 +159,10 @@ static const char * const gc8034_supply_name[] = {
  * table. The remainder of the requested gain is compensated digitally in
  * 0xb1/0xb2. Unit: 0x40 = 64 = 1.00x, Q6 fixed point.
  *
- * The BSP only uses the first 7 indices (MEAG_INDEX = 7); its last two
- * entries are dead code there. They are kept here because the sensor accepts
- * them, but the control range still stops at the last entry actually used,
- * until this can be checked on hardware.
+ * The BSP declares nine entries but only ever uses the first seven
+ * (MEAG_INDEX = 7); its last two are dead code there. Only those seven are
+ * imported here, because there is no way to check the other two: they have
+ * never been exercised by any code known to work.
  */
 static const u16 gc8034_again_level[] = {
 	0x0040,	/*  1.000x */
@@ -178,7 +187,7 @@ static const u16 gc8034_again_level[] = {
  * These values are undocumented. They affect image quality rather than
  * whether the control works at all.
  */
-static const u16 gc8034_agc_bias_reg[] = {
+static const u8 gc8034_agc_bias_reg[] = {
 	0xfe, 0x20, 0x33, 0xfe, 0xdf, 0xe7, 0xe8,
 	0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xfe,
 };
@@ -230,7 +239,6 @@ struct gc8034 {
 	unsigned long xclk_rate;
 	u8 data_lanes;
 
-	bool identified;
 	const struct gc8034_mode *cur_mode;
 };
 
@@ -546,14 +554,17 @@ static int gc8034_power_on(struct device *dev)
 
 	ret = regulator_bulk_enable(ARRAY_SIZE(gc8034_supply_name),
 				    gc8034->supplies);
-	if (ret < 0)
-		return dev_err_probe(dev, ret, "failed to enable regulators\n");
+	if (ret < 0) {
+		dev_err(dev, "failed to enable regulators: %d\n", ret);
+		return ret;
+	}
 
 	ret = clk_prepare_enable(gc8034->xclk);
 	if (ret < 0) {
 		regulator_bulk_disable(ARRAY_SIZE(gc8034_supply_name),
 				       gc8034->supplies);
-		return dev_err_probe(dev, ret, "failed to enable clock\n");
+		dev_err(dev, "failed to enable clock: %d\n", ret);
+		return ret;
 	}
 
 	gpiod_set_value_cansleep(gc8034->powerdown_gpio, 0);
@@ -803,7 +814,12 @@ static int gc8034_set_ctrl(struct v4l2_ctrl *ctrl)
 			return ret;
 	}
 
-	if (!pm_runtime_get_if_active(gc8034->dev))
+	/*
+	 * Not just != 0: the call returns -EINVAL when runtime PM is disabled,
+	 * and taking that for success would touch a powered down sensor and
+	 * then drop a reference that was never taken.
+	 */
+	if (pm_runtime_get_if_active(gc8034->dev) <= 0)
 		return 0;
 
 	switch (ctrl->id) {
@@ -834,24 +850,21 @@ static const struct v4l2_ctrl_ops gc8034_ctrl_ops = {
 	.s_ctrl = gc8034_set_ctrl,
 };
 
+/* Only ever called from probe, with the sensor powered up. */
 static int gc8034_identify_module(struct gc8034 *gc8034)
 {
 	u64 val;
 	int ret;
 
-	if (gc8034->identified)
-		return 0;
-
 	ret = cci_read(gc8034->regmap, GC8034_REG_CHIP_ID, &val, NULL);
 	if (ret)
-		return ret;
+		return dev_err_probe(gc8034->dev, ret,
+				     "failed to read chip id\n");
 
 	if (val != GC8034_CHIP_ID)
 		return dev_err_probe(gc8034->dev, -ENXIO,
 				     "chip id mismatch: %x != %llx\n",
 				     GC8034_CHIP_ID, val);
-
-	gc8034->identified = true;
 
 	return 0;
 }
@@ -862,16 +875,11 @@ static int gc8034_enable_streams(struct v4l2_subdev *sd,
 {
 	struct gc8034 *gc8034 = to_gc8034(sd);
 	const struct gc8034_reg_list *reg_list;
-	u8 stream_on;
 	int ret;
 
 	ret = pm_runtime_resume_and_get(gc8034->dev);
 	if (ret < 0)
 		return ret;
-
-	ret = gc8034_identify_module(gc8034);
-	if (ret)
-		goto err_rpm_put;
 
 	reg_list = &gc8034->cur_mode->reg_list;
 
@@ -885,11 +893,8 @@ static int gc8034_enable_streams(struct v4l2_subdev *sd,
 	if (ret)
 		goto err_rpm_put;
 
-	/* The start streaming value depends on the lane count. */
-	stream_on = gc8034->data_lanes == 4 ? GC8034_STREAM_ON_4LANE :
-					      GC8034_STREAM_ON_2LANE;
-
-	ret = cci_write(gc8034->regmap, GC8034_REG_STREAM, stream_on, NULL);
+	ret = cci_write(gc8034->regmap, GC8034_REG_STREAM, GC8034_STREAM_ON,
+			NULL);
 	if (ret)
 		goto err_rpm_put;
 
@@ -996,7 +1001,7 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 	int ret;
 
 	ctrl_hdlr = &gc8034->ctrls;
-	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 8);
+	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 9);
 	if (ret)
 		return ret;
 
@@ -1095,8 +1100,9 @@ static int gc8034_probe(struct i2c_client *client)
 		return dev_err_probe(dev, -EINVAL,
 				     "external clock rate is unknown\n");
 
+	/* The cast matters on 32 bit: unsigned long is the narrower type. */
 	gc8034->link_freq_menu[0] =
-		gc8034->xclk_rate * GC8034_LINK_FREQ_MULTIPLIER;
+		(s64)gc8034->xclk_rate * GC8034_LINK_FREQ_MULTIPLIER;
 
 	ret = gc8034_parse_fwnode(gc8034);
 	if (ret)
@@ -1129,9 +1135,24 @@ static int gc8034_probe(struct i2c_client *client)
 
 	gc8034->cur_mode = &gc8034_modes[0];
 
-	ret = gc8034_init_controls(gc8034);
+	/*
+	 * Read the chip id here rather than at first use: a bind that succeeds
+	 * with nothing behind it only moves the failure to the first capture,
+	 * where it is much harder to attribute.
+	 */
+	ret = gc8034_power_on(dev);
 	if (ret)
-		return dev_err_probe(dev, ret, "failed to init controls\n");
+		return ret;
+
+	ret = gc8034_identify_module(gc8034);
+	if (ret)
+		goto err_power_off;
+
+	ret = gc8034_init_controls(gc8034);
+	if (ret) {
+		dev_err_probe(dev, ret, "failed to init controls\n");
+		goto err_power_off;
+	}
 
 	gc8034->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
 	gc8034->pad.flags = MEDIA_PAD_FL_SOURCE;
@@ -1150,10 +1171,11 @@ static int gc8034_probe(struct i2c_client *client)
 		goto err_media_entity_cleanup;
 	}
 
+	/* The sensor is on: say so, or runtime PM would power it up again. */
+	pm_runtime_set_active(dev);
 	pm_runtime_enable(dev);
 	pm_runtime_set_autosuspend_delay(dev, 1000);
 	pm_runtime_use_autosuspend(dev);
-	pm_runtime_idle(dev);
 
 	ret = v4l2_async_register_subdev_sensor(&gc8034->sd);
 	if (ret < 0) {
@@ -1161,11 +1183,15 @@ static int gc8034_probe(struct i2c_client *client)
 		goto err_rpm;
 	}
 
+	/* Hands the sensor over to autosuspend, which powers it back down. */
+	pm_runtime_idle(dev);
+
 	return 0;
 
 err_rpm:
 	pm_runtime_disable(dev);
 	pm_runtime_dont_use_autosuspend(dev);
+	pm_runtime_set_suspended(dev);
 	v4l2_subdev_cleanup(&gc8034->sd);
 
 err_media_entity_cleanup:
@@ -1173,6 +1199,9 @@ err_media_entity_cleanup:
 
 err_ctrl_handler_free:
 	v4l2_ctrl_handler_free(&gc8034->ctrls);
+
+err_power_off:
+	gc8034_power_off(dev);
 
 	return ret;
 }
@@ -1221,5 +1250,6 @@ static struct i2c_driver gc8034_i2c_driver = {
 };
 module_i2c_driver(gc8034_i2c_driver);
 
+MODULE_AUTHOR("TODO: real name and email before upstream submission");
 MODULE_DESCRIPTION("GalaxyCore GC8034 sensor driver");
 MODULE_LICENSE("GPL");

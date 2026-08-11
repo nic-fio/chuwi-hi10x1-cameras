@@ -1,0 +1,71 @@
+# get_maintainer.pl — destinatari, 2026-08-11
+
+Generato con: scripts/get_maintainer.pl --no-rolestats <patch>
+Gli indirizzi TODO e wip@localhost sono i segnaposto da sostituire.
+
+## serie
+
+### 0001-BOZZA-media-dt-bindings-Add-GalaxyCore-GC5035.patch
+TODO Nome Cognome <email@reale>
+Mauro Carvalho Chehab <mchehab@kernel.org>
+Rob Herring <robh@kernel.org>
+Krzysztof Kozlowski <krzk+dt@kernel.org>
+Conor Dooley <conor+dt@kernel.org>
+linux-media@vger.kernel.org
+devicetree@vger.kernel.org
+linux-kernel@vger.kernel.org
+
+### 0002-BOZZA-media-i2c-Add-GC5035-image-sensor-driver.patch
+Mauro Carvalho Chehab <mchehab@kernel.org>
+Sakari Ailus <sakari.ailus@linux.intel.com>
+TODO Nome Cognome <email@reale>
+"GitAuthor: INTEL-CAMERA WIP" <wip@localhost>
+linux-kernel@vger.kernel.org
+linux-media@vger.kernel.org
+
+### 0003-BOZZA-media-dt-bindings-Add-GalaxyCore-GC8034.patch
+TODO Nome Cognome <email@reale>
+Mauro Carvalho Chehab <mchehab@kernel.org>
+Rob Herring <robh@kernel.org>
+Krzysztof Kozlowski <krzk+dt@kernel.org>
+Conor Dooley <conor+dt@kernel.org>
+linux-media@vger.kernel.org
+devicetree@vger.kernel.org
+linux-kernel@vger.kernel.org
+
+### 0004-BOZZA-media-i2c-Add-GC8034-image-sensor-driver.patch
+Mauro Carvalho Chehab <mchehab@kernel.org>
+Sakari Ailus <sakari.ailus@linux.intel.com>
+TODO Nome Cognome <email@reale>
+Heiko Stuebner <heiko@sntech.de>
+"GitAuthor: INTEL-CAMERA WIP" <wip@localhost>
+linux-kernel@vger.kernel.org
+linux-media@vger.kernel.org
+linux-arm-kernel@lists.infradead.org
+linux-rockchip@lists.infradead.org
+
+### 0005-BOZZA-media-ipu-bridge-Add-GalaxyCore-GC5035-and-GC8.patch
+Mauro Carvalho Chehab <mchehab@kernel.org>
+"GitAuthor: INTEL-CAMERA WIP" <wip@localhost>
+linux-media@vger.kernel.org
+linux-kernel@vger.kernel.org
+
+## int3472
+
+### 0001-BOZZA-platform-x86-int3472-Allow-selecting-the-IMGCL.patch
+Daniel Scally <dan.scally@ideasonboard.com>
+Sakari Ailus <sakari.ailus@linux.intel.com>
+Hans de Goede <hansg@kernel.org>
+"Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
+platform-driver-x86@vger.kernel.org
+linux-kernel@vger.kernel.org
+
+## ipu6-fix
+
+### 0001-BOZZA-media-ipu6-Check-the-remote-pad-before-derefer.patch
+Sakari Ailus <sakari.ailus@linux.intel.com>
+Bingbu Cao <bingbu.cao@intel.com>
+Tianshu Qiu <tian.shu.qiu@intel.com>
+Mauro Carvalho Chehab <mchehab@kernel.org>
+linux-media@vger.kernel.org
+linux-kernel@vger.kernel.org

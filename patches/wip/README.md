@@ -15,24 +15,44 @@ serve a impedire un invio accidentale.
 La copia autorevole vive in `/home/nicfio/linux`, dove i sei commit sono
 applicati sopra mainline 7.2-rc7.
 
-## La serie
+## Tre invii indipendenti, non uno
+
+Erano sei patch in fila. Sono diventate tre insiemi separati, perche' vanno a
+destinatari diversi e non hanno motivo di aspettarsi a vicenda — e una serie
+che tiene in ostaggio una correzione altrui e' una serie che si impantana.
+
+### `serie/` — cinque patch a `linux-media`
 
 ```
+0000  cover letter  (il testo vive in cover-letter.txt)
 0001  media: dt-bindings: Add GalaxyCore GC5035
 0002  media: i2c: Add GC5035 image sensor driver     (+ Kconfig, Makefile, MAINTAINERS)
 0003  media: dt-bindings: Add GalaxyCore GC8034
 0004  media: i2c: Add GC8034 image sensor driver     (+ Kconfig, Makefile, MAINTAINERS)
 0005  media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
-0006  platform/x86: int3472: Allow selecting the IMGCLKOUT frequency
 ```
 
 Binding prima del driver, `MAINTAINERS` **nello stesso commit** del driver:
 e' la forma che i revisori si aspettano.
 
-La 0006 e' nata il 2026-08-11 dall'analisi in `docs/07-clock-e-registri.md` ed
-e' **indipendente dalle altre cinque**: si regge da sola come correzione a
-`int3472`, e puo' essere inviata separatamente. Anzi conviene, perche' va a un
-sottosistema diverso (`platform-driver-x86`, non `linux-media`).
+### `int3472/` — una patch a `platform-driver-x86`
+
+`int3472: Allow selecting the IMGCLKOUT frequency`. Nata dall'analisi in
+`docs/07-clock-e-registri.md`, quando sembrava servisse a far funzionare il
+GC8034. **Non serve**: le tabelle a 24 MHz funzionano a 19,2. Resta valida
+come correzione di un buco di mainline — la piattaforma espone due frequenze e
+il kernel ne offre una — ma va a un sottosistema diverso e non deve stare
+nella serie media.
+
+### `ipu6-fix/` — una patch a `linux-media`, indipendente
+
+`media: ipu6: Check the remote pad before dereferencing it`. **Non e' nostro
+codice**: e' un NULL pointer dereference di mainline, presente dalla
+`3a5c59ad926b` (maggio 2024) e ancora in 7.2-rc7. Fa oopsare il kernel se si
+fa `unbind` di un sensore mentre streamma. Trovato provocandolo davvero il
+2026-08-11, vedi `docs/09-revisione-preinvio.md` § A1.
+
+Destinatari di tutti e tre in `destinatari.txt`, da `get_maintainer.pl`.
 
 ## Stato verificato, non dichiarato
 
@@ -132,11 +152,31 @@ di `ipu-bridge` sono state cambiate insieme ai driver, come devono.
 Controprova: il frame rate previsto dal driver ora coincide con quello
 misurato — 28,82 contro 28,82 e 24,00 contro 24,01.
 
-### 3. Formalita'
+### 3. ~~Rilievi della revisione pre-invio~~ — **CHIUSI il 2026-08-11**
+
+Tredici reperti da `docs/09-revisione-preinvio.md`, tutti corretti tranne
+quelli di identita'. I due che contano:
+
+- **identificazione del chip spostata in probe.** Prima il bind riusciva anche
+  senza sensore e l'errore compariva alla prima cattura. Sei driver mainline su
+  sette identificano in probe, incluso `gc08a3` che e' il template diretto
+- **le righe di copyright di Bitland, Google e Intel** mancavano in `gc5035.c`
+  pur essendoci quella di Rockchip in `gc8034.c`. Aggiunte
+
+Gli altri: `dev_err_probe()` fuori dalla probe, `pm_runtime_get_if_active()`
+il cui `-EINVAL` portava a un `put` sbilanciato, ramo a 2 lane irraggiungibile
+nel GC8034, moltiplicazione a 32 bit assegnata a un `s64`, due commenti che
+dicevano il falso, `MODULE_AUTHOR` assente, `u16` dove bastava `u8`.
+
+### 4. Formalita'
 
 Sono le uniche cose rimaste che **non** posso fare io:
 
-- nome, email e copyright reali al posto dei `TODO` (2 punti per driver)
+- nome, email e copyright reali al posto dei `TODO` (2 punti per driver, piu'
+  `MODULE_AUTHOR` e `MAINTAINERS`)
+- **l'identita' di `git`**: oggi ogni patch esce con
+  `From: INTEL-CAMERA WIP <wip@localhost>`. E' la prima riga che un revisore
+  legge
 - `Signed-off-by`: e' una dichiarazione legale, la firma dev'essere di chi
   invia
 - attribuzione da concordare con gli autori originali, che vanno contattati:

@@ -1,7 +1,7 @@
 From 86d73148c2477f21bbff13904dcf5f23a9a67065 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 14:24:16 +0200
-Subject: [PATCH 1/6] BOZZA media: dt-bindings: Add GalaxyCore GC5035
+Subject: [PATCH 1/5] BOZZA media: dt-bindings: Add GalaxyCore GC5035
 
 NON INVIABILE: manutentore ed email sono segnaposto, manca il
 Signed-off-by, e il binding non e' stato validato perche' dtschema e

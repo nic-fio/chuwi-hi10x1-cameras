@@ -1,7 +1,7 @@
-From ad58a1b73d1f2db075c8b7aef73b2d9831583f9c Mon Sep 17 00:00:00 2001
+From a8ea643d96907bae55509c6e9904d9ba687d1440 Mon Sep 17 00:00:00 2001
 From: INTEL-CAMERA WIP <wip@localhost>
 Date: Tue, 11 Aug 2026 21:36:45 +0200
-Subject: [PATCH 5/6] BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+Subject: [PATCH 5/5] BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
 
 NON INVIABILE: manca il Signed-off-by.
 
