@@ -95,5 +95,11 @@ configurazione a `#ifdef` compile-time per lane e mirror; pinctrl Rockchip.
 LINUX_VERSION_CODE`; `.init_cfg` (rimosso in mainline 6.9+, ora `.init_state`);
 mutex propria invece dello state lock del subdev; l'hack `use_independent_gpio`
 in `int3472/discrete.c`, che matcha sul nome del modulo sensore (`CJAK519`) e
-non sull'HID — quasi certamente diverso sul CHUWI, e comunque in larga parte
-superato dal mainline moderno.
+non sull'HID.
+
+> **Correzione, 2026-08-11.** Qui c'era scritto che `CJAK519` era «quasi
+> certamente diverso sul CHUWI». **E' falso**: la ACPI NVS di questa macchina
+> riporta `L1M*` = `CJAK519`, identico, per il sensore frontale. L'hack riguarda
+> quindi esattamente questo hardware e va capito prima di scartarlo. Il modulo
+> posteriore si chiama invece `GC8034`. Vedi `docs/07-clock-e-registri.md`,
+> punto 7.

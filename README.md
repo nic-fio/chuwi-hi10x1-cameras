@@ -97,7 +97,9 @@ INTEL-CAMERA/
 │   ├── 02-diagnosi.md           i tre blocchi, con le prove
 │   ├── 03-piano-upstream.md     le patch da inviare e cosa devono contenere
 │   ├── 04-riferimenti.md        template, sorgenti registri, canali, maintainer
-│   └── 05-parametri-sensori.md  registri e parametri, con la provenienza di ognuno
+│   ├── 05-parametri-sensori.md  registri e parametri, con la provenienza di ognuno
+│   ├── 06-azioni-root.md        i passi che richiedono root, con la motivazione
+│   └── 07-clock-e-registri.md   perche' il GC8034 non ha ancora tabelle usabili
 ├── scripts/
 │   ├── collect-diag.sh          snapshot riproducibile + semafori
 │   ├── dump-dsdt.sh             estrae e decompila la DSDT (la specifica)
@@ -196,13 +198,15 @@ Era "non si sa se i blob PLL di nessuno dei due sensori valgono qui". Ora:
   sul disallineamento emette solo un `dev_warn`. Quindi i blob sono stati
   tarati a **19,2 MHz**, esattamente quello che dichiara questo firmware.
   Scenario 1.
-- **GC8034 — il rischio si concentra qui.** Le lane tornano (4 = 4), ma le
-  uniche tabelle registri disponibili sono il BSP Rockchip, tarato a **XVCLK 24
-  MHz**, mentre qui l'MCLK e' 19,2. Con lo stesso moltiplicatore PLL la link
-  frequency scenderebbe da 336 MHz a ~269, e non e' ricavabile quali byte
-  toccare per ritararla. Da verificare se le tabelle a 19,2 MHz esistano
-  altrove: il driver **mainline `gc08a3`** e' della stessa famiglia, stessa
-  risoluzione nativa 3264x2448, 4 lane, e la sua voce a 336 MHz e' il termine di
-  confronto piu' vicino.
+- **GC8034 — il rischio si concentra qui, ed e' confermato.** Le lane tornano
+  (4 = 4), ma le uniche tabelle disponibili sono il BSP Rockchip a **XVCLK 24
+  MHz**, mentre qui l'MCLK e' 19,2 — e la piattaforma **non puo' dare 24 MHz**:
+  la frequenza e' un singolo bit nel `_DSM` del clock, e mainline lo fissa. Le
+  due scorciatoie sperate sono chiuse: `gc08a3`, benche' mainline e della stessa
+  famiglia, usa una mappa registri di generazione diversa (16 bit piatti contro
+  8 bit paginati), e il GC5035 usa gli stessi indirizzi con semantica diversa.
+  Il problema si riduce pero' a **quattro registri** — `0xf4`, `0xf5`, `0xf7`,
+  `0xfa` — che sono gli unici a cambiare fra le configurazioni 2 e 4 lane.
 
-Il resto in `docs/05-parametri-sensori.md`; la sequenza completa in `ROADMAP.md`.
+Analisi completa, con le prove e le piste rimaste, in
+`docs/07-clock-e-registri.md`. La sequenza in `ROADMAP.md`.
