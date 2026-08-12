@@ -324,6 +324,35 @@ driver.
 **Prima di tutto, una volta sola: la prova d'invio su se' stessi.** Vedi
 sotto — se il provider riscrive le righe, tutto il resto e' inutile.
 
+#### Configurazione dell'invio — fatta il 2026-08-12
+
+`git-email` e' installato, con i moduli Perl per TLS: `IO::Socket::SSL`,
+`Net::SMTP::SSL` e `Authen::SASL`. Quest'ultimo manca spesso e quando manca
+l'autenticazione fallisce con un errore che non lo nomina.
+
+La configurazione e' globale, quindi vale sia da qui sia dall'albero del
+kernel:
+
+```
+sendemail.smtpserver      smtp.gmail.com
+sendemail.smtpserverport  587
+sendemail.smtpencryption  tls
+sendemail.smtpuser        nicfio@gmail.com
+sendemail.from            Nicola Fiorillo <nicfio@gmail.com>
+sendemail.confirm         always
+```
+
+**La password non e' salvata, ed e' voluto.** `git send-email` la chiede al
+momento dell'invio: cosi' non finisce in chiaro dentro `~/.gitconfig`, che e'
+un file di testo come tutti gli altri. Serve una **password per le app** di
+Google, non quella dell'account: si genera da
+`myaccount.google.com/apppasswords`, e Gmail rifiuta l'autenticazione SMTP con
+la password normale.
+
+`sendemail.confirm always` fa chiedere conferma prima di ogni singolo
+messaggio. Queste patch vanno a mailing list pubbliche e archiviate per
+sempre: un invio partito per sbaglio non si richiama.
+
 ```bash
 cd /home/nicfio/INTEL-CAMERA
 
@@ -368,9 +397,41 @@ I `--cc` vengono da `destinatari.txt`, cioe' da `get_maintainer.pl`, tranne
 `tfiga@chromium.org` e `liang1.wang@intel.com`: quelli sono gli autori del
 codice riusato, e ci vanno per cortesia — vedi `reference/README.md`.
 
-**Provare `git send-email` su se' stessi prima.** Un client che riscrive le
-righe o manda HTML rende la patch inapplicabile e la serie viene ignorata
-senza che nessuno spieghi perche'.
+#### La prova d'invio su se' stessi — da fare una volta, prima di tutto
+
+Un client che riscrive le righe, converte i tab in spazi o manda HTML rende la
+patch **inapplicabile**, e la serie viene ignorata senza che nessuno spieghi
+perche'. Non e' un rischio teorico: e' il modo piu' comune in cui un primo
+invio si perde nel vuoto.
+
+La prova non e' "mi e' arrivata la mail", e' "la mail che mi e' arrivata si
+applica ancora":
+
+```bash
+cd /home/nicfio/INTEL-CAMERA
+
+# 1. mandarsi la patch piu' piccola
+git send-email --to=nicfio@gmail.com patches/wip/int3472-leak-fix/*.patch
+
+# 2. da Gmail: apri il messaggio, menu tre puntini -> "Mostra originale"
+#    -> "Scarica messaggio originale". Viene giu' un .eml o .txt
+
+# 3. il collaudo vero: quel file si applica ancora?
+cd /home/nicfio/linux
+git checkout -b prova-invio prima-della-firma
+git am ~/Scaricati/messaggio-originale.eml   # il nome che ha preso
+```
+
+Se `git am` applica il commit, la strada e' pulita e si puo' inviare davvero.
+Se si lamenta di una patch corrotta, il problema e' nel percorso di invio e va
+risolto **prima**, non dopo aver scritto a una mailing list.
+
+Per tornare indietro dopo la prova:
+
+```bash
+git am --abort 2>/dev/null
+git checkout master && git branch -D prova-invio
+```
 
 ### 5. ~~Formalita'~~ — **CHIUSE il 2026-08-12**
 
