@@ -72,13 +72,30 @@ for d in GCTI5035 GCTI8034; do
 done
 dmesg | grep -c "Connected 2 cameras" >/dev/null && ok "ipu-bridge ha collegato le camere"
 
+# Da qui in poi il buffer del kernel copre TUTTA la prova. Azzerarlo piu'
+# avanti — com'era prima del 2026-08-12 — cancellava cattura, guadagno e
+# compliance prima di guardarli, e il controllo finale diceva "nessun
+# BUG/WARNING" avendo visto solo i cicli di bind/unbind. E' cosi' che la
+# WARNING di lockdep in ipu6_isys_video_set_streaming era passata inosservata.
+dmesg -C
+
 # ------------------------------------------------------------- chip ID I2C
 # Il probe li ha gia' letti, ma leggerli da userspace prova che il bus e'
 # davvero vivo e non che il driver si e' limitato a non lamentarsi.
 head_ "CHIP ID SUL BUS"
 modprobe i2c-dev 2>/dev/null
-for spec in "GCTI5035:3:0x3f:0x50:0x35" "GCTI8034:2:0x37:0x80:0x44"; do
-    IFS=: read -r name bus addr hi lo <<<"$spec"
+# Il numero di bus NON e' stabile: dipende da quanti controller il kernel
+# enumera prima: sul kernel Debian i sensori stanno su i2c-3 e i2c-2, su
+# quello di debug su i2c-2 e i2c-1. Va ricavato da sysfs, non cablato.
+for spec in "GCTI5035:0x3f:0x50:0x35" "GCTI8034:0x37:0x80:0x44"; do
+    IFS=: read -r name addr hi lo <<<"$spec"
+    dev=$(readlink -f "/sys/bus/i2c/devices/i2c-$name:00" 2>/dev/null)
+    bus=$(basename "$(dirname "$dev")" 2>/dev/null)
+    bus=${bus#i2c-}
+    if [ -z "$dev" ] || ! [ "$bus" -ge 0 ] 2>/dev/null; then
+        ko "$name: nessun bus I2C in sysfs"
+        continue
+    fi
     echo on > "/sys/bus/i2c/devices/i2c-$name:00/power/control" 2>/dev/null
     sleep 1
     r1=$(i2cget -f -y "$bus" "$addr" 0xf0 2>/dev/null)
@@ -134,38 +151,67 @@ done
 # stata trascritta male, il rapporto non torna: e' il controllo che l'ha
 # validata la prima volta.
 head_ "GUADAGNO ANALOGICO"
-misura_media() { # nodo file
+# Restituisce due numeri: la media e la percentuale di pixel al fondo scala.
+# La percentuale non e' un di piu': senza, questa misura mente. Vedi il
+# controllo di saturazione piu' sotto.
+misura_media() { # nodo file -> "media clip%"
     timeout 60 v4l2-ctl -d "$1" --stream-mmap --stream-count=2 --stream-to="$2" >/dev/null 2>&1
     python3 - "$2" <<'PY'
 import array, sys
 d = open(sys.argv[1], 'rb').read()
 a = array.array('H'); a.frombytes(d[len(d)//2:len(d)//2*2])
 sub = a[::17]
-print(sum(sub)/len(sub) if sub else 0)
+if not sub:
+    print("0 0")
+else:
+    clip = sum(1 for v in sub if v >= 1020)     # 1023 e' il fondo scala a 10 bit
+    print(f"{sum(sub)/len(sub)} {100*clip/len(sub)}")
 PY
 }
 for spec in "gc5035:256:4096" "gc8034:64:490"; do
     IFS=: read -r s gmin gmax <<<"$spec"
     [ -n "${NODE[$s]:-}" ] || continue
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmin 2>/dev/null
-    m1=$(misura_media "${NODE[$s]}" "$OUT/.g1.raw")
+    read -r m1 c1 <<<"$(misura_media "${NODE[$s]}" "$OUT/.g1.raw")"
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmax 2>/dev/null
-    m2=$(misura_media "${NODE[$s]}" "$OUT/.g2.raw")
+    read -r m2 c2 <<<"$(misura_media "${NODE[$s]}" "$OUT/.g2.raw")"
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmin 2>/dev/null
     r=$(python3 -c "
 s1=max($m1-64, 0.1); s2=max($m2-64, 0.1)
 print(f'{s2/s1:.2f} {$gmax/$gmin:.2f}')")
     read -r got want <<<"$r"
-    echo "$s: segnale ${m1} -> ${m2}, rapporto $got, atteso $want" >> "$OUT/03-guadagno.txt"
+    echo "$s: media ${m1} (clip ${c1}%) -> ${m2} (clip ${c2}%), rapporto $got, atteso $want" \
+        >> "$OUT/03-guadagno.txt"
     # Al buio il segnale resta sul piedistallo di black level (64) e il
     # rapporto e' fra due rumori: 4 LSB al guadagno massimo vogliono dire
     # scena nera, non guadagno rotto. Serve una luce accesa davanti al
     # sensore, altrimenti questa misura non e' una misura.
     if [ "$(python3 -c "print(int($m2 - 64 < 4))")" = 1 ]; then
-        nd "$s: scena troppo scura per misurare il guadagno (segnale $(printf '%.1f' "$m2") sul piedistallo 64) — rifare con una luce"
+        # Niente printf sui decimali: la locale italiana vuole la virgola e
+        # printf rifiuta "998.4" con "numero non valido". Si taglia e basta.
+        nd "$s: scena troppo scura per misurare il guadagno (segnale ${m2%%.*} sul piedistallo 64) — rifare con una luce"
         continue
     fi
-    # Tolleranza larga: la scena non e' controllata e il sensore puo' saturare.
+    # E il caso opposto, che il 2026-08-12 ha prodotto due falsi allarmi di
+    # fila. Con troppa luce il fotogramma a guadagno massimo taglia sul fondo
+    # scala (1023 a 10 bit): il segnale che manca in cima schiaccia la media e
+    # il rapporto crolla, senza che i driver c'entrino niente.
+    #
+    # La soglia NON puo' essere sulla media, ed e' l'errore che avevo fatto la
+    # prima volta. Una scena con zone luminose taglia il 15% dei pixel avendo
+    # ancora una media di 421 su 1023: nessuna soglia sulla media la vede.
+    # Misurato quel giorno sul gc5035, a 16x: media 421, massimo 1023,
+    # 15.56% dei pixel al fondo scala, rapporto 10.7 invece di 16. A 1x lo
+    # stesso fotogramma aveva massimo 366 e zero pixel tagliati.
+    #
+    # Si guarda quindi quanti pixel sono al fondo scala. Oltre il 2% il
+    # rapporto non e' piu' una misura del guadagno, ed e' onesto dirlo invece
+    # di stampare un [KO] che fa cercare un difetto che non c'e'.
+    if [ "$(python3 -c "print(int($c2 > 2))")" = 1 ]; then
+        nd "$s: scena troppo luminosa, a guadagno massimo ${c2%%.*}% dei pixel e' tagliato sul fondo scala — rifare con meno luce"
+        continue
+    fi
+    # Tolleranza larga: la scena non e' controllata.
     check_close "$want" "$got" 25 "$s: il guadagno misurato segue quello chiesto"
 done
 rm -f "$OUT/.g1.raw" "$OUT/.g2.raw"
@@ -188,7 +234,6 @@ done
 
 # ------------------------------------------------------------- bind/unbind
 head_ "BIND E UNBIND, 10 CICLI"
-dmesg -C
 for s in gc5035 gc8034; do
     dev=$(basename "$(ls -d /sys/bus/i2c/drivers/$s/i2c-GCTI* 2>/dev/null | head -1)" 2>/dev/null)
     [ -n "$dev" ] || { ko "$s: non agganciato, salto"; continue; }
@@ -202,14 +247,33 @@ for s in gc5035 gc8034; do
         ko "$s: non si riaggancia dopo i cicli"
     fi
 done
-n=$(dmesg | grep -cE "BUG:|Oops|WARNING:|refcount_t|use-after-free")
+# Il conteggio copre tutta la prova, non solo i cicli qui sopra. KASAN, UBSAN
+# e lockdep stampano solo sul kernel di debug: sul kernel Debian queste righe
+# non escono mai, e non uscire non vuol dire che il difetto non ci sia.
+n=$(dmesg | grep -cE "BUG:|Oops|WARNING:|refcount_t|use-after-free|KASAN|UBSAN|lockdep|possible recursive|INFO: task")
 [ "$n" -eq 0 ] && ok "nessun BUG/WARNING nel kernel" || ko "$n messaggi di BUG/WARNING, vedi 05-dmesg.txt"
 dmesg > "$OUT/05-dmesg.txt"
 
-# NOTA: unbind DURANTE lo streaming non e' qui apposta. Fa oopsare il kernel
-# per un difetto di ipu6-isys, non nostro (docs/09-revisione-preinvio.md, A1),
-# e lascia la macchina da riavviare. Si riprova a mano quando quella patch e'
-# applicata.
+# Lockdep si spegne DA SOLO al primo errore che trova, e resta spento fino al
+# riavvio. Da quel momento "nessun BUG" non vuol dire piu' niente sul locking:
+# nessuno lo sta piu' controllando. Senza questa riga il 2026-08-12 la prova
+# avrebbe dichiarato tutto a posto con lockdep gia' morto da mezz'ora.
+if [ -r /proc/lockdep_stats ]; then
+    dl=$(awk '/debug_locks:/{print $2}' /proc/lockdep_stats)
+    if [ "$dl" = "1" ]; then
+        ok "lockdep e' ancora attivo: il verdetto sul locking vale"
+    else
+        ko "lockdep e' SPENTO (debug_locks=$dl): il verdetto sul locking non vale, riavviare"
+    fi
+fi
+
+# NOTA: unbind DURANTE lo streaming non e' qui apposta, e dal 2026-08-12 si sa
+# perche' deve restarne fuori. Con la patch A1 applicata non fa piu' oopsare il
+# kernel — la macchina resta in piedi e nessun processo finisce in D — ma su un
+# kernel con KASAN produce un use-after-free in __media_pipeline_stop(): la
+# lista dei pad della pipeline referenzia ancora un media_pad del sub-device
+# che l'unbind ha gia' liberato. E' C1 di docs/10, di mainline, e la patch A1
+# non lo copre. Si prova a mano, non dentro il giro automatico.
 #
 # NOTA 2: i cicli qui sopra possono far oopsare il kernel lo stesso, senza che
 # lo si chieda, per A2 — udev lancia v4l_id sul nodo che compare e sparisce e

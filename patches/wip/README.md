@@ -11,6 +11,10 @@ serve a impedire un invio accidentale.
 | `int3472/` | la patch per `platform-driver-x86` |
 | `ipu6-fix/` | la correzione dell'oops di `ipu6-isys` |
 | `subdev-fix/` | la correzione dell'oops di `subdev_open()` |
+| `mc-pipeline-fix/` | **2026-08-12** — use-after-free in `__media_pipeline_stop()` |
+| `ipu6-lock-fix/` | **2026-08-12** — stato del sub-device letto senza lock |
+| `int3472-leak-fix/` | **2026-08-12** — perdita del ritorno di `_DSM` |
+| `ipu6-unbind-fix/` | **2026-08-12** — `DQBUF` appeso per sempre dopo l'`unbind` |
 | `cover-letter.txt` | il testo della cover, modificabile a mano |
 | `destinatari.txt` | output di `get_maintainer.pl` per tutti e tre |
 | `gc5035.c`, `gc8034.c`, `galaxycore,gc*.yaml` | copie di lettura |
@@ -28,6 +32,77 @@ che tiene in ostaggio una correzione altrui e' una serie che si impantana.
 Le patch sono sette dal 2026-08-12, ma gli invii restano tre: `subdev-fix/`
 parte con `ipu6-fix/`, perche' sono due crash dello stesso scenario e vanno
 agli stessi occhi.
+
+### Le tre del kernel di debug — 2026-08-12 pomeriggio
+
+Sono diventate **dodici patch e cinque invii** — contate a mano il 2026-08-12
+sera, perche' qui c'era scritto "dieci" e i file sul disco erano di piu':
+5 in `serie/` piu' sette correzioni singole. Le tre nuove non le ha trovate
+la lettura del codice: le hanno trovate KASAN, lockdep e KMEMLEAK sul kernel
+di debug, e ognuna ha in commit message l'output dello strumento che l'ha
+vista. Dettagli e prove in `docs/10-kernel-di-debug.md`.
+
+| Cartella | Cosa corregge | Dove va |
+|---|---|---|
+| `mc-pipeline-fix/` | use-after-free: la pipeline referenzia i pad di un'entity gia' liberata dall'`unbind` | `linux-media` |
+| `ipu6-lock-fix/` | `ipu6_isys_fw_pin_cfg()` legge `format` e `crop` senza il lock dello stato | `linux-media` |
+| `int3472-leak-fix/` | il ritorno di `acpi_evaluate_dsm()` non viene mai liberato | `platform-driver-x86` |
+
+**`mc-pipeline-fix/` va da sola**, non con `ipu6-fix/`: e' lo stesso scenario
+— `unbind` a streaming acceso — ma un sottosistema diverso, il media
+controller invece di `ipu6-isys`, e altri manutentori. Tenerle insieme
+significherebbe far aspettare l'una per l'altra.
+
+**`int3472-leak-fix/` e' indipendente da `int3472/`**, benche' tocchino la
+stessa funzione: verificato applicandola su mainline pura senza la bozza
+IMGCLKOUT sotto. Possono partire in qualsiasi ordine; se partono insieme, la
+correzione della perdita va per prima, perche' e' un `Fixes:` e l'altra e' un
+miglioramento.
+
+**Provate sul silicio il 2026-08-12 alle 11:20**, ed e' la prima volta: fino a
+stamattina erano scritte ma mai eseguite, perche' il kernel in esecuzione non
+le conteneva. Ora sono nella build #8 — verificato disapplicandole una per una
+con `git apply --check --reverse`, non dedotto dalle date.
+
+| Reperto | Prova | Esito |
+|---|---|---|
+| C1 | 10 cicli di `unbind` a streaming acceso, 5 per sensore | nessun reperto KASAN |
+| C2 | streaming, compliance e 10 bind/unbind con lockdep acceso | `debug_locks: 1`, nessun reperto |
+| C3 | KMEMLEAK, due passate, dopo un ciclo completo | 0 `unreferenced object` |
+
+Verbale e materiale grezzo in `data/correzioni-20260812-111902/`.
+
+### C4 — `ipu6-unbind-fix/`, la dodicesima patch
+
+Trovata provando le tre qui sopra, e non cercandola: il riproduttore si e'
+impiantato e ci sono voluti sedici minuti per capire che non era lento, era
+fermo. Dopo l'`unbind` a streaming acceso `DQBUF` **non torna mai**, perche'
+`isys_async_ops` non ha una `.unbind()` e nessuno sveglia la coda vb2.
+
+La patch la aggiunge e chiama `vb2_queue_error()` sulle sole code in
+streaming del ricevitore CSI-2 interessato. `Fixes: f50c4ca0a820`, verificato
+sul diff vero: quel commit introduce `isys_async_ops` con due sole callback.
+
+Confronto a una sola variabile — stesso script, cambia solo il modulo:
+
+| | Cicli appesi | Cicli usciti | Errore |
+|---|---|---|---|
+| senza la patch | 3 su 3 | 0 | — |
+| con la patch | 0 | 10 su 10 | `-EIO` |
+
+`checkpatch --strict`: 0 problemi oltre ai due voluti (`Signed-off-by`
+mancante e il falso positivo `Unknown commit id`). `W=1` pulito.
+
+**Dove va**: a `linux-media`, **insieme a `ipu6-fix/`**. Stesso driver, stesso
+scenario — `unbind` a streaming acceso — e stessi revisori. Al contrario di
+`mc-pipeline-fix/`, che e' lo stesso scenario ma un altro sottosistema, qui
+non c'e' nessuna dipendenza da spezzare.
+
+Stato: `checkpatch --strict` da' **0 errori** su tutte e tre. L'unico avviso
+residuo e' `Unknown commit id` sui `Fixes:`, ed e' un falso positivo:
+`/home/nicfio/linux` e' un clone shallow di 7 commit e non puo' verificarli.
+I tre hash sono stati controllati sul mirror, confrontando il diff del commit
+con la riga che introduce il difetto.
 
 ### `serie/` — cinque patch a `linux-media`
 
@@ -94,6 +169,9 @@ Destinatari di tutte e quattro in `destinatari.txt`, da `get_maintainer.pl`.
 | Tabelle registri importate | **si'** — GC5035 161+162, GC8034 233+7x14 |
 | Tabelle identiche all'originale | **verificato**, comandi qui sotto |
 | Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 422,4 e 268,8 MHz, derivate dal clock |
+| **Le tre correzioni C1/C2/C3 eseguite su hardware** | **SI', 2026-08-12 ore 11:20** — `data/correzioni-20260812-111902/` |
+| **C4 corretta e provata** | **SI', 2026-08-12** — 3 su 3 appesi senza la patch, 10 su 10 usciti con `-EIO` con |
+| Guadagno rimisurato sul kernel #8 | **si'** — 15,89x su 16 e 7,51x su 7,66, misurati uno alla volta |
 | **Eseguiti su hardware** | **SI', 2026-08-11** — entrambi catturano |
 | **Rieseguiti dopo un riavvio** | **SI', 2026-08-12** — 19 su 22, e le tre mancate non sono dei driver. `data/prova-20260812-072414/` |
 | Frame rate dopo il riavvio | 28,82 e 24,01 — scarto 0,01% e 0,04% dal previsto |

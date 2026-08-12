@@ -1,0 +1,100 @@
+From d40ab80298d60b191ebea7f99da945419d2fbf0b Mon Sep 17 00:00:00 2001
+From: INTEL-CAMERA WIP <wip@localhost>
+Date: Wed, 12 Aug 2026 10:10:00 +0200
+Subject: [PATCH] BOZZA media: ipu6: Hold the sub-device state lock in
+ ipu6_isys_fw_pin_cfg()
+
+ipu6_isys_fw_pin_cfg() reads the format and the crop rectangle out of
+the remote sub-device's active state with
+v4l2_subdev_get_locked_active_state(), which is the variant that
+requires the caller to already hold the state lock. No caller does.
+
+ipu6_isys_video_set_streaming() takes the lock only to look up the opposite
+end of the route, and drops it again before it calls
+start_stream_firmware(), which is what reaches ipu6_isys_fw_pin_cfg().
+
+With CONFIG_PROVE_LOCKING three assertions fire on the first stream start,
+on a CHUWI Hi10 X1 (Alder Lake-N, IPU6):
+
+  WARNING: include/media/v4l2-subdev.h:1886 at ipu6_isys_video_set_streaming+0x163f/0x2180 [intel_ipu6_isys]
+  WARNING: drivers/media/v4l2-core/v4l2-subdev.c:1776 at __v4l2_subdev_state_get_format+0x21f/0x2a0
+  WARNING: drivers/media/v4l2-core/v4l2-subdev.c:1810 at __v4l2_subdev_state_get_crop+0x220/0x2a0
+  Call Trace:
+   ipu6_isys_video_set_streaming+0x98b/0x2180 [intel_ipu6_isys]
+   start_streaming+0xc5d/0x17f0 [intel_ipu6_isys]
+   vb2_start_streaming+0x14f/0x4c0 [videobuf2_common]
+   vb2_core_streamon+0x1c7/0x2f0 [videobuf2_common]
+   __video_do_ioctl+0x894/0xb30
+
+This is not only a missing annotation: the values are copied into the
+firmware stream configuration, so a VIDIOC_SUBDEV_S_FMT on the CSI-2
+sub-device running concurrently can change them underneath and the firmware
+is programmed with a configuration that does not match the one the pipeline
+was validated against.
+
+Take the lock in ipu6_isys_fw_pin_cfg() around the two reads instead. This
+is the pattern link_validate() already uses two functions further up in the
+same file, including the NULL checks, which the accessors can return and
+which were dereferenced unconditionally here.
+
+Note that lockdep goes quiet after the first report of this kind, so a
+kernel that has already hit it will not warn about anything else either.
+
+Fixes: 58410f62e25d ("media: ipu6: Drop custom functions to obtain sd state information")
+---
+ drivers/media/pci/intel/ipu6/ipu6-isys-video.c | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
+index 3ac48d207..56e239e09 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
+@@ -455,14 +455,17 @@ static int ipu6_isys_fw_pin_cfg(struct ipu6_isys_video *av,
+ {
+ 	struct media_pad *src_pad = media_pad_remote_pad_first(&av->pad);
+ 	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(src_pad->entity);
+-	struct v4l2_subdev_state *state = v4l2_subdev_get_locked_active_state(sd);
+ 	struct ipu6_fw_isys_input_pin_info_abi *input_pin;
+ 	struct ipu6_fw_isys_output_pin_info_abi *output_pin;
+ 	struct ipu6_isys_stream *stream = av->stream;
+ 	struct ipu6_isys_queue *aq = &av->aq;
++	struct device *dev = &av->isys->adev->auxdev.dev;
++	struct v4l2_subdev_state *state;
++	struct v4l2_mbus_framefmt *s_fmt;
+ 	struct v4l2_mbus_framefmt fmt;
+ 	const struct ipu6_isys_pixelformat *pfmt =
+ 		ipu6_isys_get_isys_format(ipu6_isys_get_format(av), 0);
++	struct v4l2_rect *s_crop;
+ 	struct v4l2_rect v4l2_crop;
+ 	struct ipu6_isys *isys = av->isys;
+ 	int input_pins = cfg->nof_input_pins++;
+@@ -470,8 +473,25 @@ static int ipu6_isys_fw_pin_cfg(struct ipu6_isys_video *av,
+ 	u32 src_stream;
+ 
+ 	src_stream = ipu6_isys_get_src_stream_by_src_pad(sd, src_pad->index);
+-	fmt = *v4l2_subdev_state_get_format(state, src_pad->index, src_stream);
+-	v4l2_crop = *v4l2_subdev_state_get_crop(state, src_pad->index, src_stream);
++
++	state = v4l2_subdev_lock_and_get_active_state(sd);
++	if (!state) {
++		dev_err(dev, "no active state on '%s'\n", sd->name);
++		return -EINVAL;
++	}
++
++	s_fmt = v4l2_subdev_state_get_format(state, src_pad->index, src_stream);
++	s_crop = v4l2_subdev_state_get_crop(state, src_pad->index, src_stream);
++	if (!s_fmt || !s_crop) {
++		dev_err(dev, "failed to get source pad format or crop\n");
++		v4l2_subdev_unlock_state(state);
++		return -EINVAL;
++	}
++
++	fmt = *s_fmt;
++	v4l2_crop = *s_crop;
++
++	v4l2_subdev_unlock_state(state);
+ 
+ 	input_pin = &cfg->input_pins[input_pins];
+ 	input_pin->input_res.width = fmt.width;
+-- 
+2.47.3

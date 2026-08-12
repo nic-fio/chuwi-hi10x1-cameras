@@ -1,0 +1,64 @@
+From 577ef58aabc86f550336f0e712f171eb8bca8f49 Mon Sep 17 00:00:00 2001
+From: INTEL-CAMERA WIP <wip@localhost>
+Date: Wed, 12 Aug 2026 10:05:00 +0200
+Subject: [PATCH] BOZZA platform/x86: int3472: Free the _DSM return value when
+ toggling the clock
+
+acpi_evaluate_dsm() returns an object the caller owns, and
+skl_int3472_enable_clk() drops it on the floor. Every clock enable and
+every clock disable leaks 32 bytes.
+
+kmemleak on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) reports 272 unreferenced
+objects after a single test session, 135 from .prepare and 137 from
+.unprepare, and nothing else:
+
+  unreferenced object 0xffff888117455f00 (size 32):
+    comm "kworker/u16:4", pid 67
+    backtrace (crc a050ec36):
+      __kmalloc_noprof+0x526/0x6f0
+      acpi_ut_initialize_buffer+0xc7/0x190
+      acpi_evaluate_object+0x7c9/0xbe0
+      acpi_evaluate_dsm+0x17a/0x240
+      skl_int3472_clk_prepare+0x1e2/0x270 [intel_skl_int3472_discrete]
+      clk_core_prepare+0x203/0x590
+      clk_prepare+0x37/0x60
+      gc5035_power_on+0x82/0x180 [gc5035]
+      gc5035_probe+0x35e/0xcd0 [gc5035]
+      i2c_device_probe+0x54b/0x930
+
+The count grows with every stream start and stop, so it never settles.
+
+Nothing here looks at what the _DSM returns, so just free it. ACPI_FREE()
+copes with NULL, which is what acpi_evaluate_dsm() returns on failure.
+
+Fixes: e4543de8b6ff ("platform/x86: int3472: Evaluate device's _DSM method to control imaging clock")
+---
+ drivers/platform/x86/intel/int3472/clk_and_regulator.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+index 0db4e0e83..888da3344 100644
+--- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
++++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+@@ -39,6 +39,7 @@ static void skl_int3472_enable_clk(struct int3472_clock *clk, int enable)
+ 	struct int3472_discrete_device *int3472 = to_int3472_device(clk);
+ 	union acpi_object args[3];
+ 	union acpi_object argv4;
++	union acpi_object *obj;
+ 
+ 	if (clk->ena_gpio) {
+ 		gpiod_set_value_cansleep(clk->ena_gpio, enable);
+@@ -58,8 +59,9 @@ static void skl_int3472_enable_clk(struct int3472_clock *clk, int enable)
+ 	argv4.package.count = 3;
+ 	argv4.package.elements = args;
+ 
+-	acpi_evaluate_dsm(acpi_device_handle(int3472->adev), &img_clk_guid,
+-			  0, 1, &argv4);
++	obj = acpi_evaluate_dsm(acpi_device_handle(int3472->adev), &img_clk_guid,
++				0, 1, &argv4);
++	ACPI_FREE(obj);
+ }
+ 
+ /*
+-- 
+2.47.3

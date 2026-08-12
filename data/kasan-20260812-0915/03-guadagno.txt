@@ -1,0 +1,5 @@
+gc5035 -> /dev/video16 (/dev/v4l-subdev4)
+gc8034 -> /dev/video8 (/dev/v4l-subdev5)
+[OK] gc5035: segnale 78.7 -> 300.7, rapporto 16.08, atteso 16.00, scarto 0.5% (tolleranza 25%)
+[OK] gc8034: segnale 102.9 -> 358.6, rapporto 7.57, atteso 7.66, scarto 1.1% (tolleranza 25%)
+output in /home/nicfio/INTEL-CAMERA/data/guadagno-20260812-091841

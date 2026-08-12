@@ -1,0 +1,4 @@
+sensore   : gc5035 (i2c-GCTI5035:00)
+cicli max : 150, con 4 apritori
+
+non riprodotto in 150 cicli — la finestra c'e' lo stesso, vedi docs/09

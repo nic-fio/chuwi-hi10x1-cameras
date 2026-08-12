@@ -1,0 +1,1 @@
+insmod: ERROR: could not insert module /home/nicfio/INTEL-CAMERA/build-6.12/ipu-bridge.ko: Invalid module format

@@ -1,0 +1,1703 @@
+ago 12 09:13:51 CHUWI kernel: Linux version 7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty (nicfio@CHUWI) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #7 SMP PREEMPT_DYNAMIC Wed Aug 12 09:09:39 CEST 2026
+ago 12 09:13:51 CHUWI kernel: Command line: vmlinuz-debug initrd=initrd.img-6.12.86+deb13-amd64 root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI iomem=relaxed
+ago 12 09:13:51 CHUWI kernel: x86/CPU: Running old microcode
+ago 12 09:13:51 CHUWI kernel: x86/split lock detection: #AC: crashing the kernel on kernel split_locks and warning on user-space split_locks
+ago 12 09:13:51 CHUWI kernel: BIOS-provided physical RAM map:
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000000000000-0x000000000009dfff]  System RAM
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000000009e000-0x000000000009efff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000000009f000-0x000000000009ffff]  System RAM
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000000a0000-0x00000000000fffff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000000100000-0x000000003f527fff]  System RAM
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000003f528000-0x000000003f528fff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000003f529000-0x0000000040192fff]  System RAM
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000040193000-0x0000000040193fff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000040194000-0x000000007264dfff]  System RAM
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000007264e000-0x000000007574dfff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000007574e000-0x0000000075821fff]  ACPI data
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000075822000-0x00000000758e1fff]  ACPI NVS
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000758e2000-0x0000000075ffefff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000075fff000-0x0000000075ffffff]  System RAM
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000076000000-0x0000000079ffffff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x000000007a000000-0x000000007a9fffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000007aa00000-0x000000007abfffff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x000000007ac00000-0x000000007affffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x000000007b000000-0x00000000803fffff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x0000000080400000-0x00000000bfffffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000c0000000-0x00000000cfffffff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x00000000d0000000-0x00000000fdffffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000fe000000-0x00000000fe010fff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x00000000fe011000-0x00000000febfffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x00000000fec01000-0x00000000fecfffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000fed00000-0x00000000fed00fff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x00000000fed01000-0x00000000fed1ffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000fed20000-0x00000000fed7ffff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x00000000fed80000-0x00000000fedfffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [gap 0x00000000fee01000-0x00000000feffffff]
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff]  device reserved
+ago 12 09:13:51 CHUWI kernel: BIOS-e820: [mem 0x0000000100000000-0x000000027fbfffff]  System RAM
+ago 12 09:13:51 CHUWI kernel: NX (Execute Disable) protection: active
+ago 12 09:13:51 CHUWI kernel: APIC: Static calls initialized
+ago 12 09:13:51 CHUWI kernel: efi: EFI v2.8 by American Megatrends
+ago 12 09:13:51 CHUWI kernel: efi: ACPI=0x75821000 ACPI 2.0=0x75821014 TPMFinalLog=0x7588f000 SMBIOS=0x75d9d000 SMBIOS 3.0=0x75d9c000 MEMATTR=0x6e795318 ESRT=0x6e976418 INITRD=0x6e57df18 TPMEventLog=0x75777018 
+ago 12 09:13:51 CHUWI kernel: efi: Remove mem78: MMIO range=[0xc0000000-0xcfffffff] (256MB) from e820 map
+ago 12 09:13:51 CHUWI kernel: e820: remove [mem 0xc0000000-0xcfffffff] device reserved
+ago 12 09:13:51 CHUWI kernel: efi: Not removing mem79: MMIO range=[0xfe000000-0xfe010fff] (68KB) from e820 map
+ago 12 09:13:51 CHUWI kernel: efi: Not removing mem80: MMIO range=[0xfec00000-0xfec00fff] (4KB) from e820 map
+ago 12 09:13:51 CHUWI kernel: efi: Not removing mem81: MMIO range=[0xfed00000-0xfed00fff] (4KB) from e820 map
+ago 12 09:13:51 CHUWI kernel: efi: Not removing mem83: MMIO range=[0xfee00000-0xfee00fff] (4KB) from e820 map
+ago 12 09:13:51 CHUWI kernel: efi: Remove mem84: MMIO range=[0xff000000-0xffffffff] (16MB) from e820 map
+ago 12 09:13:51 CHUWI kernel: e820: remove [mem 0xff000000-0xffffffff] device reserved
+ago 12 09:13:51 CHUWI kernel: DMI: SMBIOS 3.5.0 present.
+ago 12 09:13:51 CHUWI kernel: DMI: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:13:51 CHUWI kernel: DMI: Memory slots populated: 4/8
+ago 12 09:13:51 CHUWI kernel: tsc: Detected 800.000 MHz processor
+ago 12 09:13:51 CHUWI kernel: tsc: Detected 806.400 MHz TSC
+ago 12 09:13:51 CHUWI kernel: e820: update [mem 0x00000000-0x00000fff] System RAM ==> device reserved
+ago 12 09:13:51 CHUWI kernel: e820: remove [mem 0x000a0000-0x000fffff] System RAM
+ago 12 09:13:51 CHUWI kernel: last_pfn = 0x27fc00 max_arch_pfn = 0x400000000
+ago 12 09:13:51 CHUWI kernel: MTRR map: 5 entries (3 fixed + 2 variable; max 23), built from 10 variable MTRRs
+ago 12 09:13:51 CHUWI kernel: x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+ago 12 09:13:51 CHUWI kernel: last_pfn = 0x76000 max_arch_pfn = 0x400000000
+ago 12 09:13:51 CHUWI kernel: esrt: Reserving ESRT space from 0x000000006e976418 to 0x000000006e9764c8.
+ago 12 09:13:51 CHUWI kernel: e820: update [mem 0x6e976000-0x6e976fff] System RAM ==> device reserved
+ago 12 09:13:51 CHUWI kernel: Using GB pages for direct mapping
+ago 12 09:13:51 CHUWI kernel: Incomplete global flushes, disabling PCID
+ago 12 09:13:51 CHUWI kernel: Secure boot disabled
+ago 12 09:13:51 CHUWI kernel: RAMDISK: [mem 0x611bb000-0x63b7ffff]
+ago 12 09:13:51 CHUWI kernel: ACPI: Early table checksum verification disabled
+ago 12 09:13:51 CHUWI kernel: ACPI: RSDP 0x0000000075821014 000024 (v02 ALASKA)
+ago 12 09:13:51 CHUWI kernel: ACPI: XSDT 0x0000000075820728 00011C (v01 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: FACP 0x000000007581D000 000114 (v06 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: DSDT 0x00000000757AA000 072B07 (v02 ALASKA A M I    01072009 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: FACS 0x00000000758E1000 000040
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x000000007581E000 001459 (v02 DptfTb DptfTabl 00001000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: FIDT 0x00000000757A9000 00009C (v01 ALASKA A M I    01072009 AMI  00010013)
+ago 12 09:13:51 CHUWI kernel: ACPI: MSDM 0x00000000757A8000 000055 (v03 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x00000000757A7000 00038C (v02 PmaxDv Pmax_Dev 00000001 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x00000000757A1000 005D0B (v02 CpuRef CpuSsdt  00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x000000007579E000 002AA1 (v02 SaSsdt SaSsdt   00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x000000007579A000 0033D3 (v02 INTEL  IgfxSsdt 00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x0000000075799000 000150 (v02 INTEL  IpuSsdt  00001000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: HPET 0x0000000075798000 000038 (v01 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: APIC 0x0000000075797000 0001DC (v05 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: MCFG 0x0000000075796000 00003C (v01 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x0000000075794000 001F47 (v02 ALASKA Ther_Rvp 00001000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: UEFI 0x0000000075875000 000048 (v01 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: NHLT 0x0000000075793000 00002D (v00 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: LPIT 0x0000000075792000 0000CC (v01 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x000000007578E000 002A83 (v02 ALASKA PtidDevc 00001000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x000000007578B000 002357 (v02 ALASKA TbtTypeC 00000000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: DBGP 0x000000007578A000 000034 (v01 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: DBG2 0x0000000075789000 000054 (v00 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x0000000075787000 0014CC (v02 ALASKA UsbCTabl 00001000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: DMAR 0x0000000075786000 0000A0 (v02 INTEL  EDK2     00000002      01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x0000000075785000 0006B7 (v02 INTEL  xh_adl_N 00000000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x0000000075781000 003AEA (v02 SocGpe SocGpe   00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x000000007577D000 0039DA (v02 SocCmn SocCmn   00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0x000000007577C000 000144 (v02 Intel  ADebTabl 00001000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: TPM2 0x000000007577A000 00004C (v04 ALASKA A M I    00000001 AMI  00000000)
+ago 12 09:13:51 CHUWI kernel: ACPI: PHAT 0x0000000075779000 0005F1 (v01 ALASKA A M I    00000005 MSFT 0100000D)
+ago 12 09:13:51 CHUWI kernel: ACPI: WSMT 0x0000000075791000 000028 (v01 ALASKA A M I    01072009 AMI  00010013)
+ago 12 09:13:51 CHUWI kernel: ACPI: FPDT 0x0000000075778000 000044 (v01 ALASKA A M I    01072009 AMI  01000013)
+ago 12 09:13:51 CHUWI kernel: ACPI: BGRT 0x000000007577B000 000038 (v01 ALASKA A M I    01072009 AMI  00010013)
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving FACP table memory at [mem 0x7581d000-0x7581d113]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving DSDT table memory at [mem 0x757aa000-0x7581cb06]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving FACS table memory at [mem 0x758e1000-0x758e103f]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x7581e000-0x7581f458]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving FIDT table memory at [mem 0x757a9000-0x757a909b]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving MSDM table memory at [mem 0x757a8000-0x757a8054]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x757a7000-0x757a738b]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x757a1000-0x757a6d0a]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x7579e000-0x757a0aa0]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x7579a000-0x7579d3d2]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x75799000-0x7579914f]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving HPET table memory at [mem 0x75798000-0x75798037]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving APIC table memory at [mem 0x75797000-0x757971db]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving MCFG table memory at [mem 0x75796000-0x7579603b]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x75794000-0x75795f46]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving UEFI table memory at [mem 0x75875000-0x75875047]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving NHLT table memory at [mem 0x75793000-0x7579302c]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving LPIT table memory at [mem 0x75792000-0x757920cb]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x7578e000-0x75790a82]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x7578b000-0x7578d356]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving DBGP table memory at [mem 0x7578a000-0x7578a033]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving DBG2 table memory at [mem 0x75789000-0x75789053]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x75787000-0x757884cb]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving DMAR table memory at [mem 0x75786000-0x7578609f]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x75785000-0x757856b6]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x75781000-0x75784ae9]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x7577d000-0x757809d9]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving SSDT table memory at [mem 0x7577c000-0x7577c143]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving TPM2 table memory at [mem 0x7577a000-0x7577a04b]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving PHAT table memory at [mem 0x75779000-0x757795f0]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving WSMT table memory at [mem 0x75791000-0x75791027]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving FPDT table memory at [mem 0x75778000-0x75778043]
+ago 12 09:13:51 CHUWI kernel: ACPI: Reserving BGRT table memory at [mem 0x7577b000-0x7577b037]
+ago 12 09:13:51 CHUWI kernel: No NUMA configuration found
+ago 12 09:13:51 CHUWI kernel: Faking a node at [mem 0x0000000000000000-0x000000027fbfffff]
+ago 12 09:13:51 CHUWI kernel: NODE_DATA(0) allocated [mem 0x27fbfc3c0-0x27fbfffff]
+ago 12 09:13:51 CHUWI kernel: KernelAddressSanitizer initialized (generic)
+ago 12 09:13:51 CHUWI kernel: Reserving Intel graphics memory at [mem 0x7c800000-0x803fffff]
+ago 12 09:13:51 CHUWI kernel: ACPI: PM-Timer IO Port: 0x1808
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x01] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x02] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x03] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x04] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x05] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x06] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x07] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x08] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x09] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x0a] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x0b] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x0c] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x0d] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x0e] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x0f] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x10] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x11] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x12] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x13] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x14] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x15] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x16] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x17] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: ACPI: LAPIC_NMI (acpi_id[0x00] high edge lint[0x1])
+ago 12 09:13:51 CHUWI kernel: IOAPIC[0]: apic_id 2, version 32, address 0xfec00000, GSI 0-119
+ago 12 09:13:51 CHUWI kernel: ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+ago 12 09:13:51 CHUWI kernel: ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ago 12 09:13:51 CHUWI kernel: ACPI: Using ACPI (MADT) for SMP configuration information
+ago 12 09:13:51 CHUWI kernel: ACPI: HPET id: 0x8086a201 base: 0xfed00000
+ago 12 09:13:51 CHUWI kernel: e820: update [mem 0x69e44000-0x6a132fff] System RAM ==> device reserved
+ago 12 09:13:51 CHUWI kernel: TSC deadline timer available
+ago 12 09:13:51 CHUWI kernel: CPU topo: Max. logical packages:   1
+ago 12 09:13:51 CHUWI kernel: CPU topo: Max. logical nodes:      1
+ago 12 09:13:51 CHUWI kernel: CPU topo: Num. nodes per package:  1
+ago 12 09:13:51 CHUWI kernel: CPU topo: Max. logical dies:       1
+ago 12 09:13:51 CHUWI kernel: CPU topo: Max. dies per package:   1
+ago 12 09:13:51 CHUWI kernel: CPU topo: Max. threads per core:   1
+ago 12 09:13:51 CHUWI kernel: CPU topo: Num. cores per package:     4
+ago 12 09:13:51 CHUWI kernel: CPU topo: Num. threads per package:   4
+ago 12 09:13:51 CHUWI kernel: CPU topo: Allowing 4 present CPUs plus 0 hotplug CPUs
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x0009e000-0x0009efff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x000a0000-0x000fffff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x3f528000-0x3f528fff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x40193000-0x40193fff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x69e44000-0x6a132fff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x6e976000-0x6e976fff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x7264e000-0x75ffefff]
+ago 12 09:13:51 CHUWI kernel: PM: hibernation: Registered nosave memory: [mem 0x76000000-0xffffffff]
+ago 12 09:13:51 CHUWI kernel: [gap 0x80400000-0xfdffffff] available for PCI devices
+ago 12 09:13:51 CHUWI kernel: Booting paravirtualized kernel on bare hardware
+ago 12 09:13:51 CHUWI kernel: clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+ago 12 09:13:51 CHUWI kernel: Zone ranges:
+ago 12 09:13:51 CHUWI kernel:   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+ago 12 09:13:51 CHUWI kernel:   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+ago 12 09:13:51 CHUWI kernel:   Normal   [mem 0x0000000100000000-0x000000027fbfffff]
+ago 12 09:13:51 CHUWI kernel: Movable zone start for each node
+ago 12 09:13:51 CHUWI kernel: Early memory node ranges
+ago 12 09:13:51 CHUWI kernel:   node   0: [mem 0x0000000000001000-0x000000000009dfff]
+ago 12 09:13:51 CHUWI kernel:   node   0: [mem 0x000000000009f000-0x000000000009ffff]
+ago 12 09:13:51 CHUWI kernel:   node   0: [mem 0x0000000000100000-0x000000003f527fff]
+ago 12 09:13:51 CHUWI kernel:   node   0: [mem 0x000000003f529000-0x0000000040192fff]
+ago 12 09:13:51 CHUWI kernel:   node   0: [mem 0x0000000040194000-0x000000007264dfff]
+ago 12 09:13:51 CHUWI kernel:   node   0: [mem 0x0000000075fff000-0x0000000075ffffff]
+ago 12 09:13:51 CHUWI kernel:   node   0: [mem 0x0000000100000000-0x000000027fbfffff]
+ago 12 09:13:51 CHUWI kernel: Initmem setup node 0 [mem 0x0000000000001000-0x000000027fbfffff]
+ago 12 09:13:51 CHUWI kernel: On node 0, zone DMA: 1 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: On node 0, zone DMA: 1 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: On node 0, zone DMA: 96 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: On node 0, zone DMA32: 1 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: On node 0, zone DMA32: 1 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: On node 0, zone DMA32: 14769 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: On node 0, zone Normal: 8192 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: On node 0, zone Normal: 1024 pages in unavailable ranges
+ago 12 09:13:51 CHUWI kernel: setup_percpu: NR_CPUS:64 nr_cpumask_bits:4 nr_cpu_ids:4 nr_node_ids:1
+ago 12 09:13:51 CHUWI kernel: percpu: Embedded 67 pages/cpu s235728 r8192 d30512 u524288
+ago 12 09:13:51 CHUWI kernel: pcpu-alloc: s235728 r8192 d30512 u524288 alloc=1*2097152
+ago 12 09:13:51 CHUWI kernel: pcpu-alloc: [0] 0 1 2 3 
+ago 12 09:13:51 CHUWI kernel: Kernel command line: vmlinuz-debug initrd=initrd.img-6.12.86+deb13-amd64 root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI iomem=relaxed
+ago 12 09:13:51 CHUWI kernel: Unknown kernel command line parameters "vmlinuz-debug", will be passed to user space.
+ago 12 09:13:51 CHUWI kernel: random: crng init done
+ago 12 09:13:51 CHUWI kernel: printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes
+ago 12 09:13:51 CHUWI kernel: Dentry cache hash table entries: 1048576 (order: 11, 8388608 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: Inode-cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: software IO TLB: area num 4.
+ago 12 09:13:51 CHUWI kernel: Fallback order for Node 0: 0 
+ago 12 09:13:51 CHUWI kernel: Built 1 zonelists, mobility grouping on.  Total pages: 2040299
+ago 12 09:13:51 CHUWI kernel: Policy zone: Normal
+ago 12 09:13:51 CHUWI kernel: mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+ago 12 09:13:51 CHUWI kernel: stackdepot: allocating hash table via alloc_large_system_hash
+ago 12 09:13:51 CHUWI kernel: stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: stackdepot: allocating space for 8192 stack pools via memblock
+ago 12 09:13:51 CHUWI kernel: SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+ago 12 09:13:51 CHUWI kernel: Dynamic Preempt: lazy
+ago 12 09:13:51 CHUWI kernel: Running RCU self tests
+ago 12 09:13:51 CHUWI kernel: Running RCU synchronous self tests
+ago 12 09:13:51 CHUWI kernel: rcu: Preemptible hierarchical RCU implementation.
+ago 12 09:13:51 CHUWI kernel: rcu:         RCU event tracing is enabled.
+ago 12 09:13:51 CHUWI kernel: rcu:         RCU lockdep checking is enabled.
+ago 12 09:13:51 CHUWI kernel: rcu:         RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=4.
+ago 12 09:13:51 CHUWI kernel:         Trampoline variant of Tasks RCU enabled.
+ago 12 09:13:51 CHUWI kernel:         Tracing variant of Tasks RCU enabled.
+ago 12 09:13:51 CHUWI kernel: rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+ago 12 09:13:51 CHUWI kernel: rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=4
+ago 12 09:13:51 CHUWI kernel: Running RCU synchronous self tests
+ago 12 09:13:51 CHUWI kernel: RCU Tasks: Setting shift to 2 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=4.
+ago 12 09:13:51 CHUWI kernel: NR_IRQS: 4352, nr_irqs: 1024, preallocated irqs: 16
+ago 12 09:13:51 CHUWI kernel: rcu: srcu_init: Setting srcu_struct sizes based on contention.
+ago 12 09:13:51 CHUWI kernel: clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+ago 12 09:13:51 CHUWI kernel: Console: colour dummy device 80x25
+ago 12 09:13:51 CHUWI kernel: printk: legacy console [tty0] enabled
+ago 12 09:13:51 CHUWI kernel: Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+ago 12 09:13:51 CHUWI kernel: ... MAX_LOCKDEP_SUBCLASSES:  8
+ago 12 09:13:51 CHUWI kernel: ... MAX_LOCK_DEPTH:          48
+ago 12 09:13:51 CHUWI kernel: ... MAX_LOCKDEP_KEYS:        8192
+ago 12 09:13:51 CHUWI kernel: ... CLASSHASH_SIZE:          4096
+ago 12 09:13:51 CHUWI kernel: ... MAX_LOCKDEP_ENTRIES:     32768
+ago 12 09:13:51 CHUWI kernel: ... MAX_LOCKDEP_CHAINS:      65536
+ago 12 09:13:51 CHUWI kernel: ... CHAINHASH_SIZE:          32768
+ago 12 09:13:51 CHUWI kernel:  memory used by lock dependency info: 6429 kB
+ago 12 09:13:51 CHUWI kernel:  memory used for stack traces: 16896 kB
+ago 12 09:13:51 CHUWI kernel:  per task-struct memory footprint: 1920 bytes
+ago 12 09:13:51 CHUWI kernel: ACPI: Core revision 20260408
+ago 12 09:13:51 CHUWI kernel: hpet: HPET dysfunctional in PC10. Force disabled.
+ago 12 09:13:51 CHUWI kernel: APIC: Switch to symmetric I/O mode setup
+ago 12 09:13:51 CHUWI kernel: DMAR: Host address width 39
+ago 12 09:13:51 CHUWI kernel: DMAR: DRHD base: 0x000000fed90000 flags: 0x0
+ago 12 09:13:51 CHUWI kernel: DMAR: dmar0: reg_base_addr fed90000 ver 4:0 cap 1c0000c40660462 ecap 29a00f0505e
+ago 12 09:13:51 CHUWI kernel: DMAR: DRHD base: 0x000000fed92000 flags: 0x0
+ago 12 09:13:51 CHUWI kernel: DMAR: dmar1: reg_base_addr fed92000 ver 1:0 cap d2008c40660462 ecap f050da
+ago 12 09:13:51 CHUWI kernel: DMAR: DRHD base: 0x000000fed91000 flags: 0x1
+ago 12 09:13:51 CHUWI kernel: DMAR: dmar2: reg_base_addr fed91000 ver 5:0 cap d2008c40660462 ecap f050da
+ago 12 09:13:51 CHUWI kernel: DMAR: RMRR base: 0x0000007c000000 end: 0x000000803fffff
+ago 12 09:13:51 CHUWI kernel: DMAR-IR: IOAPIC id 2 under DRHD base  0xfed91000 IOMMU 2
+ago 12 09:13:51 CHUWI kernel: DMAR-IR: HPET id 0 under DRHD base 0xfed91000
+ago 12 09:13:51 CHUWI kernel: DMAR-IR: Queued invalidation will be enabled to support x2apic and Intr-remapping.
+ago 12 09:13:51 CHUWI kernel: DMAR-IR: Enabled IRQ remapping in x2apic mode
+ago 12 09:13:51 CHUWI kernel: x2apic enabled
+ago 12 09:13:51 CHUWI kernel: APIC: Switched APIC routing to: cluster x2apic
+ago 12 09:13:51 CHUWI kernel: clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0xb9fb05486c, max_idle_ns: 440795231721 ns
+ago 12 09:13:51 CHUWI kernel: Calibrating delay loop (skipped), value calculated using timer frequency.. 1612.80 BogoMIPS (lpj=806400)
+ago 12 09:13:51 CHUWI kernel: CPU0: Thermal monitoring enabled (TM1)
+ago 12 09:13:51 CHUWI kernel: x86/cpu: User Mode Instruction Prevention (UMIP) activated
+ago 12 09:13:51 CHUWI kernel: CET detected: Indirect Branch Tracking enabled
+ago 12 09:13:51 CHUWI kernel: Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+ago 12 09:13:51 CHUWI kernel: Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+ago 12 09:13:51 CHUWI kernel: process: using mwait in idle threads
+ago 12 09:13:51 CHUWI kernel: mitigations: Enabled attack vectors: user_kernel, user_user, SMT mitigations: auto
+ago 12 09:13:51 CHUWI kernel: Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl
+ago 12 09:13:51 CHUWI kernel: Spectre V2 : Mitigation: Enhanced / Automatic IBRS
+ago 12 09:13:51 CHUWI kernel: Register File Data Sampling: Vulnerable: No microcode
+ago 12 09:13:51 CHUWI kernel: VMSCAPE: Vulnerable
+ago 12 09:13:51 CHUWI kernel: Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+ago 12 09:13:51 CHUWI kernel: Spectre V2 : Spectre v2 / PBRSB-eIBRS: Retire a single CALL on VMEXIT
+ago 12 09:13:51 CHUWI kernel: Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
+ago 12 09:13:51 CHUWI kernel: x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+ago 12 09:13:51 CHUWI kernel: x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+ago 12 09:13:51 CHUWI kernel: x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+ago 12 09:13:51 CHUWI kernel: x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+ago 12 09:13:51 CHUWI kernel: x86/fpu: Supporting XSAVE feature 0x800: 'Control-flow User registers'
+ago 12 09:13:51 CHUWI kernel: x86/fpu: Supporting XSAVE feature 0x1000: 'Control-flow Kernel registers (KVM only)'
+ago 12 09:13:51 CHUWI kernel: x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+ago 12 09:13:51 CHUWI kernel: x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+ago 12 09:13:51 CHUWI kernel: x86/fpu: xstate_offset[11]:  840, xstate_sizes[11]:   16
+ago 12 09:13:51 CHUWI kernel: x86/fpu: xstate_offset[12]:  856, xstate_sizes[12]:   24
+ago 12 09:13:51 CHUWI kernel: x86/fpu: Enabled xstate features 0x1a07, context size is 880 bytes, using 'compacted' format.
+ago 12 09:13:51 CHUWI kernel: pid_max: default: 32768 minimum: 301
+ago 12 09:13:51 CHUWI kernel: SELinux:  Initializing.
+ago 12 09:13:51 CHUWI kernel: Mount-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: Mountpoint-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: VFS: Finished mounting rootfs on nullfs
+ago 12 09:13:51 CHUWI kernel: Running RCU synchronous self tests
+ago 12 09:13:51 CHUWI kernel: Running RCU synchronous self tests
+ago 12 09:13:51 CHUWI kernel: smpboot: CPU0: Intel(R) N100 (family: 0x6, model: 0xbe, stepping: 0x0)
+ago 12 09:13:51 CHUWI kernel: Performance Events: XSAVE Architectural LBR, PEBS fmt4+-baseline, PEBS-via-PT,  AnyThread deprecated, Gracemont events, 32-deep LBR, full-width counters, Intel PMU driver.
+ago 12 09:13:51 CHUWI kernel: ... version:                   5
+ago 12 09:13:51 CHUWI kernel: ... bit width:                 48
+ago 12 09:13:51 CHUWI kernel: ... generic counters:          6
+ago 12 09:13:51 CHUWI kernel: ... generic bitmap:            000000000000003f
+ago 12 09:13:51 CHUWI kernel: ... fixed-purpose counters:    3
+ago 12 09:13:51 CHUWI kernel: ... fixed-purpose bitmap:      0000000000000007
+ago 12 09:13:51 CHUWI kernel: ... value mask:                0000ffffffffffff
+ago 12 09:13:51 CHUWI kernel: ... max period:                00007fffffffffff
+ago 12 09:13:51 CHUWI kernel: ... global_ctrl mask:          000000070000003f
+ago 12 09:13:51 CHUWI kernel: signal: max sigframe size: 3632
+ago 12 09:13:51 CHUWI kernel: Estimated ratio of average max frequency by base frequency (times 1024): 3712
+ago 12 09:13:51 CHUWI kernel: rcu: Hierarchical SRCU implementation.
+ago 12 09:13:51 CHUWI kernel: rcu:         Max phase no-delay instances is 400.
+ago 12 09:13:51 CHUWI kernel: Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+ago 12 09:13:51 CHUWI kernel: smp: Bringing up secondary CPUs ...
+ago 12 09:13:51 CHUWI kernel: smpboot: x86: Booting SMP configuration:
+ago 12 09:13:51 CHUWI kernel: .... node  #0, CPUs:      #1 #2 #3
+ago 12 09:13:51 CHUWI kernel: smp: Brought up 1 node, 4 CPUs
+ago 12 09:13:51 CHUWI kernel: smpboot: Total of 4 processors activated (6451.20 BogoMIPS)
+ago 12 09:13:51 CHUWI kernel: Memory: 6581264K/8161196K available (48488K kernel code, 13392K rwdata, 12012K rodata, 5944K init, 40428K bss, 1564392K reserved, 0K cma-reserved)
+ago 12 09:13:51 CHUWI kernel: devtmpfs: initialized
+ago 12 09:13:51 CHUWI kernel: ACPI: PM: Registering ACPI NVS region [mem 0x75822000-0x758e1fff] (786432 bytes)
+ago 12 09:13:51 CHUWI kernel: Running RCU synchronous self tests
+ago 12 09:13:51 CHUWI kernel: Running RCU synchronous self tests
+ago 12 09:13:51 CHUWI kernel: Running RCU Tasks wait API self tests
+ago 12 09:13:51 CHUWI kernel: Running RCU Tasks Trace wait API self tests
+ago 12 09:13:51 CHUWI kernel: posixtimers hash table entries: 2048 (order: 6, 147456 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: futex hash table entries: 1024 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+ago 12 09:13:51 CHUWI kernel: PM: RTC time: 07:13:30, date: 2026-08-12
+ago 12 09:13:51 CHUWI kernel: NET: Registered PF_NETLINK/PF_ROUTE protocol family
+ago 12 09:13:51 CHUWI kernel: Callback from call_rcu_tasks_trace() invoked.
+ago 12 09:13:51 CHUWI kernel: audit: initializing netlink subsys (disabled)
+ago 12 09:13:51 CHUWI kernel: audit: type=2000 audit(1786518810.047:1): state=initialized audit_enabled=0 res=1
+ago 12 09:13:51 CHUWI kernel: thermal_sys: Registered thermal governor 'step_wise'
+ago 12 09:13:51 CHUWI kernel: cpuidle: using governor menu
+ago 12 09:13:51 CHUWI kernel: Freeing SMP alternatives memory: 44K
+ago 12 09:13:51 CHUWI kernel: efi: Freeing EFI boot services memory: 126528K
+ago 12 09:13:51 CHUWI kernel: PCI: ECAM [mem 0xc0000000-0xcfffffff] (base 0xc0000000) for domain 0000 [bus 00-ff]
+ago 12 09:13:51 CHUWI kernel: PCI: Using configuration type 1 for base access
+ago 12 09:13:51 CHUWI kernel: kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+ago 12 09:13:51 CHUWI kernel: HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+ago 12 09:13:51 CHUWI kernel: HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+ago 12 09:13:51 CHUWI kernel: ACPI: Added _OSI(Module Device)
+ago 12 09:13:51 CHUWI kernel: ACPI: Added _OSI(Processor Device)
+ago 12 09:13:51 CHUWI kernel: ACPI: Added _OSI(Processor Aggregator Device)
+ago 12 09:13:51 CHUWI kernel: ACPI BIOS Error (bug): Could not resolve symbol [\_SB.PC00.TXHC.RHUB.SS01], AE_NOT_FOUND (20260408/dswload2-162)
+ago 12 09:13:51 CHUWI kernel: ACPI Error: AE_NOT_FOUND, During name lookup/catalog (20260408/psobject-220)
+ago 12 09:13:51 CHUWI kernel: ACPI: Skipping parse of AML opcode: Scope (0x0010)
+ago 12 09:13:51 CHUWI kernel: ACPI BIOS Error (bug): Could not resolve symbol [\_SB.PC00.TXHC.RHUB.SS02], AE_NOT_FOUND (20260408/dswload2-162)
+ago 12 09:13:51 CHUWI kernel: ACPI Error: AE_NOT_FOUND, During name lookup/catalog (20260408/psobject-220)
+ago 12 09:13:51 CHUWI kernel: ACPI: Skipping parse of AML opcode: Scope (0x0010)
+ago 12 09:13:51 CHUWI kernel: ACPI BIOS Error (bug): Failure creating named object [\_SB.PC00.XHCI.RHUB.HS04._UPC], AE_ALREADY_EXISTS (20260408/dswload2-326)
+ago 12 09:13:51 CHUWI kernel: ACPI Error: AE_ALREADY_EXISTS, During name lookup/catalog (20260408/psobject-220)
+ago 12 09:13:51 CHUWI kernel: ACPI: Skipping parse of AML opcode: Method (0x0014)
+ago 12 09:13:51 CHUWI kernel: ACPI BIOS Error (bug): Failure creating named object [\_SB.PC00.XHCI.RHUB.HS04._PLD], AE_ALREADY_EXISTS (20260408/dswload2-326)
+ago 12 09:13:51 CHUWI kernel: ACPI Error: AE_ALREADY_EXISTS, During name lookup/catalog (20260408/psobject-220)
+ago 12 09:13:51 CHUWI kernel: ACPI: Skipping parse of AML opcode: Method (0x0014)
+ago 12 09:13:51 CHUWI kernel: ACPI: 15 ACPI AML tables successfully acquired and loaded
+ago 12 09:13:51 CHUWI kernel: Callback from call_rcu_tasks() invoked.
+ago 12 09:13:51 CHUWI kernel: ACPI: \_SB_: platform _OSC: OS support mask [002a7eee]
+ago 12 09:13:51 CHUWI kernel: ACPI: \_SB_: platform _OSC: OS control mask [002a7eea]
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF8881015B6000 000394 (v02 PmRef  Cpu0Cst  00003001 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF88810127F400 0001A3 (v02 PmRef  Cpu0Ist  00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF88810127F000 0001AB (v02 PmRef  Cpu0Psd  00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF888105F3C000 0004BA (v02 PmRef  Cpu0Hwp  00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF8881056D0000 001BAF (v02 PmRef  ApIst    00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF88810568C000 001038 (v02 PmRef  ApHwp    00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF888105688000 001349 (v02 PmRef  ApPsd    00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: Dynamic OEM Table Load:
+ago 12 09:13:51 CHUWI kernel: ACPI: SSDT 0xFFFF8881063B6000 000FBB (v02 PmRef  ApCst    00003000 INTL 20200717)
+ago 12 09:13:51 CHUWI kernel: ACPI: EC: EC started
+ago 12 09:13:51 CHUWI kernel: ACPI: EC: interrupt blocked
+ago 12 09:13:51 CHUWI kernel: ACPI: EC: EC_CMD/EC_SC=0x66, EC_DATA=0x62
+ago 12 09:13:51 CHUWI kernel: ACPI: \_SB_.PC00.LPCB.H_EC: Boot DSDT EC used to handle transactions
+ago 12 09:13:51 CHUWI kernel: ACPI: Interpreter enabled
+ago 12 09:13:51 CHUWI kernel: ACPI: PM: (supports S0 S3 S4 S5)
+ago 12 09:13:51 CHUWI kernel: ACPI: Using IOAPIC for interrupt routing
+ago 12 09:13:51 CHUWI kernel: PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+ago 12 09:13:51 CHUWI kernel: PCI: Ignoring E820 reservations for host bridge windows
+ago 12 09:13:51 CHUWI kernel: ACPI: Enabled 7 GPEs in block 00 to 7F
+ago 12 09:13:51 CHUWI kernel: ACPI: \_SB_.PC00.XHCI.RHUB.HS10.BTRT: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: \_SB_.PC00.CNVW.WRST: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: \_TZ_.FN00: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: \_TZ_.FN01: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: \_TZ_.FN02: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: \_TZ_.FN03: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: \_TZ_.FN04: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: \PIN_: New power resource
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI Root Bridge [PC00] (domain 0000 [bus 00-fe])
+ago 12 09:13:51 CHUWI kernel: acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability LTR]
+ago 12 09:13:51 CHUWI kernel: PCI host bridge to bus 0000:00
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: root bus resource [mem 0x000e0000-0x000fffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: root bus resource [mem 0x80400000-0xbfffffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: root bus resource [mem 0x4000000000-0x7fffffffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: root bus resource [bus 00-fe]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:00.0: [8086:461c] type 00 class 0x060000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: [8086:46d1] type 00 class 0x030000 PCIe Root Complex Integrated Endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: BAR 0 [mem 0x6001000000-0x6001ffffff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: BAR 2 [mem 0x4000000000-0x400fffffff 64bit pref]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: BAR 4 [io  0x3000-0x303f]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: DMAR: Skip IOMMU disabling for graphics
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:04.0: [8086:461d] type 00 class 0x118000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:04.0: BAR 0 [mem 0x6002100000-0x600211ffff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:05.0: [8086:462e] type 00 class 0x048000 PCIe Root Complex Integrated Endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:05.0: BAR 0 [mem 0x6000000000-0x6000ffffff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:05.0: enabling Extended Tags
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:0a.0: [8086:467d] type 00 class 0x118000 PCIe Root Complex Integrated Endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:0a.0: BAR 0 [mem 0x6002140000-0x6002147fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:0a.0: enabling Extended Tags
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:12.0: [8086:54fc] type 00 class 0x070000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:12.0: BAR 0 [mem 0x6002130000-0x600213ffff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:12.0: PME# supported from D0 D3hot
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:12.6: [8086:54fb] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:12.6: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.0: [8086:54ed] type 00 class 0x0c0330 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.0: BAR 0 [mem 0x6002120000-0x600212ffff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.0: PME# supported from D3hot D3cold
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.2: [8086:54ef] type 00 class 0x050000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.2: BAR 0 [mem 0x6002150000-0x6002153fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.2: BAR 2 [mem 0x600215c000-0x600215cfff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.3: [8086:54f0] type 00 class 0x028000 PCIe Root Complex Integrated Endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.3: BAR 0 [mem 0x600214c000-0x600214ffff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.3: PME# supported from D0 D3hot D3cold
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.0: [8086:54e8] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.0: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.1: [8086:54e9] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.1: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.2: [8086:54ea] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.2: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.3: [8086:54eb] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.3: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:16.0: [8086:54e0] type 00 class 0x078000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:16.0: BAR 0 [mem 0x6002157000-0x6002157fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:16.0: PME# supported from D3hot
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: [8086:54d3] type 00 class 0x010601 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: BAR 0 [mem 0x80400000-0x80401fff]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: BAR 1 [mem 0x80403000-0x804030ff]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: BAR 2 [io  0x3090-0x3097]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: BAR 3 [io  0x3080-0x3083]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: BAR 4 [io  0x3060-0x307f]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: BAR 5 [mem 0x80402000-0x804027ff]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:17.0: PME# supported from D3hot
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:19.0: [8086:54c5] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:19.0: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:19.1: [8086:54c6] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:19.1: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.0: [8086:5481] type 00 class 0x060100 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.3: [8086:54c8] type 00 class 0x040380 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.3: BAR 0 [mem 0x6002148000-0x600214bfff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.3: BAR 4 [mem 0x6002000000-0x60020fffff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.3: PME# supported from D3hot D3cold
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.4: [8086:54a3] type 00 class 0x0c0500 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.4: BAR 0 [mem 0x6002154000-0x60021540ff 64bit]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.4: BAR 4 [io  0xefa0-0xefbf]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.5: [8086:54a4] type 00 class 0x0c8000 conventional PCI endpoint
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.5: BAR 0 [mem 0xfe010000-0xfe010fff]
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKA configured for IRQ 0
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKB configured for IRQ 1
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKC configured for IRQ 0
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKD configured for IRQ 0
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKE configured for IRQ 0
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKF configured for IRQ 0
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKG configured for IRQ 0
+ago 12 09:13:51 CHUWI kernel: ACPI: PCI: Interrupt link LNKH configured for IRQ 0
+ago 12 09:13:51 CHUWI kernel: ACPI: EC: interrupt unblocked
+ago 12 09:13:51 CHUWI kernel: ACPI: EC: event unblocked
+ago 12 09:13:51 CHUWI kernel: ACPI: EC: EC_CMD/EC_SC=0x66, EC_DATA=0x62
+ago 12 09:13:51 CHUWI kernel: ACPI: EC: GPE=0x6e
+ago 12 09:13:51 CHUWI kernel: ACPI: \_SB_.PC00.LPCB.H_EC: Boot DSDT EC initialization complete
+ago 12 09:13:51 CHUWI kernel: ACPI: \_SB_.PC00.LPCB.H_EC: EC: Used to handle transactions and events
+ago 12 09:13:51 CHUWI kernel: iommu: Default domain type: Translated
+ago 12 09:13:51 CHUWI kernel: iommu: DMA domain TLB invalidation policy: lazy mode
+ago 12 09:13:51 CHUWI kernel: SCSI subsystem initialized
+ago 12 09:13:51 CHUWI kernel: libata version 3.00 loaded.
+ago 12 09:13:51 CHUWI kernel: ACPI: bus type USB registered
+ago 12 09:13:51 CHUWI kernel: usbcore: registered new interface driver usbfs
+ago 12 09:13:51 CHUWI kernel: usbcore: registered new interface driver hub
+ago 12 09:13:51 CHUWI kernel: usbcore: registered new device driver usb
+ago 12 09:13:51 CHUWI kernel: mc: Linux media interface: v0.10
+ago 12 09:13:51 CHUWI kernel: videodev: Linux video capture interface: v2.00
+ago 12 09:13:51 CHUWI kernel: pps_core: LinuxPPS API ver. 1 registered
+ago 12 09:13:51 CHUWI kernel: pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+ago 12 09:13:51 CHUWI kernel: PTP clock support registered
+ago 12 09:13:51 CHUWI kernel: efivars: Registered efivars operations
+ago 12 09:13:51 CHUWI kernel: Advanced Linux Sound Architecture Driver Initialized.
+ago 12 09:13:51 CHUWI kernel: NetLabel: Initializing
+ago 12 09:13:51 CHUWI kernel: NetLabel:  domain hash size = 128
+ago 12 09:13:51 CHUWI kernel: NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+ago 12 09:13:51 CHUWI kernel: NetLabel:  unlabeled traffic allowed by default
+ago 12 09:13:51 CHUWI kernel: PCI: Using ACPI for IRQ routing
+ago 12 09:13:51 CHUWI kernel: PCI: pci_cache_line_size set to 64 bytes
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.5: BAR 0 [mem 0xfe010000-0xfe010fff]: can't claim; no compatible bridge window
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x0009e000-0x0009ffff]
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x3f528000-0x3fffffff]
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x40193000-0x43ffffff]
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x69e44000-0x6bffffff]
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x6e976000-0x6fffffff]
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x7264e000-0x73ffffff]
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x76000000-0x77ffffff]
+ago 12 09:13:51 CHUWI kernel: e820: register RAM buffer resource [mem 0x27fc00000-0x27fffffff]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: vgaarb: setting as boot VGA device
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: vgaarb: bridge control possible
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+ago 12 09:13:51 CHUWI kernel: vgaarb: loaded
+ago 12 09:13:51 CHUWI kernel: clocksource: Switched to clocksource tsc-early
+ago 12 09:13:51 CHUWI kernel: VFS: Disk quotas dquot_6.6.0
+ago 12 09:13:51 CHUWI kernel: VFS: Dquot-cache hash table entries: 512 (4096 bytes)
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x002e-0x002f]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x004e-0x004f]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x0061]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x0063]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x0065]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x0067]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x0070]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x0080]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x0092]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Skipped [io  0x00b2-0x00b3]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Reserved [io  0x0680-0x069f]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:00: Reserved [io  0x164e-0x164f]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Reserved [mem 0xfedc0000-0xfedc7fff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Reserved [mem 0xfeda0000-0xfeda0fff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Reserved [mem 0xfeda1000-0xfeda1fff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Reserved [mem 0xc0000000-0xcfffffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Could not reserve [mem 0xfed20000-0xfed7ffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Could not reserve [mem 0xfed90000-0xfed93fff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Could not reserve [mem 0xfed45000-0xfed8ffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:01: Could not reserve [mem 0xfee00000-0xfeefffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Could not reserve [mem 0xfe000000-0xfe01ffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xfe04c000-0xfe04ffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xfe050000-0xfe0affff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xfe0d0000-0xfe0fffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xfe200000-0xfe7fffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xff000000-0xffffffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Could not reserve [io  0x1800-0x18fe]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xfd000000-0xfd68ffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xfd6b0000-0xfd6cffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:02: Reserved [mem 0xfd6f0000-0xfdffffff]
+ago 12 09:13:51 CHUWI kernel: acpi PNP0C02:03: Reserved [io  0x2000-0x20fe]
+ago 12 09:13:51 CHUWI kernel: pnp: PnP ACPI init
+ago 12 09:13:51 CHUWI kernel: pnp: PnP ACPI: found 1 devices
+ago 12 09:13:51 CHUWI kernel: clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+ago 12 09:13:51 CHUWI kernel: NET: Registered PF_INET protocol family
+ago 12 09:13:51 CHUWI kernel: IP idents hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: tcp_listen_portaddr_hash hash table entries: 4096 (order: 7, 294912 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: TCP established hash table entries: 65536 (order: 7, 524288 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: TCP bind hash table entries: 65536 (order: 12, 9437184 bytes, vmalloc hugepage)
+ago 12 09:13:51 CHUWI kernel: TCP: Hash tables configured (established 65536 bind 65536)
+ago 12 09:13:51 CHUWI kernel: UDP hash table entries: 4096 (order: 8, 1048576 bytes, linear)
+ago 12 09:13:51 CHUWI kernel: NET: Registered PF_UNIX/PF_LOCAL protocol family
+ago 12 09:13:51 CHUWI kernel: RPC: Registered named UNIX socket transport module.
+ago 12 09:13:51 CHUWI kernel: RPC: Registered udp transport module.
+ago 12 09:13:51 CHUWI kernel: RPC: Registered tcp transport module.
+ago 12 09:13:51 CHUWI kernel: RPC: Registered tcp-with-tls transport module.
+ago 12 09:13:51 CHUWI kernel: RPC: Registered tcp NFSv4.1 backchannel transport module.
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:12.6: BAR 0 [mem 0x4010000000-0x4010000fff 64bit]: assigned
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.0: BAR 0 [mem 0x4010001000-0x4010001fff 64bit]: assigned
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.1: BAR 0 [mem 0x4010002000-0x4010002fff 64bit]: assigned
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.2: BAR 0 [mem 0x4010003000-0x4010003fff 64bit]: assigned
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:15.3: BAR 0 [mem 0x4010004000-0x4010004fff 64bit]: assigned
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:19.0: BAR 0 [mem 0x4010005000-0x4010005fff 64bit]: assigned
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:19.1: BAR 0 [mem 0x4010006000-0x4010006fff 64bit]: assigned
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:1f.5: BAR 0 [mem 0x80404000-0x80404fff]: assigned
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: resource 7 [mem 0x000e0000-0x000fffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: resource 8 [mem 0x80400000-0xbfffffff window]
+ago 12 09:13:51 CHUWI kernel: pci_bus 0000:00: resource 9 [mem 0x4000000000-0x7fffffffff window]
+ago 12 09:13:51 CHUWI kernel: pci 0000:00:14.0: quirk_usb_early_handoff+0x0/0xc00 took 23699 usecs
+ago 12 09:13:51 CHUWI kernel: PCI: CLS 64 bytes, default 64
+ago 12 09:13:51 CHUWI kernel: PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+ago 12 09:13:51 CHUWI kernel: software IO TLB: mapped [mem 0x00000000659c3000-0x00000000699c3000] (64MB)
+ago 12 09:13:51 CHUWI kernel: RAPL PMU: API unit is 2^-32 Joules, 2 fixed counters, 655360 ms ovfl timer
+ago 12 09:13:51 CHUWI kernel: RAPL PMU: hw unit of domain pp0-core 2^-14 Joules
+ago 12 09:13:51 CHUWI kernel: RAPL PMU: hw unit of domain package 2^-14 Joules
+ago 12 09:13:51 CHUWI kernel: Unpacking initramfs...
+ago 12 09:13:51 CHUWI kernel: clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0xb9fb05486c, max_idle_ns: 440795231721 ns
+ago 12 09:13:51 CHUWI kernel: clocksource: Switched to clocksource tsc
+ago 12 09:13:51 CHUWI kernel: platform rtc_cmos: registered fallback platform RTC device
+ago 12 09:13:51 CHUWI kernel: Initialise system trusted keyrings
+ago 12 09:13:51 CHUWI kernel: workingset: timestamp_bits=56 (anon: 51) max_order=21 bucket_order=0 (anon: 0)
+ago 12 09:13:51 CHUWI kernel: NFS: Registering the id_resolver key type
+ago 12 09:13:51 CHUWI kernel: Key type id_resolver registered
+ago 12 09:13:51 CHUWI kernel: Key type id_legacy registered
+ago 12 09:13:51 CHUWI kernel: nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+ago 12 09:13:51 CHUWI kernel: nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+ago 12 09:13:51 CHUWI kernel: 9p: Installing v9fs 9p2000 file system support
+ago 12 09:13:51 CHUWI kernel: Key type asymmetric registered
+ago 12 09:13:51 CHUWI kernel: Asymmetric key parser 'x509' registered
+ago 12 09:13:51 CHUWI kernel: Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+ago 12 09:13:51 CHUWI kernel: io scheduler mq-deadline registered
+ago 12 09:13:51 CHUWI kernel: io scheduler kyber registered
+ago 12 09:13:51 CHUWI kernel: ACPI: AC: AC Adapter [ADP1] (off-line)
+ago 12 09:13:51 CHUWI kernel: input: Lid Switch as /devices/pci0000:00/0000:00:1f.0/PNP0C09:00/PNP0C0D:00/input/input0
+ago 12 09:13:51 CHUWI kernel: ACPI: button: Lid Switch [LID0]
+ago 12 09:13:51 CHUWI kernel: input: Power Button as /devices/platform/PNP0C0C:00/input/input1
+ago 12 09:13:51 CHUWI kernel: ACPI: button: Power Button [PWRB]
+ago 12 09:13:51 CHUWI kernel: input: Sleep Button as /devices/platform/PNP0C0E:00/input/input2
+ago 12 09:13:51 CHUWI kernel: ACPI: button: Sleep Button [SLPB]
+ago 12 09:13:51 CHUWI kernel: input: Power Button as /devices/platform/LNXPWRBN:00/input/input3
+ago 12 09:13:51 CHUWI kernel: ACPI: button: Power Button [PWRF]
+ago 12 09:13:51 CHUWI kernel: Monitor-Mwait will be used to enter C-1 state
+ago 12 09:13:51 CHUWI kernel: Monitor-Mwait will be used to enter C-2 state
+ago 12 09:13:51 CHUWI kernel: Monitor-Mwait will be used to enter C-3 state
+ago 12 09:13:51 CHUWI kernel: acpi LNXTHERM:00: registered as thermal_zone0
+ago 12 09:13:51 CHUWI kernel: ACPI: thermal: Thermal Zone [TZ00] (28 C)
+ago 12 09:13:51 CHUWI kernel: Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+ago 12 09:13:51 CHUWI kernel: hpet_acpi_probe: no address or irqs in _CRS
+ago 12 09:13:51 CHUWI kernel: Non-volatile memory driver v1.3
+ago 12 09:13:51 CHUWI kernel: ACPI: bus type drm_connector registered
+ago 12 09:13:51 CHUWI kernel: ACPI: battery: Slot [BAT0] (battery present)
+ago 12 09:13:51 CHUWI kernel: loop: module loaded
+ago 12 09:13:51 CHUWI kernel: mei_me 0000:00:16.0: enabling device (0000 -> 0002)
+ago 12 09:13:51 CHUWI kernel: intel-lpss 0000:00:12.6: enabling device (0004 -> 0006)
+ago 12 09:13:51 CHUWI kernel: intel-lpss 0000:00:15.0: enabling device (0004 -> 0006)
+ago 12 09:13:51 CHUWI kernel: Freeing initrd memory: 42772K
+ago 12 09:13:51 CHUWI kernel: intel-lpss 0000:00:15.1: enabling device (0004 -> 0006)
+ago 12 09:13:51 CHUWI kernel: intel-lpss 0000:00:15.2: enabling device (0004 -> 0006)
+ago 12 09:13:51 CHUWI kernel: intel-lpss 0000:00:15.3: enabling device (0004 -> 0006)
+ago 12 09:13:51 CHUWI kernel: intel-lpss 0000:00:19.0: enabling device (0004 -> 0006)
+ago 12 09:13:51 CHUWI kernel: intel-lpss 0000:00:19.1: enabling device (0004 -> 0006)
+ago 12 09:13:51 CHUWI kernel: ahci 0000:00:17.0: AHCI vers 0001.0301, 32 command slots, 6 Gbps, SATA mode
+ago 12 09:13:51 CHUWI kernel: ahci 0000:00:17.0: 2/2 ports implemented (port mask 0x3)
+ago 12 09:13:51 CHUWI kernel: ahci 0000:00:17.0: flags: 64bit ncq sntf pm clo only pio slum part deso sadm sds 
+ago 12 09:13:51 CHUWI kernel: scsi host0: ahci
+ago 12 09:13:51 CHUWI kernel: scsi host1: ahci
+ago 12 09:13:51 CHUWI kernel: ata1: SATA max UDMA/133 abar m2048@0x80402000 port 0x80402100 irq 121 lpm-pol 3
+ago 12 09:13:51 CHUWI kernel: ata2: SATA max UDMA/133 abar m2048@0x80402000 port 0x80402180 irq 121 lpm-pol 3
+ago 12 09:13:51 CHUWI kernel: e100: Intel(R) PRO/100 Network Driver
+ago 12 09:13:51 CHUWI kernel: e100: Copyright(c) 1999-2006 Intel Corporation
+ago 12 09:13:51 CHUWI kernel: e1000: Intel(R) PRO/1000 Network Driver
+ago 12 09:13:51 CHUWI kernel: e1000: Copyright (c) 1999-2006 Intel Corporation.
+ago 12 09:13:51 CHUWI kernel: e1000e: Intel(R) PRO/1000 Network Driver
+ago 12 09:13:51 CHUWI kernel: e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+ago 12 09:13:51 CHUWI kernel: sky2: driver version 1.30
+ago 12 09:13:51 CHUWI kernel: xhci_hcd 0000:00:14.0: xHCI Host Controller
+ago 12 09:13:51 CHUWI kernel: xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus number 1
+ago 12 09:13:51 CHUWI kernel: xhci_hcd 0000:00:14.0: hcc params 0x20007fc1 hci version 0x120 quirks 0x0000100200009810
+ago 12 09:13:51 CHUWI kernel: xhci_hcd 0000:00:14.0: xHCI Host Controller
+ago 12 09:13:51 CHUWI kernel: xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus number 2
+ago 12 09:13:51 CHUWI kernel: xhci_hcd 0000:00:14.0: Host supports USB 3.1 Enhanced SuperSpeed
+ago 12 09:13:51 CHUWI kernel: usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 7.02
+ago 12 09:13:51 CHUWI kernel: usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+ago 12 09:13:51 CHUWI kernel: usb usb1: Product: xHCI Host Controller
+ago 12 09:13:51 CHUWI kernel: usb usb1: Manufacturer: Linux 7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty xhci-hcd
+ago 12 09:13:51 CHUWI kernel: usb usb1: SerialNumber: 0000:00:14.0
+ago 12 09:13:51 CHUWI kernel: hub 1-0:1.0: USB hub found
+ago 12 09:13:51 CHUWI kernel: hub 1-0:1.0: 12 ports detected
+ago 12 09:13:51 CHUWI kernel: ata2: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+ago 12 09:13:51 CHUWI kernel: ata2.00: ATA-9: RS256GSSD310, W1212A0, max UDMA/133
+ago 12 09:13:51 CHUWI kernel: ata2.00: 500118192 sectors, multi 1: LBA48 NCQ (depth 32), AA
+ago 12 09:13:51 CHUWI kernel: ata2.00: Features: Dev-Sleep HIPM DIPM
+ago 12 09:13:51 CHUWI kernel: ata1: SATA link down (SStatus 4 SControl 300)
+ago 12 09:13:51 CHUWI kernel: ata2.00: configured for UDMA/133
+ago 12 09:13:51 CHUWI kernel: ahci 0000:00:17.0: port does not support device sleep
+ago 12 09:13:51 CHUWI kernel: scsi 1:0:0:0: Direct-Access     ATA      RS256GSSD310     2A0  PQ: 0 ANSI: 5
+ago 12 09:13:51 CHUWI kernel: sd 1:0:0:0: Attached scsi generic sg0 type 0
+ago 12 09:13:51 CHUWI kernel: sd 1:0:0:0: [sda] 500118192 512-byte logical blocks: (256 GB/238 GiB)
+ago 12 09:13:51 CHUWI kernel: sd 1:0:0:0: [sda] Write Protect is off
+ago 12 09:13:51 CHUWI kernel: sd 1:0:0:0: [sda] Mode Sense: 00 3a 00 00
+ago 12 09:13:51 CHUWI kernel: sd 1:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+ago 12 09:13:51 CHUWI kernel: sd 1:0:0:0: [sda] Preferred minimum I/O size 512 bytes
+ago 12 09:13:51 CHUWI kernel:  sda: sda1 sda2
+ago 12 09:13:51 CHUWI kernel: sd 1:0:0:0: [sda] Attached SCSI disk
+ago 12 09:13:51 CHUWI kernel: usb usb2: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 7.02
+ago 12 09:13:51 CHUWI kernel: usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+ago 12 09:13:51 CHUWI kernel: usb usb2: Product: xHCI Host Controller
+ago 12 09:13:51 CHUWI kernel: usb usb2: Manufacturer: Linux 7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty xhci-hcd
+ago 12 09:13:51 CHUWI kernel: usb usb2: SerialNumber: 0000:00:14.0
+ago 12 09:13:51 CHUWI kernel: hub 2-0:1.0: USB hub found
+ago 12 09:13:51 CHUWI kernel: hub 2-0:1.0: 4 ports detected
+ago 12 09:13:51 CHUWI kernel: usbcore: registered new interface driver usblp
+ago 12 09:13:51 CHUWI kernel: usbcore: registered new interface driver usb-storage
+ago 12 09:13:51 CHUWI kernel: i8042: PNP: PS/2 Controller [PNP0303:PS2K] at 0x60,0x64 irq 1
+ago 12 09:13:51 CHUWI kernel: i8042: PNP: PS/2 appears to have AUX port disabled, if this is incorrect please boot with i8042.nopnp
+ago 12 09:13:51 CHUWI kernel: serio: i8042 KBD port at 0x60,0x64 irq 1
+ago 12 09:13:51 CHUWI kernel: rtc_cmos rtc_cmos: RTC can wake from S4
+ago 12 09:13:51 CHUWI kernel: rtc_cmos rtc_cmos: registered as rtc0
+ago 12 09:13:51 CHUWI kernel: rtc_cmos rtc_cmos: alarms up to one month, y3k, 114 bytes nvram
+ago 12 09:13:51 CHUWI kernel: i2c_dev: i2c /dev entries driver
+ago 12 09:13:51 CHUWI kernel: input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input4
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: enabling device (0000 -> 0003)
+ago 12 09:13:52 CHUWI kernel: device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+ago 12 09:13:52 CHUWI kernel: intel_pstate: Intel P-state driver initializing
+ago 12 09:13:52 CHUWI kernel: intel_pstate: HWP enabled
+ago 12 09:13:52 CHUWI kernel: hid: raw HID events driver (C) Jiri Kosina
+ago 12 09:13:52 CHUWI kernel: usbcore: registered new interface driver usbhid
+ago 12 09:13:52 CHUWI kernel: usbhid: USB HID core driver
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SPD Write Disable is set
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus using PCI interrupt
+ago 12 09:13:52 CHUWI kernel: snd_hda_intel 0000:00:1f.3: enabling device (0000 -> 0002)
+ago 12 09:13:52 CHUWI kernel: nf_conntrack_irc: The irc conntrack helper is scheduled for removal.
+                              Please contact the netfilter-devel mailing list if you still need this.
+ago 12 09:13:52 CHUWI kernel: Initializing XFRM netlink socket
+ago 12 09:13:52 CHUWI kernel: NET: Registered PF_INET6 protocol family
+ago 12 09:13:52 CHUWI kernel: Segment Routing with IPv6
+ago 12 09:13:52 CHUWI kernel: In-situ OAM (IOAM) with IPv6
+ago 12 09:13:52 CHUWI kernel: NET: Registered PF_PACKET protocol family
+ago 12 09:13:52 CHUWI kernel: 9pnet: Installing 9P2000 support
+ago 12 09:13:52 CHUWI kernel: Key type dns_resolver registered
+ago 12 09:13:52 CHUWI kernel: start plist test
+ago 12 09:13:52 CHUWI kernel: end plist test
+ago 12 09:13:52 CHUWI kernel: ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
+ago 12 09:13:52 CHUWI kernel: microcode: Current revision: 0x00000007
+ago 12 09:13:52 CHUWI kernel: IPI shorthand broadcast: enabled
+ago 12 09:13:52 CHUWI kernel: usb 1-3: new full-speed USB device number 2 using xhci_hcd
+ago 12 09:13:52 CHUWI kernel: sched_clock: Marking stable (15382001335, 28000611)->(15491979580, -81977634)
+ago 12 09:13:52 CHUWI kernel: registered taskstats version 1
+ago 12 09:13:52 CHUWI kernel: Loading compiled-in X.509 certificates
+ago 12 09:13:52 CHUWI kernel: usb 1-3: New USB device found, idVendor=36b0, idProduct=3002, bcdDevice= 1.09
+ago 12 09:13:52 CHUWI kernel: usb 1-3: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+ago 12 09:13:52 CHUWI kernel: usb 1-3: Product: Wireless 2.4G Dongle
+ago 12 09:13:52 CHUWI kernel: usb 1-3: Manufacturer: RDMCTMZT
+ago 12 09:13:52 CHUWI kernel: input: RDMCTMZT Wireless 2.4G Dongle as /devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:1.0/0003:36B0:3002.0001/input/input5
+ago 12 09:13:52 CHUWI kernel: Demotion targets for Node 0: null
+ago 12 09:13:52 CHUWI kernel: kmemleak: Kernel memory leak detector initialized (mem pool available: 62489)
+ago 12 09:13:52 CHUWI kernel: kmemleak: Automatic memory scanning thread started
+ago 12 09:13:52 CHUWI kernel: hid-generic 0003:36B0:3002.0001: input,hidraw0: USB HID v1.11 Keyboard [RDMCTMZT Wireless 2.4G Dongle] on usb-0000:00:14.0-3/input0
+ago 12 09:13:52 CHUWI kernel: hid-generic 0003:36B0:3002.0002: hiddev96,hidraw1: USB HID v1.11 Device [RDMCTMZT Wireless 2.4G Dongle] on usb-0000:00:14.0-3/input1
+ago 12 09:13:52 CHUWI kernel: input: RDMCTMZT Wireless 2.4G Dongle Mouse as /devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:1.2/0003:36B0:3002.0003/input/input6
+ago 12 09:13:52 CHUWI kernel: input: RDMCTMZT Wireless 2.4G Dongle System Control as /devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:1.2/0003:36B0:3002.0003/input/input7
+ago 12 09:13:52 CHUWI kernel: PM:   Magic number: 6:821:217
+ago 12 09:13:52 CHUWI kernel: acpi device:68: hash matches
+ago 12 09:13:52 CHUWI kernel: acpi device:3b: hash matches
+ago 12 09:13:52 CHUWI kernel: netconsole: network logging started
+ago 12 09:13:52 CHUWI kernel: clk: Disabling unused clocks
+ago 12 09:13:52 CHUWI kernel: ALSA device list:
+ago 12 09:13:52 CHUWI kernel:   No soundcards found.
+ago 12 09:13:52 CHUWI kernel: input: RDMCTMZT Wireless 2.4G Dongle Consumer Control as /devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:1.2/0003:36B0:3002.0003/input/input8
+ago 12 09:13:52 CHUWI kernel: input: RDMCTMZT Wireless 2.4G Dongle Keyboard as /devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:1.2/0003:36B0:3002.0003/input/input9
+ago 12 09:13:52 CHUWI kernel: hid-generic 0003:36B0:3002.0003: input,hiddev97,hidraw2: USB HID v1.11 Mouse [RDMCTMZT Wireless 2.4G Dongle] on usb-0000:00:14.0-3/input2
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+ago 12 09:13:52 CHUWI kernel: i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+ago 12 09:13:52 CHUWI kernel: Freeing unused kernel image (initmem) memory: 5944K
+ago 12 09:13:52 CHUWI kernel: Write protecting the kernel read-only data: 61440k
+ago 12 09:13:52 CHUWI kernel: Freeing unused kernel image (text/rodata gap) memory: 660K
+ago 12 09:13:52 CHUWI kernel: Freeing unused kernel image (rodata/data gap) memory: 276K
+ago 12 09:13:52 CHUWI kernel: x86/mm: Checked W+X mappings: passed, no W+X pages found.
+ago 12 09:13:52 CHUWI kernel: Run /init as init process
+ago 12 09:13:52 CHUWI kernel:   with arguments:
+ago 12 09:13:52 CHUWI kernel:     /init
+ago 12 09:13:52 CHUWI kernel:     vmlinuz-debug
+ago 12 09:13:52 CHUWI kernel:   with environment:
+ago 12 09:13:52 CHUWI kernel:     HOME=/
+ago 12 09:13:52 CHUWI kernel:     TERM=linux
+ago 12 09:13:52 CHUWI kernel: mkdir (73) used greatest stack depth: 26536 bytes left
+ago 12 09:13:52 CHUWI kernel: usb 1-4: new full-speed USB device number 3 using xhci_hcd
+ago 12 09:13:52 CHUWI kernel: systemd-udevd (95) used greatest stack depth: 25640 bytes left
+ago 12 09:13:52 CHUWI kernel: usb 1-4: New USB device found, idVendor=1234, idProduct=abcd, bcdDevice= 0.00
+ago 12 09:13:52 CHUWI kernel: usb 1-4: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+ago 12 09:13:52 CHUWI kernel: usb 1-4: Product: TCA9537-B32
+ago 12 09:13:52 CHUWI kernel: usb 1-4: Manufacturer: NYM
+ago 12 09:13:52 CHUWI kernel: input: NYM TCA9537-B32 Touchscreen as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:1234:ABCD.0004/input/input11
+ago 12 09:13:52 CHUWI kernel: hid-generic 0003:1234:ABCD.0004: input,hiddev98,hidraw3: USB HID v1.00 Device [NYM TCA9537-B32] on usb-0000:00:14.0-4/input0
+ago 12 09:13:52 CHUWI kernel: usb 1-10: new full-speed USB device number 4 using xhci_hcd
+ago 12 09:13:52 CHUWI kernel: usb 1-10: New USB device found, idVendor=8087, idProduct=0026, bcdDevice= 0.02
+ago 12 09:13:52 CHUWI kernel: usb 1-10: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+ago 12 09:13:52 CHUWI kernel: udevadm (120) used greatest stack depth: 25152 bytes left
+ago 12 09:13:52 CHUWI kernel: EXT4-fs (sda2): mounted filesystem bbf08cd1-b31b-4a2f-8f42-9659c613ae4a r/w with ordered data mode. Quota mode: none.
+ago 12 09:13:52 CHUWI kernel: (udev-worker) (108) used greatest stack depth: 24928 bytes left
+ago 12 09:13:52 CHUWI systemd[1]: systemd 257.13-1~deb13u1 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +IPE +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF -XKBCOMMON -UTMP +SYSVINIT +LIBARCHIVE)
+ago 12 09:13:52 CHUWI systemd[1]: Detected architecture x86-64.
+ago 12 09:13:52 CHUWI systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LSM not supported.
+ago 12 09:13:52 CHUWI kernel: systemd-fstab-g (164) used greatest stack depth: 24800 bytes left
+ago 12 09:13:52 CHUWI kernel: systemd-ssh-gen (175) used greatest stack depth: 24672 bytes left
+ago 12 09:13:52 CHUWI systemd[1]: Queued start job for default target graphical.target.
+ago 12 09:13:52 CHUWI systemd[1]: Created slice system-getty.slice - Slice /system/getty.
+ago 12 09:13:52 CHUWI systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+ago 12 09:13:52 CHUWI systemd[1]: Created slice user.slice - User and Session Slice.
+ago 12 09:13:52 CHUWI systemd[1]: Started systemd-ask-password-console.path - Dispatch Password Requests to Console Directory Watch.
+ago 12 09:13:52 CHUWI systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+ago 12 09:13:52 CHUWI systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point.
+ago 12 09:13:52 CHUWI systemd[1]: Reached target nss-user-lookup.target - User and Group Name Lookups.
+ago 12 09:13:52 CHUWI systemd[1]: Reached target remote-fs.target - Remote File Systems.
+ago 12 09:13:52 CHUWI systemd[1]: Reached target slices.target - Slice Units.
+ago 12 09:13:52 CHUWI systemd[1]: Reached target swap.target - Swaps.
+ago 12 09:13:52 CHUWI systemd[1]: Listening on systemd-creds.socket - Credential Encryption/Decryption.
+ago 12 09:13:52 CHUWI systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+ago 12 09:13:52 CHUWI systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+ago 12 09:13:52 CHUWI systemd[1]: Listening on systemd-journald.socket - Journal Sockets.
+ago 12 09:13:52 CHUWI systemd[1]: systemd-pcrextend.socket - TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-uki
+ago 12 09:13:52 CHUWI systemd[1]: systemd-pcrlock.socket - Make TPM PCR Policy skipped, unmet condition check ConditionSecurity=measured-uki
+ago 12 09:13:52 CHUWI systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+ago 12 09:13:52 CHUWI systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+ago 12 09:13:52 CHUWI systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
+ago 12 09:13:52 CHUWI systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
+ago 12 09:13:52 CHUWI systemd[1]: Mounting run-lock.mount - Legacy Locks Directory /run/lock...
+ago 12 09:13:52 CHUWI systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+ago 12 09:13:52 CHUWI systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+ago 12 09:13:52 CHUWI systemd[1]: Mounting tmp.mount - Temporary Directory /tmp...
+ago 12 09:13:52 CHUWI systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes skipped, unmet condition check ConditionFileNotEmpty=/lib/modules/7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty/modules.devname
+ago 12 09:13:52 CHUWI systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+ago 12 09:13:52 CHUWI systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+ago 12 09:13:52 CHUWI systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+ago 12 09:13:52 CHUWI systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+ago 12 09:13:52 CHUWI systemd[1]: systemd-hibernate-clear.service - Clear Stale Hibernate Storage Info skipped, unmet condition check ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67
+ago 12 09:13:52 CHUWI systemd[1]: systemd-journald.service: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.
+ago 12 09:13:52 CHUWI systemd[1]: systemd-journald.service: (This warning is only shown for the first unit using IP firewalling.)
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-journald.service - Journal Service...
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+ago 12 09:13:52 CHUWI systemd[1]: systemd-pcrmachine.service - TPM PCR Machine ID Measurement skipped, unmet condition check ConditionSecurity=measured-uki
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+ago 12 09:13:52 CHUWI systemd[1]: systemd-tpm2-setup-early.service - Early TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-uki
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-udev-load-credentials.service - Load udev Rules from Credentials...
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
+ago 12 09:13:52 CHUWI systemd-journald[189]: Collecting audit messages is disabled.
+ago 12 09:13:52 CHUWI systemd[1]: Mounted dev-hugepages.mount - Huge Pages File System.
+ago 12 09:13:52 CHUWI systemd[1]: Mounted dev-mqueue.mount - POSIX Message Queue File System.
+ago 12 09:13:52 CHUWI systemd[1]: Mounted run-lock.mount - Legacy Locks Directory /run/lock.
+ago 12 09:13:52 CHUWI systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.
+ago 12 09:13:52 CHUWI systemd[1]: Mounted sys-kernel-tracing.mount - Kernel Trace File System.
+ago 12 09:13:52 CHUWI systemd[1]: Mounted tmp.mount - Temporary Directory /tmp.
+ago 12 09:13:52 CHUWI systemd[1]: modprobe@configfs.service: Deactivated successfully.
+ago 12 09:13:52 CHUWI systemd[1]: Finished modprobe@configfs.service - Load Kernel Module configfs.
+ago 12 09:13:52 CHUWI systemd[1]: modprobe@drm.service: Deactivated successfully.
+ago 12 09:13:52 CHUWI systemd[1]: Finished modprobe@drm.service - Load Kernel Module drm.
+ago 12 09:13:52 CHUWI systemd[1]: modprobe@efi_pstore.service: Deactivated successfully.
+ago 12 09:13:52 CHUWI systemd[1]: Finished modprobe@efi_pstore.service - Load Kernel Module efi_pstore.
+ago 12 09:13:52 CHUWI systemd[1]: modprobe@fuse.service: Deactivated successfully.
+ago 12 09:13:52 CHUWI systemd[1]: Finished modprobe@fuse.service - Load Kernel Module fuse.
+ago 12 09:13:52 CHUWI systemd[1]: Finished systemd-modules-load.service - Load Kernel Modules.
+ago 12 09:13:52 CHUWI systemd[1]: Finished systemd-remount-fs.service - Remount Root and Kernel File Systems.
+ago 12 09:13:52 CHUWI systemd[1]: sys-fs-fuse-connections.mount - FUSE Control File System skipped, unmet condition check ConditionPathExists=/sys/fs/fuse/connections
+ago 12 09:13:52 CHUWI systemd[1]: sys-kernel-config.mount - Kernel Configuration File System skipped, unmet condition check ConditionPathExists=/sys/kernel/config
+ago 12 09:13:52 CHUWI systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database skipped, unmet condition check ConditionNeedsUpdate=/etc
+ago 12 09:13:52 CHUWI systemd[1]: systemd-pstore.service - Platform Persistent Storage Archival skipped, unmet condition check ConditionDirectoryNotEmpty=/sys/fs/pstore
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-random-seed.service - Load/Save OS Random Seed...
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-sysctl.service - Apply Kernel Variables...
+ago 12 09:13:52 CHUWI systemd[1]: systemd-tpm2-setup.service - TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-uki
+ago 12 09:13:52 CHUWI systemd[1]: Finished systemd-udev-load-credentials.service - Load udev Rules from Credentials.
+ago 12 09:13:52 CHUWI systemd[1]: Finished systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+ago 12 09:13:52 CHUWI systemd[1]: systemd-sysusers.service - Create System Users skipped, no trigger condition checks were met.
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev...
+ago 12 09:13:52 CHUWI systemd[1]: Finished systemd-random-seed.service - Load/Save OS Random Seed.
+ago 12 09:13:52 CHUWI systemd[1]: Finished systemd-sysctl.service - Apply Kernel Variables.
+ago 12 09:13:52 CHUWI systemd[1]: Finished systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+ago 12 09:13:52 CHUWI systemd[1]: Reached target local-fs-pre.target - Preparation for Local File Systems.
+ago 12 09:13:52 CHUWI systemd[1]: Reached target local-fs.target - Local File Systems.
+ago 12 09:13:52 CHUWI systemd[1]: Listening on systemd-sysext.socket - System Extension Image Management.
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-binfmt.service - Set Up Additional Binary Formats...
+ago 12 09:13:52 CHUWI systemd[1]: Starting systemd-udevd.service - Rule-based Manager for Device Events and Files...
+ago 12 09:13:52 CHUWI systemd[1]: proc-sys-fs-binfmt_misc.automount: Got automount request for /proc/sys/fs/binfmt_misc, triggered by 205 (systemd-binfmt)
+ago 12 09:13:52 CHUWI systemd[1]: Started systemd-udevd.service - Rule-based Manager for Device Events and Files.
+ago 12 09:13:52 CHUWI systemd[1]: Started systemd-journald.service - Journal Service.
+ago 12 09:13:52 CHUWI systemd-journald[189]: Received client request to flush runtime journal.
+ago 12 09:13:52 CHUWI kernel: journal-offline (227) used greatest stack depth: 24248 bytes left
+ago 12 09:13:55 CHUWI kernel: pci 0000:00:1f.3: deferred probe pending: snd_hda_intel: couldn't bind with audio component
+ago 12 09:13:56 CHUWI kernel: intel-ipu6 0000:00:05.0: enabling device (0000 -> 0002)
+ago 12 09:13:57 CHUWI kernel: cfg80211: Loading compiled-in X.509 certificates for regulatory database
+ago 12 09:13:57 CHUWI kernel: Bluetooth: Core ver 2.22
+ago 12 09:13:57 CHUWI kernel: NET: Registered PF_BLUETOOTH protocol family
+ago 12 09:13:57 CHUWI kernel: Bluetooth: HCI device and connection manager initialized
+ago 12 09:13:57 CHUWI kernel: Bluetooth: HCI socket layer initialized
+ago 12 09:13:57 CHUWI kernel: Bluetooth: L2CAP socket layer initialized
+ago 12 09:13:57 CHUWI kernel: Bluetooth: SCO socket layer initialized
+ago 12 09:13:57 CHUWI kernel: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+ago 12 09:13:57 CHUWI kernel: Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+ago 12 09:13:57 CHUWI kernel: faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+ago 12 09:13:57 CHUWI kernel: cfg80211: failed to load regulatory.db
+ago 12 09:13:57 CHUWI kernel: iwlwifi 0000:00:14.3: enabling device (0000 -> 0002)
+ago 12 09:13:57 CHUWI kernel: intel-ipu6 0000:00:05.0: Found supported sensor GCTI5035:00
+ago 12 09:13:57 CHUWI kernel: usbcore: registered new interface driver btusb
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Device revision is 2
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Secure boot is enabled
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: OTP lock is enabled
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: API lock is enabled
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Debug lock is disabled
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Minimum firmware build 1 week 10 2014
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Bootloader timestamp 2019.40 buildtype 1 build 38
+ago 12 09:13:57 CHUWI kernel: intel-ipu6 0000:00:05.0: Found supported sensor GCTI8034:00
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: DSM reset method type: 0x00
+ago 12 09:13:57 CHUWI kernel: intel-ipu6 0000:00:05.0: Connected 2 cameras
+ago 12 09:13:57 CHUWI kernel: intel-ipu6 0000:00:05.0: Sending BOOT_LOAD to CSE
+ago 12 09:13:57 CHUWI kernel: intel-ipu6 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+ago 12 09:13:57 CHUWI kernel: i915 0000:00:02.0: [drm] Found alderlake_p/alderlake_n (device ID 46d1) integrated display version 13.00 stepping D0
+ago 12 09:13:57 CHUWI kernel: i915 0000:00:02.0: vgaarb: deactivate vga console
+ago 12 09:13:57 CHUWI kernel: i915 0000:00:02.0: [drm] Transparent Hugepage support is recommended for optimal performance on this platform!
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Found device firmware: intel/ibt-0040-1050.sfi
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Boot Address: 0x100800
+ago 12 09:13:57 CHUWI kernel: Bluetooth: hci0: Firmware Version: 200-48.24
+ago 12 09:13:57 CHUWI kernel: gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+ago 12 09:13:57 CHUWI kernel: gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+ago 12 09:13:57 CHUWI kernel: intel-ipu6 0000:00:05.0: CSE authenticate_run done
+ago 12 09:13:57 CHUWI kernel: intel-ipu6 0000:00:05.0: IPU6-v3[462e] hardware version 5
+ago 12 09:13:57 CHUWI kernel: i915 0000:00:02.0: [drm] Finished loading DMC firmware i915/adlp_dmc.bin (v2.20)
+ago 12 09:13:57 CHUWI kernel: iwlwifi 0000:00:14.3: Detected crf-id 0x501, cnv-id 0x80400 wfpm id 0x80000030
+ago 12 09:13:57 CHUWI kernel: iwlwifi 0000:00:14.3: PCI dev 54f0/0244, rev=0x370, rfid=0x10c000
+ago 12 09:13:57 CHUWI kernel: iwlwifi 0000:00:14.3: Detected Intel(R) Wi-Fi 6 AX101
+ago 12 09:13:57 CHUWI kernel: iwlwifi 0000:00:14.3: loaded firmware version 89.4d42c933.0 so-a0-hr-b0-89.ucode op_mode iwlmvm
+ago 12 09:13:58 CHUWI kernel: gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+ago 12 09:13:58 CHUWI kernel: gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+ago 12 09:13:58 CHUWI kernel: i915 0000:00:02.0: [drm] *ERROR* Port F/TC#3: timeout waiting for PHY ready
+ago 12 09:13:58 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:13:58 CHUWI kernel: i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+ago 12 09:13:58 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#0: (udev-worker)/246
+ago 12 09:13:58 CHUWI kernel: Modules linked in: iwlmvm(+) mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915(+) btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:13:58 CHUWI kernel: CPU: 0 UID: 0 PID: 246 Comm: (udev-worker) Tainted: G S                  7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:13:58 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC
+ago 12 09:13:58 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:13:58 CHUWI kernel: RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+ago 12 09:13:58 CHUWI kernel: Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 88 f9 43 df 48 89 c6 48 8d 3d 7e 72 38 00 48 8b 14 24 48 c7 c1 80 3d 94 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+ago 12 09:13:58 CHUWI kernel: RSP: 0000:ffff88811ba2f038 EFLAGS: 00010246
+ago 12 09:13:58 CHUWI kernel: RAX: ffffffffc189d620 RBX: ffff888108bc2000 RCX: ffffffffc1943d80
+ago 12 09:13:58 CHUWI kernel: RDX: ffff888107eea360 RSI: ffffffffc189d620 RDI: ffffffffc160de80
+ago 12 09:13:58 CHUWI kernel: RBP: ffff88811c704000 R08: 0000000000000000 R09: fffffbfff466130a
+ago 12 09:13:58 CHUWI kernel: R10: ffffffffa3309857 R11: 0000000000000000 R12: 0000000000000019
+ago 12 09:13:58 CHUWI kernel: R13: 0000000000000001 R14: ffff888108bc2008 R15: ffff8881090b20c8
+ago 12 09:13:58 CHUWI kernel: FS:  00007fc7ea02f9c0(0000) GS:ffff88828c755000(0000) knlGS:0000000000000000
+ago 12 09:13:58 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:13:58 CHUWI kernel: CR2: 00007f39bd976728 CR3: 0000000112fdd000 CR4: 0000000000f50ef0
+ago 12 09:13:58 CHUWI kernel: PKRU: 55555554
+ago 12 09:13:58 CHUWI kernel: Call Trace:
+ago 12 09:13:58 CHUWI kernel:  <TASK>
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_display_power_is_enabled+0x32/0x40 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_init_mode+0x377/0x9d0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_init+0x4ed/0x7a0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_ddi_init+0x1b72/0x37a0 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irq+0x11/0x40
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_lock+0x128/0x260
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irqrestore+0x3f/0x50
+ago 12 09:13:58 CHUWI kernel:  ? __pfx___drm_dev_dbg+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_bios_for_each_encoder+0x56/0xa0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_setup_outputs+0x4b3/0x1e40 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_update_max_cdclk+0x259/0xd40 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_display_driver_probe_nogem+0x25e/0x4c0 [i915]
+ago 12 09:13:58 CHUWI kernel:  i915_driver_probe+0xcda/0x1b20 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_i915_driver_probe+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? __pm_runtime_resume+0x78/0x110
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irqrestore+0x3f/0x50
+ago 12 09:13:58 CHUWI kernel:  ? i915_pci_probe+0x2aa/0x390 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_i915_pci_probe+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  local_pci_probe+0xd0/0x170
+ago 12 09:13:58 CHUWI kernel:  pci_call_probe+0x143/0x5a0
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_pci_call_probe+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_lock+0x128/0x260
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? pci_match_device+0x32a/0x620
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  ? pci_match_device+0x39d/0x620
+ago 12 09:13:58 CHUWI kernel:  ? kernfs_put+0x17/0x30
+ago 12 09:13:58 CHUWI kernel:  pci_device_probe+0xa7/0x110
+ago 12 09:13:58 CHUWI kernel:  really_probe+0x1eb/0x630
+ago 12 09:13:58 CHUWI kernel:  __driver_probe_device+0x1ab/0x2f0
+ago 12 09:13:58 CHUWI kernel:  driver_probe_device+0x45/0xf0
+ago 12 09:13:58 CHUWI kernel:  __driver_attach+0x157/0x400
+ago 12 09:13:58 CHUWI kernel:  ? __pfx___driver_attach+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  bus_for_each_dev+0x103/0x180
+ago 12 09:13:58 CHUWI kernel:  ? __kasan_kmalloc+0x8f/0xa0
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_bus_for_each_dev+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? bus_add_driver+0x1d1/0x420
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  bus_add_driver+0x20b/0x420
+ago 12 09:13:58 CHUWI kernel:  driver_register+0x1a0/0x350
+ago 12 09:13:58 CHUWI kernel:  i915_init+0x56/0x160 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_init_module+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  do_one_initcall+0xd0/0x440
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_do_one_initcall+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? memset+0x11/0x30
+ago 12 09:13:58 CHUWI kernel:  ? kasan_unpoison+0x27/0x60
+ago 12 09:13:58 CHUWI kernel:  do_init_module+0x27c/0x7b0
+ago 12 09:13:58 CHUWI kernel:  ? trace_hardirqs_on+0x18/0x160
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_do_init_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? kasan_quarantine_put+0xc7/0x1d0
+ago 12 09:13:58 CHUWI kernel:  ? load_module+0x5713/0x6200
+ago 12 09:13:58 CHUWI kernel:  ? kfree+0x1b0/0x500
+ago 12 09:13:58 CHUWI kernel:  load_module+0x5533/0x6200
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_selinux_kernel_load_from_file+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_load_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? security_file_permission+0x1d/0x40
+ago 12 09:13:58 CHUWI kernel:  ? __lock_acquire+0x4c5/0x1e60
+ago 12 09:13:58 CHUWI kernel:  init_module_from_file+0x152/0x170
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_init_module_from_file+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? finish_task_switch.isra.0+0x3b0/0x940
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? idempotent_init_module+0x5e4/0x760
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_unlock+0x53/0x210
+ago 12 09:13:58 CHUWI kernel:  idempotent_init_module+0x228/0x760
+ago 12 09:13:58 CHUWI kernel:  ? cred_has_capability.isra.0+0x12e/0x220
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_idempotent_init_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  __x64_sys_finit_module+0xbf/0x120
+ago 12 09:13:58 CHUWI kernel:  do_syscall_64+0x101/0x690
+ago 12 09:13:58 CHUWI kernel:  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ago 12 09:13:58 CHUWI kernel: RIP: 0033:0x7fc7eab8d7b9
+ago 12 09:13:58 CHUWI kernel: Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 66 0d 00 f7 d8 64 89 01 48
+ago 12 09:13:58 CHUWI kernel: RSP: 002b:00007ffc09d476b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+ago 12 09:13:58 CHUWI kernel: RAX: ffffffffffffffda RBX: 000055fc6e002500 RCX: 00007fc7eab8d7b9
+ago 12 09:13:58 CHUWI kernel: RDX: 0000000000000000 RSI: 00007fc7e92b944d RDI: 0000000000000022
+ago 12 09:13:58 CHUWI kernel: RBP: 0000000000000000 R08: 0000000000000000 R09: 000055fc6df79790
+ago 12 09:13:58 CHUWI kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc7e92b944d
+ago 12 09:13:58 CHUWI kernel: R13: 0000000000020000 R14: 000055fc6e004440 R15: 0000000000000000
+ago 12 09:13:58 CHUWI kernel:  </TASK>
+ago 12 09:13:58 CHUWI kernel: irq event stamp: 302547
+ago 12 09:13:58 CHUWI kernel: hardirqs last  enabled at (302553): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:13:58 CHUWI kernel: hardirqs last disabled at (302558): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:13:58 CHUWI kernel: softirqs last  enabled at (299388): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:13:58 CHUWI kernel: softirqs last disabled at (298975): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:13:58 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:13:58 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:13:58 CHUWI kernel: i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+ago 12 09:13:58 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#3: (udev-worker)/246
+ago 12 09:13:58 CHUWI kernel: Modules linked in: iwlmvm(+) mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915(+) btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:13:58 CHUWI kernel: CPU: 3 UID: 0 PID: 246 Comm: (udev-worker) Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:13:58 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:13:58 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:13:58 CHUWI kernel: RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+ago 12 09:13:58 CHUWI kernel: Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 2c 6d 44 df 48 89 c6 48 8d 3d c2 e4 38 00 48 8b 54 24 08 48 c7 c1 a0 33 94 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+ago 12 09:13:58 CHUWI kernel: RSP: 0018:ffff88811ba2efc0 EFLAGS: 00010246
+ago 12 09:13:58 CHUWI kernel: RAX: ffffffffc189d620 RBX: ffff88811c704000 RCX: ffffffffc19433a0
+ago 12 09:13:58 CHUWI kernel: RDX: ffff888107eea360 RSI: ffffffffc189d620 RDI: ffffffffc160dd20
+ago 12 09:13:58 CHUWI kernel: RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff466130a
+ago 12 09:13:58 CHUWI kernel: R10: ffffffffa3309857 R11: 0000000000000000 R12: ffff8881090b20c8
+ago 12 09:13:58 CHUWI kernel: R13: 000000000000000f R14: ffff88811c7046c0 R15: ffff888108bc2000
+ago 12 09:13:58 CHUWI kernel: FS:  00007fc7ea02f9c0(0000) GS:ffff88828c8d5000(0000) knlGS:0000000000000000
+ago 12 09:13:58 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:13:58 CHUWI kernel: CR2: 000055fc6dff48c0 CR3: 0000000112fdd000 CR4: 0000000000f50ef0
+ago 12 09:13:58 CHUWI kernel: PKRU: 55555554
+ago 12 09:13:58 CHUWI kernel: Call Trace:
+ago 12 09:13:58 CHUWI kernel:  <TASK>
+ago 12 09:13:58 CHUWI kernel:  read_pin_configuration+0x12/0x560 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_display_power_get+0x48/0x60 [i915]
+ago 12 09:13:58 CHUWI kernel:  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_display_power_is_enabled+0x32/0x40 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_init_mode+0x377/0x9d0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_init+0x4ed/0x7a0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_ddi_init+0x1b72/0x37a0 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irq+0x11/0x40
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_lock+0x128/0x260
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irqrestore+0x3f/0x50
+ago 12 09:13:58 CHUWI kernel:  ? __pfx___drm_dev_dbg+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_bios_for_each_encoder+0x56/0xa0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_setup_outputs+0x4b3/0x1e40 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_update_max_cdclk+0x259/0xd40 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_display_driver_probe_nogem+0x25e/0x4c0 [i915]
+ago 12 09:13:58 CHUWI kernel:  i915_driver_probe+0xcda/0x1b20 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_i915_driver_probe+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? __pm_runtime_resume+0x78/0x110
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irqrestore+0x3f/0x50
+ago 12 09:13:58 CHUWI kernel:  ? i915_pci_probe+0x2aa/0x390 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_i915_pci_probe+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  local_pci_probe+0xd0/0x170
+ago 12 09:13:58 CHUWI kernel:  pci_call_probe+0x143/0x5a0
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_pci_call_probe+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_lock+0x128/0x260
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? pci_match_device+0x32a/0x620
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  ? pci_match_device+0x39d/0x620
+ago 12 09:13:58 CHUWI kernel:  ? kernfs_put+0x17/0x30
+ago 12 09:13:58 CHUWI kernel:  pci_device_probe+0xa7/0x110
+ago 12 09:13:58 CHUWI kernel:  really_probe+0x1eb/0x630
+ago 12 09:13:58 CHUWI kernel:  __driver_probe_device+0x1ab/0x2f0
+ago 12 09:13:58 CHUWI kernel:  driver_probe_device+0x45/0xf0
+ago 12 09:13:58 CHUWI kernel:  __driver_attach+0x157/0x400
+ago 12 09:13:58 CHUWI kernel:  ? __pfx___driver_attach+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  bus_for_each_dev+0x103/0x180
+ago 12 09:13:58 CHUWI kernel:  ? __kasan_kmalloc+0x8f/0xa0
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_bus_for_each_dev+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? bus_add_driver+0x1d1/0x420
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  bus_add_driver+0x20b/0x420
+ago 12 09:13:58 CHUWI kernel:  driver_register+0x1a0/0x350
+ago 12 09:13:58 CHUWI kernel:  i915_init+0x56/0x160 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_init_module+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  do_one_initcall+0xd0/0x440
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_do_one_initcall+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? memset+0x11/0x30
+ago 12 09:13:58 CHUWI kernel:  ? kasan_unpoison+0x27/0x60
+ago 12 09:13:58 CHUWI kernel:  do_init_module+0x27c/0x7b0
+ago 12 09:13:58 CHUWI kernel:  ? trace_hardirqs_on+0x18/0x160
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_do_init_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? kasan_quarantine_put+0xc7/0x1d0
+ago 12 09:13:58 CHUWI kernel:  ? load_module+0x5713/0x6200
+ago 12 09:13:58 CHUWI kernel:  ? kfree+0x1b0/0x500
+ago 12 09:13:58 CHUWI kernel:  load_module+0x5533/0x6200
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_selinux_kernel_load_from_file+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_load_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? security_file_permission+0x1d/0x40
+ago 12 09:13:58 CHUWI kernel:  ? __lock_acquire+0x4c5/0x1e60
+ago 12 09:13:58 CHUWI kernel:  init_module_from_file+0x152/0x170
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_init_module_from_file+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? finish_task_switch.isra.0+0x3b0/0x940
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? idempotent_init_module+0x5e4/0x760
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_unlock+0x53/0x210
+ago 12 09:13:58 CHUWI kernel:  idempotent_init_module+0x228/0x760
+ago 12 09:13:58 CHUWI kernel:  ? cred_has_capability.isra.0+0x12e/0x220
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_idempotent_init_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  __x64_sys_finit_module+0xbf/0x120
+ago 12 09:13:58 CHUWI kernel:  do_syscall_64+0x101/0x690
+ago 12 09:13:58 CHUWI kernel:  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ago 12 09:13:58 CHUWI kernel: RIP: 0033:0x7fc7eab8d7b9
+ago 12 09:13:58 CHUWI kernel: Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 66 0d 00 f7 d8 64 89 01 48
+ago 12 09:13:58 CHUWI kernel: RSP: 002b:00007ffc09d476b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+ago 12 09:13:58 CHUWI kernel: RAX: ffffffffffffffda RBX: 000055fc6e002500 RCX: 00007fc7eab8d7b9
+ago 12 09:13:58 CHUWI kernel: RDX: 0000000000000000 RSI: 00007fc7e92b944d RDI: 0000000000000022
+ago 12 09:13:58 CHUWI kernel: RBP: 0000000000000000 R08: 0000000000000000 R09: 000055fc6df79790
+ago 12 09:13:58 CHUWI kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc7e92b944d
+ago 12 09:13:58 CHUWI kernel: R13: 0000000000020000 R14: 000055fc6e004440 R15: 0000000000000000
+ago 12 09:13:58 CHUWI kernel:  </TASK>
+ago 12 09:13:58 CHUWI kernel: irq event stamp: 306919
+ago 12 09:13:58 CHUWI kernel: hardirqs last  enabled at (306925): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:13:58 CHUWI kernel: hardirqs last disabled at (306930): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:13:58 CHUWI kernel: softirqs last  enabled at (306674): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:13:58 CHUWI kernel: softirqs last disabled at (306589): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:13:58 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:13:58 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:13:58 CHUWI kernel: Missing case (pin_assignment == 15)
+ago 12 09:13:58 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#3: (udev-worker)/246
+ago 12 09:13:58 CHUWI kernel: Modules linked in: iwlmvm(+) mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915(+) btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:13:58 CHUWI kernel: CPU: 3 UID: 0 PID: 246 Comm: (udev-worker) Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:13:58 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:13:58 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:13:58 CHUWI kernel: RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+ago 12 09:13:58 CHUWI kernel: Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d 9f e5 38 00 48 c7 c6 80 34 94 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+ago 12 09:13:58 CHUWI kernel: RSP: 0018:ffff88811ba2efc0 EFLAGS: 00010206
+ago 12 09:13:58 CHUWI kernel: RAX: 000000000000000f RBX: ffff88811c704000 RCX: 0000000000000000
+ago 12 09:13:58 CHUWI kernel: RDX: 000000000000000f RSI: ffffffffc1943480 RDI: ffffffffc160dd10
+ago 12 09:13:58 CHUWI kernel: RBP: 000000000000000f R08: 0000000000000001 R09: ffffed1023745ddd
+ago 12 09:13:58 CHUWI kernel: R10: ffff88811ba2eeef R11: 0000000000000000 R12: 000000000000000f
+ago 12 09:13:58 CHUWI kernel: R13: 000000000000000f R14: ffff88811c7046c0 R15: ffff888108bc2000
+ago 12 09:13:58 CHUWI kernel: FS:  00007fc7ea02f9c0(0000) GS:ffff88828c8d5000(0000) knlGS:0000000000000000
+ago 12 09:13:58 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:13:58 CHUWI kernel: CR2: 00007f5bc4304200 CR3: 0000000112fdd000 CR4: 0000000000f50ef0
+ago 12 09:13:58 CHUWI kernel: PKRU: 55555554
+ago 12 09:13:58 CHUWI kernel: Call Trace:
+ago 12 09:13:58 CHUWI kernel:  <TASK>
+ago 12 09:13:58 CHUWI kernel:  read_pin_configuration+0x12/0x560 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_display_power_get+0x48/0x60 [i915]
+ago 12 09:13:58 CHUWI kernel:  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_display_power_is_enabled+0x32/0x40 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_init_mode+0x377/0x9d0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_tc_port_init+0x4ed/0x7a0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_ddi_init+0x1b72/0x37a0 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irq+0x11/0x40
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_lock+0x128/0x260
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irqrestore+0x3f/0x50
+ago 12 09:13:58 CHUWI kernel:  ? __pfx___drm_dev_dbg+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_bios_for_each_encoder+0x56/0xa0 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_setup_outputs+0x4b3/0x1e40 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? intel_update_max_cdclk+0x259/0xd40 [i915]
+ago 12 09:13:58 CHUWI kernel:  intel_display_driver_probe_nogem+0x25e/0x4c0 [i915]
+ago 12 09:13:58 CHUWI kernel:  i915_driver_probe+0xcda/0x1b20 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_i915_driver_probe+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? __pm_runtime_resume+0x78/0x110
+ago 12 09:13:58 CHUWI kernel:  ? _raw_spin_unlock_irqrestore+0x3f/0x50
+ago 12 09:13:58 CHUWI kernel:  ? i915_pci_probe+0x2aa/0x390 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_i915_pci_probe+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  local_pci_probe+0xd0/0x170
+ago 12 09:13:58 CHUWI kernel:  pci_call_probe+0x143/0x5a0
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_pci_call_probe+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_lock+0x128/0x260
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? pci_match_device+0x32a/0x620
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  ? pci_match_device+0x39d/0x620
+ago 12 09:13:58 CHUWI kernel:  ? kernfs_put+0x17/0x30
+ago 12 09:13:58 CHUWI kernel:  pci_device_probe+0xa7/0x110
+ago 12 09:13:58 CHUWI kernel:  really_probe+0x1eb/0x630
+ago 12 09:13:58 CHUWI kernel:  __driver_probe_device+0x1ab/0x2f0
+ago 12 09:13:58 CHUWI kernel:  driver_probe_device+0x45/0xf0
+ago 12 09:13:58 CHUWI kernel:  __driver_attach+0x157/0x400
+ago 12 09:13:58 CHUWI kernel:  ? __pfx___driver_attach+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  bus_for_each_dev+0x103/0x180
+ago 12 09:13:58 CHUWI kernel:  ? __kasan_kmalloc+0x8f/0xa0
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_bus_for_each_dev+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? bus_add_driver+0x1d1/0x420
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  bus_add_driver+0x20b/0x420
+ago 12 09:13:58 CHUWI kernel:  driver_register+0x1a0/0x350
+ago 12 09:13:58 CHUWI kernel:  i915_init+0x56/0x160 [i915]
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_init_module+0x10/0x10 [i915]
+ago 12 09:13:58 CHUWI kernel:  do_one_initcall+0xd0/0x440
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_do_one_initcall+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? memset+0x11/0x30
+ago 12 09:13:58 CHUWI kernel:  ? kasan_unpoison+0x27/0x60
+ago 12 09:13:58 CHUWI kernel:  do_init_module+0x27c/0x7b0
+ago 12 09:13:58 CHUWI kernel:  ? trace_hardirqs_on+0x18/0x160
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_do_init_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? kasan_quarantine_put+0xc7/0x1d0
+ago 12 09:13:58 CHUWI kernel:  ? load_module+0x5713/0x6200
+ago 12 09:13:58 CHUWI kernel:  ? kfree+0x1b0/0x500
+ago 12 09:13:58 CHUWI kernel:  load_module+0x5533/0x6200
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_selinux_kernel_load_from_file+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_load_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? security_file_permission+0x1d/0x40
+ago 12 09:13:58 CHUWI kernel:  ? __lock_acquire+0x4c5/0x1e60
+ago 12 09:13:58 CHUWI kernel:  init_module_from_file+0x152/0x170
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_init_module_from_file+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? finish_task_switch.isra.0+0x3b0/0x940
+ago 12 09:13:58 CHUWI kernel:  ? find_held_lock+0x2b/0x80
+ago 12 09:13:58 CHUWI kernel:  ? idempotent_init_module+0x5e4/0x760
+ago 12 09:13:58 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:13:58 CHUWI kernel:  ? do_raw_spin_unlock+0x53/0x210
+ago 12 09:13:58 CHUWI kernel:  idempotent_init_module+0x228/0x760
+ago 12 09:13:58 CHUWI kernel:  ? cred_has_capability.isra.0+0x12e/0x220
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_idempotent_init_module+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+ago 12 09:13:58 CHUWI kernel:  __x64_sys_finit_module+0xbf/0x120
+ago 12 09:13:58 CHUWI kernel:  do_syscall_64+0x101/0x690
+ago 12 09:13:58 CHUWI kernel:  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ago 12 09:13:58 CHUWI kernel: RIP: 0033:0x7fc7eab8d7b9
+ago 12 09:13:58 CHUWI kernel: Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 27 66 0d 00 f7 d8 64 89 01 48
+ago 12 09:13:58 CHUWI kernel: RSP: 002b:00007ffc09d476b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+ago 12 09:13:58 CHUWI kernel: RAX: ffffffffffffffda RBX: 000055fc6e002500 RCX: 00007fc7eab8d7b9
+ago 12 09:13:58 CHUWI kernel: RDX: 0000000000000000 RSI: 00007fc7e92b944d RDI: 0000000000000022
+ago 12 09:13:58 CHUWI kernel: RBP: 0000000000000000 R08: 0000000000000000 R09: 000055fc6df79790
+ago 12 09:13:58 CHUWI kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc7e92b944d
+ago 12 09:13:58 CHUWI kernel: R13: 0000000000020000 R14: 000055fc6e004440 R15: 0000000000000000
+ago 12 09:13:58 CHUWI kernel:  </TASK>
+ago 12 09:13:58 CHUWI kernel: irq event stamp: 308063
+ago 12 09:13:58 CHUWI kernel: hardirqs last  enabled at (308069): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:13:58 CHUWI kernel: hardirqs last disabled at (308074): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:13:58 CHUWI kernel: softirqs last  enabled at (307824): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:13:58 CHUWI kernel: softirqs last disabled at (307773): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:13:58 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:13:58 CHUWI kernel: i915 0000:00:02.0: vgaarb: VGA decodes changed: olddecodes=io+mem,decodes=io:owns=io+mem
+ago 12 09:13:59 CHUWI kernel: i915 0000:00:02.0: [drm] GT0: GuC firmware i915/tgl_guc_70.bin version 70.36.0
+ago 12 09:13:59 CHUWI kernel: i915 0000:00:02.0: [drm] GT0: HuC firmware i915/tgl_huc.bin version 7.9.3
+ago 12 09:13:59 CHUWI kernel: i915 0000:00:02.0: [drm] GT0: HuC: authenticated for all workloads
+ago 12 09:13:59 CHUWI kernel: i915 0000:00:02.0: [drm] GT0: GUC: submission enabled
+ago 12 09:13:59 CHUWI kernel: i915 0000:00:02.0: [drm] GT0: GUC: SLPC enabled
+ago 12 09:13:59 CHUWI kernel: i915 0000:00:02.0: [drm] GT0: GUC: RC enabled
+ago 12 09:14:00 CHUWI kernel: [drm] Initialized i915 1.6.0 for 0000:00:02.0 on minor 0
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION: 0x20
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x10
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: Detected RF HR1 B3, rfid=0x10c000
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: RFIm is deactivated, reason = 4
+ago 12 09:14:00 CHUWI kernel: gc8034 i2c-GCTI8034:00: Instantiated dw9714 VCM
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: base HW address: b0:47:e9:4f:ee:df
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3 wlo1: renamed from wlan0
+ago 12 09:14:00 CHUWI kernel: ACPI: video: Video Device [GFX0] (multi-head: yes  rom: no  post: no)
+ago 12 09:14:00 CHUWI kernel: input: Video Bus as /devices/pci0000:00/acpi.video_bus.0/input/input13
+ago 12 09:14:00 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:14:00 CHUWI kernel: i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+ago 12 09:14:00 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#0: kworker/0:1/11
+ago 12 09:14:00 CHUWI kernel: Modules linked in: iwlmvm mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915(+) btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:14:00 CHUWI kernel: CPU: 0 UID: 0 PID: 11 Comm: kworker/0:1 Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:14:00 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:14:00 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:14:00 CHUWI kernel: Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+ago 12 09:14:00 CHUWI kernel: RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+ago 12 09:14:00 CHUWI kernel: Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 88 f9 43 df 48 89 c6 48 8d 3d 7e 72 38 00 48 8b 14 24 48 c7 c1 80 3d 94 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+ago 12 09:14:00 CHUWI kernel: RSP: 0000:ffff88810106f7e8 EFLAGS: 00010246
+ago 12 09:14:00 CHUWI kernel: RAX: ffffffffc189d620 RBX: ffff888108bc2000 RCX: ffffffffc1943d80
+ago 12 09:14:00 CHUWI kernel: RDX: ffff888107eea360 RSI: ffffffffc189d620 RDI: ffffffffc160de80
+ago 12 09:14:00 CHUWI kernel: RBP: ffff88811c704000 R08: 0000000000000000 R09: fffffbfff466130a
+ago 12 09:14:00 CHUWI kernel: R10: ffffffffa3309857 R11: 0000000000000000 R12: 0000000000000019
+ago 12 09:14:00 CHUWI kernel: R13: 0000000000000001 R14: ffff888108bc2008 R15: ffff8881090b20c8
+ago 12 09:14:00 CHUWI kernel: FS:  0000000000000000(0000) GS:ffff88828c755000(0000) knlGS:0000000000000000
+ago 12 09:14:00 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:14:00 CHUWI kernel: CR2: 00007f8e7c4ed058 CR3: 0000000104009000 CR4: 0000000000f50ef0
+ago 12 09:14:00 CHUWI kernel: PKRU: 55555554
+ago 12 09:14:00 CHUWI kernel: Call Trace:
+ago 12 09:14:00 CHUWI kernel:  <TASK>
+ago 12 09:14:00 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:14:00 CHUWI kernel:  __intel_tc_port_lock+0x238/0x460 [i915]
+ago 12 09:14:00 CHUWI kernel:  intel_digital_port_connected+0x84/0x1c0 [i915]
+ago 12 09:14:00 CHUWI kernel:  intel_dp_detect+0x2a2/0x1d70 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:00 CHUWI kernel:  drm_helper_probe_detect_ctx+0xd9/0x1e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? drm_connector_list_iter_next+0x20d/0x310
+ago 12 09:14:00 CHUWI kernel:  intel_hotplug_detect_connector+0xa7/0x3d0 [i915]
+ago 12 09:14:00 CHUWI kernel:  i915_hpd_poll_init_work+0x4ac/0x7b0 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:00 CHUWI kernel:  process_one_work+0x879/0x1570
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_process_one_work+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? lock_is_held_type+0x85/0xf0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  worker_thread+0x4ea/0xd60
+ago 12 09:14:00 CHUWI kernel:  ? __kthread_parkme+0xac/0x1e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_worker_thread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  kthread+0x2fe/0x3e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_kthread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ret_from_fork+0x559/0x7e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_ret_from_fork+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? __switch_to+0x58b/0xe10
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_kthread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ret_from_fork_asm+0x1a/0x30
+ago 12 09:14:00 CHUWI kernel:  </TASK>
+ago 12 09:14:00 CHUWI kernel: irq event stamp: 27407
+ago 12 09:14:00 CHUWI kernel: hardirqs last  enabled at (27413): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:14:00 CHUWI kernel: hardirqs last disabled at (27418): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:14:00 CHUWI kernel: softirqs last  enabled at (27250): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:00 CHUWI kernel: softirqs last disabled at (27241): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:00 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION: 0x20
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: RFIm is deactivated, reason = 4
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x10
+ago 12 09:14:00 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:14:00 CHUWI kernel: i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+ago 12 09:14:00 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#0: kworker/0:1/11
+ago 12 09:14:00 CHUWI kernel: Modules linked in: iwlmvm mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915(+) btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:14:00 CHUWI kernel: CPU: 0 UID: 0 PID: 11 Comm: kworker/0:1 Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:14:00 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:14:00 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:14:00 CHUWI kernel: Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+ago 12 09:14:00 CHUWI kernel: RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+ago 12 09:14:00 CHUWI kernel: Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 2c 6d 44 df 48 89 c6 48 8d 3d c2 e4 38 00 48 8b 54 24 08 48 c7 c1 a0 33 94 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+ago 12 09:14:00 CHUWI kernel: RSP: 0018:ffff88810106f770 EFLAGS: 00010246
+ago 12 09:14:00 CHUWI kernel: RAX: ffffffffc189d620 RBX: ffff88811c704000 RCX: ffffffffc19433a0
+ago 12 09:14:00 CHUWI kernel: RDX: ffff888107eea360 RSI: ffffffffc189d620 RDI: ffffffffc160dd20
+ago 12 09:14:00 CHUWI kernel: RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff466130a
+ago 12 09:14:00 CHUWI kernel: R10: ffffffffa3309857 R11: ffff88810106f6e0 R12: ffff8881090b20c8
+ago 12 09:14:00 CHUWI kernel: R13: 000000000000000f R14: ffff88811c7046c0 R15: ffff888108bc2000
+ago 12 09:14:00 CHUWI kernel: FS:  0000000000000000(0000) GS:ffff88828c755000(0000) knlGS:0000000000000000
+ago 12 09:14:00 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:14:00 CHUWI kernel: CR2: 00007f175aa04543 CR3: 0000000119b80000 CR4: 0000000000f50ef0
+ago 12 09:14:00 CHUWI kernel: PKRU: 55555554
+ago 12 09:14:00 CHUWI kernel: Call Trace:
+ago 12 09:14:00 CHUWI kernel:  <TASK>
+ago 12 09:14:00 CHUWI kernel:  read_pin_configuration+0x12/0x560 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? intel_display_power_get+0x48/0x60 [i915]
+ago 12 09:14:00 CHUWI kernel:  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+ago 12 09:14:00 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:14:00 CHUWI kernel:  __intel_tc_port_lock+0x238/0x460 [i915]
+ago 12 09:14:00 CHUWI kernel:  intel_digital_port_connected+0x84/0x1c0 [i915]
+ago 12 09:14:00 CHUWI kernel:  intel_dp_detect+0x2a2/0x1d70 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:00 CHUWI kernel:  drm_helper_probe_detect_ctx+0xd9/0x1e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? drm_connector_list_iter_next+0x20d/0x310
+ago 12 09:14:00 CHUWI kernel:  intel_hotplug_detect_connector+0xa7/0x3d0 [i915]
+ago 12 09:14:00 CHUWI kernel:  i915_hpd_poll_init_work+0x4ac/0x7b0 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:00 CHUWI kernel:  process_one_work+0x879/0x1570
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_process_one_work+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? lock_is_held_type+0x85/0xf0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  worker_thread+0x4ea/0xd60
+ago 12 09:14:00 CHUWI kernel:  ? __kthread_parkme+0xac/0x1e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_worker_thread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  kthread+0x2fe/0x3e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_kthread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ret_from_fork+0x559/0x7e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_ret_from_fork+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? __switch_to+0x58b/0xe10
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_kthread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ret_from_fork_asm+0x1a/0x30
+ago 12 09:14:00 CHUWI kernel:  </TASK>
+ago 12 09:14:00 CHUWI kernel: irq event stamp: 30867
+ago 12 09:14:00 CHUWI kernel: hardirqs last  enabled at (30873): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:14:00 CHUWI kernel: hardirqs last disabled at (30878): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:14:00 CHUWI kernel: softirqs last  enabled at (30680): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:00 CHUWI kernel: softirqs last disabled at (30675): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:00 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:14:00 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:14:00 CHUWI kernel: Missing case (pin_assignment == 15)
+ago 12 09:14:00 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#0: kworker/0:1/11
+ago 12 09:14:00 CHUWI kernel: Modules linked in: iwlmvm mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915(+) btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:14:00 CHUWI kernel: CPU: 0 UID: 0 PID: 11 Comm: kworker/0:1 Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:14:00 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:14:00 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:14:00 CHUWI kernel: Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+ago 12 09:14:00 CHUWI kernel: RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+ago 12 09:14:00 CHUWI kernel: Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d 9f e5 38 00 48 c7 c6 80 34 94 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+ago 12 09:14:00 CHUWI kernel: RSP: 0018:ffff88810106f770 EFLAGS: 00010206
+ago 12 09:14:00 CHUWI kernel: RAX: 000000000000000f RBX: ffff88811c704000 RCX: 0000000000000000
+ago 12 09:14:00 CHUWI kernel: RDX: 000000000000000f RSI: ffffffffc1943480 RDI: ffffffffc160dd10
+ago 12 09:14:00 CHUWI kernel: RBP: 000000000000000f R08: 0000000000000001 R09: ffffed102020ded3
+ago 12 09:14:00 CHUWI kernel: R10: ffff88810106f69f R11: 0000000000000000 R12: 000000000000000f
+ago 12 09:14:00 CHUWI kernel: R13: 000000000000000f R14: ffff88811c7046c0 R15: ffff888108bc2000
+ago 12 09:14:00 CHUWI kernel: FS:  0000000000000000(0000) GS:ffff88828c755000(0000) knlGS:0000000000000000
+ago 12 09:14:00 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:14:00 CHUWI kernel: CR2: 00007f175aa04543 CR3: 0000000119b80000 CR4: 0000000000f50ef0
+ago 12 09:14:00 CHUWI kernel: PKRU: 55555554
+ago 12 09:14:00 CHUWI kernel: Call Trace:
+ago 12 09:14:00 CHUWI kernel:  <TASK>
+ago 12 09:14:00 CHUWI kernel:  read_pin_configuration+0x12/0x560 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? intel_display_power_get+0x48/0x60 [i915]
+ago 12 09:14:00 CHUWI kernel:  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+ago 12 09:14:00 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:14:00 CHUWI kernel:  __intel_tc_port_lock+0x238/0x460 [i915]
+ago 12 09:14:00 CHUWI kernel:  intel_digital_port_connected+0x84/0x1c0 [i915]
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION: 0x20
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x10
+ago 12 09:14:00 CHUWI kernel:  intel_dp_detect+0x2a2/0x1d70 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:00 CHUWI kernel:  drm_helper_probe_detect_ctx+0xd9/0x1e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? drm_connector_list_iter_next+0x20d/0x310
+ago 12 09:14:00 CHUWI kernel:  intel_hotplug_detect_connector+0xa7/0x3d0 [i915]
+ago 12 09:14:00 CHUWI kernel: iwlwifi 0000:00:14.3: RFIm is deactivated, reason = 4
+ago 12 09:14:00 CHUWI kernel:  i915_hpd_poll_init_work+0x4ac/0x7b0 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:00 CHUWI kernel:  process_one_work+0x879/0x1570
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_process_one_work+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? lock_is_held_type+0x85/0xf0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+ago 12 09:14:00 CHUWI kernel:  worker_thread+0x4ea/0xd60
+ago 12 09:14:00 CHUWI kernel:  ? __kthread_parkme+0xac/0x1e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_worker_thread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  kthread+0x2fe/0x3e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_kthread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ret_from_fork+0x559/0x7e0
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_ret_from_fork+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ? __switch_to+0x58b/0xe10
+ago 12 09:14:00 CHUWI kernel:  ? __pfx_kthread+0x10/0x10
+ago 12 09:14:00 CHUWI kernel:  ret_from_fork_asm+0x1a/0x30
+ago 12 09:14:00 CHUWI kernel:  </TASK>
+ago 12 09:14:00 CHUWI kernel: irq event stamp: 31461
+ago 12 09:14:00 CHUWI kernel: hardirqs last  enabled at (31467): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:14:00 CHUWI kernel: hardirqs last disabled at (31472): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:14:00 CHUWI kernel: softirqs last  enabled at (30680): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:00 CHUWI kernel: softirqs last disabled at (30675): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:00 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:14:00 CHUWI kernel: snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0 (ops intel_audio_component_bind_ops [i915])
+ago 12 09:14:00 CHUWI kernel: fbcon: i915drmfb (fb0) is primary device
+ago 12 09:14:01 CHUWI kernel: Console: switching to colour frame buffer device 100x80
+ago 12 09:14:01 CHUWI kernel: i915 0000:00:02.0: [drm] fb0: i915drmfb frame buffer device
+ago 12 09:14:01 CHUWI kernel: snd_hda_intel 0000:00:1f.3: Cannot probe codecs, giving up
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Waiting for firmware download to complete
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Firmware loaded in 3451786 usecs
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Waiting for device to boot
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Device booted in 15335 usecs
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Found Intel DDC parameters: intel/ibt-0040-1050.ddc
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Applying Intel DDC parameters completed
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Firmware timestamp 2024.48 buildtype 1 build 81864
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Firmware SHA1: 0xc115e35a
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Fseq status: Success (0x00)
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Fseq executed: 00.00.02.41
+ago 12 09:14:01 CHUWI kernel: Bluetooth: hci0: Fseq BT Top: 00.00.02.41
+ago 12 09:14:01 CHUWI kernel: Bluetooth: MGMT ver 1.23
+ago 12 09:14:04 CHUWI kernel: wlo1: authenticate with 6c:99:61:4b:65:b5 (local address=b0:47:e9:4f:ee:df)
+ago 12 09:14:04 CHUWI kernel: wlo1: send auth to 6c:99:61:4b:65:b5 (try 1/3)
+ago 12 09:14:04 CHUWI kernel: wlo1: authenticated
+ago 12 09:14:04 CHUWI kernel: wlo1: associate with 6c:99:61:4b:65:b5 (try 1/3)
+ago 12 09:14:04 CHUWI kernel: wlo1: RX AssocResp from 6c:99:61:4b:65:b5 (capab=0x1011 status=0 aid=21)
+ago 12 09:14:04 CHUWI kernel: wlo1: Ignore NSS change to invalid 4 in VHT opmode notif from 6c:99:61:4b:65:b5
+ago 12 09:14:04 CHUWI kernel: wlo1: associated
+ago 12 09:14:04 CHUWI kernel: wlo1: Ignore NSS change to invalid 4 in VHT opmode notif from 6c:99:61:4b:65:b5
+ago 12 09:14:04 CHUWI kernel: wlo1: Limiting TX power to 23 (23 - 0) dBm as advertised by 6c:99:61:4b:65:b5
+ago 12 09:14:05 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:14:05 CHUWI kernel: i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+ago 12 09:14:05 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#1: KMS thread/786
+ago 12 09:14:05 CHUWI kernel: Modules linked in: iwlmvm mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915 btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:14:05 CHUWI kernel: CPU: 1 UID: 103 PID: 786 Comm: KMS thread Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:14:05 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:14:05 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:14:05 CHUWI kernel: RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+ago 12 09:14:05 CHUWI kernel: Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 88 f9 43 df 48 89 c6 48 8d 3d 7e 72 38 00 48 8b 14 24 48 c7 c1 80 3d 94 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+ago 12 09:14:05 CHUWI kernel: RSP: 0018:ffff88811bff7748 EFLAGS: 00010246
+ago 12 09:14:05 CHUWI kernel: RAX: ffffffffc189d620 RBX: ffff888108bc2000 RCX: ffffffffc1943d80
+ago 12 09:14:05 CHUWI kernel: RDX: ffff888107eea360 RSI: ffffffffc189d620 RDI: ffffffffc160de80
+ago 12 09:14:05 CHUWI kernel: RBP: ffff88811c704000 R08: 0000000000000000 R09: fffffbfff466130a
+ago 12 09:14:05 CHUWI kernel: R10: ffffffffa3309857 R11: 0000000000000000 R12: 0000000000000019
+ago 12 09:14:05 CHUWI kernel: R13: 0000000000000001 R14: ffff888108bc2008 R15: ffff8881090b20c8
+ago 12 09:14:05 CHUWI kernel: FS:  00007f94065866c0(0000) GS:ffff88828c7d5000(0000) knlGS:0000000000000000
+ago 12 09:14:05 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:14:05 CHUWI kernel: CR2: 00007f93f402f5e8 CR3: 00000001099f3000 CR4: 0000000000f50ef0
+ago 12 09:14:05 CHUWI kernel: PKRU: 55555554
+ago 12 09:14:05 CHUWI kernel: Call Trace:
+ago 12 09:14:05 CHUWI kernel:  <TASK>
+ago 12 09:14:05 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:14:05 CHUWI kernel:  __intel_tc_port_lock+0x238/0x460 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_digital_port_connected+0x84/0x1c0 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_dp_detect+0x2a2/0x1d70 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:05 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:05 CHUWI kernel:  drm_helper_probe_single_connector_modes+0x955/0x14a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_mode_getconnector+0x4af/0x1600
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? drm_dev_exit+0x2b/0x50
+ago 12 09:14:05 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_ioctl_kernel+0x168/0x2f0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_ioctl_kernel+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_ioctl+0x4cf/0xb60
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_ioctl+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  __x64_sys_ioctl+0x134/0x1c0
+ago 12 09:14:05 CHUWI kernel:  ? lockdep_hardirqs_on_prepare+0xe6/0x1a0
+ago 12 09:14:05 CHUWI kernel:  do_syscall_64+0x101/0x690
+ago 12 09:14:05 CHUWI kernel:  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ago 12 09:14:05 CHUWI kernel: RIP: 0033:0x7f9422dc991b
+ago 12 09:14:05 CHUWI kernel: Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+ago 12 09:14:05 CHUWI kernel: RSP: 002b:00007f94065850c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+ago 12 09:14:05 CHUWI kernel: RAX: ffffffffffffffda RBX: 00007f93f402b510 RCX: 00007f9422dc991b
+ago 12 09:14:05 CHUWI kernel: RDX: 00007f9406585160 RSI: 00000000c05064a7 RDI: 000000000000000c
+ago 12 09:14:05 CHUWI kernel: RBP: 00007f9406585160 R08: 0000000000000060 R09: 0000000000000002
+ago 12 09:14:05 CHUWI kernel: R10: 00007f93f402e8d0 R11: 0000000000000246 R12: 00000000c05064a7
+ago 12 09:14:05 CHUWI kernel: R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f9406585160
+ago 12 09:14:05 CHUWI kernel:  </TASK>
+ago 12 09:14:05 CHUWI kernel: irq event stamp: 8149
+ago 12 09:14:05 CHUWI kernel: hardirqs last  enabled at (8155): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:14:05 CHUWI kernel: hardirqs last disabled at (8160): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:14:05 CHUWI kernel: softirqs last  enabled at (7504): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:05 CHUWI kernel: softirqs last disabled at (7499): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:05 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:14:05 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:14:05 CHUWI kernel: i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+ago 12 09:14:05 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#3: KMS thread/786
+ago 12 09:14:05 CHUWI kernel: Modules linked in: iwlmvm mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915 btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:14:05 CHUWI kernel: CPU: 3 UID: 103 PID: 786 Comm: KMS thread Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:14:05 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:14:05 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:14:05 CHUWI kernel: RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+ago 12 09:14:05 CHUWI kernel: Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 2c 6d 44 df 48 89 c6 48 8d 3d c2 e4 38 00 48 8b 54 24 08 48 c7 c1 a0 33 94 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+ago 12 09:14:05 CHUWI kernel: RSP: 0018:ffff88811bff76d0 EFLAGS: 00010246
+ago 12 09:14:05 CHUWI kernel: RAX: ffffffffc189d620 RBX: ffff88811c704000 RCX: ffffffffc19433a0
+ago 12 09:14:05 CHUWI kernel: RDX: ffff888107eea360 RSI: ffffffffc189d620 RDI: ffffffffc160dd20
+ago 12 09:14:05 CHUWI kernel: RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff466130a
+ago 12 09:14:05 CHUWI kernel: R10: ffffffffa3309857 R11: ffff88811bff7640 R12: ffff8881090b20c8
+ago 12 09:14:05 CHUWI kernel: R13: 000000000000000f R14: ffff88811c7046c0 R15: ffff888108bc2000
+ago 12 09:14:05 CHUWI kernel: FS:  00007f94065866c0(0000) GS:ffff88828c8d5000(0000) knlGS:0000000000000000
+ago 12 09:14:05 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:14:05 CHUWI kernel: CR2: 00007f8ebafdfcc0 CR3: 00000001099f3000 CR4: 0000000000f50ef0
+ago 12 09:14:05 CHUWI kernel: PKRU: 55555554
+ago 12 09:14:05 CHUWI kernel: Call Trace:
+ago 12 09:14:05 CHUWI kernel:  <TASK>
+ago 12 09:14:05 CHUWI kernel:  read_pin_configuration+0x12/0x560 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? intel_display_power_get+0x48/0x60 [i915]
+ago 12 09:14:05 CHUWI kernel:  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:14:05 CHUWI kernel:  __intel_tc_port_lock+0x238/0x460 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_digital_port_connected+0x84/0x1c0 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_dp_detect+0x2a2/0x1d70 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:05 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:05 CHUWI kernel:  drm_helper_probe_single_connector_modes+0x955/0x14a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_mode_getconnector+0x4af/0x1600
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? drm_dev_exit+0x2b/0x50
+ago 12 09:14:05 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_ioctl_kernel+0x168/0x2f0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_ioctl_kernel+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_ioctl+0x4cf/0xb60
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_ioctl+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  __x64_sys_ioctl+0x134/0x1c0
+ago 12 09:14:05 CHUWI kernel:  ? lockdep_hardirqs_on_prepare+0xe6/0x1a0
+ago 12 09:14:05 CHUWI kernel:  do_syscall_64+0x101/0x690
+ago 12 09:14:05 CHUWI kernel:  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ago 12 09:14:05 CHUWI kernel: RIP: 0033:0x7f9422dc991b
+ago 12 09:14:05 CHUWI kernel: Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+ago 12 09:14:05 CHUWI kernel: RSP: 002b:00007f94065850c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+ago 12 09:14:05 CHUWI kernel: RAX: ffffffffffffffda RBX: 00007f93f402b510 RCX: 00007f9422dc991b
+ago 12 09:14:05 CHUWI kernel: RDX: 00007f9406585160 RSI: 00000000c05064a7 RDI: 000000000000000c
+ago 12 09:14:05 CHUWI kernel: RBP: 00007f9406585160 R08: 0000000000000060 R09: 0000000000000002
+ago 12 09:14:05 CHUWI kernel: R10: 00007f93f402e8d0 R11: 0000000000000246 R12: 00000000c05064a7
+ago 12 09:14:05 CHUWI kernel: R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f9406585160
+ago 12 09:14:05 CHUWI kernel:  </TASK>
+ago 12 09:14:05 CHUWI kernel: irq event stamp: 11777
+ago 12 09:14:05 CHUWI kernel: hardirqs last  enabled at (11783): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:14:05 CHUWI kernel: hardirqs last disabled at (11788): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:14:05 CHUWI kernel: softirqs last  enabled at (11560): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:05 CHUWI kernel: softirqs last disabled at (11555): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:05 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:14:05 CHUWI kernel: ------------[ cut here ]------------
+ago 12 09:14:05 CHUWI kernel: Missing case (pin_assignment == 15)
+ago 12 09:14:05 CHUWI kernel: WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#3: KMS thread/786
+ago 12 09:14:05 CHUWI kernel: Modules linked in: iwlmvm mac80211 libarc4 intel_ipu6_isys videobuf2_dma_sg videobuf2_memops videobuf2_v4l2 videobuf2_common i915 btusb btrtl iwlwifi btintel drm_buddy btbcm i2c_algo_bit bluetooth ecdh_generic intel_ipu6 ttm kpp x86_pkg_temp_thermal intel_skl_int3472_tps68470 cfg80211 ecc drm_display_helper ipu_bridge gc5035 gc8034 intel_skl_int3472_discrete v4l2_cci intel_skl_int3472_common regmap_i2c efivarfs
+ago 12 09:14:05 CHUWI kernel: CPU: 3 UID: 103 PID: 786 Comm: KMS thread Tainted: G S      W           7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 PREEMPT(lazy) 
+ago 12 09:14:05 CHUWI kernel: Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+ago 12 09:14:05 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 09:14:05 CHUWI kernel: RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+ago 12 09:14:05 CHUWI kernel: Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d 9f e5 38 00 48 c7 c6 80 34 94 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+ago 12 09:14:05 CHUWI kernel: RSP: 0018:ffff88811bff76d0 EFLAGS: 00010206
+ago 12 09:14:05 CHUWI kernel: RAX: 000000000000000f RBX: ffff88811c704000 RCX: 0000000000000000
+ago 12 09:14:05 CHUWI kernel: RDX: 000000000000000f RSI: ffffffffc1943480 RDI: ffffffffc160dd10
+ago 12 09:14:05 CHUWI kernel: RBP: 000000000000000f R08: 0000000000000001 R09: ffffed10237feebf
+ago 12 09:14:05 CHUWI kernel: R10: ffff88811bff75ff R11: 0000000000000000 R12: 000000000000000f
+ago 12 09:14:05 CHUWI kernel: R13: 000000000000000f R14: ffff88811c7046c0 R15: ffff888108bc2000
+ago 12 09:14:05 CHUWI kernel: FS:  00007f94065866c0(0000) GS:ffff88828c8d5000(0000) knlGS:0000000000000000
+ago 12 09:14:05 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 09:14:05 CHUWI kernel: CR2: 00007f8ebafdfcc0 CR3: 00000001099f3000 CR4: 0000000000f50ef0
+ago 12 09:14:05 CHUWI kernel: PKRU: 55555554
+ago 12 09:14:05 CHUWI kernel: Call Trace:
+ago 12 09:14:05 CHUWI kernel:  <TASK>
+ago 12 09:14:05 CHUWI kernel:  read_pin_configuration+0x12/0x560 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? intel_display_power_get+0x48/0x60 [i915]
+ago 12 09:14:05 CHUWI kernel:  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_tc_port_update_mode+0x722/0xf40 [i915]
+ago 12 09:14:05 CHUWI kernel:  __intel_tc_port_lock+0x238/0x460 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_digital_port_connected+0x84/0x1c0 [i915]
+ago 12 09:14:05 CHUWI kernel:  intel_dp_detect+0x2a2/0x1d70 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+ago 12 09:14:05 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:05 CHUWI kernel:  ? ww_mutex_lock+0x37/0x160
+ago 12 09:14:05 CHUWI kernel:  drm_helper_probe_single_connector_modes+0x955/0x14a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx___might_resched+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_mode_getconnector+0x4af/0x1600
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? drm_dev_exit+0x2b/0x50
+ago 12 09:14:05 CHUWI kernel:  ? lock_release+0xc6/0x2a0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_ioctl_kernel+0x168/0x2f0
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_ioctl_kernel+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  drm_ioctl+0x4cf/0xb60
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_mode_getconnector+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_drm_ioctl+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+ago 12 09:14:05 CHUWI kernel:  __x64_sys_ioctl+0x134/0x1c0
+ago 12 09:14:05 CHUWI kernel:  ? lockdep_hardirqs_on_prepare+0xe6/0x1a0
+ago 12 09:14:05 CHUWI kernel:  do_syscall_64+0x101/0x690
+ago 12 09:14:05 CHUWI kernel:  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ago 12 09:14:05 CHUWI kernel: RIP: 0033:0x7f9422dc991b
+ago 12 09:14:05 CHUWI kernel: Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+ago 12 09:14:05 CHUWI kernel: RSP: 002b:00007f94065850c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+ago 12 09:14:05 CHUWI kernel: RAX: ffffffffffffffda RBX: 00007f93f402b510 RCX: 00007f9422dc991b
+ago 12 09:14:05 CHUWI kernel: RDX: 00007f9406585160 RSI: 00000000c05064a7 RDI: 000000000000000c
+ago 12 09:14:05 CHUWI kernel: RBP: 00007f9406585160 R08: 0000000000000060 R09: 0000000000000002
+ago 12 09:14:05 CHUWI kernel: R10: 00007f93f402e8d0 R11: 0000000000000246 R12: 00000000c05064a7
+ago 12 09:14:05 CHUWI kernel: R13: 000000000000000c R14: 00000000c05064a7 R15: 00007f9406585160
+ago 12 09:14:05 CHUWI kernel:  </TASK>
+ago 12 09:14:05 CHUWI kernel: irq event stamp: 12407
+ago 12 09:14:05 CHUWI kernel: hardirqs last  enabled at (12413): [<ffffffff9f099e5d>] __up_console_sem+0x4d/0x60
+ago 12 09:14:05 CHUWI kernel: hardirqs last disabled at (12418): [<ffffffff9f099e42>] __up_console_sem+0x32/0x60
+ago 12 09:14:05 CHUWI kernel: softirqs last  enabled at (11560): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:05 CHUWI kernel: softirqs last disabled at (11555): [<ffffffff9ef1422b>] __irq_exit_rcu+0x12b/0x1a0
+ago 12 09:14:05 CHUWI kernel: ---[ end trace 0000000000000000 ]---
+ago 12 09:14:06 CHUWI kernel: (udev-worker) (246) used greatest stack depth: 21664 bytes left
+ago 12 09:14:11 CHUWI kernel: rfkill: input handler disabled

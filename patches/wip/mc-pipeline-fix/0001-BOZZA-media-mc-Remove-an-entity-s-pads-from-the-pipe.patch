@@ -1,0 +1,136 @@
+From 15cc44431d6e95b628d8fe6b9711a68cd121be65 Mon Sep 17 00:00:00 2001
+From: INTEL-CAMERA WIP <wip@localhost>
+Date: Wed, 12 Aug 2026 10:15:00 +0200
+Subject: [PATCH] BOZZA media: mc: Remove an entity's pads from the pipeline
+ when it goes away
+
+A started pipeline keeps a list of every pad the graph walk found, and
+each media_pipeline_pad in that list holds a bare pointer to a media_pad.
+Nothing keeps the entity owning that pad alive for as long as the list
+refers to it.
+
+Unbinding a sensor driver while it is streaming frees the sub-device, and
+its pads with it, while the pipeline is still started. The pointers in
+pipe->pads are left dangling, and the next __media_pipeline_stop() writes
+through them:
+
+  BUG: KASAN: slab-use-after-free in __media_pipeline_stop+0x2b2/0x360
+  Write of size 8 at addr ffff88811bf1a9f8 by task v4l2-ctl
+  Call Trace:
+   __media_pipeline_stop+0x2b2/0x360
+   media_pipeline_stop+0x3c/0x50
+   stop_streaming+0x2a9/0x4c0 [intel_ipu6_isys]
+   __vb2_queue_cancel+0x9a/0xd70 [videobuf2_common]
+   vb2_core_queue_release+0x1f/0x190 [videobuf2_common]
+   _vb2_fop_release+0xc7/0x250 [videobuf2_v4l2]
+   v4l2_release+0x268/0x360
+   __fput+0x36d/0xaa0
+
+The faulting write is the "ppad->pad->pipe = NULL" loop in
+__media_pipeline_stop(). By then the slab has already been handed out
+again: KASAN reports the object as allocated by alloc_pipe_info() and
+freed by free_pipe_info(), which is an unrelated process' pipe, not
+anything media.
+
+Drop the entity's pads from the pipeline in
+__media_device_unregister_entity(), before the pads are destroyed. Both
+that function and the pipeline start and stop paths run under the media
+device graph_mutex, so the removal cannot race with a walk of the same
+list.
+
+This leaves the pipeline started but short of the pads that went away,
+which is what the drivers involved already assume when a device
+disappears from under them, and is in any case what the stop path would
+have done a moment later.
+
+Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 7.2-rc7 with
+KASAN, by unbinding a GC5035 sensor two seconds into a capture.
+
+Fixes: ae219872834a ("media: mc: entity: Rewrite media_pipeline_start()")
+---
+ drivers/media/mc/mc-device.c |  7 +++++++
+ drivers/media/mc/mc-entity.c | 24 ++++++++++++++++++++++++
+ include/media/media-entity.h | 15 +++++++++++++++
+ 3 files changed, 46 insertions(+)
+
+diff --git a/drivers/media/mc/mc-device.c b/drivers/media/mc/mc-device.c
+index f8ea7cfe1..0ebbda816 100644
+--- a/drivers/media/mc/mc-device.c
++++ b/drivers/media/mc/mc-device.c
+@@ -592,6 +592,13 @@ static void __media_device_unregister_entity(struct media_entity *entity)
+ 	/* Remove all data links that belong to this entity */
+ 	__media_entity_remove_links(entity);
+ 
++	/*
++	 * Drop the entity's pads from the pipeline they belong to, if any.
++	 * A streaming pipeline keeps a list of the pads it walked, and
++	 * nothing keeps this entity alive while that list references it.
++	 */
++	__media_pipeline_remove_entity_pads(entity);
++
+ 	/* Remove all pads that belong to this entity */
+ 	media_entity_for_each_pad(entity, iter)
+ 		media_gobj_destroy(&iter->graph_obj);
+diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
+index 3fa0bc687..d91d8bd5b 100644
+--- a/drivers/media/mc/mc-entity.c
++++ b/drivers/media/mc/mc-entity.c
+@@ -952,6 +952,30 @@ void __media_pipeline_stop(struct media_pad *pad)
+ }
+ EXPORT_SYMBOL_GPL(__media_pipeline_stop);
+ 
++void __media_pipeline_remove_entity_pads(struct media_entity *entity)
++{
++	struct media_pad *pad;
++
++	media_entity_for_each_pad(entity, pad) {
++		struct media_pipeline_pad *ppad, *tmp;
++		struct media_pipeline *pipe = pad->pipe;
++
++		if (!pipe)
++			continue;
++
++		list_for_each_entry_safe(ppad, tmp, &pipe->pads, list) {
++			if (ppad->pad != pad)
++				continue;
++
++			list_del(&ppad->list);
++			kfree(ppad);
++		}
++
++		pad->pipe = NULL;
++	}
++}
++EXPORT_SYMBOL_GPL(__media_pipeline_remove_entity_pads);
++
+ void media_pipeline_stop(struct media_pad *pad)
+ {
+ 	struct media_device *mdev = pad->graph_obj.mdev;
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index d9b72cd87..9ebca592d 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -1189,6 +1189,21 @@ void media_pipeline_stop(struct media_pad *pad);
+  */
+ void __media_pipeline_stop(struct media_pad *pad);
+ 
++/**
++ * __media_pipeline_remove_entity_pads - Detach an entity's pads from the
++ *	pipeline they belong to
++ *
++ * @entity: The entity going away
++ *
++ * Nothing holds an entity in place while a pipeline references its pads, so
++ * an entity unregistered while a pipeline is streaming leaves that pipeline
++ * with dangling pointers. Drop the entity's pads from the pipeline before
++ * they are freed.
++ *
++ * .. note:: Requires the media device graph_mutex to be held.
++ */
++void __media_pipeline_remove_entity_pads(struct media_entity *entity);
++
+ struct media_pad *
+ __media_pipeline_pad_iter_next(struct media_pipeline *pipe,
+ 			       struct media_pipeline_pad_iter *iter,
+-- 
+2.47.3

@@ -1,0 +1,44 @@
+[ 3077.751407] gc5035 2-003f: =================  START STATUS  =================
+[ 3077.751417] gc5035 2-003f: ==================  END STATUS  ==================
+[ 3077.860578] gc8034 1-0037: =================  START STATUS  =================
+[ 3077.860590] gc8034 1-0037: ==================  END STATUS  ==================
+[ 3078.031741] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.032962] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3078.162182] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.163626] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3078.280423] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.281674] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3078.410071] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.412384] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3078.537311] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.538452] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3078.669476] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.672055] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3078.799705] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.801246] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3078.928776] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3078.930867] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3079.063826] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3079.065829] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3079.198855] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[ 3079.200101] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[ 3079.398070] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3079.399259] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3079.530442] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3079.531666] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3079.680603] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3079.682533] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3079.808222] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3079.810846] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3079.941199] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3079.942440] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3080.079077] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3080.080285] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3080.211424] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3080.213402] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3080.338702] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3080.341513] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3080.477192] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3080.478312] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[ 3080.613397] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[ 3080.614637] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator

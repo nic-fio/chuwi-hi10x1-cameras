@@ -1,0 +1,242 @@
+diff --git a/drivers/media/mc/mc-device.c b/drivers/media/mc/mc-device.c
+index f8ea7cfe1..0ebbda816 100644
+--- a/drivers/media/mc/mc-device.c
++++ b/drivers/media/mc/mc-device.c
+@@ -592,6 +592,13 @@ static void __media_device_unregister_entity(struct media_entity *entity)
+ 	/* Remove all data links that belong to this entity */
+ 	__media_entity_remove_links(entity);
+ 
++	/*
++	 * Drop the entity's pads from the pipeline they belong to, if any.
++	 * A streaming pipeline keeps a list of the pads it walked, and
++	 * nothing keeps this entity alive while that list references it.
++	 */
++	__media_pipeline_remove_entity_pads(entity);
++
+ 	/* Remove all pads that belong to this entity */
+ 	media_entity_for_each_pad(entity, iter)
+ 		media_gobj_destroy(&iter->graph_obj);
+diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
+index 3fa0bc687..d91d8bd5b 100644
+--- a/drivers/media/mc/mc-entity.c
++++ b/drivers/media/mc/mc-entity.c
+@@ -952,6 +952,30 @@ void __media_pipeline_stop(struct media_pad *pad)
+ }
+ EXPORT_SYMBOL_GPL(__media_pipeline_stop);
+ 
++void __media_pipeline_remove_entity_pads(struct media_entity *entity)
++{
++	struct media_pad *pad;
++
++	media_entity_for_each_pad(entity, pad) {
++		struct media_pipeline_pad *ppad, *tmp;
++		struct media_pipeline *pipe = pad->pipe;
++
++		if (!pipe)
++			continue;
++
++		list_for_each_entry_safe(ppad, tmp, &pipe->pads, list) {
++			if (ppad->pad != pad)
++				continue;
++
++			list_del(&ppad->list);
++			kfree(ppad);
++		}
++
++		pad->pipe = NULL;
++	}
++}
++EXPORT_SYMBOL_GPL(__media_pipeline_remove_entity_pads);
++
+ void media_pipeline_stop(struct media_pad *pad)
+ {
+ 	struct media_device *mdev = pad->graph_obj.mdev;
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c b/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
+index 7e539a0c6..c00a82eb8 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
+@@ -356,6 +356,9 @@ static int ipu6_isys_csi2_enable_streams(struct v4l2_subdev *sd,
+ 	int ret;
+ 
+ 	remote_pad = media_pad_remote_pad_first(&sd->entity.pads[CSI2_PAD_SINK]);
++	if (!remote_pad)
++		return -ENOLINK;
++
+ 	remote_sd = media_entity_to_v4l2_subdev(remote_pad->entity);
+ 
+ 	sink_streams =
+@@ -392,10 +395,17 @@ static int ipu6_isys_csi2_disable_streams(struct v4l2_subdev *sd,
+ 		v4l2_subdev_state_xlate_streams(state, pad, CSI2_PAD_SINK,
+ 						&streams_mask);
+ 
++	ipu6_isys_csi2_set_stream(sd, NULL, 0, false);
++
++	/*
++	 * The link is gone if the sensor driver was unbound while streaming.
++	 * Stop the receiver anyway, there is just no one left to tell.
++	 */
+ 	remote_pad = media_pad_remote_pad_first(&sd->entity.pads[CSI2_PAD_SINK]);
+-	remote_sd = media_entity_to_v4l2_subdev(remote_pad->entity);
++	if (!remote_pad)
++		return 0;
+ 
+-	ipu6_isys_csi2_set_stream(sd, NULL, 0, false);
++	remote_sd = media_entity_to_v4l2_subdev(remote_pad->entity);
+ 
+ 	v4l2_subdev_disable_streams(remote_sd, remote_pad->index, sink_streams);
+ 
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
+index 3ac48d207..56e239e09 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
+@@ -455,14 +455,17 @@ static int ipu6_isys_fw_pin_cfg(struct ipu6_isys_video *av,
+ {
+ 	struct media_pad *src_pad = media_pad_remote_pad_first(&av->pad);
+ 	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(src_pad->entity);
+-	struct v4l2_subdev_state *state = v4l2_subdev_get_locked_active_state(sd);
+ 	struct ipu6_fw_isys_input_pin_info_abi *input_pin;
+ 	struct ipu6_fw_isys_output_pin_info_abi *output_pin;
+ 	struct ipu6_isys_stream *stream = av->stream;
+ 	struct ipu6_isys_queue *aq = &av->aq;
++	struct device *dev = &av->isys->adev->auxdev.dev;
++	struct v4l2_subdev_state *state;
++	struct v4l2_mbus_framefmt *s_fmt;
+ 	struct v4l2_mbus_framefmt fmt;
+ 	const struct ipu6_isys_pixelformat *pfmt =
+ 		ipu6_isys_get_isys_format(ipu6_isys_get_format(av), 0);
++	struct v4l2_rect *s_crop;
+ 	struct v4l2_rect v4l2_crop;
+ 	struct ipu6_isys *isys = av->isys;
+ 	int input_pins = cfg->nof_input_pins++;
+@@ -470,8 +473,25 @@ static int ipu6_isys_fw_pin_cfg(struct ipu6_isys_video *av,
+ 	u32 src_stream;
+ 
+ 	src_stream = ipu6_isys_get_src_stream_by_src_pad(sd, src_pad->index);
+-	fmt = *v4l2_subdev_state_get_format(state, src_pad->index, src_stream);
+-	v4l2_crop = *v4l2_subdev_state_get_crop(state, src_pad->index, src_stream);
++
++	state = v4l2_subdev_lock_and_get_active_state(sd);
++	if (!state) {
++		dev_err(dev, "no active state on '%s'\n", sd->name);
++		return -EINVAL;
++	}
++
++	s_fmt = v4l2_subdev_state_get_format(state, src_pad->index, src_stream);
++	s_crop = v4l2_subdev_state_get_crop(state, src_pad->index, src_stream);
++	if (!s_fmt || !s_crop) {
++		dev_err(dev, "failed to get source pad format or crop\n");
++		v4l2_subdev_unlock_state(state);
++		return -EINVAL;
++	}
++
++	fmt = *s_fmt;
++	v4l2_crop = *s_crop;
++
++	v4l2_subdev_unlock_state(state);
+ 
+ 	input_pin = &cfg->input_pins[input_pins];
+ 	input_pin->input_res.width = fmt.width;
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index e9f81b9be..2a47b9730 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -97,8 +97,19 @@ static int subdev_open(struct file *file)
+ 	struct video_device *vdev = video_devdata(file);
+ 	struct v4l2_subdev *sd = vdev_to_v4l2_subdev(vdev);
+ 	struct v4l2_subdev_fh *subdev_fh;
++	struct v4l2_device *v4l2_dev;
+ 	int ret;
+ 
++	/*
++	 * v4l2_device_unregister_subdev() clears sd->v4l2_dev and unregisters
++	 * the entity before it unregisters the device node, so an open() that
++	 * races with the sub-device going away lands here with those pointers
++	 * already gone.
++	 */
++	v4l2_dev = READ_ONCE(sd->v4l2_dev);
++	if (!v4l2_dev)
++		return -ENODEV;
++
+ 	subdev_fh = kzalloc_obj(*subdev_fh);
+ 	if (subdev_fh == NULL)
+ 		return -ENOMEM;
+@@ -112,15 +123,23 @@ static int subdev_open(struct file *file)
+ 	v4l2_fh_init(&subdev_fh->vfh, vdev);
+ 	v4l2_fh_add(&subdev_fh->vfh, file);
+ 
+-	if (sd->v4l2_dev->mdev && sd->entity.graph_obj.mdev->dev) {
+-		struct module *owner;
++	if (v4l2_dev->mdev) {
++		struct media_device *mdev = READ_ONCE(sd->entity.graph_obj.mdev);
+ 
+-		owner = sd->entity.graph_obj.mdev->dev->driver->owner;
+-		if (!try_module_get(owner)) {
+-			ret = -EBUSY;
++		if (!mdev) {
++			ret = -ENODEV;
+ 			goto err;
+ 		}
+-		subdev_fh->owner = owner;
++
++		if (mdev->dev) {
++			struct module *owner = mdev->dev->driver->owner;
++
++			if (!try_module_get(owner)) {
++				ret = -EBUSY;
++				goto err;
++			}
++			subdev_fh->owner = owner;
++		}
+ 	}
+ 
+ 	if (sd->internal_ops && sd->internal_ops->open) {
+diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+index 0db4e0e83..888da3344 100644
+--- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
++++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
+@@ -39,6 +39,7 @@ static void skl_int3472_enable_clk(struct int3472_clock *clk, int enable)
+ 	struct int3472_discrete_device *int3472 = to_int3472_device(clk);
+ 	union acpi_object args[3];
+ 	union acpi_object argv4;
++	union acpi_object *obj;
+ 
+ 	if (clk->ena_gpio) {
+ 		gpiod_set_value_cansleep(clk->ena_gpio, enable);
+@@ -58,8 +59,9 @@ static void skl_int3472_enable_clk(struct int3472_clock *clk, int enable)
+ 	argv4.package.count = 3;
+ 	argv4.package.elements = args;
+ 
+-	acpi_evaluate_dsm(acpi_device_handle(int3472->adev), &img_clk_guid,
+-			  0, 1, &argv4);
++	obj = acpi_evaluate_dsm(acpi_device_handle(int3472->adev), &img_clk_guid,
++				0, 1, &argv4);
++	ACPI_FREE(obj);
+ }
+ 
+ /*
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index d9b72cd87..9ebca592d 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -1189,6 +1189,21 @@ void media_pipeline_stop(struct media_pad *pad);
+  */
+ void __media_pipeline_stop(struct media_pad *pad);
+ 
++/**
++ * __media_pipeline_remove_entity_pads - Detach an entity's pads from the
++ *	pipeline they belong to
++ *
++ * @entity: The entity going away
++ *
++ * Nothing holds an entity in place while a pipeline references its pads, so
++ * an entity unregistered while a pipeline is streaming leaves that pipeline
++ * with dangling pointers. Drop the entity's pads from the pipeline before
++ * they are freed.
++ *
++ * .. note:: Requires the media device graph_mutex to be held.
++ */
++void __media_pipeline_remove_entity_pads(struct media_entity *entity);
++
+ struct media_pad *
+ __media_pipeline_pad_iter_next(struct media_pipeline *pipe,
+ 			       struct media_pipeline_pad_iter *iter,

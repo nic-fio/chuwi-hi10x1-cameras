@@ -1,0 +1,40 @@
+
+===== AMBIENTE
+Linux CHUWI 7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty #7 SMP PREEMPT_DYNAMIC Wed Aug 12 09:09:39 CEST 2026 x86_64 GNU/Linux
+  [OK] v4l2-ctl presente
+  [OK] media-ctl presente
+  [OK] v4l2-compliance presente
+  [OK] i2cget presente
+
+===== CARICAMENTO DEI MODULI
+  [OK] GCTI5035 agganciato a gc5035
+  [OK] GCTI8034 agganciato a gc8034
+
+===== CHIP ID SUL BUS
+  [OK] GCTI5035 risponde 0x50 0x35
+  [OK] GCTI8034 risponde 0x80 0x44
+
+===== CATTURA E TEMPI
+  [OK] gc5035 -> /dev/video16 (/dev/v4l-subdev4)
+  [OK] gc8034 -> /dev/video8 (/dev/v4l-subdev5)
+  [OK] gc5035: il frame rate previsto dal driver e' quello reale: atteso 28.8162, misurato 28.82, scarto 0.01% (tolleranza 1%)
+  [OK] gc5035: immagine scritta in gc5035.png
+  [OK] gc8034: il frame rate previsto dal driver e' quello reale: atteso 24, misurato 24, scarto 0.00% (tolleranza 1%)
+  [OK] gc8034: immagine scritta in gc8034.png
+
+===== GUADAGNO ANALOGICO
+  [OK] gc5035: il guadagno misurato segue quello chiesto: atteso 16, misurato 16.04, scarto 0.25% (tolleranza 25%)
+  [OK] gc8034: il guadagno misurato segue quello chiesto: atteso 7.66, misurato 7.57, scarto 1.17% (tolleranza 25%)
+
+===== V4L2-COMPLIANCE
+  [OK] gc5035: compliance 46 ok, 0 fallito (atteso: al massimo 1)
+  [OK] gc8034: compliance 46 ok, 0 fallito (atteso: al massimo 1)
+
+===== BIND E UNBIND, 10 CICLI
+  [OK] gc5035: 10 cicli, ancora agganciato
+  [OK] gc8034: 10 cicli, ancora agganciato
+  [OK] nessun BUG/WARNING nel kernel
+
+===== VERDETTO
+  21 verifiche superate, 0 fallite
+  output in /home/nicfio/INTEL-CAMERA/data/prova-20260812-091755

@@ -196,8 +196,10 @@ Si parte da qui perche' esiste gia' codice Intel da cui prendere i registri.
 - [x] Runtime PM, helper CCI, match table ACPI + OF
 - [x] Binding YAML — scritto e validato con `make dt_binding_check`
 - [x] Voce `GCTI5035` in `ipu_supported_sensors[]` — bozza applicata al tree
-- [x] **Prima immagine catturata** — 2026-08-11, 2592x1944 SGRBG10,
-      `data/prima-cattura-2026-08-11/gc5035-soffitto.png`
+- [x] **Prima immagine catturata** — 2026-08-11, 2592x1944 SGRBG10. Il file
+      sta in `data/prima-cattura-2026-08-11/` sul disco ma non nel
+      repository: dal 2026-08-12 le immagini sono tutte escluse, vedi
+      `.gitignore`
 - [x] `v4l2-compliance` — 45/46. L'unico fallimento (eventi sui controlli)
       e' condiviso con `gc05a2`, `gc08a3`, `ov2740`, `ov08x40` e `t4ka3`
 - [x] `checkpatch.pl --strict` pulito

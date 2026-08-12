@@ -149,8 +149,25 @@ done
 ./scripts/config --module ACPI_DEBUGGER_USER
 
 # --- I2C: i sensori stanno su designware ----------------------------------
-./scripts/config --module I2C_DESIGNWARE_CORE
-./scripts/config --module I2C_DESIGNWARE_PLATFORM
+# Attenzione: i2c-designware-platform NON basta. E' il driver del controller,
+# ma su Alder Lake-N i due controller sono dispositivi PCI (00:15.x), non
+# platform: chi li vede e crea il platform device e' intel-lpss-pci, cioe'
+# MFD_INTEL_LPSS_PCI. Senza di lui il driver designware c'e' e non si aggancia
+# a niente, non nasce alcun bus, e i sensori non vengono mai enumerati.
+#
+# Costato un boot il 2026-08-12: il kernel di debug era partito senza LPSS e
+# /sys/bus/i2c/devices conteneva solo SMBus e i bus della grafica. La verifica
+# al punto 3 non se n'era accorta perche' guardava solo DESIGNWARE_PLATFORM.
+# Built-in e non modulo: questo kernel parte senza initrd.
+./scripts/config --enable X86_INTEL_LPSS
+./scripts/config --enable MFD_INTEL_LPSS
+./scripts/config --enable MFD_INTEL_LPSS_PCI
+./scripts/config --enable MFD_INTEL_LPSS_ACPI
+./scripts/config --enable I2C_DESIGNWARE_CORE
+./scripts/config --enable I2C_DESIGNWARE_PLATFORM
+
+# i2cget di prova-completa.sh legge il chip ID dal bus: serve /dev/i2c-*.
+./scripts/config --enable I2C_CHARDEV
 
 # --- perche' la macchina resti USABILE dopo il boot ------------------------
 # Seconda trappola di localmodconfig, scoperta sul campo il 2026-08-11 e ben
@@ -251,7 +268,8 @@ check() {
 }
 for s in PINCTRL PINCTRL_INTEL PINCTRL_ALDERLAKE INTEL_SKL_INT3472 \
          VIDEO_INTEL_IPU6 IPU_BRIDGE V4L2_CCI_I2C \
-         I2C_DESIGNWARE_PLATFORM VIDEO_GC05A2 VIDEO_GC08A3 \
+         I2C_DESIGNWARE_PLATFORM MFD_INTEL_LPSS_PCI I2C_CHARDEV \
+         VIDEO_GC05A2 VIDEO_GC08A3 \
          ACPI_DEBUGGER ACPI_DEBUGGER_USER \
          FRAMEBUFFER_CONSOLE DRM_FBDEV_EMULATION IWLWIFI IWLMVM \
          BT BT_HCIBTUSB BT_HIDP; do

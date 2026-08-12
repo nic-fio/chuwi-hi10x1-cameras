@@ -17,11 +17,13 @@ Prove della prima esecuzione dei due driver su hardware. Analisi completa in
 I `.raw` sono fuori da git (10 e 16 MB). I PNG sono ridotti a 640 px: le
 versioni piene si rifanno da `.raw` con `scripts/raw-to-png.py`.
 
-**`gc8034-scrivania.png` ritrae una persona.** E' l'inquadratura che c'era
-davanti alla camera posteriore al momento della prova. Sta qui perche' e' la
-prova che il sensore da 8 MP produce un'immagine riconoscibile, ma **e' escluso
-da git** (vedi `.gitignore`): se il repository diventa pubblico, la scelta di
-pubblicarla e' di chi ci sta dentro, non una conseguenza di un commit.
+**Le immagini sono tutte fuori dal repository**, dal 2026-08-12: sono
+fotografie fatte in casa, e la camera frontale riprende chi sta davanti al
+tablet. La regola sta in `.gitignore` con la sua motivazione. Restano sul
+disco — il repository e' pubblico, il disco no — e chi vuole rivederle le
+trova qui, o le rifa' da `.raw` con `scripts/raw-to-png.py`.
+
+Vale in particolare per `gc8034-scrivania.png`, che ritrae una persona.
 
 ## Come sono stati prodotti
 

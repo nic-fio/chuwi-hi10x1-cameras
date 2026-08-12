@@ -84,3 +84,31 @@ clone shallow non puo' contare i firmatari recenti, quindi restano solo i
 nomi che stanno letteralmente in `MAINTAINERS`, e per `drivers/media/` c'e'
 solo Mauro. Sul `v4l2-core` i revisori veri sono anche **Hans Verkuil** e
 **Sakari Ailus**, e vanno aggiunti a mano se la lista non li ritrova.
+
+# ---------------------------------------------------------------------------
+# Aggiunte del 2026-08-12: le tre correzioni trovate col kernel di debug.
+# Generate con lo stesso comando, ./scripts/get_maintainer.pl --no-rolestats
+# Manca ovunque il Signed-off-by dell'autore: e' il reperto B1 di docs/09.
+
+## mc-pipeline-fix — use-after-free in __media_pipeline_stop() (C1)
+Sakari Ailus <sakari.ailus@linux.intel.com>
+Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Mauro Carvalho Chehab <mchehab@kernel.org>
+linux-media@vger.kernel.org
+linux-kernel@vger.kernel.org
+
+## ipu6-lock-fix — stato del sub-device letto senza lock (C2)
+Sakari Ailus <sakari.ailus@linux.intel.com>
+Bingbu Cao <bingbu.cao@intel.com>
+Tianshu Qiu <tian.shu.qiu@intel.com>
+Mauro Carvalho Chehab <mchehab@kernel.org>
+linux-media@vger.kernel.org
+linux-kernel@vger.kernel.org
+
+## int3472-leak-fix — perdita del ritorno di _DSM (C3)
+Daniel Scally <dan.scally@ideasonboard.com>
+Sakari Ailus <sakari.ailus@linux.intel.com>
+Hans de Goede <hansg@kernel.org>
+"Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
+platform-driver-x86@vger.kernel.org
+linux-kernel@vger.kernel.org

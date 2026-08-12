@@ -38,7 +38,408 @@ Cosa aggiunge, e cosa trova ciascuno:
 `PANIC_ON_OOPS` e' **disattivato apposta**: se qualcosa esplode, serve che la
 macchina resti in piedi abbastanza da leggere il journal.
 
-## PRONTO ALL'AVVIO — 2026-08-12, ore 08:56
+## Primo avvio, 2026-08-12 ore 09:03 — mancava il bus I2C
+
+Il kernel e' partito, gli strumenti erano tutti attivi, ma `prova-completa.sh`
+ha dato **6 superate e 8 fallite**: nessuno dei due sensori si e' agganciato.
+
+Non e' un difetto dei driver. Manca il bus su cui vivono.
+
+```
+$ ls /sys/bus/i2c/devices/    ->  solo SMBus e i bus della grafica i915
+$ ls /sys/bus/acpi/devices/GCTI*  ->  ci sono, status=15, physical_node NESSUNO
+```
+
+I due controller I2C dei sensori, su Alder Lake-N, sono dispositivi **PCI**
+(`00:15.0`–`00:15.3`), non platform. A vederli e a creare il platform device
+su cui `i2c-designware-platform` si aggancia e' `intel-lpss-pci`, cioe'
+`CONFIG_MFD_INTEL_LPSS_PCI`. Nel config di debug era `is not set`.
+
+Risultato a catena: nessun adattatore designware → nessun client I2C per
+`GCTI5035:00` e `GCTI8034:00` → i driver restano caricati e inutilizzati.
+`ipu-bridge` intanto stampa `Connected 2 cameras`, perche' lui legge la ACPI e
+non il bus: e' quello che rende l'errore poco evidente a prima vista.
+
+La verifica dei simboli in `build-kernel.sh` non l'ha intercettato perche'
+controllava `I2C_DESIGNWARE_PLATFORM` — il driver — e non chi gli fornisce il
+dispositivo. **Corretto il 2026-08-12**: ora lo script forza `X86_INTEL_LPSS`,
+`MFD_INTEL_LPSS`, `MFD_INTEL_LPSS_PCI`, `MFD_INTEL_LPSS_ACPI` e `I2C_CHARDEV`
+built-in, e `MFD_INTEL_LPSS_PCI` e `I2C_CHARDEV` sono nella lista obbligatoria.
+
+Due dettagli minori emersi nella stessa sessione:
+
+- `I2C_CHARDEV` era `is not set`, quindi `i2cget` non avrebbe potuto leggere il
+  chip ID nemmeno col bus a posto
+- `prova-completa.sh` ha provato a lanciare `build-6.12/carica.sh`, che fa
+  `insmod` dei moduli fuori albero compilati per il 6.12; il kernel li ha
+  rifiutati (`section size must match`). Innocuo, ma qui i moduli sono in
+  albero e quel ramo dello script non andrebbe percorso
+
+## ESITO — 2026-08-12, ore 09:13-09:35, secondo avvio
+
+**Il buco della revisione e' chiuso: gli strumenti sono girati davvero.** Il
+bus I2C c'era (`i2c-1` e `i2c-2`, designware su PCI), entrambi i sensori
+agganciati, chip ID `0x50 0x35` e `0x80 0x44` letti da userspace.
+
+Materiale grezzo in `data/kasan-20260812-0915/`.
+
+### Cosa dicono gli strumenti dei nostri due driver
+
+| Strumento | Esito su `gc5035` e `gc8034` |
+|---|---|
+| KASAN | nessun reperto |
+| UBSAN | nessun reperto |
+| KMEMLEAK | nessuna perdita attribuibile ai due driver |
+| lockdep | nessun reperto (ma vedi il limite piu' sotto) |
+| DETECT_HUNG_TASK | nessun task bloccato |
+| `v4l2-compliance` | 46 superate, 0 fallite, su entrambi |
+| Frame rate | scarto 0.01% e 0.00% dal dichiarato |
+| Guadagno analogico | scarto 0.3% e 1.3% dal richiesto |
+
+`prova-completa.sh`: **21 verifiche su 21**.
+
+**La correzione A2 regge alla prova.** Il riproduttore
+`riproduci-oops-subdev.sh` ha fatto 150 cicli con 4 apritori senza oops e
+senza perdere un solo minor: `/dev/v4l-subdev0..5` sono rimasti contigui.
+Prima della patch A2 si riproduceva **da solo**, con dieci cicli e udev vivo.
+
+### Tre difetti nuovi, tutti di monte, nessuno nostro
+
+**C1 — use-after-free in `__media_pipeline_stop()`.** Il reperto piu' grosso,
+e lo trova solo KASAN.
+
+```
+BUG: KASAN: slab-use-after-free in __media_pipeline_stop+0x2b2/0x360
+Write of size 8 at addr ffff88811bf1a9f8 by task v4l2-ctl
+ stop_streaming+0x2a9/0x4c0 [intel_ipu6_isys]
+ __vb2_queue_cancel  ->  vb2_core_queue_release  ->  v4l2_release  ->  __fput
+```
+
+**Innesco**: `unbind` del sensore mentre lo streaming e' in corso. E' lo
+scenario di A1, ma il punto e' un altro e la patch A1 **non** lo copre.
+
+La scrittura e' `mc-entity.c:946`, cioe' `ppad->pad->pipe = NULL` dentro
+`list_for_each_entry(ppad, &pipe->pads, list)`. Verificato sulla disassemblata,
+non dedotto:
+
+```
+mov  0x18(%rbx),%r14        <- r14 = ppad->pad
+lea  0x38(%r14),%rdi        <- &pad->pipe
+call __asan_report_store8_noabort
+movq $0x0,0x38(%r14)        <- ppad->pad->pipe = NULL
+```
+
+`pipe->pads` elenca ancora un `media_pad` del sub-device che l'`unbind` ha
+gia' liberato, e la chiusura del pipeline ci scrive dentro. Che sia memoria
+davvero riciclata lo dicono le tracce di KASAN: l'oggetto risulta allocato da
+`alloc_pipe_info()` e liberato da `free_pipe_info()`, cioe' lo slab era gia'
+tornato in giro come pipe di un altro processo.
+
+**C2 — `ipu6_isys_fw_pin_cfg()` legge lo stato del sub-device senza il lock.**
+Tre asserzioni di lockdep, 27 volte ciascuna:
+
+```
+WARNING: include/media/v4l2-subdev.h:1886 at ipu6_isys_video_set_streaming
+WARNING: drivers/media/v4l2-core/v4l2-subdev.c:1776 at __v4l2_subdev_state_get_format
+WARNING: drivers/media/v4l2-core/v4l2-subdev.c:1810 at __v4l2_subdev_state_get_crop
+```
+
+In `ipu6_isys_video_set_streaming()` (`ipu6-isys-video.c`): prende il lock alla
+riga 1005, **lo rilascia alla 1010**, poi alla 1029 chiama
+`start_stream_firmware()` → `ipu6_isys_fw_pin_cfg()`, che usa la variante
+`v4l2_subdev_get_locked_active_state()` — quella che pretende il lock ancora
+tenuto. Legge `format` e `crop` scoperti: una `S_FMT` concorrente sul CSI-2
+puo' cambiarli sotto, e il firmware riceve una configurazione che non
+corrisponde a quella impostata.
+
+**C3 — perdita di memoria in `int3472`, 272 volte.** KMEMLEAK ha riportato 272
+oggetti persi e sono **tutti lo stesso difetto**: 137 da
+`skl_int3472_clk_unprepare`, 135 da `skl_int3472_clk_prepare`.
+
+`skl_int3472_enable_clk()` (`clk_and_regulator.c`) chiama `acpi_evaluate_dsm()`
+e ne **scarta il valore di ritorno**, che invece il chiamante deve liberare con
+`ACPI_FREE()`. Sono 32 byte a ogni accensione e a ogni spegnimento del clock:
+non si stabilizza mai, cresce a ogni cattura.
+
+**Non e' della nostra bozza** `int3472: Allow selecting the IMGCLKOUT
+frequency`: quella cambia solo il valore di `args[2]`. La chiamata col ritorno
+scartato c'era gia' in `HEAD~1`, verificato con `git show`.
+
+### Le tre patch, scritte il 2026-08-12 pomeriggio
+
+| Reperto | Cartella | Correzione |
+|---|---|---|
+| C1 | `patches/wip/mc-pipeline-fix/` | i pad dell'entity vengono staccati dalla pipeline in `__media_device_unregister_entity()`, prima di essere distrutti |
+| C2 | `patches/wip/ipu6-lock-fix/` | `fw_pin_cfg()` prende il lock attorno alle due letture, come gia' fa `link_validate()` nello stesso file |
+| C3 | `patches/wip/int3472-leak-fix/` | `ACPI_FREE()` sul ritorno di `acpi_evaluate_dsm()` |
+
+Tutte e tre compilano pulite, `checkpatch --strict` da' **0 errori**, e i
+`Fixes:` sono stati verificati confrontando il diff del commit incriminato con
+la riga che introduce il difetto — non dedotti dal titolo:
+
+```
+C1  ae219872834a ("media: mc: entity: Rewrite media_pipeline_start()")
+C2  58410f62e25d ("media: ipu6: Drop custom functions to obtain sd state information")
+C3  e4543de8b6ff ("platform/x86: int3472: Evaluate device's _DSM method to control imaging clock")
+```
+
+**Sono applicate non committate** in `/home/nicfio/linux`, accanto ad A1 e A2 e
+per lo stesso motivo: committarle cambierebbe la stringa di versione e
+costringerebbe a ricompilare e reinstallare tutto.
+
+**Ricompilate il 2026-08-12 alle 10:45**, build `#8`, incrementale sopra la
+`#7`: `.config` identico a quello archiviato, **0 errori e 0 warning**,
+`bzImage` di 29 389 824 byte. Nell'immagine si vedono C1 (`System.map` ha
+`__media_pipeline_remove_entity_pads` e `__media_device_unregister_entity` la
+chiama) e C3 (`skl_int3472_clk_prepare` adesso chiama `kfree`, cioe'
+`ACPI_FREE`, accanto a `acpi_evaluate_dsm`). C2 finisce inline dentro
+`ipu6_isys_video_set_streaming` e li' si contano cinque `mutex_lock_nested`:
+coerente, ma la prova vera e' a runtime.
+
+**Non installata e non provata sull'hardware.** La stringa di versione non
+cambia — `-dirty` senza commit nuovi — quindi `make modules_install`
+sovrascriverebbe i moduli della `#7`, che e' quella in esecuzione. Va fatto
+solo insieme al riavvio, non prima:
+
+```bash
+sudo make -C /home/nicfio/linux modules_install
+sudo mount /dev/sda1 /mnt/esp
+sudo cp /mnt/esp/vmlinuz-debug /mnt/esp/vmlinuz-dbg-ok     # la #7, che avvia
+sudo cp /home/nicfio/linux/arch/x86/boot/bzImage /mnt/esp/vmlinuz-debug
+sync && sudo umount /mnt/esp
+```
+
+Le tre prove di verifica:
+
+| Patch | Come si vede se funziona |
+|---|---|
+| C1 | `unbind` a streaming acceso non deve piu' dare `slab-use-after-free` |
+| C2 | nessuna WARNING alla prima cattura, e `debug_locks` deve restare `1` |
+| C3 | dopo un ciclo completo, `kmemleak` non deve piu' elencare `skl_int3472_clk_prepare` |
+
+C2 e' anche la condizione perche' lockdep sopravviva abbastanza da guardare
+davvero i nostri driver, per il motivo qui sotto.
+
+### Un limite da sapere, e vale per tutte le sessioni future
+
+**Lockdep si spegne da solo al primo errore che trova, e resta spento fino al
+riavvio.** Dopo C2, `/proc/lockdep_stats` dice `debug_locks: 0`: da quel
+momento nessuno controlla piu' il locking, e un "nessun BUG/WARNING" non vuol
+dire piu' niente. KASAN e UBSAN invece continuano a funzionare, sono
+indipendenti.
+
+Conseguenza pratica: **finche' C2 non e' corretto, la copertura di lockdep sui
+nostri driver si ferma alla prima cattura.** Quello che c'e' qui sopra vale
+per KASAN, UBSAN e KMEMLEAK senza riserve; per lockdep vale fino a li'.
+
+### Due difetti di `prova-completa.sh` corretti oggi
+
+Trovati mentre si guardavano i risultati, ed entrambi facevano dire allo
+script piu' di quanto avesse misurato:
+
+1. **I numeri di bus I2C erano cablati** (`3` e `2`). Non sono stabili:
+   dipendono da quanti controller il kernel enumera prima, e su questo kernel
+   i sensori stanno su `2` e `1`. Erano le 2 verifiche fallite del primo giro.
+   Adesso il bus si ricava da sysfs.
+2. **`dmesg -C` subito prima dei cicli bind/unbind** cancellava cattura,
+   guadagno e compliance prima che qualcuno li guardasse: il controllo finale
+   diceva "nessun BUG/WARNING" avendo visto solo gli ultimi dieci cicli. E'
+   cosi' che C2 era passato inosservato. Adesso il buffer copre tutta la
+   prova, il grep cerca anche `KASAN|UBSAN|lockdep`, e c'e' una verifica in
+   piu' che fallisce se lockdep si e' spento.
+
+### Il terzo: la misura di guadagno mentiva con troppa luce
+
+Aggiunto in serata, dopo due falsi allarmi di fila nella stessa ora. Lo
+script sapeva gia' difendersi dal buio — al buio il segnale resta sul
+piedistallo e il rapporto e' fra due rumori — ma non dal caso opposto.
+
+Con troppa luce il fotogramma a guadagno massimo **taglia sul fondo scala** a
+1023, il segnale che manca in cima schiaccia la media e il rapporto crolla.
+Il `gc5035` ha dato prima 2.83 e poi 10.7 invece di 16, e la prima volta e'
+sembrata una regressione dei driver: era mezzogiorno, e poi il tablet era
+girato verso la finestra.
+
+**La soglia sulla media non basta, ed e' l'errore che ho fatto al primo
+tentativo.** Misurato sul silicio, `gc5035` a 16x in una stanza illuminata di
+lato:
+
+| Guadagno | Media | Massimo | Pixel al fondo scala |
+|---|---|---|---|
+| 1x | 97,5 | 366 | 0,00% |
+| 16x | 421,6 | 1023 | **15,56%** |
+
+Un sesto dell'immagine e' tagliato e la media e' 421 su 1023: nessuna soglia
+sulla media puo' accorgersene. Il rilevatore giusto e' **la percentuale di
+pixel al fondo scala**, e la soglia e' il 2%. Sopra, il rapporto non e' piu'
+una misura del guadagno e lo script lo dice — `[--]`, con la percentuale nel
+messaggio — invece di stampare un `[KO]` che manda a cercare un difetto
+inesistente.
+
+Le percentuali di taglio finiscono anche in `03-guadagno.txt`, cosi' la
+misura resta verificabile a posteriori invece di dover essere creduta.
+
+Nota pratica per chi rifa' la prova: **le due camere guardano da parti
+opposte**, quindi non esiste una posizione della luce che vada bene per
+entrambe insieme. Si misura una alla volta, e va benissimo: i due numeri non
+devono venire dallo stesso fotogramma.
+
+## ESITO — 2026-08-12, ore 10:52-11:20, terzo avvio
+
+Il terzo avvio serviva a una cosa sola: **provare C1, C2 e C3**, che fino a
+qui erano scritte ma mai eseguite. Il kernel di stamattina non le conteneva —
+sono state trovate *durante* quella sessione, quindi la sessione che le ha
+scoperte non poteva verificarle.
+
+Verbale completo in `data/correzioni-20260812-111902/ESITO.md`. In breve:
+**tutte e tre reggono**, `prova-completa.sh` da' 23 su 23, e lockdep e'
+rimasto acceso fino in fondo.
+
+Il kernel di debug adesso **parte da solo**, senza la trafila della UEFI
+Shell: e' quello che ha reso possibile questa sessione.
+
+### Non fidarsi delle date: verificare che le patch siano nel binario
+
+La build #8 e' delle 10:45 e le patch sono state scritte alle 10:31-10:37.
+Dedurre da questo che siano dentro sarebbe un ragionamento, non una prova — e
+sui binari i ragionamenti sbagliano. Il controllo diretto e' provare a
+**disapplicarle** dall'albero compilato:
+
+```bash
+cd /home/nicfio/linux
+for d in ipu6-fix subdev-fix mc-pipeline-fix ipu6-lock-fix int3472-leak-fix; do
+    p=$(ls /home/nicfio/INTEL-CAMERA/patches/wip/$d/*.patch | head -1)
+    git apply --check --reverse "$p" 2>/dev/null \
+        && echo "  DENTRO   $d" || echo "  ASSENTE  $d"
+done
+```
+
+Se una patch torna indietro pulita, il codice corretto e' nel sorgente da cui
+e' uscito il binario. Tutte e cinque: `DENTRO`.
+
+### C4 — `DQBUF` non torna mai dopo l'unbind, reperto nuovo
+
+Trovato oggi, e non cercandolo: la prima esecuzione del riproduttore si e'
+impiantata e ci sono voluti sedici minuti per capire che non era lenta, era
+ferma.
+
+Dopo l'`unbind` a streaming acceso il processo di cattura resta in
+`vb2_core_dqbuf` ad aspettare un fotogramma che non arrivera' mai. Nessuno
+dice alla coda vb2 che il sensore se n'e' andato, quindi `DQBUF` non torna con
+un errore: non torna e basta. **Riproducibile 10 volte su 10**, su entrambi i
+sensori.
+
+Va tenuto separato dagli altri tre, per quello che **non** e':
+
+- **non e' un blocco del kernel**: il processo e' in stato `S`, attesa
+  interrompibile. Un segnale lo libera e il sistema non ne risente. Ecco
+  perche' `DETECT_HUNG_TASK` tace — sorveglia lo stato `D`, non `S`
+- **non e' corruzione**: KASAN muto su tutti e dieci i cicli
+- **non e' nostro**: sta nel percorso di mainline, non nei due driver
+
+**Corretto in giornata.** `isys_async_ops` dichiara `.bound()` e `.complete()`
+ma non `.unbind()`: nessuno avvisa i nodi video, e l'attesa in
+`__vb2_wait_for_done_vb()` — che finisce su un buffer nuovo, su `!q->streaming`
+o su `q->error` — non riceve nessuno dei tre. La patch aggiunge `.unbind()` e
+chiama `vb2_queue_error()` sulle code **in streaming** del ricevitore CSI-2 a
+cui il sensore era attaccato; marcare anche le code ferme le lascerebbe
+avvelenate fino al successivo `STREAMOFF`, perche' `q->error` lo azzera solo
+`__vb2_queue_cancel()`.
+
+Patch in `patches/wip/ipu6-unbind-fix/`, `Fixes: f50c4ca0a820`. Su
+`torvalds/master` di oggi il difetto c'e' ancora e l'archivio di `linux-media`
+non ha nessun invio in proposito.
+
+Confronto a una sola variabile — stesso script, stesso kernel, cambia solo il
+modulo:
+
+| | Cicli appesi | Cicli usciti | Errore |
+|---|---|---|---|
+| senza la patch | 3 su 3 | 0 | — |
+| con la patch | 0 | 10 su 10 | `-EIO` |
+
+### La prova che stava per mentire
+
+Merita di essere raccontata, perche' e' passata a un soffio dall'essere
+creduta. Dopo la ricarica dei moduli il riproduttore ha dato **5 successi su
+5**, cioe' esattamente il risultato sperato. Era falso: ricaricando i moduli
+il grafo media torna ai default, `STREAMON` falliva subito con `ENOLINK` e
+`v4l2-ctl` usciva in un decimo di secondo **senza catturare niente**. Lo
+script contava quell'uscita immediata come una vittoria.
+
+Si e' scoperto solo andando a vedere *quale* errore tornasse a userspace: era
+`STREAMON`, non `DQBUF`. Adesso lo script configura la pipeline riusando
+`cattura.sh`, controlla che lo streaming sia partito davvero, e tratta un
+ciclo senza cattura come **non valido** invece che come riuscito.
+
+La morale, per le prossime sessioni: quando una prova da' il risultato che
+speravi, e' quello il momento di chiederle come l'ha ottenuto.
+
+### Il riproduttore aveva un difetto, corretto oggi
+
+`unbind-in-streaming.sh` faceva `wait` liscio sul processo di cattura: con C4
+di mezzo, attesa infinita. Adesso concede una finestra di grazia, poi termina
+il processo, e **conta quanti cicli si sono appesi** invece di nasconderlo.
+
+Terminare il processo non e' un ripiego, e' meta' della prova: chiudere il
+file percorre `v4l2_release -> __vb2_queue_cancel -> __media_pipeline_stop`,
+cioe' esattamente il punto dove viveva l'use-after-free C1. Ogni ciclo ci
+passa per intero.
+
+Cinque cicli: da oltre 80 minuti stimati a 50 secondi reali.
+
+### Una trappola di lettura, per la prossima sessione
+
+Cercando `KASAN` nel log d'avvio escono nove righe, e sembra un disastro. Sono
+righe come `? __kasan_kmalloc` e `? kasan_quarantine_put` **dentro i backtrace
+dei `WARNING` di i915** sulle porte TypeC: voci residue dello stack, non
+segnalazioni. Una segnalazione vera comincia con `BUG: KASAN:`, ed e' quello
+che va cercato.
+
+## Il riquadro del secondo avvio (superato)
+
+> Immagine ricompilata con LPSS e gia' installata. **Manca solo il riavvio.**
+>
+> | Cosa | Stato |
+> |---|---|
+> | Immagine sulla ESP | `/mnt/esp/vmlinuz-debug`, 29 385 728 byte, build `#7` |
+> | Copia di sicurezza | `/mnt/esp/vmlinuz-dbg-ok` = l'immagine di prima, che almeno avviava |
+> | Moduli | reinstallati, stessa cartella: la stringa di versione non e' cambiata |
+> | Correzioni A1 e A2 | sempre applicate **non committate** in `/home/nicfio/linux` |
+> | `startup.nsh` | **modificato**: adesso avvia `vmlinuz-debug` da solo, md5 `527d5481e29f0aa698aa02ebaed3cb90` |
+>
+> Attenzione a quell'ultima riga: il kernel di debug e' diventato il default.
+> Se non parte, la macchina **non** torna a Debian da sola — bisogna premere
+> ESC al countdown e digitare a mano, al prompt `Shell>`:
+>
+> ```
+> fs0:
+> vmlinuz initrd=initrd.img root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI iomem=relaxed
+> ```
+>
+> (e' la seconda riga commentata dentro `startup.nsh`; oppure `vmlinuz-dbg-ok`
+> al posto di `vmlinuz-debug` per riavere l'immagine precedente).
+>
+> **Una volta dentro**, prima di tutto il resto:
+>
+> ```bash
+> ls /sys/bus/i2c/devices/     # devono comparire i bus designware, non solo SMBus e i915
+> ls -l /sys/bus/i2c/devices/i2c-GCTI5035:00/driver   # deve esistere
+> ```
+>
+> Se ci sono, allora la prova puo' partire davvero:
+>
+> ```bash
+> sudo ./scripts/prova-completa.sh
+> sudo ./scripts/misura-guadagno.sh          # con la luce accesa
+> sudo dmesg | grep -E "KASAN|UBSAN|lockdep|BUG:|WARNING:|possible recursive"
+> echo scan | sudo tee /sys/kernel/debug/kmemleak && sudo cat /sys/kernel/debug/kmemleak
+> ```
+>
+> Nota: `prova-completa.sh` azzera il buffer di `dmesg`. Per rileggere i
+> messaggi dall'avvio usare `journalctl -k -b`.
+
+## PRONTO ALL'AVVIO — 2026-08-12, ore 08:56 (superato)
 
 > **I passi 1 e 2 qui sotto sono gia' stati fatti.** Manca solo il riavvio.
 >

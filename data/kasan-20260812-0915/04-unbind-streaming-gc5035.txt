@@ -1,0 +1,2 @@
+sensore gc5035 (i2c-GCTI5035:00) su /dev/video16, 5 cicli
+  ciclo 1: unbind a streaming acceso
