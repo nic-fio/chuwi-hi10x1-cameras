@@ -15,9 +15,10 @@ KMEMLEAK, PROVE_LOCKING and DETECT_HUNG_TASK. Three of them are fixed here;
 the fourth, a use-after-free in the media controller, is sent separately
 because it belongs to a different subsystem.
 
-Patch 1 is a NULL pointer dereference in ipu6_isys_csi2_get_remote_desc().
-The remote pad is dereferenced without being checked, and unbinding the
-sensor mid-stream makes it NULL. Present since May 2024.
+Patch 1 is a NULL pointer dereference in ipu6_isys_csi2_enable_streams()
+and ipu6_isys_csi2_disable_streams(). The remote pad is dereferenced
+without being checked, and unbinding the sensor mid-stream makes it NULL.
+Present since May 2024.
 
 Patch 2 is a second NULL pointer dereference, in subdev_open().
 v4l2_device_unregister_subdev() clears sd->v4l2_dev before the device node
