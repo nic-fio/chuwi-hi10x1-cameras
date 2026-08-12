@@ -1,0 +1,67 @@
+From 7e0b404baf65541ba15b8787e69b13b41109f0b6 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:50:01 +0200
+Subject: [PATCH 0/3] media: Two oopses and a hang when unbinding a streaming sensor
+
+Unbinding a camera sensor while a capture is running is a scenario that
+nothing in the IPU6 path handles: the kernel oopses twice, corrupts memory
+once, and leaves the application blocked forever. None of this is caused by
+the sensor drivers themselves, and all four failures are present in
+mainline today.
+
+They were found while testing two new sensor drivers on a CHUWI Hi10 X1
+(Intel N100, Alder Lake-N, IPU6) on a kernel built with KASAN, UBSAN,
+KMEMLEAK, PROVE_LOCKING and DETECT_HUNG_TASK. Three of them are fixed here;
+the fourth, a use-after-free in the media controller, is sent separately
+because it belongs to a different subsystem.
+
+Patch 1 is a NULL pointer dereference in ipu6_isys_csi2_get_remote_desc().
+The remote pad is dereferenced without being checked, and unbinding the
+sensor mid-stream makes it NULL. Present since May 2024.
+
+Patch 2 is a second NULL pointer dereference, in subdev_open().
+v4l2_device_unregister_subdev() clears sd->v4l2_dev before the device node
+goes away, so anything opening /dev/v4l-subdevN in that window oopses. This
+one was not provoked deliberately: udev's v4l_id walked into it on its own.
+The window has been open since 2011.
+
+Patch 3 is the hang. isys_async_ops has no .unbind() callback, so nothing
+tells the video nodes that the sensor is gone, and a DQBUF already waiting
+in vb2_core_dqbuf() never returns. The sleep is interruptible, so
+DETECT_HUNG_TASK stays quiet and the process is simply stuck until it is
+killed. Reproduced 10 times out of 10 on both sensors of the machine; with
+the patch, all 10 return -EIO and exit.
+
+How each one was verified, since the three differ:
+
+  - patch 1: the oops was provoked deliberately on the unpatched kernel
+    before the fix was written
+  - patch 2: reproduced itself, unprompted, with udev alone; after the fix,
+    150 cycles of a reproducer with four concurrent openers left no oops
+    and no leaked minors
+  - patch 3: rebuilt both ways, same kernel and same test. Without it,
+    3 attempts out of 3 hang; with it, 10 out of 10 wake up and return
+    -EIO
+
+The full test cycle with the three fixes in place is clean: no KASAN or
+UBSAN reports, no KMEMLEAK findings, and lockdep still enabled at the end
+of the run. That last detail matters: lockdep disables itself on its first
+complaint and silently invalidates everything measured afterwards.
+
+The reproducer is a shell script that streams with v4l2-ctl, unbinds the
+sensor after two seconds, then rebinds it, in a loop. I am happy to post it
+if that would be useful.
+
+Nicola Fiorillo (3):
+  media: ipu6: Check the remote pad before dereferencing it
+  media: v4l2-subdev: Check v4l2_dev before dereferencing it in open()
+  media: ipu6: Signal the video queues when a sensor is unbound
+
+ drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 14 ++++++-
+ drivers/media/pci/intel/ipu6/ipu6-isys.c      | 41 +++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-subdev.c         | 31 +++++++++++---
+ 3 files changed, 78 insertions(+), 8 deletions(-)
+
+-- 
+2.47.3
+

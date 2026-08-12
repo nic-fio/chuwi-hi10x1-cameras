@@ -1,0 +1,111 @@
+From 7e0b404baf65541ba15b8787e69b13b41109f0b6 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:25:51 +0200
+Subject: [PATCH 3/3] media: ipu6: Signal the video queues when a sensor is
+ unbound
+
+isys_async_ops implements .bound() and .complete() but not .unbind(), so
+nothing tells the ISYS video nodes that the sensor feeding them has gone
+away. A capture that is streaming when the sensor is unbound stays
+blocked in vb2_core_dqbuf() forever, waiting for a frame that can no
+longer arrive:
+
+  [<0>] vb2_core_dqbuf+0x362/0x1190 [videobuf2_common]
+  [<0>] vb2_dqbuf+0xb4/0x210 [videobuf2_v4l2]
+  [<0>] __video_do_ioctl+0x894/0xb30
+  [<0>] video_usercopy+0x479/0xde0
+  [<0>] v4l2_ioctl+0x198/0x220
+  [<0>] __x64_sys_ioctl+0x134/0x1c0
+
+The wait in __vb2_wait_for_done_vb() ends on a new buffer, on
+!q->streaming, or on q->error. Tearing the sensor down sets none of the
+three. The sleep is interruptible, so DETECT_HUNG_TASK stays quiet as
+well and the process is simply stuck until something kills it.
+
+Add the missing .unbind() and mark the queues of the CSI-2 receiver the
+departing sensor was attached to, which is enough for DQBUF to return
+-EIO. Only streaming queues are flagged: q->error is cleared by
+__vb2_queue_cancel(), so flagging an idle queue would leave it in error
+until the next VIDIOC_STREAMOFF.
+
+Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) by unbinding the
+sensor while v4l2-ctl was streaming, with both sensors of the machine.
+Without this patch 3 attempts out of 3 hang; with it, 10 out of 10 wake
+up, report "VIDIOC_DQBUF: failed: Input/output error" and exit. The same
+run under KASAN reports nothing.
+
+Fixes: f50c4ca0a820 ("media: intel/ipu6: add the main input system driver")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
+---
+ drivers/media/pci/intel/ipu6/ipu6-isys.c | 41 ++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys.c b/drivers/media/pci/intel/ipu6/ipu6-isys.c
+index c9cdeb705..8055ae169 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-isys.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-isys.c
+@@ -31,6 +31,7 @@
+ #include <media/v4l2-async.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-fwnode.h>
++#include <media/videobuf2-core.h>
+ 
+ #include "ipu6-bus.h"
+ #include "ipu6-cpd.h"
+@@ -700,6 +701,45 @@ static int isys_notifier_bound(struct v4l2_async_notifier *notifier,
+ 	return v4l2_device_register_subdev_nodes(&isys->v4l2_dev);
+ }
+ 
++/* The .unbind() notifier callback when a sub-device goes away */
++static void isys_notifier_unbind(struct v4l2_async_notifier *notifier,
++				 struct v4l2_subdev *sd,
++				 struct v4l2_async_connection *asc)
++{
++	struct ipu6_isys *isys =
++		container_of(notifier, struct ipu6_isys, notifier);
++	struct sensor_async_sd *s_asd =
++		container_of(asc, struct sensor_async_sd, asc);
++	struct ipu6_isys_csi2 *csi2;
++	unsigned int i;
++
++	if (s_asd->csi2.port >= isys->pdata->ipdata->csi2.nports)
++		return;
++
++	/*
++	 * The sensor is gone, so no more frames will ever arrive on the video
++	 * nodes fed by it. Tell videobuf2, or a DQBUF already blocked in
++	 * vb2_core_dqbuf() would sleep forever: nothing else in the teardown
++	 * path wakes that queue up.
++	 *
++	 * Only queues that are actually streaming are marked. The error flag
++	 * is only cleared by __vb2_queue_cancel(), so flagging an idle queue
++	 * would leave it poisoned until the next STREAMOFF.
++	 */
++	csi2 = &isys->csi2[s_asd->csi2.port];
++	for (i = 0; i < NR_OF_CSI2_SRC_PADS; i++) {
++		struct vb2_queue *q = &csi2->av[i].aq.vbq;
++
++		if (!vb2_is_streaming(q))
++			continue;
++
++		dev_dbg(&isys->adev->auxdev.dev,
++			"%s went away while streaming on %s\n", sd->name,
++			csi2->av[i].vdev.name);
++		vb2_queue_error(q);
++	}
++}
++
+ static int isys_notifier_complete(struct v4l2_async_notifier *notifier)
+ {
+ 	struct ipu6_isys *isys =
+@@ -710,6 +750,7 @@ static int isys_notifier_complete(struct v4l2_async_notifier *notifier)
+ 
+ static const struct v4l2_async_notifier_operations isys_async_ops = {
+ 	.bound = isys_notifier_bound,
++	.unbind = isys_notifier_unbind,
+ 	.complete = isys_notifier_complete,
+ };
+ 
+-- 
+2.47.3
+

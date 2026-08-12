@@ -22,6 +22,7 @@ in fondo.
 | `ipu6-lock-fix/` | **2026-08-12** — stato del sub-device letto senza lock |
 | `int3472-leak-fix/` | **2026-08-12** — perdita del ritorno di `_DSM` |
 | `ipu6-unbind-fix/` | **2026-08-12** — `DQBUF` appeso per sempre dopo l'`unbind` |
+| `invio-1-difetti-mainline/` | le tre qui sopra **assemblate in serie** con cover letter: e' questa la cartella da inviare, non le tre singole |
 | `cover-letter.txt` | il testo della cover, modificabile a mano |
 | `destinatari.txt` | output di `get_maintainer.pl` per tutti e tre |
 | `gc5035.c`, `gc8034.c`, `galaxycore,gc*.yaml` | copie di lettura |
@@ -356,12 +357,14 @@ sempre: un invio partito per sbaglio non si richiama.
 ```bash
 cd /home/nicfio/INTEL-CAMERA
 
-# 1. i tre difetti di ipu6/v4l2 dello stesso scenario, insieme
+# 1. i tre difetti dello stesso scenario, come SERIE con cover letter
+#    (cartella invio-1-difetti-mainline/, non le tre cartelle singole:
+#     numerate 1/3 2/3 3/3 e legate in un thread solo)
 git send-email --to=linux-media@vger.kernel.org \
-    --cc=sakari.ailus@linux.intel.com --cc=bingbu.cao@intel.com \
-    --cc=tian.shu.qiu@intel.com \
-    patches/wip/ipu6-fix/*.patch patches/wip/subdev-fix/*.patch \
-    patches/wip/ipu6-unbind-fix/*.patch
+    --cc=mchehab@kernel.org --cc=sakari.ailus@linux.intel.com \
+    --cc=bingbu.cao@intel.com --cc=tian.shu.qiu@intel.com \
+    --cc=linux-kernel@vger.kernel.org \
+    patches/wip/invio-1-difetti-mainline/*.patch
 
 # 2. l'use-after-free del media controller, da solo: altri manutentori
 git send-email --to=linux-media@vger.kernel.org \
