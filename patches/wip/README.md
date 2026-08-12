@@ -397,7 +397,29 @@ I `--cc` vengono da `destinatari.txt`, cioe' da `get_maintainer.pl`, tranne
 `tfiga@chromium.org` e `liang1.wang@intel.com`: quelli sono gli autori del
 codice riusato, e ci vanno per cortesia — vedi `reference/README.md`.
 
-#### La prova d'invio su se' stessi — da fare una volta, prima di tutto
+#### La prova d'invio su se' stessi — **SUPERATA il 2026-08-12**
+
+Gmail non tocca niente. Verificato andata e ritorno, non a occhio:
+
+| Verifica | Esito |
+|---|---|
+| SMTP | `Result: 250`, accettata dal server |
+| Contenuto della patch dopo il giro in posta | **identico bit per bit** |
+| Messaggio di commit | **identico** |
+| Autore | `Nicola Fiorillo <nicfio@gmail.com>` |
+| `Signed-off-by` | integro |
+
+Il metodo, se serve rifarla: mandarsi la patch, scaricare da Gmail il
+messaggio originale, applicarlo con `git am` su un ramo che parte da
+`prima-della-firma`, e poi **confrontare il commit ricostruito con
+l'originale** — `diff <(git show ORIG --format="") <(git show NUOVO
+--format="")`. Il confronto e' la parte che conta: "git am non ha dato
+errore" non basta, perche' una patch puo' applicarsi lo stesso dopo che il
+client ha convertito i tab.
+
+Istruzioni originali qui sotto.
+
+#### Come si fa
 
 Un client che riscrive le righe, converte i tab in spazi o manda HTML rende la
 patch **inapplicabile**, e la serie viene ignorata senza che nessuno spieghi
