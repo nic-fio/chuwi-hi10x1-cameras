@@ -119,6 +119,7 @@ INTEL-CAMERA/
 │   ├── cattura.sh               configura la pipeline IPU6 e cattura
 │   ├── raw-to-png.py            da RAW Bayer a PNG guardabile
 │   ├── prova-completa.sh        tutte le verifiche su hardware, con verdetto
+│   ├── misura-guadagno.sh       solo il guadagno; serve una luce accesa
 │   ├── riproduci-oops-subdev.sh provoca a comando il NULL deref di mainline
 │   ├── build-kernel.sh          kernel di sviluppo, con --debug per KASAN
 │   └── fix-pinctrl-alderlake.sh OBSOLETO — vedi l'intestazione del file

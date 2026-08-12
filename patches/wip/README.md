@@ -70,8 +70,9 @@ oopsa. Non e' stato provocato: si e' presentato da solo il 2026-08-12 con
 `v4l_id` di udev. Vedi `docs/09-revisione-preinvio.md` § A2.
 
 Ha il suo `Fixes:` — `61f5db549dde`, del 2011 — trovato con la blame di GitHub
-perche' il clone locale e' shallow. Prima di inviarla resta da guardare
-`lore.kernel.org` con un browser: vedi ROADMAP punto 4.
+perche' il clone locale e' shallow. L'archivio di `linux-media` e' stato
+controllato il 2026-08-12: nessuno l'ha gia' inviata, e la finestra e' aperta
+da quindici anni. Tecnicamente pronta, aspetta solo B1.
 
 Destinatari di tutte e quattro in `destinatari.txt`, da `get_maintainer.pl`.
 
@@ -94,9 +95,9 @@ Destinatari di tutte e quattro in `destinatari.txt`, da `get_maintainer.pl`.
 | Tabelle identiche all'originale | **verificato**, comandi qui sotto |
 | Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 422,4 e 268,8 MHz, derivate dal clock |
 | **Eseguiti su hardware** | **SI', 2026-08-11** — entrambi catturano |
-| **Rieseguiti dopo un riavvio** | **SI', 2026-08-12** — 19 verifiche su 22, `data/prova-20260812-072414/` |
+| **Rieseguiti dopo un riavvio** | **SI', 2026-08-12** — 19 su 22, e le tre mancate non sono dei driver. `data/prova-20260812-072414/` |
 | Frame rate dopo il riavvio | 28,82 e 24,01 — scarto 0,01% e 0,04% dal previsto |
-| Guadagno dopo il riavvio | **non misurato**: scena nera, il test va rifatto con una luce |
+| Guadagno dopo il riavvio | **si', alle 08:05 con la luce** — 15,85x su 16 e 7,37x su 7,66 |
 | Oops nel kernel durante la prova | **si', ma non nostro** — A2, `subdev_open()` di mainline |
 | Chip ID letto sul silicio | `0x5035` e `0x8044` |
 | `v4l2-compliance` | **45/46** su entrambi — vedi `docs/08-prova-hardware.md` |

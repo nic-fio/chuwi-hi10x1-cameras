@@ -6,9 +6,10 @@
 > che nessuna quantita' di lavoro sul codice risolve.
 >
 > La **rivalidazione su hardware** e' stata fatta il **2026-08-12**, dopo il
-> riavvio: 19 verifiche su 22 in `scripts/prova-completa.sh`, con le tre
-> mancate spiegate in `docs/08-prova-hardware.md`. Ha prodotto un reperto
-> nuovo, **A2**, che non e' dei nostri driver.
+> riavvio: 19 verifiche su 22 in `scripts/prova-completa.sh`. Delle tre
+> mancate, due erano il buio — il guadagno, rimisurato alle 08:05 con la luce,
+> torna: 15,85x su 16 e 7,37x su 7,66. La terza e' un reperto nuovo, **A2**,
+> che non e' dei nostri driver. Tutto in `docs/08-prova-hardware.md`.
 >
 > | | Reperto | Stato |
 > |---|---|---|
@@ -313,21 +314,33 @@ riagganciato in ciclo. **Riprodotto al ciclo 7.**
 **Presente in mainline 7.2-rc7**: verificato, `v4l2-subdev.c:115` e
 `v4l2-device.c:279-291` sono identici.
 
-**Non e' stato verificato che nessuno l'abbia gia' segnalata, e non e' per
-pigrizia.** Due ricerche sul web — una libera, una ristretta a
-`lore.kernel.org`, `patchwork.kernel.org` e `patchwork.linuxtv.org` — non hanno
-trovato niente di pertinente. Ma l'archivio vero non e' interrogabile da qui:
-`lore.kernel.org` sta dietro ad **Anubis**, che chiede una proof-of-work al
-browser e rifiuta sia `curl` sia il recupero automatico della pagina. E "non
-trovato da un motore di ricerca" non e' "non esiste".
+**Nessuno l'ha gia' segnalata** — verificato sull'archivio vero il 2026-08-12,
+con un browser. `lore.kernel.org` sta dietro ad **Anubis**, che chiede una
+proof-of-work e rifiuta sia `curl` sia il recupero automatico della pagina: le
+prime due ricerche, fatte da fuori, non facevano testo.
 
-Serve un browser, trenta secondi, questo indirizzo:
+Tre interrogazioni su `lore.kernel.org/linux-media`:
 
-```
-https://lore.kernel.org/linux-media/?q=subdev_open+v4l2_dev
-```
+| Query | Risultati | Pertinenti |
+|---|---|---|
+| `subdev_open v4l2_dev` | 53 | nessuno |
+| `"v4l2_device_unregister_subdev" AND "NULL pointer"` | 43 | uno solo, vedi sotto |
+| `"subdev_open" AND "ENODEV"` | 27 | nessuno |
 
-Se non esce niente di simile, la patch e' nuova e si invia.
+I 53 della prima sono la storia del codice: l'introduzione del 2010-2011, il
+`handle module refcounting here` del 2019, la serie sul `file->private_data`
+del 2025. Nessuna correzione a questa finestra.
+
+**Il risultato piu' vicino, e perche' non e' il nostro.** Liu Ying, 30 aprile
+2014, «v4l2-device: fix potential NULL pointer dereference for subdev
+unregister path». Tocca lo stesso `sd->v4l2_dev = NULL` e lo stesso file, ma
+guarda dall'altra parte: si occupa della dereferenza **dentro**
+`v4l2_device_unregister_subdev()` stessa, non di chi apre il nodo da userspace
+nel frattempo. Ed e' sbagliata di suo — sposta l'azzeramento dopo il blocco
+`MEDIA_CONTROLLER` scrivendo `v4l2_dev = NULL`, cioe' la variabile locale, che
+non azzera niente. Non e' mai stata applicata: oggi `sd->v4l2_dev = NULL` sta
+ancora alla riga 279, esattamente dove stava. **La finestra e' aperta da
+quindici anni e nessuno l'ha ancora chiusa.**
 
 **Severita'**: crash del kernel. La macchina resta in piedi — l'oops uccide
 chi apriva, non il kernel, e dopo due colpi non c'e' stato nessun task in
@@ -369,7 +382,8 @@ anche l'altro.
 `subdev_close()` **non** e' affetto: dal 2019 usa `subdev_fh->owner` e non
 tocca piu' `sd->v4l2_dev`.
 
-**Cosa manca prima di inviarla**: solo il controllo sull'archivio.
+**Cosa manca prima di inviarla**: niente di tecnico. Solo B1, l'identita' del
+firmatario, che vale per tutto quello che questo progetto manda upstream.
 
 **Cosa farne**: patch separata a `linux-media`, come A1 e insieme ad A1. Sono
 due crash indipendenti nello stesso scenario — il sensore che se ne va mentre

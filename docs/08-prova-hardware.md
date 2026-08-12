@@ -319,9 +319,19 @@ la misura di oggi a non esistere, non quella di ieri.
 
 `prova-completa.sh` adesso lo riconosce da solo e stampa `[--]` invece di
 `[KO]`: se al guadagno massimo il segnale resta a meno di 4 LSB dal
-piedistallo, la misura non e' stata fatta. **Il test del guadagno va rifatto
-con una luce accesa davanti ai sensori** — resta l'unica verifica del giorno
-che non ha prodotto un numero.
+piedistallo, la misura non e' stata fatta.
+
+### Rifatta con la luce, alle 08:05 — e torna
+
+| | segnale min -> max | rapporto | atteso | scarto |
+|---|---|---|---|---|
+| GC5035 | 74,2 -> 226,2 | **15,85** | 16,00 | 1,0% |
+| GC8034 | 87,4 -> 236,7 | **7,37** | 7,66 | 3,7% |
+
+`data/guadagno-20260812-080548/`. Coerente con le misure dell'11 sera (15,7x e
+7,9x): **le tabelle di guadagno dei due driver sono confermate una seconda
+volta, su un boot diverso.** Con questa, delle tre mancate della mattina non
+ne resta nessuna che riguardi i nostri driver.
 
 ### La terza mancata e' un oops, e non e' dei nostri driver
 

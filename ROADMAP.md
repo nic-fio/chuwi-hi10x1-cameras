@@ -301,11 +301,9 @@ partono insieme.
       due crash indipendenti nello stesso scenario, il sensore che se ne va
       mentre qualcuno lo sta usando. Questo pero' non e' stato provocato — si
       e' presentato da solo, con udev che apriva il nodo (reperto A2). Il
-      `Fixes:` c'e' — `61f5db549dde`, del 2011, trovato con la blame di GitHub
-      visto che il clone locale e' shallow. **Manca una cosa sola, e serve un
-      browser**: guardare `https://lore.kernel.org/linux-media/?q=subdev_open+v4l2_dev`
-      per escludere che qualcuno l'abbia gia' inviata. L'archivio sta dietro ad
-      Anubis e da qui non si interroga.
+      `Fixes:` c'e' — `61f5db549dde`, del 2011 — e l'archivio e' stato
+      controllato: tre ricerche su `lore.kernel.org/linux-media`, nessuno l'ha
+      gia' inviata. **Tecnicamente e' pronta**; aspetta solo B1.
 
 Destinatari gia' calcolati in `patches/wip/destinatari.txt`.
 
