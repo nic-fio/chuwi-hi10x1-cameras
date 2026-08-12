@@ -10,6 +10,7 @@ serve a impedire un invio accidentale.
 | `serie/` | le cinque patch per `linux-media`, piu' la cover letter |
 | `int3472/` | la patch per `platform-driver-x86` |
 | `ipu6-fix/` | la correzione dell'oops di `ipu6-isys` |
+| `subdev-fix/` | la correzione dell'oops di `subdev_open()` |
 | `cover-letter.txt` | il testo della cover, modificabile a mano |
 | `destinatari.txt` | output di `get_maintainer.pl` per tutti e tre |
 | `gc5035.c`, `gc8034.c`, `galaxycore,gc*.yaml` | copie di lettura |
@@ -23,6 +24,10 @@ applicati sopra mainline 7.2-rc7. Le copie qui si rigenerano da li'.
 Erano sei patch in fila. Sono diventate tre insiemi separati, perche' vanno a
 destinatari diversi e non hanno motivo di aspettarsi a vicenda — e una serie
 che tiene in ostaggio una correzione altrui e' una serie che si impantana.
+
+Le patch sono sette dal 2026-08-12, ma gli invii restano tre: `subdev-fix/`
+parte con `ipu6-fix/`, perche' sono due crash dello stesso scenario e vanno
+agli stessi occhi.
 
 ### `serie/` — cinque patch a `linux-media`
 
@@ -55,7 +60,18 @@ codice**: e' un NULL pointer dereference di mainline, presente dalla
 fa `unbind` di un sensore mentre streamma. Trovato provocandolo davvero il
 2026-08-11, vedi `docs/09-revisione-preinvio.md` § A1.
 
-Destinatari di tutti e tre in `destinatari.txt`, da `get_maintainer.pl`.
+### `subdev-fix/` — una patch a `linux-media`, da inviare insieme a `ipu6-fix/`
+
+`media: v4l2-subdev: Check v4l2_dev before dereferencing it in open()`.
+**Non e' nostro codice**: e' un secondo NULL pointer dereference di mainline,
+in `subdev_open()`. `v4l2_device_unregister_subdev()` azzera `sd->v4l2_dev`
+prima di togliere il nodo, e chi apre `/dev/v4l-subdevN` in quella finestra
+oopsa. Non e' stato provocato: si e' presentato da solo il 2026-08-12 con
+`v4l_id` di udev. Vedi `docs/09-revisione-preinvio.md` § A2.
+
+Manca il `Fixes:`, e manca perche' il clone e' shallow — vedi ROADMAP punto 4.
+
+Destinatari di tutte e quattro in `destinatari.txt`, da `get_maintainer.pl`.
 
 ## Stato verificato, non dichiarato
 
@@ -76,6 +92,10 @@ Destinatari di tutti e tre in `destinatari.txt`, da `get_maintainer.pl`.
 | Tabelle identiche all'originale | **verificato**, comandi qui sotto |
 | Link frequency coerenti fra driver e `ipu-bridge` | **si'** — 422,4 e 268,8 MHz, derivate dal clock |
 | **Eseguiti su hardware** | **SI', 2026-08-11** — entrambi catturano |
+| **Rieseguiti dopo un riavvio** | **SI', 2026-08-12** — 19 verifiche su 22, `data/prova-20260812-072414/` |
+| Frame rate dopo il riavvio | 28,82 e 24,01 — scarto 0,01% e 0,04% dal previsto |
+| Guadagno dopo il riavvio | **non misurato**: scena nera, il test va rifatto con una luce |
+| Oops nel kernel durante la prova | **si', ma non nostro** — A2, `subdev_open()` di mainline |
 | Chip ID letto sul silicio | `0x5035` e `0x8044` |
 | `v4l2-compliance` | **45/46** su entrambi — vedi `docs/08-prova-hardware.md` |
 | Tabelle di guadagno verificate a misura | si' — 15,7x su 16 e 7,9x su 7,66 |

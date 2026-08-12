@@ -283,6 +283,60 @@ costa quattro righe.
   anche il dato in volo dallo stream precedente — con l'autosuspend a 1 s il
   sensore in mezzo si spegne del tutto. Resta aperto.
 
+## La rivalidazione dopo il riavvio — 2026-08-12
+
+Riavvio alle 07:16, moduli ricostruiti e ricaricati, e **prima esecuzione
+completa di `scripts/prova-completa.sh`**: 19 verifiche superate, 3 fallite.
+Output in `data/prova-20260812-072414/`.
+
+Quello che conta e' tornato identico su una macchina ripartita da zero:
+
+| | GC5035 | GC8034 |
+|---|---|---|
+| Chip ID | `0x50 0x35` | `0x80 0x44` |
+| Frame rate previsto / misurato | 28.8162 / 28.82 (0,01%) | 24 / 24.01 (0,04%) |
+| `v4l2-compliance` | 45 ok, 1 fallito | 45 ok, 1 fallito |
+| 10 cicli di bind/unbind | riagganciato | riagganciato |
+
+### Due delle tre mancate non sono un difetto: era buio
+
+Il test del guadagno alza il guadagno analogico da minimo a massimo e chiede
+che la luminosita' segua. Alle 07:24 il segnale misurato era **64,2** e
+**63,8**: il piedistallo di black level e' 64, quindi il segnale utile era
+sotto l'LSB. Il rapporto misurato — 3,98 contro 16 attesi — e' il rapporto fra
+due rumori.
+
+| | 2026-08-11 sera | 2026-08-12 07:24 |
+|---|---|---|
+| GC5035, media / massimo | 198 / 411 | 64 / 84 |
+| GC8034, media / massimo | 124 / 598 | 64 / 80 |
+
+La prova che e' la scena e non il driver sta nel massimo: 84 su 4096. Un
+sensore che ignora il guadagno darebbe un'immagine costante, non un'immagine
+nera. E la stessa misura, l'11 con la luce, aveva dato **15,7x su 16 chiesti**
+e **7,9x su 7,66**: le tabelle di guadagno erano gia' state verificate, ed e'
+la misura di oggi a non esistere, non quella di ieri.
+
+`prova-completa.sh` adesso lo riconosce da solo e stampa `[--]` invece di
+`[KO]`: se al guadagno massimo il segnale resta a meno di 4 LSB dal
+piedistallo, la misura non e' stata fatta. **Il test del guadagno va rifatto
+con una luce accesa davanti ai sensori** — resta l'unica verifica del giorno
+che non ha prodotto un numero.
+
+### La terza mancata e' un oops, e non e' dei nostri driver
+
+```
+BUG: kernel NULL pointer dereference, address: 0000000000000008
+RIP: subdev_open+0x8a/0x190 [videodev]     Comm: v4l_id
+```
+
+`sd->v4l2_dev` e' `NULL` mentre il nodo `/dev/v4l-subdevN` e' ancora apribile,
+perche' `v4l2_device_unregister_subdev()` azzera il puntatore prima di togliere
+il nodo. E' un difetto di mainline, riprodotto poi a comando al settimo ciclo
+con `scripts/riproduci-oops-subdev.sh`. Reperto **A2** in
+`docs/09-revisione-preinvio.md`, patch in `patches/wip/subdev-fix/`, prove in
+`data/oops-subdev-2026-08-12/`.
+
 ## Come rifare tutto
 
 ```bash

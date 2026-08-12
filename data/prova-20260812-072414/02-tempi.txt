@@ -1,0 +1,2 @@
+gc5035: link_freq=422400000 pixel_rate=168960000 fps_atteso=28.816241881787917 fps_misurato=28.82
+gc8034: link_freq=268800000 pixel_rate=255909888 fps_atteso=24.0 fps_misurato=24.01

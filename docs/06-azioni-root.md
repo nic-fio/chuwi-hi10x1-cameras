@@ -541,6 +541,36 @@ Non e' urgente e non e' in questa fase.
 
 ---
 
+## 6. Riprodurre l'oops di `subdev_open()` — **fa oopsare il kernel apposta**
+
+```bash
+sudo ./scripts/riproduci-oops-subdev.sh gc5035 200
+```
+
+E' l'unica cosa in questo repository che rompe qualcosa di proposito, quindi va
+detto per esteso cosa fa e cosa costa.
+
+**Cosa fa**: riaggancia il sensore in ciclo mentre quattro processi aprono ogni
+`/dev/v4l-subdev*`, finche' uno dei due si infila nella finestra in cui
+`sd->v4l2_dev` e' gia' `NULL` e il nodo c'e' ancora. Il 2026-08-12 ci ha messo
+**sette cicli**.
+
+**Cosa costa**:
+
+- il kernel stampa un `BUG:` e va in stato `D` (`Tainted: [D]=DIE`). Da li' in
+  poi ogni oops successivo e' meno informativo, e un `WARNING` di qualcun altro
+  puo' essere confuso col nostro;
+- **ogni colpo perde un minor di `/dev/v4l-subdev` per sempre**, con il
+  `video_device` attaccato. Si vede dai buchi nella numerazione;
+- non serve riavviare — dopo due oops la macchina ha continuato a catturare —
+  ma la memoria persa la restituisce solo un riavvio.
+
+**Quando ha senso**: per confermare la diagnosi di A2 a chi chiede una prova, o
+per verificare che `patches/wip/subdev-fix/` la chiuda davvero. Non per
+abitudine, e non "per vedere se funziona ancora".
+
+---
+
 ## Opzionale — evitare di ridigitare la password
 
 ```bash

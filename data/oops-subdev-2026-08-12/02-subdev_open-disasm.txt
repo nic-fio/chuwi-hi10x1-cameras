@@ -1,0 +1,45 @@
+000000000000be00 <subdev_open>:
+    be00:	f3 0f 1e fa          	endbr64
+    be04:	e8 00 00 00 00       	call   be09 <subdev_open+0x9>
+    be09:	41 55                	push   %r13
+    be0b:	41 54                	push   %r12
+    be0d:	55                   	push   %rbp
+    be0e:	48 89 fd             	mov    %rdi,%rbp
+    be11:	53                   	push   %rbx
+    be12:	e8 00 00 00 00       	call   be17 <subdev_open+0x17>
+    be17:	ba a8 00 00 00       	mov    $0xa8,%edx
+    be1c:	be c0 0d 00 00       	mov    $0xdc0,%esi
+    be21:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # be28 <subdev_open+0x28>
+    be28:	4c 8b a8 30 01 00 00 	mov    0x130(%rax),%r13
+    be2f:	49 89 c4             	mov    %rax,%r12
+    be32:	e8 00 00 00 00       	call   be37 <subdev_open+0x37>
+    be37:	48 85 c0             	test   %rax,%rax
+    be3a:	0f 84 37 01 00 00    	je     bf77 <subdev_open+0x177>
+    be40:	48 c7 c2 00 00 00 00 	mov    $0x0,%rdx
+    be47:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+    be4e:	4c 89 ef             	mov    %r13,%rdi
+    be51:	48 89 c3             	mov    %rax,%rbx
+    be54:	e8 00 00 00 00       	call   be59 <subdev_open+0x59>
+    be59:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+    be5f:	0f 87 88 00 00 00    	ja     beed <subdev_open+0xed>
+    be65:	48 89 83 98 00 00 00 	mov    %rax,0x98(%rbx)
+    be6c:	4c 89 e6             	mov    %r12,%rsi
+    be6f:	48 89 df             	mov    %rbx,%rdi
+    be72:	e8 00 00 00 00       	call   be77 <subdev_open+0x77>
+    be77:	48 89 df             	mov    %rbx,%rdi
+    be7a:	e8 00 00 00 00       	call   be7f <subdev_open+0x7f>
+    be7f:	48 89 5d 20          	mov    %rbx,0x20(%rbp)
+    be83:	49 8b 85 98 00 00 00 	mov    0x98(%r13),%rax
+    be8a:	48 83 78 08 00       	cmpq   $0x0,0x8(%rax)
+    be8f:	74 27                	je     beb8 <subdev_open+0xb8>
+    be91:	49 8b 45 00          	mov    0x0(%r13),%rax
+    be95:	48 8b 00             	mov    (%rax),%rax
+    be98:	48 85 c0             	test   %rax,%rax
+    be9b:	74 1b                	je     beb8 <subdev_open+0xb8>
+    be9d:	48 8b 40 68          	mov    0x68(%rax),%rax
+    bea1:	48 8b 68 10          	mov    0x10(%rax),%rbp
+    bea5:	48 89 ef             	mov    %rbp,%rdi
+    bea8:	e8 00 00 00 00       	call   bead <subdev_open+0xad>
+    bead:	84 c0                	test   %al,%al
+    beaf:	74 53                	je     bf04 <subdev_open+0x104>
+    beb1:	48 89 ab 90 00 00 00 	mov    %rbp,0x90(%rbx)

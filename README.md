@@ -65,6 +65,14 @@ recenti. Prove e misure in **`docs/08-prova-hardware.md`**.
 Questo **non** e' il traguardo: e' il passaggio intermedio descritto qui sopra.
 Il codice gira con patch locali, non e' nel tree di Linus.
 
+**Riverificato il 2026-08-12**, su una macchina ripartita da zero: chip ID,
+frame rate previsto = misurato, `v4l2-compliance` 45/1, tutto identico
+(`data/prova-20260812-072414/`). La stessa prova ha fatto emergere **due
+difetti di mainline**, nessuno dei due nostro, che questi driver rendono
+raggiungibili qui per la prima volta: entrambi fanno oopsare il kernel quando
+un sensore viene tolto mentre qualcuno lo sta usando. Sono **A1** e **A2** di
+`docs/09-revisione-preinvio.md`, con due patch pronte in `patches/wip/`.
+
 Cinque semafori, aggiornati da `collect-diag.sh` (`data/20260811-201501/`):
 
 | # | Semaforo | Stato | Dove si risolve |
@@ -111,6 +119,7 @@ INTEL-CAMERA/
 │   ├── cattura.sh               configura la pipeline IPU6 e cattura
 │   ├── raw-to-png.py            da RAW Bayer a PNG guardabile
 │   ├── prova-completa.sh        tutte le verifiche su hardware, con verdetto
+│   ├── riproduci-oops-subdev.sh provoca a comando il NULL deref di mainline
 │   ├── build-kernel.sh          kernel di sviluppo, con --debug per KASAN
 │   └── fix-pinctrl-alderlake.sh OBSOLETO — vedi l'intestazione del file
 ├── build-6.12/                  build fuori albero per provare sul kernel Debian

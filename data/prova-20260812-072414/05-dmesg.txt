@@ -1,0 +1,112 @@
+[  492.408153] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.408211] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.451670] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.451740] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.494754] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.494805] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.539206] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.539295] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.582830] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.582883] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.631709] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.631764] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.678568] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.678636] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.722724] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.722772] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.772219] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.772305] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.818650] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  492.818700] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  492.868001] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  492.868092] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  492.898559] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  492.898604] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  492.924640] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  492.924700] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  492.951973] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  492.952035] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  492.982795] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  492.982848] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  493.013567] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  493.013639] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  493.043087] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  493.043175] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  493.067696] BUG: kernel NULL pointer dereference, address: 0000000000000008
+[  493.067711] #PF: supervisor read access in kernel mode
+[  493.067715] #PF: error_code(0x0000) - not-present page
+[  493.067719] PGD 0 P4D 0 
+[  493.067724] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+[  493.067731] CPU: 1 UID: 0 PID: 4697 Comm: v4l_id Tainted: G        W  OE      6.12.86+deb13-amd64 #1  Debian 6.12.86-1
+[  493.067740] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+[  493.067742] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  493.067746] RIP: 0010:subdev_open+0x8a/0x190 [videodev]
+[  493.067789] Code: 87 88 00 00 00 48 89 83 98 00 00 00 4c 89 e6 48 89 df e8 99 d8 ff ff 48 89 df e8 41 d9 ff ff 48 89 5d 20 49 8b 85 98 00 00 00 <48> 83 78 08 00 74 27 49 8b 45 00 48 8b 00 48 85 c0 74 1b 48 8b 40
+[  493.067794] RSP: 0018:ffffd34401f57928 EFLAGS: 00010286
+[  493.067798] RAX: 0000000000000000 RBX: ffff89d9850cf000 RCX: 0000000000000000
+[  493.067802] RDX: ffff89d9d79e7c48 RSI: 0000000000000282 RDI: ffff89d9d79e7c44
+[  493.067805] RBP: ffff89da301340c0 R08: ffff89d9d79e7c48 R09: 0000000000000cc0
+[  493.067808] R10: 0000000000000001 R11: 0000000000000000 R12: ffff89d9d79e7800
+[  493.067811] R13: ffff89da0a2ff830 R14: ffff89d98924c5d0 R15: ffff89d98924c5d0
+[  493.067814] FS:  00007ff0c7645980(0000) GS:ffff89daf7a80000(0000) knlGS:0000000000000000
+[  493.067818] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  493.067821] CR2: 0000000000000008 CR3: 000000014f06c000 CR4: 0000000000f52ef0
+[  493.067825] PKRU: 55555554
+[  493.067827] Call Trace:
+[  493.067833]  <TASK>
+[  493.067841]  v4l2_open+0xa9/0x100 [videodev]
+[  493.067865]  chrdev_open+0xb2/0x230
+[  493.067874]  ? __pfx_chrdev_open+0x10/0x10
+[  493.067879]  do_dentry_open+0x14c/0x440
+[  493.067887]  vfs_open+0x2e/0xe0
+[  493.067893]  path_openat+0x82e/0x12d0
+[  493.067897]  ? inode_permission+0x39/0x190
+[  493.067904]  do_filp_open+0xc4/0x170
+[  493.067910]  do_sys_openat2+0xae/0xe0
+[  493.067915]  __x64_sys_openat+0x55/0xa0
+[  493.067921]  do_syscall_64+0x87/0x1b0
+[  493.067928]  ? next_uptodate_folio+0x89/0x2a0
+[  493.067935]  ? filemap_map_pages+0x553/0x6a0
+[  493.067942]  ? do_fault+0x31a/0x550
+[  493.067947]  ? __handle_mm_fault+0x7c2/0xf70
+[  493.067951]  ? __do_sys_prctl+0x3f/0xa60
+[  493.067960]  ? __count_memcg_events+0x53/0xf0
+[  493.067965]  ? count_memcg_events.constprop.0+0x1a/0x30
+[  493.067972]  ? handle_mm_fault+0x1bb/0x2c0
+[  493.067976]  ? do_user_addr_fault+0x36c/0x620
+[  493.067981]  ? clear_bhb_loop+0x40/0x90
+[  493.067987]  ? clear_bhb_loop+0x40/0x90
+[  493.067991]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  493.067997] RIP: 0033:0x7ff0c709b687
+[  493.068063] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  493.068067] RSP: 002b:00007ffc06863c00 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
+[  493.068072] RAX: ffffffffffffffda RBX: 00007ff0c7645980 RCX: 00007ff0c709b687
+[  493.068075] RDX: 0000000000080100 RSI: 00007ffc06865edf RDI: ffffffffffffff9c
+[  493.068077] RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
+[  493.068080] R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffc06863ca0
+[  493.068083] R13: 00007ffc06863e50 R14: 00007ff0c786c000 R15: 000055ea40df4c58
+[  493.068088]  </TASK>
+[  493.068090] Modules linked in: i2c_dev gc8034(OE) gc5035(OE) intel_ipu6_isys intel_ipu6 ipu_bridge(OE) v4l2_cci snd_seq_dummy snd_hrtimer snd_seq snd_seq_device ccm xe drm_gpuvm drm_exec gpu_sched drm_suballoc_helper drm_ttm_helper nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_multiport xt_cgroup xt_mark xt_owner xt_tcpudp nft_compat snd_hda_codec_realtek snd_hda_codec_generic snd_hda_scodec_component uhid rfcomm cmac algif_hash algif_skcipher af_alg nf_tables libcrc32c snd_sof_pci_intel_tgl snd_sof_pci_intel_cnl snd_sof_intel_hda_generic soundwire_intel soundwire_generic_allocation soundwire_cadence snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink snd_sof_intel_hda snd_hda_codec_hdmi snd_sof_pci x86_pkg_temp_thermal snd_sof_xtensa_dsp intel_powerclamp snd_sof coretemp kvm_intel snd_sof_utils snd_soc_acpi_intel_match bnep snd_soc_acpi kvm soundwire_bus snd_soc_avs iwlmvm binfmt_misc irqbypass snd_soc_hda_codec snd_hda_ext_core
+[  493.068187]  crct10dif_pclmul mac80211 ghash_clmulni_intel snd_soc_core v4l2_fwnode i915 v4l2_async sha512_ssse3 snd_compress videobuf2_dma_sg snd_pcm_dmaengine sha256_ssse3 snd_hda_intel videobuf2_memops sha1_ssse3 videobuf2_v4l2 libarc4 snd_intel_dspcfg snd_intel_sdw_acpi videodev snd_hda_codec aesni_intel iwlwifi btusb gf128mul btrtl crypto_simd snd_hda_core btintel processor_thermal_device_pci cryptd videobuf2_common btbcm processor_thermal_device rapl btmtk snd_hwdep processor_thermal_wt_hint snd_pcm mc processor_thermal_rfim intel_cstate intel_rapl_msr bluetooth mei_hdcp mei_pxp processor_thermal_rapl drm_buddy snd_timer drm_display_helper cfg80211 snd intel_rapl_common intel_uncore wmi_bmof cec processor_thermal_wt_req soundcore mei_me processor_thermal_power_floor pcspkr rc_core ttm processor_thermal_mbox mei drm_kms_helper ecdh_generic int340x_thermal_zone da280 rfkill i2c_algo_bit igen6_edac industrialio soc_button_array intel_pmc_core intel_skl_int3472_tps68470 int3400_thermal intel_vsec
+[  493.068283]  intel_skl_int3472_discrete joydev intel_hid pmt_telemetry acpi_thermal_rel intel_skl_int3472_common pmt_class sparse_keymap acpi_tad acpi_pad button ac sg evdev parport_pc ppdev drm lp parport configfs efi_pstore nfnetlink efivarfs ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2 crc32c_generic hid_multitouch hid_generic usbhid hid sd_mod iTCO_wdt spi_pxa2xx_platform xhci_pci intel_pmc_bxt dw_dmac xhci_hcd dw_dmac_core iTCO_vendor_support ahci watchdog spi_pxa2xx_core libahci libata usbcore crc32_pclmul i2c_i801 scsi_mod intel_lpss_pci i2c_smbus usb_common crc32c_intel serio_raw intel_lpss intel_ish_ipc intel_ishtp idma64 scsi_common video battery wmi pinctrl_alderlake [last unloaded: ipu_bridge]
+[  493.068371] CR2: 0000000000000008
+[  493.068376] ---[ end trace 0000000000000000 ]---
+[  493.116741] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  493.116818] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  493.122380] RIP: 0010:subdev_open+0x8a/0x190 [videodev]
+[  493.122440] Code: 87 88 00 00 00 48 89 83 98 00 00 00 4c 89 e6 48 89 df e8 99 d8 ff ff 48 89 df e8 41 d9 ff ff 48 89 5d 20 49 8b 85 98 00 00 00 <48> 83 78 08 00 74 27 49 8b 45 00 48 8b 00 48 85 c0 74 1b 48 8b 40
+[  493.122445] RSP: 0018:ffffd34401f57928 EFLAGS: 00010286
+[  493.122452] RAX: 0000000000000000 RBX: ffff89d9850cf000 RCX: 0000000000000000
+[  493.122456] RDX: ffff89d9d79e7c48 RSI: 0000000000000282 RDI: ffff89d9d79e7c44
+[  493.122459] RBP: ffff89da301340c0 R08: ffff89d9d79e7c48 R09: 0000000000000cc0
+[  493.122463] R10: 0000000000000001 R11: 0000000000000000 R12: ffff89d9d79e7800
+[  493.122466] R13: ffff89da0a2ff830 R14: ffff89d98924c5d0 R15: ffff89d98924c5d0
+[  493.122470] FS:  00007ff0c7645980(0000) GS:ffff89daf7a80000(0000) knlGS:0000000000000000
+[  493.122474] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  493.122478] CR2: 0000000000000008 CR3: 000000014f06c000 CR4: 0000000000f52ef0
+[  493.122482] PKRU: 55555554
+[  493.122486] note: v4l_id[4697] exited with irqs disabled
+[  493.155202] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  493.155288] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[  493.186861] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[  493.186925] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator

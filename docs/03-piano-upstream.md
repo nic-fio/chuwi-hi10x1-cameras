@@ -1,5 +1,17 @@
 # 03 — Piano upstream
 
+> **La numerazione "Serie 1/2/3/4" di questo documento e' quella vecchia.**
+> Quella che vale, e che descrive gli invii come sono davvero organizzati, sta
+> in `ROADMAP.md` § «Cosa si invia, e a chi». Qui restano i contenuti: cosa
+> ciascuna patch deve contenere e perche'. Le corrispondenze:
+>
+> | Qui | In ROADMAP |
+> |---|---|
+> | Serie 1, 2, 3 | punto 1, un solo invio di cinque patch a `linux-media` |
+> | Serie 4 | **non serve** — deciso leggendo la NVS, vedi sotto |
+> | — | punto 2, `int3472` a `platform-driver-x86` |
+> | — | punti 3 e 4, i due oops di mainline, vedi sotto |
+
 Cosa esattamente inviare a mainline perche' questa sequenza funzioni su un
 kernel vanilla:
 
@@ -156,11 +168,43 @@ documentazione, nessun Kconfig, nessuna tabella HID duplicata in `ipu6/` o
 `ipu7/`. Le review sono tipicamente un `Reviewed-by` secco piu' nit
 sull'ordinamento.
 
-## Serie 4 — quirk `int3472` *(condizionale)*
+## Serie 4 — quirk `int3472` — **non serve, chiuso il 2026-08-11**
 
-Serve solo se i `_DSM` di `DSC0`/`DSC1` usano tipi di funzione GPIO non
-riconosciuti da `intel_skl_int3472_discrete`. Si stabilisce leggendo la DSDT.
-Puo' benissimo non servire.
+Serviva solo se i `_DSM` di `DSC0`/`DSC1` avessero usato tipi di funzione GPIO
+non riconosciuti da `intel_skl_int3472_discrete`. La NVS ACPI ha risposto:
+`C1GP` = 2, sotto la soglia di 6 oltre la quale morde il bug del `_DSM`
+duplicato, e i tipi usati (`0x00 RESET`, `0x0b POWER_ENABLE`) sono gia' gestiti.
+**Due patch in meno.** Vedi `README.md` § «Tre conseguenze».
+
+---
+
+## Le due correzioni di mainline — non sono nostro codice
+
+Trovate provando i driver su hardware. Nessuna delle due riguarda `gc5035` o
+`gc8034`: sono difetti che esistono gia' e che questi driver rendono
+raggiungibili su questa macchina per la prima volta. Vanno inviate **separate
+dalla serie e insieme fra loro**, perche' sono due crash dello stesso scenario
+— il sensore che se ne va mentre qualcuno lo sta usando — e una correzione di
+un crash non deve aspettare una serie di funzionalita'.
+
+| | Dove | Innesco | Patch |
+|---|---|---|---|
+| **A1** | `ipu6-isys-csi2.c` | `unbind` del sensore **durante** una cattura | `patches/wip/ipu6-fix/` |
+| **A2** | `v4l2-subdev.c` | `unbind` del sensore mentre qualcuno **apre** `/dev/v4l-subdevN` | `patches/wip/subdev-fix/` |
+
+A1 e' stato provocato apposta; A2 no, si e' presentato da solo con `v4l_id` di
+udev. Analisi, prove e disassemblate in `docs/09-revisione-preinvio.md`
+§§ A1 e A2.
+
+Cosa deve accompagnarle, oltre al codice:
+
+- **un `Fixes:`** per ciascuna. A1 ce l'ha (`3a5c59ad926b`), **A2 no**: il clone
+  in `/home/nicfio/linux` e' shallow e `git blame` non risale al commit che ha
+  introdotto la dereferenza;
+- **la riproduzione**, scritta in modo che un revisore la rifaccia senza avere
+  questo hardware. Per A2 c'e' `scripts/riproduci-oops-subdev.sh` e vale su
+  qualunque sensore con un nodo `/dev/v4l-subdev`;
+- **un controllo su `lore.kernel.org`** che nessuno le abbia gia' inviate.
 
 ---
 

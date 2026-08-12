@@ -69,3 +69,17 @@ Tianshu Qiu <tian.shu.qiu@intel.com>
 Mauro Carvalho Chehab <mchehab@kernel.org>
 linux-media@vger.kernel.org
 linux-kernel@vger.kernel.org
+
+## subdev-fix — 2026-08-12
+
+### 0001-BOZZA-media-v4l2-subdev-Check-v4l2_dev-before-derefe.patch
+Mauro Carvalho Chehab <mchehab@kernel.org>
+linux-media@vger.kernel.org
+linux-kernel@vger.kernel.org
+
+**Questa lista e' incompleta e va rifatta su un clone completo.**
+`get_maintainer.pl` ha stampato `Bad divisor in main::vcs_assign: 0`: in un
+clone shallow non puo' contare i firmatari recenti, quindi restano solo i
+nomi che stanno letteralmente in `MAINTAINERS`, e per `drivers/media/` c'e'
+solo Mauro. Sul `v4l2-core` i revisori veri sono anche **Hans Verkuil** e
+**Sakari Ailus**, e vanno aggiunti a mano se la lista non li ritrova.

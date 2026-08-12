@@ -16,13 +16,37 @@ Rilevato il 2026-08-11 sulla macchina di sviluppo. Rigenerabile con
 | Audio | HDA Intel PCH |
 | BIOS | `SA10C.N1195.24071902.014` — 20/09/2024 |
 | OS | Debian 13 trixie |
-| Kernel di sviluppo | 7.0 compilato in locale (`/lib/modules/7.0/build -> /root/linux-7.0`) |
+| Kernel in esecuzione | **`6.12.86+deb13-amd64`**, Debian — dal 2026-08-11 sera |
+| Kernel di sviluppo (storico) | 7.0 compilato in locale (`/lib/modules/7.0/build -> /root/linux-7.0`) |
 
-> Il kernel locale **non** e' un vanilla pulito: gli manca almeno
-> `CONFIG_PINCTRL_ALDERLAKE`. Vedi `02-diagnosi.md`. Per il lavoro upstream si
-> useranno sorgenti vanilla o il tree `media_stage`.
+> Il kernel locale 7.0 **non** e' un vanilla pulito: gli manca almeno
+> `CONFIG_PINCTRL_ALDERLAKE`. Vedi `02-diagnosi.md`. Non e' piu' quello che
+> avvia: e' rimasto solo l'albero moduli in `/lib/modules/7.0`. Per il lavoro
+> upstream si usano i sorgenti vanilla in `/home/nicfio/linux`.
 
 ## Stato dell'ambiente di sviluppo
+
+> **Superato il 2026-08-11 sera, e la tabella qui sotto e' storia.** Da quando
+> avvia il kernel Debian la macchina compila, carica e prova i propri moduli.
+> Stato di oggi, riverificato dopo il riavvio del **2026-08-12**:
+>
+> | Cosa | Stato |
+> |---|---|
+> | Kernel che avvia | `6.12.86+deb13-amd64`, con `pinctrl-alderlake` |
+> | Headers per la build | `/usr/src/linux-headers-6.12.86+deb13-amd64` |
+> | `/lib/modules/6.12.86+deb13-amd64/build` | symlink **valido** |
+> | `v4l-utils` | **1.30.1-1** — `v4l2-ctl`, `media-ctl`, `v4l2-compliance` |
+> | Moduli del progetto | `build-6.12/`, fuori albero, da ricaricare a ogni boot |
+> | Sorgenti mainline | `/home/nicfio/linux`, shallow su 7.2-rc7 |
+>
+> Un dettaglio che vale la pena sapere: **il kernel che avvia non risulta a
+> `dpkg`**. I moduli e gli headers ci sono, ma `dpkg -l 'linux-image*'` e'
+> vuoto e `dpkg -S` non trova un proprietario per
+> `/lib/modules/6.12.86+deb13-amd64/`. Come ci sia finito non e' scritto da
+> nessuna parte in questo repository, quindi non lo dico. La conseguenza si',
+> ed e' pratica: **gli aggiornamenti di quel kernel non arriveranno da soli**,
+> e un `apt install linux-image-amd64` fatto un giorno per distrazione
+> installerebbe un kernel diverso da quello che sta funzionando.
 
 Verificato il 2026-08-11. **Questa macchina non era in grado di compilare un
 modulo per il proprio kernel.** I documenti precedenti lo davano per scontato.

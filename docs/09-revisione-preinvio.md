@@ -3,8 +3,12 @@
 > ## Stato: tutti i reperti tecnici sono stati corretti in giornata
 >
 > Restano aperti solo **B1** e **B2**, che sono di identita' e attribuzione e
-> che nessuna quantita' di lavoro sul codice risolve, e la **rivalidazione su
-> hardware**, che aspetta un riavvio.
+> che nessuna quantita' di lavoro sul codice risolve.
+>
+> La **rivalidazione su hardware** e' stata fatta il **2026-08-12**, dopo il
+> riavvio: 19 verifiche su 22 in `scripts/prova-completa.sh`, con le tre
+> mancate spiegate in `docs/08-prova-hardware.md`. Ha prodotto un reperto
+> nuovo, **A2**, che non e' dei nostri driver.
 >
 > | | Reperto | Stato |
 > |---|---|---|
@@ -12,6 +16,7 @@
 > | B2 | copyright mancanti in `gc5035.c` | **corretto** — Bitland, Google e Intel aggiunti |
 > | B3 | codice assistito da AI | **aperto** — decisione dell'autore |
 > | A1 | NULL deref in `ipu6-isys` | **patch scritta**, `patches/wip/ipu6-fix/` |
+> | A2 | NULL deref in `subdev_open()` | **trovato il 2026-08-12**, patch scritta, `patches/wip/subdev-fix/` |
 > | M1 | `dev_err_probe()` fuori dalla probe | corretto |
 > | M2 | `link_freq_bitmap` inutilizzato | **il reperto era mio errore**, vedi sotto |
 > | M3 | ramo a 2 lane irraggiungibile | corretto |
@@ -158,7 +163,7 @@ verificheranno comunque.
 
 ---
 
-## 3. Reperto ad alta severita'
+## 3. Reperti ad alta severita'
 
 ### A1 — NULL pointer dereference in `ipu6-isys`, presente in mainline
 
@@ -228,6 +233,123 @@ dello stato appartiene a un task morto. **Si recupera solo riavviando.**
 questa serie. Va segnalato comunque, perche' chiunque provi a fare `unbind` di
 un sensore IPU6 mentre streamma ottiene un oops, e con l'arrivo di questi due
 driver quel "chiunque" diventa una categoria piu' popolata.
+
+---
+
+### A2 — NULL pointer dereference in `subdev_open()`, presente in mainline
+
+> Trovato il **2026-08-12**, dopo un riavvio, alla prima esecuzione completa di
+> `scripts/prova-completa.sh`. Non e' A1: cambia il puntatore, cambia il
+> percorso, e soprattutto **cambia l'innesco**, che qui non richiede nessuno
+> streaming in corso.
+
+**Non e' un difetto di questi driver.** Come A1, e' di mainline, e questi
+driver lo rendono raggiungibile su questo hardware.
+
+**Innesco**: fare `unbind` del sensore mentre qualcuno apre il suo
+`/dev/v4l-subdevN`. La prima volta **non e' stato provocato**: e' bastata la
+sezione bind/unbind della prova, con `v4l_id` lanciato da udev sul nodo che
+compariva e spariva.
+
+```
+BUG: kernel NULL pointer dereference, address: 0000000000000008
+RIP: 0010:subdev_open+0x8a/0x190 [videodev]
+CPU: 1 PID: 4697 Comm: v4l_id
+Call Trace:
+ v4l2_open+0xa9/0x100 [videodev]
+ chrdev_open+0xb2/0x230
+ do_dentry_open+0x14c/0x440
+ vfs_open+0x2e/0xe0
+ path_openat+0x82e/0x12d0
+ do_sys_openat2+0xae/0xe0
+ __x64_sys_openat+0x55/0xa0
+```
+
+**Quale puntatore, e come si sa.** Il kernel Debian non ha i simboli, quindi
+il nome del campo viene dalla disassemblata di `videodev.ko`
+(`data/oops-subdev-2026-08-12/02-subdev_open-disasm.txt`):
+
+```
+be83:  49 8b 85 98 00 00 00    mov  0x98(%r13),%rax      <- sd->v4l2_dev
+be8a:  48 83 78 08 00          cmpq $0x0,0x8(%rax)       <- ->mdev, RAX = 0
+```
+
+`0x8` e' l'offset di `mdev` in `struct v4l2_device`, ed e' esattamente il
+`CR2` dell'oops. Il puntatore nullo e' **`sd->v4l2_dev`**.
+
+**Causa**, `drivers/media/v4l2-core/v4l2-device.c:279-291`:
+
+```c
+	sd->v4l2_dev = NULL;                    /* 279 */
+	...
+	media_device_unregister_entity(&sd->entity);   /* dorme */
+	...
+	if (sd->devnode)
+		video_unregister_device(sd->devnode);   /* 291 */
+```
+
+Il nodo viene tolto **per ultimo**. Fra la riga 279 e la 291 esiste un
+`/dev/v4l-subdevN` ancora apribile il cui `sd->v4l2_dev` e' gia' `NULL`, e
+`subdev_open()` (`v4l2-subdev.c:115`) lo dereferenzia senza controllarlo. In
+mezzo c'e' `media_device_unregister_entity()`, che dorme: la finestra non e'
+di poche istruzioni.
+
+**C'e' una seconda mina nella stessa riga.** `media_device_unregister_entity()`
+azzera `sd->entity.graph_obj.mdev`, e la condizione e'
+`sd->v4l2_dev->mdev && sd->entity.graph_obj.mdev->dev`: appena dopo
+l'unregister dell'entita' il primo termine e' ancora vero e il secondo
+dereferenzia `NULL`. Questa **non e' stata osservata**, e' stata letta.
+
+**Riordinare non basta.** Togliere il nodo prima di azzerare i puntatori
+stringe la finestra ma non la chiude: `v4l2_open()` rilascia `videodev_lock`
+prima di chiamare `fops->open()` (`v4l2-dev.c:426-433`), quindi tutta
+`v4l2_device_unregister_subdev()` puo' ancora infilarsi in mezzo. Il controllo
+va messo in `subdev_open()`.
+
+**Riproducibile a comando**: `scripts/riproduci-oops-subdev.sh`, quattro
+processi che aprono ogni `/dev/v4l-subdev*` mentre il sensore viene
+riagganciato in ciclo. **Riprodotto al ciclo 7.**
+
+**Presente in mainline 7.2-rc7**: verificato, `v4l2-subdev.c:115` e
+`v4l2-device.c:279-291` sono identici.
+
+**Non e' stato verificato che nessuno l'abbia gia' segnalata.** Una ricerca
+sul web non ha trovato niente, ma `lore.kernel.org` ha rifiutato la query, e
+"non trovato" da un motore di ricerca non e' "non esiste". Prima di inviare va
+guardato l'archivio vero:
+
+```
+https://lore.kernel.org/linux-media/?q=subdev_open+v4l2_dev
+```
+
+**Severita'**: crash del kernel. La macchina resta in piedi — l'oops uccide
+chi apriva, non il kernel, e dopo due colpi non c'e' stato nessun task in
+stato `D` — ma **ogni colpo perde per sempre un minor**: dopo i due oops di
+oggi `/dev/v4l-subdev4` e `/dev/v4l-subdev5` non esistono piu' e il GC5035 e'
+finito su `v4l-subdev7` (`data/oops-subdev-2026-08-12/03-nodi.txt`). Il
+`video_device` non viene mai rilasciato perche' il riferimento preso da
+`video_get()` resta appeso al processo morto.
+
+Chi fa l'`unbind` deve essere root, ma **chi apre no**: basta essere nel gruppo
+`video`. E l'`unbind` non e' un gesto esotico — un `rmmod` del driver di
+sensore fa la stessa cosa, con udev che apre il nodo per conto suo.
+
+**Correzione proposta**: `patches/wip/subdev-fix/`, testata in compilazione
+contro mainline 7.2-rc7. Legge `sd->v4l2_dev` una volta sola, rifiuta con
+`-ENODEV` se e' `NULL`, e fa lo stesso per l'`mdev` dell'entita'.
+
+**Cosa manca prima di inviarla**: il tag `Fixes:`. Il clone in
+`/home/nicfio/linux` e' shallow e `git blame` si ferma al commit innestato, per
+cui il commit che ha introdotto la dereferenza non e' determinabile da qui. Su
+un clone completo:
+
+```bash
+git log -L 115,115:drivers/media/v4l2-core/v4l2-subdev.c | head -40
+```
+
+**Cosa farne**: patch separata a `linux-media`, come A1 e insieme ad A1. Sono
+due crash indipendenti nello stesso scenario — il sensore che se ne va mentre
+qualcuno lo sta usando — e nessuno dei due deve aspettare la serie dei driver.
 
 ---
 
@@ -454,6 +576,15 @@ scrivono nello stesso modo.
 - **`bind`/`unbind` a riposo**: dieci cicli consecutivi sul GC5035, nessun
   messaggio d'errore, driver riagganciato ogni volta, nessuna perdita
   osservabile di riferimenti.
+
+  > **Smentito il 2026-08-12, ed e' istruttivo.** Rifatti i dieci cicli su
+  > entrambi i sensori con udev vivo, il kernel e' andato in oops: **A2**.
+  > "A riposo" voleva dire "senza cattura in corso", ma la macchina non era a
+  > riposo — c'era `v4l_id` che apriva il nodo. La perdita di riferimenti
+  > c'era, e non era osservabile solo perche' guardavo la cosa sbagliata: si
+  > vede nei minor di `/dev/v4l-subdev` che non tornano piu'. Quello che
+  > questa riga provava davvero era che dieci cicli **senza nessuno che apra
+  > il nodo** vanno bene.
 - **Ricaricamento dei moduli**: piu' cicli completi di
   `rmmod`/`insmod`/`modprobe` della catena `ipu-bridge` + IPU6 + sensori
   durante la giornata, senza errori.
@@ -466,7 +597,9 @@ scrivono nello stesso modo.
    di questa revisione.
 2. **Suspend/resume di sistema non provato.**
 3. **`unbind` durante lo streaming**: provato una volta sola, ha prodotto A1.
-   Non ripetuto, perche' lascia la macchina da riavviare.
+   Non ripetuto, perche' lascia la macchina da riavviare. L'`unbind` con il
+   nodo aperto ma **senza** streaming e' invece stato ripetuto e riprodotto a
+   comando: e' A2, e non lascia la macchina da riavviare.
 4. **Il VCM `dw9714` non e' mai stato esercitato**: viene istanziato, il fuoco
    non e' stato mosso.
 5. **Nessun test di concorrenza**: due processi che aprono lo stesso subdev,

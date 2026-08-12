@@ -25,9 +25,13 @@ mkdir -p "$OUT"
 
 PASS=0
 FAIL=0
+ND=0
 
 ok()   { printf '  [OK] %s\n' "$1"; PASS=$((PASS+1)); }
 ko()   { printf '  [KO] %s\n' "$1"; FAIL=$((FAIL+1)); }
+# Terzo esito, e serve davvero: una misura che dipende dalla scena non e' un
+# difetto quando la scena non c'e'. Un [KO] al buio sarebbe una bugia.
+nd()   { printf '  [--] %s\n' "$1"; ND=$((ND+1)); }
 head_() { printf '\n===== %s\n' "$1"; }
 
 # Confronta due numeri con una tolleranza percentuale. Serve dappertutto qui:
@@ -153,6 +157,14 @@ s1=max($m1-64, 0.1); s2=max($m2-64, 0.1)
 print(f'{s2/s1:.2f} {$gmax/$gmin:.2f}')")
     read -r got want <<<"$r"
     echo "$s: segnale ${m1} -> ${m2}, rapporto $got, atteso $want" >> "$OUT/03-guadagno.txt"
+    # Al buio il segnale resta sul piedistallo di black level (64) e il
+    # rapporto e' fra due rumori: 4 LSB al guadagno massimo vogliono dire
+    # scena nera, non guadagno rotto. Serve una luce accesa davanti al
+    # sensore, altrimenti questa misura non e' una misura.
+    if [ "$(python3 -c "print(int($m2 - 64 < 4))")" = 1 ]; then
+        nd "$s: scena troppo scura per misurare il guadagno (segnale $(printf '%.1f' "$m2") sul piedistallo 64) — rifare con una luce"
+        continue
+    fi
     # Tolleranza larga: la scena non e' controllata e il sensore puo' saturare.
     check_close "$want" "$got" 25 "$s: il guadagno misurato segue quello chiesto"
 done
@@ -198,9 +210,16 @@ dmesg > "$OUT/05-dmesg.txt"
 # per un difetto di ipu6-isys, non nostro (docs/09-revisione-preinvio.md, A1),
 # e lascia la macchina da riavviare. Si riprova a mano quando quella patch e'
 # applicata.
+#
+# NOTA 2: i cicli qui sopra possono far oopsare il kernel lo stesso, senza che
+# lo si chieda, per A2 — udev lancia v4l_id sul nodo che compare e sparisce e
+# lo apre proprio dentro la finestra di subdev_open(). E' un difetto di
+# mainline, non nostro, e non e' fatale: si vede come [KO] qui sotto finche'
+# 'patches/wip/subdev-fix/' non e' applicata.
 
 # ------------------------------------------------------------------ verdetto
 head_ "VERDETTO"
-printf '  %d verifiche superate, %d fallite\n' "$PASS" "$FAIL"
+printf '  %d verifiche superate, %d fallite' "$PASS" "$FAIL"
+[ "$ND" -eq 0 ] && echo || printf ', %d non misurabili\n' "$ND"
 echo "  output in $OUT"
 [ "$FAIL" -eq 0 ] || exit 1

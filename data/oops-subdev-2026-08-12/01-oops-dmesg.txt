@@ -1,0 +1,97 @@
+ago 12 07:24:43 CHUWI kernel: gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+ago 12 07:24:43 CHUWI kernel: gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+ago 12 07:24:43 CHUWI kernel: BUG: kernel NULL pointer dereference, address: 0000000000000008
+ago 12 07:24:43 CHUWI kernel: #PF: supervisor read access in kernel mode
+ago 12 07:24:43 CHUWI kernel: #PF: error_code(0x0000) - not-present page
+ago 12 07:24:43 CHUWI kernel: PGD 0 P4D 0 
+ago 12 07:24:43 CHUWI kernel: Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+ago 12 07:24:43 CHUWI kernel: CPU: 1 UID: 0 PID: 4697 Comm: v4l_id Tainted: G        W  OE      6.12.86+deb13-amd64 #1  Debian 6.12.86-1
+ago 12 07:24:43 CHUWI kernel: Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+ago 12 07:24:43 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 07:24:43 CHUWI kernel: RIP: 0010:subdev_open+0x8a/0x190 [videodev]
+ago 12 07:24:43 CHUWI kernel: Code: 87 88 00 00 00 48 89 83 98 00 00 00 4c 89 e6 48 89 df e8 99 d8 ff ff 48 89 df e8 41 d9 ff ff 48 89 5d 20 49 8b 85 98 00 00 00 <48> 83 78 08 00 74 27 49 8b 45 00 48 8b 00 48 85 c0 74 1b 48 8b 40
+ago 12 07:24:43 CHUWI kernel: RSP: 0018:ffffd34401f57928 EFLAGS: 00010286
+ago 12 07:24:43 CHUWI kernel: RAX: 0000000000000000 RBX: ffff89d9850cf000 RCX: 0000000000000000
+ago 12 07:24:43 CHUWI kernel: RDX: ffff89d9d79e7c48 RSI: 0000000000000282 RDI: ffff89d9d79e7c44
+ago 12 07:24:43 CHUWI kernel: RBP: ffff89da301340c0 R08: ffff89d9d79e7c48 R09: 0000000000000cc0
+ago 12 07:24:43 CHUWI kernel: R10: 0000000000000001 R11: 0000000000000000 R12: ffff89d9d79e7800
+ago 12 07:24:43 CHUWI kernel: R13: ffff89da0a2ff830 R14: ffff89d98924c5d0 R15: ffff89d98924c5d0
+ago 12 07:24:43 CHUWI kernel: FS:  00007ff0c7645980(0000) GS:ffff89daf7a80000(0000) knlGS:0000000000000000
+ago 12 07:24:43 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 07:24:43 CHUWI kernel: CR2: 0000000000000008 CR3: 000000014f06c000 CR4: 0000000000f52ef0
+ago 12 07:24:43 CHUWI kernel: PKRU: 55555554
+ago 12 07:24:43 CHUWI kernel: Call Trace:
+ago 12 07:24:43 CHUWI kernel:  <TASK>
+ago 12 07:24:43 CHUWI kernel:  v4l2_open+0xa9/0x100 [videodev]
+ago 12 07:24:43 CHUWI kernel:  chrdev_open+0xb2/0x230
+ago 12 07:24:43 CHUWI kernel:  ? __pfx_chrdev_open+0x10/0x10
+ago 12 07:24:43 CHUWI kernel:  do_dentry_open+0x14c/0x440
+ago 12 07:24:43 CHUWI kernel:  vfs_open+0x2e/0xe0
+ago 12 07:24:43 CHUWI kernel:  path_openat+0x82e/0x12d0
+ago 12 07:24:43 CHUWI kernel:  ? inode_permission+0x39/0x190
+ago 12 07:24:43 CHUWI kernel:  do_filp_open+0xc4/0x170
+ago 12 07:24:43 CHUWI kernel:  do_sys_openat2+0xae/0xe0
+ago 12 07:24:43 CHUWI kernel:  __x64_sys_openat+0x55/0xa0
+ago 12 07:24:43 CHUWI kernel:  do_syscall_64+0x87/0x1b0
+ago 12 07:24:43 CHUWI kernel:  ? next_uptodate_folio+0x89/0x2a0
+ago 12 07:24:43 CHUWI kernel:  ? filemap_map_pages+0x553/0x6a0
+ago 12 07:24:43 CHUWI kernel:  ? do_fault+0x31a/0x550
+ago 12 07:24:43 CHUWI kernel:  ? __handle_mm_fault+0x7c2/0xf70
+ago 12 07:24:43 CHUWI kernel:  ? __do_sys_prctl+0x3f/0xa60
+ago 12 07:24:43 CHUWI kernel:  ? __count_memcg_events+0x53/0xf0
+ago 12 07:24:43 CHUWI kernel:  ? count_memcg_events.constprop.0+0x1a/0x30
+ago 12 07:24:43 CHUWI kernel:  ? handle_mm_fault+0x1bb/0x2c0
+ago 12 07:24:43 CHUWI kernel:  ? do_user_addr_fault+0x36c/0x620
+ago 12 07:24:43 CHUWI kernel:  ? clear_bhb_loop+0x40/0x90
+ago 12 07:24:43 CHUWI kernel:  ? clear_bhb_loop+0x40/0x90
+ago 12 07:24:43 CHUWI kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ago 12 07:24:43 CHUWI kernel: RIP: 0033:0x7ff0c709b687
+--
+ago 12 07:33:31 CHUWI kernel: gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+ago 12 07:33:31 CHUWI kernel: gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+ago 12 07:33:31 CHUWI kernel: BUG: kernel NULL pointer dereference, address: 0000000000000008
+ago 12 07:33:31 CHUWI kernel: #PF: supervisor read access in kernel mode
+ago 12 07:33:31 CHUWI kernel: #PF: error_code(0x0000) - not-present page
+ago 12 07:33:31 CHUWI kernel: PGD 1bf1b1067 P4D 1bf1b1067 PUD 1bf1b5067 PMD 0 
+ago 12 07:33:31 CHUWI kernel: Oops: Oops: 0000 [#2] PREEMPT SMP NOPTI
+ago 12 07:33:31 CHUWI kernel: CPU: 2 UID: 0 PID: 4945 Comm: python3 Tainted: G      D W  OE      6.12.86+deb13-amd64 #1  Debian 6.12.86-1
+ago 12 07:33:31 CHUWI kernel: Tainted: [D]=DIE, [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+ago 12 07:33:31 CHUWI kernel: Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+ago 12 07:33:31 CHUWI kernel: RIP: 0010:subdev_open+0x8a/0x190 [videodev]
+ago 12 07:33:31 CHUWI kernel: Code: 87 88 00 00 00 48 89 83 98 00 00 00 4c 89 e6 48 89 df e8 99 d8 ff ff 48 89 df e8 41 d9 ff ff 48 89 5d 20 49 8b 85 98 00 00 00 <48> 83 78 08 00 74 27 49 8b 45 00 48 8b 00 48 85 c0 74 1b 48 8b 40
+ago 12 07:33:31 CHUWI kernel: RSP: 0018:ffffd3440229f8a8 EFLAGS: 00010286
+ago 12 07:33:31 CHUWI kernel: RAX: 0000000000000000 RBX: ffff89da27489000 RCX: 0000000000000000
+ago 12 07:33:31 CHUWI kernel: RDX: ffff89d9d79e7448 RSI: 0000000000000282 RDI: ffff89d9d79e7444
+ago 12 07:33:31 CHUWI kernel: RBP: ffff89da30123240 R08: ffff89d9d79e7448 R09: 0000000000000a20
+ago 12 07:33:31 CHUWI kernel: R10: 0000000000000001 R11: 0000000000000000 R12: ffff89d9d79e7000
+ago 12 07:33:31 CHUWI kernel: R13: ffff89da0a2fd030 R14: ffff89da30123280 R15: ffffd3440229fb64
+ago 12 07:33:31 CHUWI kernel: FS:  00007f4bca6ea780(0000) GS:ffff89daf7b00000(0000) knlGS:0000000000000000
+ago 12 07:33:31 CHUWI kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ago 12 07:33:31 CHUWI kernel: CR2: 0000000000000008 CR3: 0000000105e7a000 CR4: 0000000000f52ef0
+ago 12 07:33:31 CHUWI kernel: PKRU: 55555554
+ago 12 07:33:31 CHUWI kernel: Call Trace:
+ago 12 07:33:31 CHUWI kernel:  <TASK>
+ago 12 07:33:31 CHUWI kernel:  v4l2_open+0xa9/0x100 [videodev]
+ago 12 07:33:31 CHUWI kernel:  chrdev_open+0xb2/0x230
+ago 12 07:33:31 CHUWI kernel:  ? __pfx_chrdev_open+0x10/0x10
+ago 12 07:33:31 CHUWI kernel:  do_dentry_open+0x14c/0x440
+ago 12 07:33:31 CHUWI kernel:  vfs_open+0x2e/0xe0
+ago 12 07:33:31 CHUWI kernel:  path_openat+0x82e/0x12d0
+ago 12 07:33:31 CHUWI kernel:  ? tomoyo_check_open_permission+0xb1/0x1a0
+ago 12 07:33:31 CHUWI kernel:  do_filp_open+0xc4/0x170
+ago 12 07:33:31 CHUWI kernel:  do_sys_openat2+0xae/0xe0
+ago 12 07:33:31 CHUWI kernel:  __x64_sys_openat+0x55/0xa0
+ago 12 07:33:31 CHUWI kernel:  do_syscall_64+0x87/0x1b0
+ago 12 07:33:31 CHUWI kernel:  ? current_time+0x3e/0xe0
+ago 12 07:33:31 CHUWI kernel:  ? atime_needs_update+0x9c/0x110
+ago 12 07:33:31 CHUWI kernel:  ? touch_atime+0x1e/0x120
+ago 12 07:33:31 CHUWI kernel:  ? iterate_dir+0x182/0x200
+ago 12 07:33:31 CHUWI kernel:  ? __x64_sys_getdents64+0xfa/0x130
+ago 12 07:33:31 CHUWI kernel:  ? __pfx_filldir64+0x10/0x10
+ago 12 07:33:31 CHUWI kernel:  ? arch_exit_to_user_mode_prepare.isra.0+0x16/0xa0
+ago 12 07:33:31 CHUWI kernel:  ? syscall_exit_to_user_mode+0x37/0x1b0
+ago 12 07:33:31 CHUWI kernel:  ? do_syscall_64+0x93/0x1b0
+ago 12 07:33:31 CHUWI kernel:  ? arch_exit_to_user_mode_prepare.isra.0+0x16/0xa0
+ago 12 07:33:31 CHUWI kernel:  ? update_curr+0x2d/0x210
+ago 12 07:33:31 CHUWI kernel:  ? reweight_entity+0x1b9/0x250
+ago 12 07:33:31 CHUWI kernel:  ? update_curr+0x51/0x210

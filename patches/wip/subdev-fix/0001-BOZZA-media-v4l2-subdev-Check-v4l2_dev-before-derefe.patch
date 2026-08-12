@@ -1,0 +1,105 @@
+From d9e67079d1ba8f6fe7ad8c3f3dbbeb88f0ac0f28 Mon Sep 17 00:00:00 2001
+From: INTEL-CAMERA WIP <wip@localhost>
+Date: Wed, 12 Aug 2026 07:41:31 +0200
+Subject: [PATCH] BOZZA media: v4l2-subdev: Check v4l2_dev before dereferencing
+ it in open()
+
+Unbinding a sensor driver while something opens its /dev/v4l-subdevN node
+oopses the kernel:
+
+  BUG: kernel NULL pointer dereference, address: 0000000000000008
+  RIP: 0010:subdev_open+0x8a/0x190 [videodev]
+  Call Trace:
+   v4l2_open+0xa9/0x100 [videodev]
+   chrdev_open+0xb2/0x230
+   do_dentry_open+0x14c/0x440
+   vfs_open+0x2e/0xe0
+   path_openat+0x82e/0x12d0
+   do_filp_open+0xc4/0x170
+   do_sys_openat2+0xae/0xe0
+   __x64_sys_openat+0x55/0xa0
+
+v4l2_device_unregister_subdev() clears sd->v4l2_dev, then unregisters the
+media entity, and only then unregisters the device node. Until the node is
+gone userspace can still open it, and subdev_open() dereferences
+sd->v4l2_dev unconditionally. The faulting address is the offset of the
+mdev member in struct v4l2_device.
+
+The window is not a narrow one: media_device_unregister_entity() sleeps,
+and the first oops seen here was not provoked at all, it was hit by v4l_id,
+run by udev on the very node that was appearing and disappearing.
+
+The same window leaves sd->entity.graph_obj.mdev NULL while
+sd->v4l2_dev->mdev is not, and the second dereference on that line goes
+through it. That one was found by reading the teardown path, not by
+crashing on it.
+
+Unregistering the device node before clearing the pointers would narrow the
+window but not close it, because v4l2_open() drops videodev_lock before it
+calls fops->open() and the whole of v4l2_device_unregister_subdev() can run
+in between. Check the pointers in subdev_open() instead.
+
+Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 6.12.86, at
+cycle 7 of a loop unbinding and rebinding a sensor while four processes
+opened every /dev/v4l-subdev*. The code is unchanged in 7.2-rc7.
+---
+ drivers/media/v4l2-core/v4l2-subdev.c | 31 +++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index e9f81b9be..2a47b9730 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -97,8 +97,19 @@ static int subdev_open(struct file *file)
+ 	struct video_device *vdev = video_devdata(file);
+ 	struct v4l2_subdev *sd = vdev_to_v4l2_subdev(vdev);
+ 	struct v4l2_subdev_fh *subdev_fh;
++	struct v4l2_device *v4l2_dev;
+ 	int ret;
+ 
++	/*
++	 * v4l2_device_unregister_subdev() clears sd->v4l2_dev and unregisters
++	 * the entity before it unregisters the device node, so an open() that
++	 * races with the sub-device going away lands here with those pointers
++	 * already gone.
++	 */
++	v4l2_dev = READ_ONCE(sd->v4l2_dev);
++	if (!v4l2_dev)
++		return -ENODEV;
++
+ 	subdev_fh = kzalloc_obj(*subdev_fh);
+ 	if (subdev_fh == NULL)
+ 		return -ENOMEM;
+@@ -112,15 +123,23 @@ static int subdev_open(struct file *file)
+ 	v4l2_fh_init(&subdev_fh->vfh, vdev);
+ 	v4l2_fh_add(&subdev_fh->vfh, file);
+ 
+-	if (sd->v4l2_dev->mdev && sd->entity.graph_obj.mdev->dev) {
+-		struct module *owner;
++	if (v4l2_dev->mdev) {
++		struct media_device *mdev = READ_ONCE(sd->entity.graph_obj.mdev);
+ 
+-		owner = sd->entity.graph_obj.mdev->dev->driver->owner;
+-		if (!try_module_get(owner)) {
+-			ret = -EBUSY;
++		if (!mdev) {
++			ret = -ENODEV;
+ 			goto err;
+ 		}
+-		subdev_fh->owner = owner;
++
++		if (mdev->dev) {
++			struct module *owner = mdev->dev->driver->owner;
++
++			if (!try_module_get(owner)) {
++				ret = -EBUSY;
++				goto err;
++			}
++			subdev_fh->owner = owner;
++		}
+ 	}
+ 
+ 	if (sd->internal_ops && sd->internal_ops->open) {
+-- 
+2.47.3
+

@@ -280,6 +280,9 @@ Deciso il 2026-08-11 dopo la revisione pre-invio. Il rischio da evitare e'
 sempre lo stesso: una serie che aspetta un'altra somma due timeline invece di
 sovrapporle, e basta che una si impantani perche' si fermi tutto.
 
+I punti sono quattro dal 2026-08-12, gli invii restano tre: il 3 e il 4
+partono insieme.
+
 1. [ ] **Serie media, 5 patch** a `linux-media` — `patches/wip/serie/`.
       I due binding, i due driver e le due voci di `ipu-bridge`, con cover
       letter. Le voci di `ipu-bridge` stanno **dentro** la serie e non a
@@ -293,6 +296,15 @@ sovrapporle, e basta che una si impantani perche' si fermi tutto.
       Non e' nostro codice: e' un NULL deref di mainline trovato provocandolo.
       Si invia **subito e da sola**, con il suo `Fixes:`. Una correzione di un
       crash non deve aspettare una serie di feature.
+4. [ ] **Oops di `subdev_open()`, 1 patch** a `linux-media` —
+      `patches/wip/subdev-fix/`. Stessa storia della 3, e si inviano insieme:
+      due crash indipendenti nello stesso scenario, il sensore che se ne va
+      mentre qualcuno lo sta usando. Questo pero' non e' stato provocato — si
+      e' presentato da solo, con udev che apriva il nodo (reperto A2). Prima di
+      inviarla mancano due cose: il **`Fixes:`**, che il clone shallow non
+      permette di determinare, e un controllo su `lore.kernel.org` che nessuno
+      l'abbia gia' segnalata — la ricerca fatta finora non fa testo, l'archivio
+      ha rifiutato la query.
 
 Destinatari gia' calcolati in `patches/wip/destinatari.txt`.
 

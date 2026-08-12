@@ -102,13 +102,25 @@ di `build-6.12/` mascheri qualcosa.
 
 Poi, in ordine di quanto sono informativi:
 
+> **Prima di tutto: applicare le due correzioni di mainline**, `ipu6-fix/` e
+> `subdev-fix/`. Senza, questa sessione misura i difetti di qualcun altro. Il
+> bind/unbind fa oopsare il kernel da solo per **A2** — basta udev che apre il
+> nodo — e un oops interrompe la prova a meta' lasciando in giro riferimenti
+> che poi KMEMLEAK segnala come perdite nostre. Non lo sono.
+>
+> ```bash
+> cd /home/nicfio/linux
+> git am /home/nicfio/INTEL-CAMERA/patches/wip/{ipu6-fix,subdev-fix}/*.patch
+> ```
+
 1. **Ripetere tutto il ciclo normale** — carica, cattura, guadagno,
    compliance, bind/unbind — e guardare `dmesg`. Con KASAN e lockdep attivi,
-   un difetto che prima passava inosservato adesso stampa.
-2. **`unbind` durante lo streaming.** Prima applicare
-   `patches/wip/ipu6-fix/`, altrimenti si riproduce solo l'oops gia' noto.
-   Con la patch applicata, e' il test che dice se i **nostri** driver reggono
-   quello scenario.
+   un difetto che prima passava inosservato adesso stampa. Il guadagno chiede
+   una luce accesa davanti ai sensori: al buio la misura non si fa, e dal
+   2026-08-12 `prova-completa.sh` lo dice invece di dare `[KO]`.
+2. **`unbind` durante lo streaming.** E' il test che dice se i **nostri**
+   driver reggono quello scenario. Con `ipu6-fix/` applicata non lascia piu'
+   la macchina da riavviare; senza, si', e allora si riproduce soltanto A1.
 3. **KMEMLEAK dopo un ciclo completo**:
 
    ```bash
@@ -117,7 +129,11 @@ Poi, in ordine di quanto sono informativi:
    ```
 
    Da fare dopo dieci cicli di bind/unbind: e' li' che una perdita si accumula
-   abbastanza da vedersi.
+   abbastanza da vedersi. **Una perdita in quel punto e' gia' nota e non e'
+   nostra**: ogni oops di A2 lascia appeso per sempre un `video_device` con il
+   suo minor, e si vede a occhio nudo dai buchi in `/dev/v4l-subdev*`. Con
+   `subdev-fix/` applicata quel rumore sparisce e quello che resta e' materiale
+   da guardare davvero.
 4. **Cercare i messaggi che contano**:
 
    ```bash
