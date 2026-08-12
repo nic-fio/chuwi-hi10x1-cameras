@@ -69,7 +69,9 @@ prima di togliere il nodo, e chi apre `/dev/v4l-subdevN` in quella finestra
 oopsa. Non e' stato provocato: si e' presentato da solo il 2026-08-12 con
 `v4l_id` di udev. Vedi `docs/09-revisione-preinvio.md` § A2.
 
-Manca il `Fixes:`, e manca perche' il clone e' shallow — vedi ROADMAP punto 4.
+Ha il suo `Fixes:` — `61f5db549dde`, del 2011 — trovato con la blame di GitHub
+perche' il clone locale e' shallow. Prima di inviarla resta da guardare
+`lore.kernel.org` con un browser: vedi ROADMAP punto 4.
 
 Destinatari di tutte e quattro in `destinatari.txt`, da `get_maintainer.pl`.
 

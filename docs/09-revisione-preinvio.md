@@ -313,14 +313,21 @@ riagganciato in ciclo. **Riprodotto al ciclo 7.**
 **Presente in mainline 7.2-rc7**: verificato, `v4l2-subdev.c:115` e
 `v4l2-device.c:279-291` sono identici.
 
-**Non e' stato verificato che nessuno l'abbia gia' segnalata.** Una ricerca
-sul web non ha trovato niente, ma `lore.kernel.org` ha rifiutato la query, e
-"non trovato" da un motore di ricerca non e' "non esiste". Prima di inviare va
-guardato l'archivio vero:
+**Non e' stato verificato che nessuno l'abbia gia' segnalata, e non e' per
+pigrizia.** Due ricerche sul web — una libera, una ristretta a
+`lore.kernel.org`, `patchwork.kernel.org` e `patchwork.linuxtv.org` — non hanno
+trovato niente di pertinente. Ma l'archivio vero non e' interrogabile da qui:
+`lore.kernel.org` sta dietro ad **Anubis**, che chiede una proof-of-work al
+browser e rifiuta sia `curl` sia il recupero automatico della pagina. E "non
+trovato da un motore di ricerca" non e' "non esiste".
+
+Serve un browser, trenta secondi, questo indirizzo:
 
 ```
 https://lore.kernel.org/linux-media/?q=subdev_open+v4l2_dev
 ```
+
+Se non esce niente di simile, la patch e' nuova e si invia.
 
 **Severita'**: crash del kernel. La macchina resta in piedi — l'oops uccide
 chi apriva, non il kernel, e dopo due colpi non c'e' stato nessun task in
@@ -338,14 +345,31 @@ sensore fa la stessa cosa, con udev che apre il nodo per conto suo.
 contro mainline 7.2-rc7. Legge `sd->v4l2_dev` una volta sola, rifiuta con
 `-ENODEV` se e' `NULL`, e fa lo stesso per l'`mdev` dell'entita'.
 
-**Cosa manca prima di inviarla**: il tag `Fixes:`. Il clone in
-`/home/nicfio/linux` e' shallow e `git blame` si ferma al commit innestato, per
-cui il commit che ha introdotto la dereferenza non e' determinabile da qui. Su
-un clone completo:
+**Il `Fixes:` c'e'**, ed e' stato determinato senza clone completo:
 
-```bash
-git log -L 115,115:drivers/media/v4l2-core/v4l2-subdev.c | head -40
 ```
+Fixes: 61f5db549dde ("[media] v4l: Make v4l2_subdev inherit from media_entity")
+```
+
+`git blame` qui non serve — il clone e' shallow e si ferma al commit innestato.
+La strada e' stata la blame di GitHub via `gh api graphql`, risalita di padre in
+padre: `master` da' `218bf10e39ed` (2019), il cui padre da' `61f5db549dde`
+(2011-03-22), e il padre di **quello** ha un `subdev_open()` che
+`sd->v4l2_dev` non lo tocca proprio. Verificato leggendo il diff: e' il commit
+che introduce `if (sd->v4l2_dev->mdev) {`.
+
+La seconda mina ha un'altra data. `sd->entity.graph_obj.mdev->dev` senza
+controllo arriva con `218bf10e39ed` ("media: v4l2-subdev: handle module
+refcounting here"), che sposta il conteggio dei riferimenti al modulo dentro
+`v4l2-subdev.c`. Prima faceva la stessa dereferenza `media_entity_get()`, quindi
+non e' una regressione di quel commit: e' lo stesso difetto che cambia casa. Il
+`Fixes:` resta uno solo, quello del 2011, ma nel corpo della patch e' citato
+anche l'altro.
+
+`subdev_close()` **non** e' affetto: dal 2019 usa `subdev_fh->owner` e non
+tocca piu' `sd->v4l2_dev`.
+
+**Cosa manca prima di inviarla**: solo il controllo sull'archivio.
 
 **Cosa farne**: patch separata a `linux-media`, come A1 e insieme ad A1. Sono
 due crash indipendenti nello stesso scenario — il sensore che se ne va mentre

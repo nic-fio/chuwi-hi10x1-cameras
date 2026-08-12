@@ -300,11 +300,12 @@ partono insieme.
       `patches/wip/subdev-fix/`. Stessa storia della 3, e si inviano insieme:
       due crash indipendenti nello stesso scenario, il sensore che se ne va
       mentre qualcuno lo sta usando. Questo pero' non e' stato provocato — si
-      e' presentato da solo, con udev che apriva il nodo (reperto A2). Prima di
-      inviarla mancano due cose: il **`Fixes:`**, che il clone shallow non
-      permette di determinare, e un controllo su `lore.kernel.org` che nessuno
-      l'abbia gia' segnalata — la ricerca fatta finora non fa testo, l'archivio
-      ha rifiutato la query.
+      e' presentato da solo, con udev che apriva il nodo (reperto A2). Il
+      `Fixes:` c'e' — `61f5db549dde`, del 2011, trovato con la blame di GitHub
+      visto che il clone locale e' shallow. **Manca una cosa sola, e serve un
+      browser**: guardare `https://lore.kernel.org/linux-media/?q=subdev_open+v4l2_dev`
+      per escludere che qualcuno l'abbia gia' inviata. L'archivio sta dietro ad
+      Anubis e da qui non si interroga.
 
 Destinatari gia' calcolati in `patches/wip/destinatari.txt`.
 

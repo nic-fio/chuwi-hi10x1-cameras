@@ -32,7 +32,8 @@ run by udev on the very node that was appearing and disappearing.
 The same window leaves sd->entity.graph_obj.mdev NULL while
 sd->v4l2_dev->mdev is not, and the second dereference on that line goes
 through it. That one was found by reading the teardown path, not by
-crashing on it.
+crashing on it; it arrived later, with commit 218bf10e39ed ("media:
+v4l2-subdev: handle module refcounting here").
 
 Unregistering the device node before clearing the pointers would narrow the
 window but not close it, because v4l2_open() drops videodev_lock before it
@@ -42,6 +43,8 @@ in between. Check the pointers in subdev_open() instead.
 Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 6.12.86, at
 cycle 7 of a loop unbinding and rebinding a sensor while four processes
 opened every /dev/v4l-subdev*. The code is unchanged in 7.2-rc7.
+
+Fixes: 61f5db549dde ("[media] v4l: Make v4l2_subdev inherit from media_entity")
 ---
  drivers/media/v4l2-core/v4l2-subdev.c | 31 +++++++++++++++++++++------
  1 file changed, 25 insertions(+), 6 deletions(-)

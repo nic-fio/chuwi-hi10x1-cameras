@@ -198,9 +198,9 @@ udev. Analisi, prove e disassemblate in `docs/09-revisione-preinvio.md`
 
 Cosa deve accompagnarle, oltre al codice:
 
-- **un `Fixes:`** per ciascuna. A1 ce l'ha (`3a5c59ad926b`), **A2 no**: il clone
-  in `/home/nicfio/linux` e' shallow e `git blame` non risale al commit che ha
-  introdotto la dereferenza;
+- **un `Fixes:`** per ciascuna, e ci sono entrambi: `3a5c59ad926b` per A1,
+  `61f5db549dde` per A2. Il secondo non veniva da `git blame` — il clone e'
+  shallow — ma dalla blame di GitHub risalita di padre in padre;
 - **la riproduzione**, scritta in modo che un revisore la rifaccia senza avere
   questo hardware. Per A2 c'e' `scripts/riproduci-oops-subdev.sh` e vale su
   qualunque sensore con un nodo `/dev/v4l-subdev`;
