@@ -1,5 +1,10 @@
 # INTEL-CAMERA
 
+> **In English**: [`README.en.md`](README.en.md) for the project,
+> [`FINDINGS.en.md`](FINDINGS.en.md) for the technical findings — parameters,
+> measurements, and the two mainline NULL pointer dereferences with their
+> patches. The rest of the documentation is in Italian.
+
 Portare in **mainline vanilla** il supporto nativo alle fotocamere del tablet
 **CHUWI Hi10 X1** (Intel N100 / Alder Lake-N, Intel IPU6).
 
@@ -96,11 +101,29 @@ traguardo vero e' comunque il sesto criterio, che `collect-diag.sh` non puo'
 misurare: **il codice nel tree di Linus**, con i cinque semafori `[OK]` su un
 kernel vanilla senza patch.
 
+## Licenza
+
+**MIT** per il materiale di questo progetto — documenti, script, dati
+raccolti. E' la piu' permissiva in uso reale: prendi, usa, modifica, ridistribuisci,
+basta tenere la riga di copyright.
+
+**GPL-2.0** per i driver del kernel (`build-6.12/*.c`, `patches/`,
+`reference/`), e non e' una scelta: le loro tabelle di registri vengono da
+codice GPL-2.0 di Intel e Rockchip, e la GPL obbliga chi le riusa a
+ridistribuirle alle stesse condizioni. E' comunque la licenza richiesta da
+mainline, dove quei driver sono diretti. Catena di attribuzione completa in
+`reference/README.md`.
+
+Dettagli e motivazioni in `LICENSE`.
+
 ## Struttura
 
 ```
 INTEL-CAMERA/
 ├── README.md                    questo file
+├── README.en.md                 lo stesso, in inglese, per chi arriva da fuori
+├── FINDINGS.en.md               i risultati tecnici in inglese, con le misure
+├── LICENSE                      MIT, tranne i driver che restano GPL-2.0
 ├── ROADMAP.md                   fasi, criteri di completamento, decisioni aperte
 ├── docs/
 │   ├── 01-hardware.md           inventario, catena camera, stato dell'ambiente

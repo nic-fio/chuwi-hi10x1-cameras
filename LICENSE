@@ -1,0 +1,74 @@
+MIT License
+
+Copyright (c) 2026 nic-fio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+================================================================================
+PARTS OF THIS REPOSITORY ARE GPL-2.0, AND HAVE TO BE
+================================================================================
+
+The MIT license above covers this project's own material: the documentation,
+the shell and Python scripts under scripts/, and the collected data.
+
+It does NOT cover the Linux kernel drivers. Those carry
+`SPDX-License-Identifier: GPL-2.0` in their own headers and stay GPL-2.0:
+
+    build-6.12/gc5035.c        build-6.12/gc8034.c
+    build-6.12/ipu-bridge.c    patches/**
+    reference/**
+
+This is not a preference, it is a condition inherited from the code they are
+derived from. Their register tables are reproduced from existing GPL-2.0 work:
+
+  * gc5035.c  — from the out-of-tree Alder Lake-M patch in intel/ipu6-drivers
+                by liang.wang <liang1.wang@intel.com>, which derives from the
+                ChromeOS series by Tomasz Figa <tfiga@chromium.org>.
+                Copyright (c) 2020 Bitland Inc., 2020 Google LLC,
+                2022 Intel Corporation.
+
+  * gc8034.c  — from the Rockchip BSP.
+                Copyright (C) 2017 Fuzhou Rockchip Electronics Co., Ltd.
+
+GPL-2.0 requires derivative works to be distributed under the same terms. The
+original copyright lines are preserved in the file headers, and the full chain
+of provenance is documented in reference/README.md.
+
+The drivers are meant for the mainline Linux kernel, where GPL-2.0 is required
+anyway.
+
+
+================================================================================
+IN BREVE, IN ITALIANO
+================================================================================
+
+La licenza MIT qui sopra e' la piu' permissiva in uso reale: chiunque puo'
+usare, copiare, modificare, distribuire e anche vendere questo lavoro, a una
+sola condizione — mantenere la riga di copyright. Copre i documenti, gli
+script e i dati raccolti.
+
+I due driver del kernel restano GPL-2.0 e non e' una scelta: contengono
+tabelle di registri prese da codice GPL-2.0 gia' esistente, e la GPL obbliga
+chi le riusa a ridistribuirle alle stesse condizioni. E' la stessa licenza del
+kernel Linux, dove quei driver sono destinati ad andare.
+
+Nota: il nome nel copyright e' l'identificativo GitHub. Va sostituito con nome
+e cognome veri quando si sciogliera' il reperto B1 di
+docs/09-revisione-preinvio.md, che e' lo stesso nodo del `Signed-off-by`.
