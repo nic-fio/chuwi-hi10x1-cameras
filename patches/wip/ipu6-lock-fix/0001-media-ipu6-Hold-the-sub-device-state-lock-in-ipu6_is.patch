@@ -1,7 +1,7 @@
-From d40ab80298d60b191ebea7f99da945419d2fbf0b Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
-Date: Wed, 12 Aug 2026 10:10:00 +0200
-Subject: [PATCH] BOZZA media: ipu6: Hold the sub-device state lock in
+From 2f11b0ec01b71d6da45ae0512e9eafef61528da1 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:25:54 +0200
+Subject: [PATCH] media: ipu6: Hold the sub-device state lock in
  ipu6_isys_fw_pin_cfg()
 
 ipu6_isys_fw_pin_cfg() reads the format and the crop rectangle out of
@@ -41,8 +41,9 @@ Note that lockdep goes quiet after the first report of this kind, so a
 kernel that has already hit it will not warn about anything else either.
 
 Fixes: 58410f62e25d ("media: ipu6: Drop custom functions to obtain sd state information")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
- drivers/media/pci/intel/ipu6/ipu6-isys-video.c | 26 +++++++++++++++++++++++---
+ .../media/pci/intel/ipu6/ipu6-isys-video.c    | 26 ++++++++++++++++---
  1 file changed, 23 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
@@ -98,3 +99,4 @@ index 3ac48d207..56e239e09 100644
  	input_pin->input_res.width = fmt.width;
 -- 
 2.47.3
+

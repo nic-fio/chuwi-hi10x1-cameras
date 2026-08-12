@@ -1,8 +1,8 @@
-From 15cc44431d6e95b628d8fe6b9711a68cd121be65 Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
-Date: Wed, 12 Aug 2026 10:15:00 +0200
-Subject: [PATCH] BOZZA media: mc: Remove an entity's pads from the pipeline
- when it goes away
+From 770cfbc26dfe13ca3b6c5581c2fdc4b0147e076a Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:25:52 +0200
+Subject: [PATCH] media: mc: Remove an entity's pads from the pipeline when it
+ goes away
 
 A started pipeline keeps a list of every pad the graph walk found, and
 each media_pipeline_pad in that list holds a bare pointer to a media_pad.
@@ -47,6 +47,7 @@ Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 7.2-rc7 with
 KASAN, by unbinding a GC5035 sensor two seconds into a capture.
 
 Fixes: ae219872834a ("media: mc: entity: Rewrite media_pipeline_start()")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/media/mc/mc-device.c |  7 +++++++
  drivers/media/mc/mc-entity.c | 24 ++++++++++++++++++++++++
@@ -134,3 +135,4 @@ index d9b72cd87..9ebca592d 100644
  			       struct media_pipeline_pad_iter *iter,
 -- 
 2.47.3
+

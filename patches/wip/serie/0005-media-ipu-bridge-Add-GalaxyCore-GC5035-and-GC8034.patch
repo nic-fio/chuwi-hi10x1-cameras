@@ -1,7 +1,7 @@
-From 18a8e7dc6250e073c129b7e22823431023126887 Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
+From d4c5f042fdcfcf62b247a6dc9c0aa679ce97e6de Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 21:36:45 +0200
-Subject: [PATCH 5/5] BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+Subject: [PATCH 5/5] media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
 
 NON INVIABILE: manca il Signed-off-by.
 
@@ -16,6 +16,8 @@ numbers here and there have to be changed together.
 Verificato che l'SSDB di questa macchina NON contiene la link
 frequency: il campo maxlanespeed non viene popolato dal BIOS e resta a
 zero, coerentemente con il commento in testa alla tabella.
+
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/media/pci/intel/ipu-bridge.c | 4 ++++
  1 file changed, 4 insertions(+)

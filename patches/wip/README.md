@@ -1,7 +1,14 @@
 # patches/wip — lavoro in corso
 
-**Niente di qui e' inviabile.** I commit hanno `BOZZA` nel subject apposta:
-serve a impedire un invio accidentale.
+**PRONTE DA INVIARE dal 2026-08-12.** Fino a quel giorno i commit avevano
+`BOZZA` nel subject apposta, per impedire un invio accidentale. Adesso non ce
+l'hanno piu': sono firmate da Nicola Fiorillo <nicfio@gmail.com>, i segnaposto
+di identita' sono spariti da tutti e otto i punti in cui stavano, e
+`checkpatch --strict` da' **0 errori su tutte e dodici**.
+
+Da qui in avanti un `git send-email` su questa cartella manda roba vera a
+mailing list vere. Prima di farlo, la prova d'invio su se' stessi descritta
+in fondo.
 
 ## Cosa c'e'
 
@@ -158,7 +165,9 @@ Destinatari di tutte e quattro in `destinatari.txt`, da `get_maintainer.pl`.
 | Compilano su mainline 7.2-rc7 | **si'** |
 | Build `W=1` dei due sottosistemi toccati | **nessun warning** |
 | `checkpatch --strict --max-line-length=80` sui file | **0/0/0** su entrambi i driver |
-| `checkpatch --strict` su tutte le patch | **solo `Missing Signed-off-by`**, voluto |
+| `checkpatch --strict` su tutte e dodici le patch | **0 errori**, 9 avvisi tutti falsi positivi |
+| Firmate con `Signed-off-by` | **si', tutte e dodici** — 2026-08-12 |
+| Segnaposto di identita' | **nessuno** — erano 8, in 5 file |
 | `make dt_binding_check` sui due binding | **pulito** — dtschema 2026.6 |
 | `yamllint` con la config del kernel | **pulito** |
 | `sparse` (`C=1 W=1`) | **pulito** — sparse v0.6.5-rc1 |
@@ -215,13 +224,18 @@ su `pylibfdt`), e la `sparse` di Debian e' troppo vecchia — il kernel la rifiu
 e **prosegue lo stesso**, stampando un warning che si perde nell'output, cosi'
 `C=1` sembra aver funzionato senza aver controllato niente.
 
-L'unico errore di checkpatch e' `Missing Signed-off-by`. **E' corretto che ci
-sia**: il DCO e' una dichiarazione legale e la firma deve essere di una persona
-reale, con nome e cognome veri. Va aggiunta da chi invia, non da chi scrive.
+**Dal 2026-08-12 `checkpatch --strict` da' 0 errori su tutte e dodici.** Prima
+ne dava uno per patch, `Missing Signed-off-by`, ed era corretto che ci fosse:
+il DCO e' una dichiarazione legale, la firma dev'essere di una persona reale e
+va aggiunta da chi invia. Adesso c'e'.
 
-Sulle due patch di binding resta un warning *"added file(s), does MAINTAINERS
-need updating?"*: e' un falso positivo noto, la voce `MAINTAINERS` che copre
-anche il binding sta nel commit del driver.
+I 9 avvisi che restano sono tutti falsi positivi, verificati uno per uno:
+
+| Avviso | Quante volte | Perche' e' falso |
+|---|---|---|
+| `Unknown commit id` sui `Fixes:` | 7 | il clone locale e' shallow e non puo' risolverli; i sette hash sono stati controllati sul diff del commit che introduce ciascun difetto |
+| `does MAINTAINERS need updating?` | 2 | la voce `MAINTAINERS` che copre anche il binding sta nel commit del driver, dove i revisori se l'aspettano |
+| `Prefer a maximum 75 chars per line` | 1 | e' una riga `create mode` generata da git nel diffstat: il percorso del file binding e' semplicemente lungo |
 
 ## Fatto il 2026-08-11
 
@@ -300,26 +314,37 @@ il cui `-EINVAL` portava a un `put` sbilanciato, ramo a 2 lane irraggiungibile
 nel GC8034, moltiplicazione a 32 bit assegnata a un `s64`, due commenti che
 dicevano il falso, `MODULE_AUTHOR` assente, `u16` dove bastava `u8`.
 
-### 4. Come si invia, quando sara' il momento
+### 4. Come si invia — i passi di preparazione sono FATTI
 
-Tre invii separati, in quest'ordine. Il primo e' quello che non ha
-dipendenze da niente e corregge un crash, quindi non ha motivo di aspettare.
+Identita', firme e rimozione di `BOZZA`: fatti il 2026-08-12. Restano solo i
+cinque invii, in quest'ordine. I primi due sono correzioni di difetti gia'
+presenti in mainline, quindi non hanno motivo di aspettare la serie dei
+driver.
+
+**Prima di tutto, una volta sola: la prova d'invio su se' stessi.** Vedi
+sotto — se il provider riscrive le righe, tutto il resto e' inutile.
 
 ```bash
-# 0. una volta sola: identita' vera, non il segnaposto
-git -C /home/nicfio/linux config user.name  "Nome Cognome"
-git -C /home/nicfio/linux config user.email "indirizzo@vero"
+cd /home/nicfio/INTEL-CAMERA
 
-# 1. rifirmare la serie con l'identita' nuova, togliendo BOZZA dai subject
-#    (git rebase --exec, oppure rigenerare i commit: sono sei)
-
-# 2. l'oops di ipu6, da solo, subito
+# 1. i tre difetti di ipu6/v4l2 dello stesso scenario, insieme
 git send-email --to=linux-media@vger.kernel.org \
     --cc=sakari.ailus@linux.intel.com --cc=bingbu.cao@intel.com \
     --cc=tian.shu.qiu@intel.com \
-    patches/wip/ipu6-fix/*.patch
+    patches/wip/ipu6-fix/*.patch patches/wip/subdev-fix/*.patch \
+    patches/wip/ipu6-unbind-fix/*.patch
 
-# 3. la serie dei due driver, con cover letter
+# 2. l'use-after-free del media controller, da solo: altri manutentori
+git send-email --to=linux-media@vger.kernel.org \
+    --cc=sakari.ailus@linux.intel.com --cc=laurent.pinchart@ideasonboard.com \
+    patches/wip/mc-pipeline-fix/*.patch
+
+# 3. il lock mancante in ipu6, da solo
+git send-email --to=linux-media@vger.kernel.org \
+    --cc=sakari.ailus@linux.intel.com --cc=bingbu.cao@intel.com \
+    patches/wip/ipu6-lock-fix/*.patch
+
+# 4. la serie dei due driver, con cover letter
 git send-email --to=linux-media@vger.kernel.org \
     --cc=mchehab@kernel.org --cc=sakari.ailus@linux.intel.com \
     --cc=robh@kernel.org --cc=krzk+dt@kernel.org --cc=conor+dt@kernel.org \
@@ -327,12 +352,17 @@ git send-email --to=linux-media@vger.kernel.org \
     --cc=tfiga@chromium.org --cc=liang1.wang@intel.com \
     patches/wip/serie/*.patch
 
-# 4. int3472, altro sottosistema
+# 5. int3472, altro sottosistema. La perdita di memoria per prima: e' un
+#    Fixes:, l'altra e' un miglioramento
 git send-email --to=platform-driver-x86@vger.kernel.org \
     --cc=dan.scally@ideasonboard.com --cc=hansg@kernel.org \
     --cc=ilpo.jarvinen@linux.intel.com --cc=sakari.ailus@linux.intel.com \
-    patches/wip/int3472/*.patch
+    patches/wip/int3472-leak-fix/*.patch patches/wip/int3472/*.patch
 ```
+
+Controllare i `--cc` di `mc-pipeline-fix` con `get_maintainer.pl` prima di
+mandarlo: e' l'unico dei cinque che va a un sottosistema su cui non avevamo
+ancora raccolto i destinatari.
 
 I `--cc` vengono da `destinatari.txt`, cioe' da `get_maintainer.pl`, tranne
 `tfiga@chromium.org` e `liang1.wang@intel.com`: quelli sono gli autori del
@@ -342,17 +372,31 @@ codice riusato, e ci vanno per cortesia — vedi `reference/README.md`.
 righe o manda HTML rende la patch inapplicabile e la serie viene ignorata
 senza che nessuno spieghi perche'.
 
-### 5. Formalita'
+### 5. ~~Formalita'~~ — **CHIUSE il 2026-08-12**
 
-Sono le uniche cose rimaste che **non** posso fare io:
+Erano le uniche cose che non potevo fare io, perche' richiedevano un'identita'
+reale. Nicola Fiorillo <nicfio@gmail.com> le ha fornite e sono state applicate
+a tutta la storia:
 
-- nome, email e copyright reali al posto dei `TODO` (2 punti per driver, piu'
-  `MODULE_AUTHOR` e `MAINTAINERS`)
-- **l'identita' di `git`**: oggi ogni patch esce con
-  `From: INTEL-CAMERA WIP <wip@localhost>`. E' la prima riga che un revisore
-  legge
-- `Signed-off-by`: e' una dichiarazione legale, la firma dev'essere di chi
-  invia
+| Cosa | Dov'era | Adesso |
+|---|---|---|
+| Identita' `git` | `INTEL-CAMERA WIP <wip@localhost>` su ogni patch | reale su tutte e dodici |
+| Righe di copyright | `<TODO: real name...>` nei due driver | reali |
+| `MODULE_AUTHOR` | `TODO` nei due driver | reale |
+| Voci `MAINTAINERS` | 2 con `TODO Nome Cognome` | reali |
+| Campo `maintainers` dei binding | 2 YAML con `TODO Nome Cognome` | reali |
+| `Signed-off-by` | assente ovunque | su tutte e dodici |
+| `BOZZA` nel subject | su tutte e dodici | tolto |
+
+I segnaposto erano **otto in cinque file**: i due YAML dei binding non erano
+nell'elenco che questo documento riportava, e si sarebbero scoperti in review.
+Sono stati trovati cercandoli in tutto l'albero invece di fidarsi della lista.
+
+Dopo la sostituzione i due driver sono stati ricompilati e i due binding
+rivalidati con `dt_binding_check`: il campo `maintainers` ha un formato che
+`dtschema` controlla davvero, e una scrittura sbagliata li avrebbe rotti.
+Entrambi puliti.
+
 L'attribuzione **non** e' piu' in questa lista: la DCO clausola (b) copre il
 riuso GPL-2.0 dentro il kernel senza chiedere permesso a nessuno. Servivano le
 righe di copyright originali e la provenienza dichiarata, e ci sono entrambe.

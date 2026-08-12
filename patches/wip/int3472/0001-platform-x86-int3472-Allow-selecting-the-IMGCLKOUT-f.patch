@@ -1,7 +1,7 @@
-From c61216fb5a24652bde00c4cf0ca55199e9d22ab4 Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
+From 686af98035047b990138a45fdf3ab8d748f610a9 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 19:30:45 +0200
-Subject: [PATCH] BOZZA platform/x86: int3472: Allow selecting the IMGCLKOUT
+Subject: [PATCH] platform/x86: int3472: Allow selecting the IMGCLKOUT
  frequency
 
 The PCH IMGCLKOUT outputs feeding a camera sensor can be driven at either
@@ -30,6 +30,8 @@ rate any more. The GC8034 register tables, computed for 24 MHz, turned
 out to capture correctly at 19.2 MHz with every timing scaled by 0.8,
 so forcing 24 MHz is no longer needed to make that sensor work and the
 new .set_rate path stays unexercised.
+
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  .../x86/intel/int3472/clk_and_regulator.c     | 66 ++++++++++++++++++-
  1 file changed, 65 insertions(+), 1 deletion(-)

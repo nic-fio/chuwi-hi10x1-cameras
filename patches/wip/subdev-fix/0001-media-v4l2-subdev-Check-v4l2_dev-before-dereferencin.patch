@@ -1,8 +1,8 @@
-From d9e67079d1ba8f6fe7ad8c3f3dbbeb88f0ac0f28 Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
-Date: Wed, 12 Aug 2026 07:41:31 +0200
-Subject: [PATCH] BOZZA media: v4l2-subdev: Check v4l2_dev before dereferencing
- it in open()
+From 7b6a194fb8d56192f000adf7d9c21dc873763cf2 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:25:49 +0200
+Subject: [PATCH] media: v4l2-subdev: Check v4l2_dev before dereferencing it in
+ open()
 
 Unbinding a sensor driver while something opens its /dev/v4l-subdevN node
 oopses the kernel:
@@ -45,6 +45,7 @@ cycle 7 of a loop unbinding and rebinding a sensor while four processes
 opened every /dev/v4l-subdev*. The code is unchanged in 7.2-rc7.
 
 Fixes: 61f5db549dde ("[media] v4l: Make v4l2_subdev inherit from media_entity")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/media/v4l2-core/v4l2-subdev.c | 31 +++++++++++++++++++++------
  1 file changed, 25 insertions(+), 6 deletions(-)

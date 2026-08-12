@@ -1,16 +1,143 @@
-From 18a8e7dc6250e073c129b7e22823431023126887 Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
-Date: Tue, 11 Aug 2026 22:49:08 +0200
-Subject: [PATCH 0/5] *** SUBJECT HERE ***
+From d4c5f042fdcfcf62b247a6dc9c0aa679ce97e6de Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:27:04 +0200
+Subject: [PATCH 0/5] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
 
-*** BLURB HERE ***
+This series adds drivers for two GalaxyCore sensors found on the CHUWI
+Hi10 X1, an Intel N100 (Alder Lake-N) tablet with an IPU6 ISP, plus the
+two ipu-bridge entries that let the IPU6 build a CSI-2 graph for them:
 
-INTEL-CAMERA WIP (5):
-  BOZZA media: dt-bindings: Add GalaxyCore GC5035
-  BOZZA media: i2c: Add GC5035 image sensor driver
-  BOZZA media: dt-bindings: Add GalaxyCore GC8034
-  BOZZA media: i2c: Add GC8034 image sensor driver
-  BOZZA media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+  GC5035, 5 Mpixel, front,  2 CSI-2 lanes, ACPI HID GCTI5035
+  GC8034, 8 Mpixel, rear,   4 CSI-2 lanes, ACPI HID GCTI8034
+
+Both are also described for device tree, since neither part is x86 only.
+
+Tested on the machine above: both sensors capture, and the images are in
+focus, correctly coloured and free of artefacts. v4l2-compliance reports
+45 of 46 tests passing on each subdev; the one failure is control event
+subscription, which no recent mainline sensor driver implements either
+(gc05a2, gc08a3, ov2740, ov08x40 and t4ka3 all fail the same test).
+
+Patch 1/2: GC5035 binding and driver
+Patch 3/4: GC8034 binding and driver
+Patch 5:   ipu-bridge entries for both
+
+An int3472 change that used to accompany this work is no longer part of
+it: it goes to a different subsystem and, as it turns out, these drivers
+do not need it. See "The clock" below.
+
+Why the link frequencies are derived and not hardcoded
+------------------------------------------------------
+
+Both drivers compute V4L2_CID_LINK_FREQ at probe time as a fixed multiple
+of the external clock, rather than carrying a constant. This is unusual
+enough to deserve the reasoning.
+
+The register tables program the PLL once and never touch it again, so the
+link frequency is by construction a fixed multiple of whatever clock the
+sensor is given. The multiplier belongs to the table; the input clock
+belongs to the board. Hardcoding their product bakes one board into the
+driver.
+
+That is not a theoretical concern here, because both vendor sources got
+the constant wrong for this platform:
+
+  - the Intel Alder Lake-M patch this GC5035 driver takes its tables from
+    declares 438 MHz, which is not a whole multiple of any plausible
+    external clock;
+  - the Rockchip BSP this GC8034 driver takes its tables from declares
+    336 MHz, correct for its own 24 MHz clock but not for the 19.2 MHz an
+    IPU6 platform provides.
+
+Measuring the frame rate over 200 frames settles it. The GC5035 runs at
+28.81 fps where 438 MHz predicts 29.88, which works out at 422.4 MHz,
+exactly 19.2 MHz x 22. The GC8034 runs at 23.99 fps where the tabulated
+30.00 predicts 30.00, a ratio of 0.7997 against the 0.8000 of 19.2/24,
+so 268.8 MHz, exactly 19.2 MHz x 14. Both agree with the corresponding
+pixel rates to within 0.04%, and for the GC5035 the ratio is unchanged
+at three different VBLANK settings, which rules out a timing model error
+and leaves only the constant.
+
+With the multiplier in the driver, the same code is correct on a device
+tree board clocking either part at 24 MHz, where the numbers become
+528 MHz and 336 MHz respectively.
+
+The clock
+---------
+
+The GC8034 tables come from a BSP that clocks the sensor at 24 MHz, while
+the PCH IMGCLKOUT on this machine runs at 19.2 MHz. The tables work
+unmodified at that rate: every timing simply scales by 0.8. An earlier
+version of this work carried a patch teaching the int3472 clock to select
+24 MHz, which the PCH can do; it is not needed and has been dropped.
+
+Provenance
+----------
+
+Neither driver is new code throughout, and the register tables in
+particular are reproduced from vendor sources.
+
+The GC5035 tables come from the out-of-tree Alder Lake-M patch in
+intel/ipu6-drivers, which derives from the ChromeOS series posted by
+Tomasz Figa in September 2020, itself based on work from Bitland. The
+copyright lines of Bitland, Google and Intel are carried in the file
+header.
+
+The GC8034 tables come from the Rockchip BSP (rockchip-linux/kernel,
+develop-5.10), GPL-2.0. The Fuzhou Rockchip copyright line is carried in
+the file header.
+
+The conversion from the vendor {reg, val} form to cci_reg_sequence was
+mechanical and is verifiable: a script re-reads the generated tables and
+compares them register by register against the originals, so the
+rewriting can be shown to be purely syntactic without a reviewer having
+to check 400 lines by hand.
+
+There is a precedent this list will remember: the GC5035 was posted
+before, as v4 by Tomasz Figa on 2 September 2020, reviewed by Sakari
+Ailus and Rob Herring, and silent after 8 September. What is different
+now is that the hardware is available for testing and the driver has
+been rewritten against current APIs: CCI accessors, the streams API,
+subdev active state, and runtime PM.
+
+What is not covered
+-------------------
+
+  - The PLL, D-PHY and analogue bias registers are undocumented vendor
+    blobs. There is no public register guide for either sensor. They are
+    reproduced unmodified and the drivers do not attempt to recompute
+    them.
+  - The GC8034 has a single mode, 3264x2448; the GC5035 a single mode,
+    2592x1944. No binning or cropping modes were available to import.
+  - GC8034 VTS is programmed through an offset register whose base is
+    inferred from the BSP defaults, not measured. An error of a few lines
+    there would shift the frame rate by about 0.1%, below what can be
+    measured.
+  - The GC8034 module carries a dw9714 VCM, which ipu-bridge instantiates.
+    Focus control has not been exercised.
+  - Both were tested on one machine, with one sample of each sensor.
+
+Testing done
+------------
+
+  - both sensors capture at full resolution, images verified visually
+  - analogue gain verified against the requested value: 16x requested and
+    15.7x measured on the GC5035, 7.66x requested and 7.9x measured on
+    the GC8034
+  - GC5035 test pattern verified pixel-exact across a full frame, which
+    also validates the CSI-2 packing
+  - frame rate predicted by the driver matches the measured rate on both
+  - v4l2-compliance, 45/46 as described above
+  - ten bind/unbind cycles per driver, clean
+  - checkpatch --strict, sparse, smatch and 69 coccinelle scripts: clean
+  - make dt_binding_check and yamllint on both bindings: clean
+
+Nicola Fiorillo (5):
+  media: dt-bindings: Add GalaxyCore GC5035
+  media: i2c: Add GC5035 image sensor driver
+  media: dt-bindings: Add GalaxyCore GC8034
+  media: i2c: Add GC8034 image sensor driver
+  media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
 
  .../bindings/media/i2c/galaxycore,gc5035.yaml |  109 ++
  .../bindings/media/i2c/galaxycore,gc8034.yaml |  115 ++

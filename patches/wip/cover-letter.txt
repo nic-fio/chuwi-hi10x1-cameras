@@ -1,12 +1,5 @@
 Subject: [PATCH 0/5] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
 
-NOTE FOR THE PROJECT, NOT FOR THE LIST: this is a draft. Before sending,
-replace every TODO with a real identity and add the Signed-off-by tags, and
-consider Cc'ing the authors named under "Provenance". See
-patches/wip/README.md.
-
----
-
 This series adds drivers for two GalaxyCore sensors found on the CHUWI
 Hi10 X1, an Intel N100 (Alder Lake-N) tablet with an IPU6 ISP, plus the
 two ipu-bridge entries that let the IPU6 build a CSI-2 graph for them:

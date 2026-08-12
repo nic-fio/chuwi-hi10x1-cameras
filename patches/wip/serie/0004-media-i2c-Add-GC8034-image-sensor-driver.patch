@@ -1,7 +1,7 @@
-From 5f72c76978b395c05424be1b1cdbac350328363f Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
+From be29d55fcb529676fee076f3b1fe7fc93641cb22 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 21:36:45 +0200
-Subject: [PATCH 4/5] BOZZA media: i2c: Add GC8034 image sensor driver
+Subject: [PATCH 4/5] media: i2c: Add GC8034 image sensor driver
 
 NON INVIABILE: attribuzione Rockchip non sciolta, manca il
 Signed-off-by.
@@ -36,6 +36,8 @@ in xvclk cycles: the BSP hardcoded 350 us, which is its 8192 cycles at
 
 Target hardware: CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6),
 ACPI HID GCTI8034 at \_SB.PC00.LNK0.
+
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  MAINTAINERS                |    7 +
  drivers/media/i2c/Kconfig  |   10 +
@@ -45,7 +47,7 @@ ACPI HID GCTI8034 at \_SB.PC00.LNK0.
  create mode 100644 drivers/media/i2c/gc8034.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 165a18928..286c64517 100644
+index 37f03e9f1..5db2fcb83 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
 @@ -10801,6 +10801,13 @@ S:	Maintained
@@ -53,7 +55,7 @@ index 165a18928..286c64517 100644
  F:	drivers/media/i2c/gc5035.c
  
 +GALAXYCORE GC8034 CAMERA SENSOR DRIVER
-+M:	TODO Nome Cognome <email@reale>
++M:	Nicola Fiorillo <nicfio@gmail.com>
 +L:	linux-media@vger.kernel.org
 +S:	Maintained
 +F:	Documentation/devicetree/bindings/media/i2c/galaxycore,gc8034.yaml
@@ -97,7 +99,7 @@ index de46c13ac..07b4545d3 100644
  obj-$(CONFIG_VIDEO_HI847) += hi847.o
 diff --git a/drivers/media/i2c/gc8034.c b/drivers/media/i2c/gc8034.c
 new file mode 100644
-index 000000000..c67916ca2
+index 000000000..7e782407b
 --- /dev/null
 +++ b/drivers/media/i2c/gc8034.c
 @@ -0,0 +1,1255 @@
@@ -106,7 +108,7 @@ index 000000000..c67916ca2
 + * Driver for GalaxyCore GC8034 image sensor
 + *
 + * Copyright (C) 2017 Fuzhou Rockchip Electronics Co., Ltd.
-+ * Copyright (C) 2026 <TODO: real name and email before upstream submission>
++ * Copyright (C) 2026 Nicola Fiorillo <nicfio@gmail.com>
 + *
 + * Tested on a CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6) on 2026-08-11:
 + * captures at 3264x2448 and passes v4l2-compliance.
@@ -1353,7 +1355,7 @@ index 000000000..c67916ca2
 +};
 +module_i2c_driver(gc8034_i2c_driver);
 +
-+MODULE_AUTHOR("TODO: real name and email before upstream submission");
++MODULE_AUTHOR("Nicola Fiorillo <nicfio@gmail.com>");
 +MODULE_DESCRIPTION("GalaxyCore GC8034 sensor driver");
 +MODULE_LICENSE("GPL");
 -- 

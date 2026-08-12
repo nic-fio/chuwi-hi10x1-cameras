@@ -1,8 +1,7 @@
-From 6f1aacaa122bcccf15f4cc1fdfebe8fa983d6d62 Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
-Date: Tue, 11 Aug 2026 22:36:22 +0200
-Subject: [PATCH] BOZZA media: ipu6: Check the remote pad before dereferencing
- it
+From 140ed911e45fcda7d091bc0a88c3fe5dacd738b1 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:25:48 +0200
+Subject: [PATCH] media: ipu6: Check the remote pad before dereferencing it
 
 Unbinding a sensor driver while a capture is running oopses the kernel:
 
@@ -32,6 +31,7 @@ the CSI-2 port of a sensor being unbound mid capture. The code is
 unchanged in 7.2-rc7.
 
 Fixes: 3a5c59ad926b ("media: ipu6: Rework CSI-2 sub-device streaming control")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 14 ++++++++++++--
  1 file changed, 12 insertions(+), 2 deletions(-)

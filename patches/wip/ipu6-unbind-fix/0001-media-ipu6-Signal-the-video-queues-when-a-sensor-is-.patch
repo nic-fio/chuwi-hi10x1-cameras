@@ -1,8 +1,7 @@
-From 1eb31a6df0698354c05c7801a0ae7d0ae09606ce Mon Sep 17 00:00:00 2001
-From: INTEL-CAMERA WIP <wip@localhost>
-Date: Wed, 12 Aug 2026 11:37:20 +0200
-Subject: [PATCH] BOZZA media: ipu6: Signal the video queues when a sensor is
- unbound
+From 7e0b404baf65541ba15b8787e69b13b41109f0b6 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Wed, 12 Aug 2026 12:25:51 +0200
+Subject: [PATCH] media: ipu6: Signal the video queues when a sensor is unbound
 
 isys_async_ops implements .bound() and .complete() but not .unbind(), so
 nothing tells the ISYS video nodes that the sensor feeding them has gone
@@ -35,6 +34,7 @@ up, report "VIDIOC_DQBUF: failed: Input/output error" and exit. The same
 run under KASAN reports nothing.
 
 Fixes: f50c4ca0a820 ("media: intel/ipu6: add the main input system driver")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/media/pci/intel/ipu6/ipu6-isys.c | 41 ++++++++++++++++++++++++
  1 file changed, 41 insertions(+)
