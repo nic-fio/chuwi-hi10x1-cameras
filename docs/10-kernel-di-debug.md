@@ -38,6 +38,46 @@ Cosa aggiunge, e cosa trova ciascuno:
 `PANIC_ON_OOPS` e' **disattivato apposta**: se qualcosa esplode, serve che la
 macchina resti in piedi abbastanza da leggere il journal.
 
+## PRONTO ALL'AVVIO — 2026-08-12, ore 08:56
+
+> **I passi 1 e 2 qui sotto sono gia' stati fatti.** Manca solo il riavvio.
+>
+> | Cosa | Stato |
+> |---|---|
+> | Immagine sulla ESP | `/mnt/esp/vmlinuz-debug`, 29 MB, con le due correzioni dentro |
+> | Moduli installati | `/lib/modules/7.2.0-rc7-intelcam-debug-gc61216fb5a24-dirty` |
+> | `startup.nsh` | **intatto**, md5 `78c831bb7c3f537b1c8bdae19025bfe3` |
+> | Correzioni A1 e A2 | applicate **non committate** in `/home/nicfio/linux` |
+> | `PARTUUID` di root | `dc363afc-02`, verificato con `lsblk` |
+> | KMEMLEAK | attivo di suo, nessun parametro da aggiungere |
+> | `PANIC_ON_OOPS` | disattivato: un oops non spegne la macchina |
+>
+> **Le due righe da digitare** dopo aver premuto ESC al conto alla rovescia:
+>
+> ```
+> fs0:
+> vmlinuz-debug root=PARTUUID=dc363afc-02 rw
+> ```
+>
+> **Una volta dentro** (il prompt dira' `7.2.0-rc7-intelcam-debug`):
+>
+> ```bash
+> uname -r                                   # deve dire 7.2.0-rc7-intelcam-debug-...
+> sudo modprobe gc5035 gc8034                # qui sono IN-TREE, niente build-6.12
+> sudo ./scripts/prova-completa.sh
+> sudo ./scripts/misura-guadagno.sh          # con la luce accesa
+> sudo dmesg | grep -E "KASAN|UBSAN|lockdep|BUG:|WARNING:|possible recursive"
+> echo scan | sudo tee /sys/kernel/debug/kmemleak && sudo cat /sys/kernel/debug/kmemleak
+> ```
+>
+> **Nota per la sessione dopo il riavvio**: questa conversazione girava sul
+> tablet, quindi il riavvio l'ha interrotta. Il contesto e' tutto qui e in
+> `docs/09-revisione-preinvio.md`. Le due correzioni nell'albero del kernel
+> sono **non committate** apposta: committarle cambierebbe la stringa di
+> versione e costringerebbe a ricompilare tutto.
+>
+> Per tornare a Debian: riavviare e lasciar scorrere `startup.nsh`.
+
 ## Avviarlo — richiede te davanti alla tastiera
 
 Non lo si puo' rendere il default e non lo si vuole: e' un kernel da
