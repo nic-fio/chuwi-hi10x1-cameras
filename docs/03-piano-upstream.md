@@ -142,12 +142,19 @@ ha importato in blocco HID dal driver out-of-tree senza giustificare i numeri) e
 il fatto verificabile che `SONY471A` e `OVTI05C1` sono in tabella oggi senza che
 `imx471.o`/`ov05c10.o` esistano in `drivers/media/i2c/Makefile`.
 
-### Raccomandazione: partire dal solo GC5035
+### ~~Raccomandazione: partire dal solo GC5035~~ — decaduta il 2026-08-11
 
-La link frequency del GC8034 sul CHUWI non e' difendibile: i valori Rockchip
-(336/634 MHz) vengono da una piattaforma diversa e non esiste un driver Intel di
-riferimento. **Inviare la Serie 3 con il solo `GCTI5035`** e rimandare il
-`GCTI8034` a quando il suo driver sara' testato sull'hardware.
+Diceva: «la link frequency del GC8034 sul CHUWI non e' difendibile, i valori
+Rockchip vengono da un'altra piattaforma, inviare la Serie 3 col solo
+`GCTI5035` e rimandare il `GCTI8034` a quando il suo driver sara' testato
+sull'hardware».
+
+**La condizione si e' avverata**: il GC8034 e' stato testato sull'hardware,
+cattura a 3264×2448, e la sua link frequency non e' piu' un valore preso da
+un'altra piattaforma — e' **268,8 MHz misurata**, cioe' 19,2 × 14, con il frame
+rate previsto che coincide con quello reale allo 0,04%. Adesso e' difendibile
+esattamente come quella del GC5035, e per lo stesso motivo. **Le due voci
+partono insieme.**
 
 ### Avvertenza: la macro potrebbe cambiare
 
@@ -334,7 +341,7 @@ confronto tra mode table, oppure richiesta al vendor.
 
 1. Sviluppo e test su **vanilla** o sul tree `media_stage` — **non** sul 7.0
    locale, che ha un `.config` difettoso
-2. `scripts/get_maintainer.pl` sulle patch
+2. `scripts/get_maintainer.pl` dell'albero del kernel, non di questo repository, sulle patch
 3. `scripts/checkpatch.pl --strict`
 4. `v4l2-compliance` sul device
 5. `b4` per gestire le serie

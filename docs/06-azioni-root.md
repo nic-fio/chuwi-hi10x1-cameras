@@ -40,7 +40,14 @@ sudo ./scripts/dump-dsdt.sh
 ```
 
 Legge `/sys/firmware/acpi/tables/DSDT` (root-only), decompila con `iasl` e
-isola i nodi camera. Produce `data/dsdt/camera-nodes.dsl`.
+isola i nodi camera. Scrive in `data/dsdt/`: `dsdt.aml` (la tabella grezza),
+`dsdt.dsl` (tutta la DSDT decompilata) e `camera-nodes.dsl` (solo i nodi che
+interessano).
+
+**Nel repository sono committati gli estratti, non l'output grezzo**: la DSDT
+decompilata sta in `data/dsdt-analisi/dsdt.dsl.gz` e i quattro nodi che contano
+sono file separati — `LNK0.dsl`, `LNK1.dsl`, `DSC0.dsl`, `DSC1.dsl`, piu'
+`gnvs-offsets.txt`. `camera-nodes.dsl` si rigenera lanciando lo script.
 
 Da li' si compilano le righe **[DSDT]** di `05-parametri-sensori.md`, e
 soprattutto si scopre **se la link frequency del CHUWI coincide con quella

@@ -7,11 +7,21 @@ Tutto quello che serve per scrivere i due driver, con l'origine di ogni valore.
 | Marca | Significato |
 |---|---|
 | **[CODICE]** | letto da codice sorgente esistente e verificato — affidabile |
-| **[DSDT]** | da leggere dalla DSDT di *questa* macchina — **ancora ignoto** |
+| **[DSDT]** | da leggere dalla DSDT di *questa* macchina — **non ne resta nessuna** |
+| **[MISURATO]** | letto dal firmware o misurato sull'hardware acceso — il grado piu' alto |
 | **[IPOTESI]** | valore da un'altra piattaforma, da confermare — **non usare senza verifica** |
 
-Lo stato attuale: la DSDT non e' ancora stata estratta (serve root), quindi
-tutte le righe **[DSDT]** sono vuote. E' il blocco della Fase 0.
+> **Aggiornato il 2026-08-12.** Il testo che segue diceva «la DSDT non e'
+> ancora stata estratta, quindi tutte le righe **[DSDT]** sono vuote, ed e' il
+> blocco della Fase 0». **Non e' piu' vero da due giorni.** La DSDT e' stata
+> estratta, la ACPI NVS letta, e i sensori hanno acceso e catturato: ogni
+> valore che era «da leggere» adesso e' **[MISURATO]**, cioe' preso dal
+> firmware *e* confermato dall'hardware in funzione. Non e' rimasta nessuna
+> riga ignota.
+>
+> Le poche cose che restano **[IPOTESI]** sono marcate come tali e sono tutte
+> nella parte del GC8034 che viene dal BSP Rockchip: sono valori che questa
+> macchina non usa.
 
 ---
 
@@ -27,8 +37,8 @@ espone su `\_SB.PC00.LNK1`.
 |---|---|---|
 | Chip ID | `0x5035` | **[CODICE]** |
 | Registri ID | `0xf0` (H), `0xf1` (L) | **[CODICE]** — leggibili in qualsiasi pagina |
-| Indirizzo I2C | **da DSDT** (`_CRS` I2cSerialBus di `LNK1`) | **[DSDT]** — il binding ChromeOS usa `0x37`, ma **non assumerlo** |
-| Bus I2C | **da DSDT** | **[DSDT]** |
+| Indirizzo I2C | **`0x3f`** | **[MISURATO]** — NVS ACPI, e il client creato dal kernel e' `i2c-GCTI5035:00` su `i2c-3` @ `0x3f`. Il binding ChromeOS usa `0x37`: **era giusto non assumerlo** |
+| Bus I2C | **2** nella NVS, che il kernel enumera come **`i2c-3`** | **[MISURATO]** — l'indice ACPI e il numero dell'adattatore Linux non coincidono, e non devono |
 
 ### Parametri CSI-2
 
@@ -40,12 +50,15 @@ espone su `\_SB.PC00.LNK1`.
 | Bits per sample | 10 | **[CODICE]** |
 | Pixel rate | **168 960 000** (= freq × 2 × lane / 10) | **[MISURATO]** — 168,92 MHz dal frame rate, scarto 0,02% |
 | Bus type | `V4L2_MBUS_CSI2_DPHY` | **[CODICE]** |
-| MCLK | 24 MHz nei commenti, 19,2 MHz tipico su ADL-N | **[DSDT]** — conflitto irrisolto, vedi sotto |
+| MCLK | **19 200 000 Hz** | **[MISURATO]** — NVS ACPI, e confermato dal frame rate: il modello che prevede 28,8162 fps ne misura 28,82 |
 
-> **Conflitto MCLK nella patch Intel**: definisce `GC5035_MCLK_RATE 24000000`
-> (mai usata) e passa `192000000` a `clk_set_rate()` nel probe. I commenti delle
-> tabelle registri dicono "Xclk 24Mhz". Il valore vero per questa macchina si
-> legge dal `_DSD` `clock-frequency` nella DSDT.
+> **Conflitto MCLK nella patch Intel — risolto.** La patch definisce
+> `GC5035_MCLK_RATE 24000000` (mai usata) e passa `192000000` a
+> `clk_set_rate()` nel probe, che e' 19 200 000 con uno zero di troppo. I
+> commenti delle tabelle dicono "Xclk 24Mhz". **Vince il 19,2**: e' quello che
+> dichiara il firmware, ed e' quello con cui i tempi misurati tornano. Le
+> tabelle registri funzionano lo stesso, con tutti i tempi scalati di 0,8.
+> Vedi `docs/07-clock-e-registri.md` e `docs/08-prova-hardware.md`.
 
 ### Registri di controllo
 
@@ -96,8 +109,8 @@ i valori vengono dal BSP Rockchip (device-tree).
 |---|---|---|
 | Chip ID | **`0x8044`** (non `0x8034`) | **[CODICE]** |
 | Registri ID | `0xf0` (H), `0xf1` (L) | **[CODICE]** |
-| Indirizzo I2C | **da DSDT** (`_CRS` di `LNK0`) | **[DSDT]** |
-| Bus I2C | **da DSDT** | **[DSDT]** |
+| Indirizzo I2C | **`0x37`** (piu' il VCM `dw9714` @ `0x0c`) | **[MISURATO]** — NVS ACPI, e il client e' `i2c-GCTI8034:00` su `i2c-2` @ `0x37` |
+| Bus I2C | **1** nella NVS, che il kernel enumera come **`i2c-2`** | **[MISURATO]** |
 
 ### Parametri CSI-2 **[IPOTESI]** — dal BSP Rockchip, piattaforma diversa
 
@@ -109,7 +122,11 @@ i valori vengono dal BSP Rockchip (device-tree).
 | VTS | 2496 / 2500 | 2496 |
 | Formato | `MEDIA_BUS_FMT_SRGGB10_1X10` | idem |
 
-MCLK del BSP: 24 MHz. **Quante lane usi questa macchina si legge dalla DSDT.**
+MCLK del BSP: 24 MHz. **Questa macchina usa 4 lane a 19,2 MHz** — NVS ACPI,
+confermato dallo streaming a 3264×2448 e dal frame rate misurato (24,01 contro
+24,00 previsti). La colonna «2-lane» resta come documentazione del BSP: qui non
+si usa, ed e' il ramo di codice morto che la revisione ha tolto dal driver
+(reperto M3 di `docs/09-revisione-preinvio.md`).
 
 > **Verificato sull'hardware il 2026-08-11, e il BSP ha ragione lui.** Le due
 > quantita' non concordano perche' **non sono la stessa cosa**: il rate

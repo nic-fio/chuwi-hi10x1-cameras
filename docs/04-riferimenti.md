@@ -97,7 +97,7 @@ la tecnica. Vedi `03-piano-upstream.md`.
 
 ## Maintainer di riferimento
 
-Da confermare sempre con `scripts/get_maintainer.pl` sulle patch effettive.
+Da confermare sempre con `scripts/get_maintainer.pl` **dell'albero del kernel** (`/home/nicfio/linux`, non di questo repository) sulle patch effettive.
 
 - **Sakari Ailus** — V4L2 / sensori, revisore principale
 - **Bingbu Cao** — IPU6
