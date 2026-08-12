@@ -315,6 +315,27 @@ il cui `-EINVAL` portava a un `put` sbilanciato, ramo a 2 lane irraggiungibile
 nel GC8034, moltiplicazione a 32 bit assegnata a un `s64`, due commenti che
 dicevano il falso, `MODULE_AUTHOR` assente, `u16` dove bastava `u8`.
 
+### INVIO 1 — **PARTITO il 2026-08-12 alle 12:53**
+
+Il primo contributo di questo progetto al kernel Linux e' stato spedito.
+
+| | |
+|---|---|
+| Cosa | `invio-1-difetti-mainline/`, serie di 3 patch con cover letter |
+| A | `linux-media@vger.kernel.org` |
+| In copia | Mauro Carvalho Chehab, Sakari Ailus, Bingbu Cao, Tianshu Qiu, `linux-kernel` |
+| Message-ID | `20260812105305.32447-1-nicfio@gmail.com` |
+| Esito SMTP | `250` su tutte e quattro le email |
+| Thread | corretto: le tre patch hanno `In-Reply-To` verso la cover |
+
+Archivio pubblico:
+<https://lore.kernel.org/linux-media/20260812105305.32447-1-nicfio@gmail.com/>
+
+**Restano quattro invii**, e conviene aspettare le prime risposte prima di
+mandarne altri: se dalla review esce una convenzione che ci e' sfuggita, val
+la pena applicarla ai quattro rimanenti invece di ripetere lo stesso errore
+cinque volte.
+
 ### 4. Come si invia — i passi di preparazione sono FATTI
 
 Identita', firme e rimozione di `BOZZA`: fatti il 2026-08-12. Restano solo i
