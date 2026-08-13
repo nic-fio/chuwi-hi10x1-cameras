@@ -333,6 +333,11 @@ Per ciascuna:
 > settimana** dal feedback, sempre. Se una settimana non basta, rispondere
 > comunque nel thread dicendo che si sta lavorando.
 
+- [x] **Registro delle osservazioni** in `docs/11-osservazioni-review.md`:
+      ogni cosa che torna indietro — risposte, commenti, rilievi dei bot, esiti
+      della CI — viene annotata li' con la verifica fatta sul sorgente. Serve a
+      mandare **una** v2 che chiude tutti i punti insieme, invece di un invio
+      per osservazione
 - [ ] **Rispondere a ogni commento**, anche a quelli che si respingono, con la
       motivazione tecnica. Il silenzio su un commento blocca la serie
 - [ ] **Un `v(N+1)` per ogni giro**, con changelog per-versione nella cover

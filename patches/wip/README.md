@@ -61,6 +61,12 @@ vista. Dettagli e prove in `docs/10-kernel-di-debug.md`.
 controller invece di `ipu6-isys`, e altri manutentori. Tenerle insieme
 significherebbe far aspettare l'una per l'altra.
 
+**`ipu6-lock-fix/` va modificata prima di partire.** Una review automatica
+sull'invio 1 ha fatto notare che lo stesso ritorno non controllato c'e' anche in
+`ipu6_isys_configure_stream_watermark()`, che la nostra patch non tocca — li' il
+lock c'e' gia', il controllo di NULL no. Dettagli e verifica in
+`docs/11-osservazioni-review.md` § O7.
+
 **`int3472-leak-fix/` e' indipendente da `int3472/`**, benche' tocchino la
 stessa funzione: verificato applicandola su mainline pura senza la bozza
 IMGCLKOUT sotto. Possono partire in qualsiasi ordine; se partono insieme, la
@@ -330,6 +336,12 @@ Il primo contributo di questo progetto al kernel Linux e' stato spedito.
 
 Archivio pubblico:
 <https://lore.kernel.org/linux-media/20260812105305.32447-1-nicfio@gmail.com/>
+
+**Quello che torna indietro si annota in `docs/11-osservazioni-review.md`**:
+risposte, commenti, rilievi dei bot, esiti della CI. Si accumula li' e si manda
+**una** v2 che li chiude tutti insieme, invece di un invio per osservazione.
+Al 2026-08-13 nessuna risposta umana; c'e' una review automatica, con un rilievo
+fondato su codice nostro (§ O2).
 
 **Restano quattro invii**, e conviene aspettare le prime risposte prima di
 mandarne altri: se dalla review esce una convenzione che ci e' sfuggita, val
