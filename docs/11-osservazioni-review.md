@@ -296,6 +296,29 @@ Quello che **non** fa scattare una v2 e' un rilievo di un bot, per quanto
 corretto. O2 e' reale e va corretto, ma da solo non giustifica di rimandare
 tutto: si porta con la prima v2 che parte per un motivo vero.
 
+### Deciso il 2026-08-15
+
+Si aspetta ancora, **non meno di una settimana**: prossimo controllo dal
+**22 agosto** in poi. Se a quel punto nessun umano si e' fatto vivo, si smette
+di aspettare e si lavora sui rilievi di Sashiko.
+
+Cosa vuol dire in concreto, perche' non sono otto lavori ma due:
+
+| | Cosa si fa | Dove va a finire |
+|---|---|---|
+| **O2** | prendere `q->lock` attorno al controllo e alla marcatura in `isys_notifier_unbind()` | v2 dell'invio 1, insieme a **O1** (il nome di funzione nella cover) |
+| **O7** | aggiungere il controllo di NULL in `ipu6_isys_configure_stream_watermark()` | dentro `ipu6-lock-fix/`, prima che l'invio 3 parta |
+
+Gli altri restano dove sono: **O3** in attesa di un umano, **O4** e **O9**
+candidati a patch nuove ma solo dopo averli provocati davvero, **O5**, **O6**
+e **O8** annotati e chiusi.
+
+**Prerequisito di O2**, da non saltare: verificare col kernel di debug e
+`PROVE_LOCKING` che nessun percorso prenda il lock del notificatore
+v4l2-async tenendo gia' `av->mutex`, altrimenti la correzione introduce un
+ordine inverso al posto di un difetto. Vuol dire far ripartire la macchina
+sul kernel di debug, quindi si concorda prima.
+
 ## Storico dei controlli
 
 | Data | Cosa e' emerso |
