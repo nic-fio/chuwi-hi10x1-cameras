@@ -301,3 +301,4 @@ tutto: si porta con la prima v2 che parte per un motivo vero.
 | Data | Cosa e' emerso |
 |---|---|
 | 2026-08-13 | Primo controllo dopo l'invio. Nessuna risposta umana. Thread integro su lore, 3 patch in patchwork stato *New*. Trovata la review Sashiko del 12/08 — da li' O2..O9. La lista e' attiva (Ailus, Verkuil, Pinchart hanno scritto il 10 e l'11), quindi il silenzio non e' un problema di recapito |
+| 2026-08-15 | Secondo controllo. **Niente di nuovo.** Thread lore fermo a 4 messaggi (`newest: 2026-08-12`), ricerca globale `?q=nicfio` 4 risultati su 4 tutti nostri. Le tre patch restano *New*, senza delegato; unica voce in Checks sempre `external-ci/sashiko` → `warning`, nessun check aggiunto. Lista molto attiva il 13 e il 14 (Ruoyu Wang, Pengpeng Hou, Brian Daniels, Thierry Reding, Ribalda), quindi e' coda di review, non lista ferma. Nessuna azione: 3 giorni dall'invio, la finestra del ping e' il 22-26 agosto |
