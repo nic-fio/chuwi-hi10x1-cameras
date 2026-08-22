@@ -1,0 +1,20 @@
+From: Nicola Fiorillo <nicfio@gmail.com>
+To: linux-media@vger.kernel.org
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, bingbu.cao@intel.com, tian.shu.qiu@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] media: Two oopses and a hang when unbinding a streaming sensor
+In-Reply-To: <20260812105305.32447-1-nicfio@gmail.com>
+References: <20260812105305.32447-1-nicfio@gmail.com>
+
+Gentle ping on this series, posted ten days ago:
+
+  https://lore.kernel.org/linux-media/20260812105305.32447-1-nicfio@gmail.com/
+
+None of the three files it touches changed between v7.2-rc7 and v7.2, so it
+still applies unchanged.
+
+I am aware the merge window is open and that this is not the quietest
+moment, so there is no hurry. If anything should be changed, or if it would
+help to have the reproducer script on the list, I am happy to do either.
+
+Thanks,
+Nicola
