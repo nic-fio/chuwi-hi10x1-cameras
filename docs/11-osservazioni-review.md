@@ -147,10 +147,84 @@ l'avvio del kernel di debug ha lasciato la macchina senza schermo esterno, dock
 ne' touchscreen (`docs/10-kernel-di-debug.md`, sezione "ANDATA MALE"). Quel
 kernel non e' utilizzabile su questo tablet e non si ricompila.
 
-Resta una sola strada praticabile, piu' debole ma legittima: **leggere i
-sorgenti** e verificare l'ordine dei lock sui percorsi di chiamata, come fa
-qualunque revisore umano. Se il risultato e' pulito, O2 si scrive dichiarando
-onestamente **come** e' stata verificata; se resta un dubbio, O2 non si invia.
+## VERIFICA DI O2 FATTA SUL SORGENTE — 2026-08-22
+
+Letta a mano sull'albero del server (`b3366efad`, `v7.2-rc7`). Due risposte, e
+la seconda non era la domanda che ci si faceva.
+
+### 1. L'ordine inverso NON c'e'
+
+La correzione stabilirebbe l'ordine **`list_lock` -> `av->mutex`**:
+`v4l2_async_unregister_subdev()` prende `list_lock` (`v4l2-async.c:893`) e lo
+tiene per tutta la `.unbind()`, che verrebbe chiamata dentro
+`v4l2_async_unbind_subdev_one()` (`v4l2-async.c:477`).
+
+Perche' ci sia un'inversione servirebbe un percorso che prende `av->mutex`
+**e poi** `list_lock`. Non esiste, e la ragione e' che il perimetro e' chiuso:
+
+- `list_lock` e' una `static DEFINE_MUTEX` privata di `v4l2-async.c`
+  (riga 176), presa da **sette** funzioni sole: `__v4l2_async_nf_register`,
+  `v4l2_async_nf_unregister`, `v4l2_async_nf_cleanup`,
+  `__v4l2_async_nf_add_connection`, `__v4l2_async_register_subdev`,
+  `v4l2_async_unregister_subdev`, `pending_subdevs_show` (debugfs)
+- in tutto `ipu6` le uniche chiamate a quelle funzioni stanno in
+  `isys_notifier_init()` (probe, via `isys_register_devices()`) e
+  `isys_notifier_cleanup()` (rimozione dell'auxdev). Nessuna delle due gira
+  sotto un lock del nodo video
+- `av->mutex` **non viene mai preso esplicitamente dal codice ipu6**: e'
+  installato come `aq->vbq.lock` (`ipu6-isys-queue.c:841`) e come
+  `av->vdev.lock` (`ipu6-isys-video.c:1306`), quindi lo tiene solo il core
+  V4L2/vb2 attorno a ioctl, `mmap`, `poll` e `release` di quel nodo
+- la superficie delle ioctl di quel nodo e' `ipu6_v4l2_ioctl_ops`: querycap,
+  enum/g/s/try_fmt, reqbufs, create_bufs e le vb2 (qbuf, dqbuf, streamon,
+  streamoff, expbuf). Nessuna arriva a `v4l2-async`
+
+**Conclusione: la correzione non introduce nessuna inversione.**
+
+### 2. Ma c'e' un altro problema, e questo e' vero
+
+Nel percorso di rimozione del driver l'ordine e' questo:
+
+```
+ipu6_isys_remove()
+  isys_unregister_devices()   -> isys_unregister_video_devices()
+                              -> ipu6_isys_video_cleanup()
+                              -> mutex_destroy(&av->mutex)      <-- DISTRUTTO
+  isys_notifier_cleanup()     -> v4l2_async_nf_unregister()
+                              -> ... -> isys_notifier_unbind()  <-- la nostra
+```
+
+La nostra `.unbind()` gira **dopo** che `av->mutex` e' stato distrutto.
+`mutex_destroy()` mette `lock->magic = NULL` e il commento della funzione dice
+testualmente che ogni uso successivo e' proibito; `MUTEX_WARN_ON(lock->magic
+!= lock)` scatta sia in presa che in rilascio con `CONFIG_DEBUG_MUTEXES`.
+
+Quindi **O2 nella forma descritta — prendere `q->lock` attorno al controllo e
+alla marcatura — introdurrebbe l'uso di un mutex distrutto a ogni rimozione
+del driver con un sensore agganciato.** Non e' un'inversione, e' peggio: e' un
+oggetto morto.
+
+**La patch 3/3 gia' inviata non e' toccata da questo**, verificato: legge solo
+`vb2_is_streaming(q)`, e `vb2_video_unregister_device()` ha gia' rilasciato la
+coda tenendo il lock, quindi il flag e' 0 e il ciclo non fa niente. E' salva,
+ma lo e' **per l'ordine dello smontaggio**, non per costruzione: vale la pena
+saperlo.
+
+### Cosa vuol dire per O2
+
+La forma della correzione va cambiata. Due strade, in ordine di preferenza:
+
+1. **Rimettere in ordine lo smontaggio**: chiamare `isys_notifier_cleanup()`
+   **prima** di `isys_unregister_devices()`. E' probabilmente giusto di per se'
+   — il notificatore andrebbe smontato mentre i nodi video esistono ancora — ma
+   e' un cambiamento al percorso di rimozione e vuole una sua giustificazione e
+   una sua prova. **Da valutare, non ancora fatto.**
+2. **Saltare le code il cui nodo video e' gia' sparito**, con un
+   `video_is_registered(&av->vdev)` prima di prendere il lock. Locale e a
+   basso rischio, ma e' un cerotto.
+
+Non si va oltre finche' non si sceglie: **O2 non si scrive nella forma
+originale.**
 
 ### O3 — `driver` puo' essere NULL, e la riga e' nostra
 
