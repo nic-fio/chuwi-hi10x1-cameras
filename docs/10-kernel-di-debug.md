@@ -584,3 +584,286 @@ Poi, in ordine di quanto sono informativi:
 Se dopo tutto questo non esce niente, allora — e solo allora — si puo' scrivere
 in una cover letter che i driver sono stati provati con KASAN e lockdep. Prima
 no.
+
+---
+
+## RICOSTRUITO — 2026-08-22, ore 11:21. Pronto all'avvio.
+
+Il kernel di debug era stato rimosso il 21/08 insieme al suo albero dei
+sorgenti, sul tablet **e** sul server di compilazione. Senza di lui il
+**prerequisito di O2** non e' verificabile, perche' nessuno dei due kernel
+rimasti ha `PROVE_LOCKING`:
+
+| Kernel | `PROVE_LOCKING` |
+|---|---|
+| 7.0 (`/mnt/vmlinuz`, quello in uso) | lockdep non attivo |
+| Debian 6.12.101 | `# CONFIG_PROVE_LOCKING is not set` |
+
+Quindi e' stato ricostruito da zero. **Non e' un kernel nuovo: e' la build #8
+riprodotta**, stessa base e stesso insieme di patch.
+
+| | |
+|---|---|
+| Versione | `7.2.0-rc7-intelcam-debug-00011-g7575251abc28` |
+| Base | `db2ddb871` = tag `v7.2-rc7`, clone shallow |
+| Immagine | `/mnt/vmlinuz-debug`, **29 389 824 byte** |
+| Moduli | `/lib/modules/7.2.0-rc7-intelcam-debug-00011-g7575251abc28`, 42 moduli |
+| Compilata su | `nicfio@192.168.0.2`, `-j20`, 3 min 14 s, **0 errori 0 warning** |
+
+I 29 389 824 byte sono **esattamente** la dimensione registrata per la build #8
+del 2026-08-12. E' la conferma piu' diretta che si sia riprodotta quella, e non
+qualcos'altro.
+
+### Le 11 patch applicate, in quest'ordine
+
+`serie/0001..0005` (bindings + i due driver + ipu-bridge), poi `ipu6-fix` (A1),
+`subdev-fix` (A2), `mc-pipeline-fix` (C1), `ipu6-lock-fix` (C2),
+`int3472-leak-fix` (C3), `ipu6-unbind-fix` (C4).
+
+**C2 non e' opzionale qui**, ed e' il motivo per cui e' dentro: senza,
+lockdep si spegne alla prima cattura e il prerequisito di O2 non si puo'
+misurare (vedi il limite documentato piu' sopra).
+
+Fuori resta la sola patch `int3472/` IMGCLKOUT, che `patches/wip/README.md`
+dichiara non necessaria e che non era nella #8.
+
+### Due scelte da non dimenticare alla prossima ricostruzione
+
+1. **`build-kernel.sh` non e' stato usato cosi' com'e'.** Genera la config con
+   `localmodconfig`, che legge i moduli *della macchina su cui gira*: sul
+   server avrebbe prodotto la config del server — niente camere, niente LPSS.
+   Si e' ripresa la config archiviata `config/intelcam-7.2.0-rc7-debug.config`
+   e si sono rifatti a mano tutti i controlli di sicurezza dello script.
+2. **Le patch vanno applicate e verificate IN SEQUENZA.** `serie/0002` e
+   `serie/0004` toccano le stesse righe di `MAINTAINERS` e
+   `drivers/media/i2c/Kconfig`: provarle tutte contro l'albero pulito da un
+   falso `[KO]` sulla 0004, e disapplicarne una sola dall'albero completo da un
+   falso `ASSENTE` sulla 0002. Il controllo buono e' `git am` in ordine, piu'
+   un `grep` del codice atteso nei sorgenti.
+
+### Avvio: c'e' una rete di sicurezza, stavolta
+
+`startup.nsh` e' stato modificato, **ma la riga del 7.0 e' intatta e sotto**:
+
+```
+#vmlinuz initrd=initrd.img boot=live quiet hostname=CHUWI
+vmlinuz-debug root=PARTUUID=dc363afc-02 rw
+vmlinuz initrd=initrd.img root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI
+```
+
+La UEFI Shell esegue le righe in ordine. Se `vmlinuz-debug` **non si carica**,
+la Shell passa alla riga dopo e riparte il 7.0 da sola. Se si carica, la terza
+riga non viene mai raggiunta.
+
+Il caso che la rete di sicurezza **non** copre e' il kernel che si carica e poi
+va in panico (root non montabile). Contro quello valgono i controlli fatti
+prima di compilare — `EXT4_FS`, `ATA`, `SATA_AHCI`, `BLK_DEV_SD`,
+`MSDOS_PARTITION`, `EFI_STUB` tutti `=y`, `PARTUUID=dc363afc-02` verificato con
+`lsblk` — e il fatto che questa stessa riga aveva gia' avviato la #8.
+
+A mano, premendo ESC al countdown, al prompt `Shell>`:
+
+```
+fs0:
+vmlinuz initrd=initrd.img root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI
+```
+
+Copia di `startup.nsh` originale: `/mnt/startup.nsh.bak-20260822-112118`
+(md5 `b7589921d91c3ad2db2eca3e0c9c2e76`).
+
+### Una volta dentro — il prerequisito di O2, che e' il motivo di tutto
+
+La ESP non si rimonta da sola (`/etc/fstab` e' vuoto):
+`sudo mount /dev/sda1 /mnt`.
+
+```bash
+uname -r                      # 7.2.0-rc7-intelcam-debug-00011-g7575251abc28
+cat /proc/lockdep_stats | grep debug_locks     # deve dire 1
+ls /sys/bus/i2c/devices/      # devono comparire i bus designware, non solo SMBus
+```
+
+Poi, **nell'ordine**, perche' lockdep si spegne al primo reperto e da li' in
+poi non misura piu' niente:
+
+```bash
+cd /home/nicfio/INTEL-CAMERA
+sudo ./scripts/prova-completa.sh              # attese 23 su 23
+grep debug_locks /proc/lockdep_stats          # ancora 1? se no, fermarsi e leggere dmesg
+sudo ./scripts/unbind-in-streaming.sh         # e' qui che passa isys_notifier_unbind()
+sudo dmesg | grep -E "possible circular locking|possible recursive|WARNING: .*lock|lockdep"
+```
+
+La domanda a cui rispondere e' una sola:
+
+> esiste un percorso che prende il lock del notificatore v4l2-async **tenendo
+> gia'** `av->mutex`?
+
+Se lockdep tace **ed e' rimasto acceso fino in fondo** (`debug_locks: 1` anche
+alla fine), il prerequisito e' soddisfatto e O2 si puo' scrivere: prendere
+`q->lock` attorno al controllo e alla marcatura in `isys_notifier_unbind()` non
+introduce un ordine inverso. Se invece lockdep segnala una dipendenza
+circolare, **O2 va ripensata**, perche' cosi' com'e' sostituirebbe un difetto
+con un altro peggiore.
+
+Attenzione a `debug_locks` alla fine e non solo all'inizio: un "nessun
+messaggio" con lockdep gia' spento non vuol dire niente.
+
+### Nota per la sessione che verra' dopo il riavvio
+
+Questa conversazione girava **sul tablet**, quindi il riavvio l'ha interrotta.
+Il contesto e' tutto qui e in `docs/11-osservazioni-review.md`. Da fare, oltre
+al prerequisito di O2:
+
+- **il ping sulla lista**: oggi e' il 22, la finestra 22-26 agosto e' aperta e
+  il terzo controllo del 21/08 non ha trovato nessuna risposta umana
+- **O7**, il controllo di NULL in `ipu6_isys_configure_stream_watermark()`, che
+  non ha bisogno di nessun kernel particolare e va in `ipu6-lock-fix/` prima
+  che parta l'invio 3
+
+---
+
+## ESITO DELL'AVVIO — 2026-08-22, ore 11:25-11:29. ANDATA MALE.
+
+**Il kernel di debug e' partito, ma la macchina era inservibile: nessuno
+schermo esterno e nessuna periferica del dock.** Nic ha dovuto ripristinare il
+PC da una chiavetta d'emergenza. La riga `vmlinuz-debug` in `startup.nsh` e'
+ora **commentata**: si avvia solo il 7.0.
+
+Non rimetterla senza aver prima letto tutto questo paragrafo.
+
+### Cosa e' successo davvero, dal journal (`journalctl -b -1`)
+
+Il kernel si e' caricato, la radice si e' montata, i moduli si sono caricati,
+il wifi e' partito e alle 11:27 GNOME era in piedi — due minuti dopo l'avvio,
+perche' con KASAN inline tutto va al rallentatore (UPower e' andato in timeout
+a 25 s). Quindi **la rete di sicurezza dello `startup.nsh` non e' mai
+scattata**: la riga si e' caricata benissimo, era il sistema a essere
+inservibile. E' esattamente il caso che avevo scritto di non coprire.
+
+Il guasto e' nel Type-C:
+
+```
+i915 0000:00:02.0: [drm] *ERROR* Port F/TC#3: timeout waiting for PHY ready
+WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect
+WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment   <- drm_WARN_ON(val == 0xffffffff)
+WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment
+```
+
+La porta USB-C che porta **sia** lo schermo esterno **sia** il dock con le
+periferiche non si aggancia: il PHY non risponde (`0xffffffff` = registro che
+legge tutti uno, cioe' silicio non alimentato o non presente), e le tre
+asserzioni si ripetono a ogni tentativo, fino alle 11:29:35, dentro
+`intel_dp_detect()` chiamata da `systemd-logind`.
+
+### Il punto che avrei dovuto vedere prima, e non ho visto
+
+**Questo guasto c'era gia' il 12 agosto, identico, in tutti e tre gli avvii
+del kernel di debug** — build #6, #7 e #8:
+
+| Avvio | Data | `Port F/TC#3: timeout waiting for PHY ready` |
+|---|---|---|
+| #6 | 12/08 09:03 | si' |
+| #7 | 12/08 09:13 | si' |
+| #8 | 12/08 10:52 | si' |
+| ricostruito | 22/08 11:25 | si' |
+
+Era scritto nel journal di quelle sessioni. Nessuno l'ha notato perche' quel
+giorno si guardavano solo KASAN, lockdep e le camere, e — questa e' la
+differenza — **il dock e lo schermo esterno probabilmente non erano
+attaccati**, quindi non e' costato niente a nessuno.
+
+Quindi non e' un caso sfortunato del 22: e' una proprieta' nota e riproducibile
+di questo kernel, che era gia' nei dati e che io non ho controllato prima di
+dire "pronto all'avvio".
+
+### Regole per la prossima volta
+
+1. **`startup.nsh` non deve mai avere il kernel di debug come prima riga.** Il
+   7.0 resta la riga che parte da sola. Il kernel di debug si sceglie **a
+   mano** al prompt `Shell>`, premendo ESC al countdown:
+   ```
+   fs0:
+   vmlinuz-debug root=PARTUUID=dc363afc-02 rw
+   ```
+   Cosi' l'unico modo di finire nel kernel di debug e' volerlo, e per uscirne
+   basta riavviare, senza chiavette.
+2. **Prima di proporre un avvio, leggere il journal degli avvii precedenti di
+   quello stesso kernel** (`journalctl -b -N | grep -Ei "ERROR|WARNING"`), non
+   solo la parte che interessa il progetto.
+3. **Sessione col kernel di debug: dock e schermo esterno scollegati**, si
+   lavora sullo schermo del tablet, si accetta che sia lento.
+4. Il buco resta aperto: **il prerequisito di O2 non e' ancora misurato.**
+
+### La causa vera: la config e' amputata, non e' il silicio
+
+Correzione al paragrafo qui sopra. Il `timeout waiting for PHY ready` non e' un
+difetto della porta: e' la conseguenza. **Nel kernel di debug manca l'intero
+sottosistema USB Type-C.**
+
+```
+config/intelcam-7.2.0-rc7-debug.config:   # CONFIG_TYPEC is not set
+config/intelcam-7.2.0-rc7.config:         # CONFIG_TYPEC is not set
+config/intelcam-7.2.config:                # CONFIG_TYPEC is not set
+```
+
+Senza `TYPEC` non esistono nemmeno `TYPEC_DP_ALTMODE`, `TYPEC_UCSI`,
+`UCSI_ACPI`, `USB_ROLE_SWITCH`, `USB4`. Nessuno negozia il DisplayPort sulla
+porta USB-C, quindi i915 aspetta un PHY che nessuno ha acceso e legge
+`0xffffffff`. Cadono insieme **schermo esterno e dock**, che stanno sulla
+stessa porta.
+
+Nel 7.0 in uso, invece, `drivers/usb/typec/` c'e' tutto: `typec.ko`,
+`altmodes/`, `ucsi/`, `mux/`.
+
+**Non e' l'unica cosa che manca.** Confronto fra i 210 moduli che il 7.0 sta
+usando adesso e tutto cio' che il kernel di debug ha (moduli + built-in):
+**108 su 210 sono assenti**.
+
+| Cosa manca | Effetto |
+|---|---|
+| tutto `TYPEC` + `USB4` | niente schermo esterno, niente dock |
+| `hid_multitouch` (`is not set`) | **touchscreen del tablet morto** |
+| 33 moduli audio (`snd_sof*`, `snd_soc*`, `snd_hda_codec_*`, soundwire) | niente audio |
+| 16 moduli termici (`int340x`, `processor_thermal_*`, `coretemp`, `rapl`) | niente gestione termica |
+| 4 moduli `tpm` | niente TPM |
+| `fuse`, `overlay`, `squashfs`, `configfs`, `kvm` | vari servizi non partono |
+
+Il touchscreen morto **piu'** il dock morto spiega perche' la macchina sembrava
+completamente bloccata: non c'era piu' nessun modo di darle un comando.
+
+**Perche' la config e' ridotta cosi':** `scripts/build-kernel.sh` la genera con
+`localmodconfig`, che tiene **solo i moduli caricati in quell'istante**. E'
+stata generata l'11/08 sul tablet, verosimilmente senza dock, senza schermo
+esterno e senza le altre periferiche attaccate: tutto quello che in quel
+momento non era in uso e' stato buttato via. Da 4455 moduli del 7.0 a 42.
+
+**Due cose che invece funzionavano** (dal journal, per correttezza):
+`iwlwifi` ha caricato il firmware e `wlo1` si e' **associato alla rete FAST**
+alle 11:25:15, handshake WPA completato; il Bluetooth ha caricato il firmware
+di `hci0` e `bluetoothd` e' partito. I driver c'erano. Mancavano pero' i
+profili `rfcomm` e `bnep`, e soprattutto non c'era piu' modo di *usare* la
+macchina per accorgersene.
+
+### Conseguenza per il progetto
+
+Cosi' com'e', **questo kernel non e' utilizzabile come macchina di lavoro**: fa
+girare KASAN e lockdep sui driver delle camere, e nient'altro. Per renderlo
+usabile va ricompilato partendo da una config **completa** (base: quella del
+kernel Debian, piu' le opzioni di debug), non da `localmodconfig`. Costa una
+compilazione lunga sul server e un altro riavvio.
+
+L'alternativa e' rinunciare alla misura di lockdep e dichiarare il
+prerequisito di O2 come **limite noto**.
+
+### DECISIONE — 2026-08-22: si lascia perdere
+
+Nic ha scelto la prima delle due strade: **il kernel di debug non si
+ricompila.** Il prerequisito di O2 e' chiuso come **limite noto** (vedi
+`docs/11-osservazioni-review.md`).
+
+Stato finale, da non cambiare senza chiedere:
+
+- `/mnt/startup.nsh` — riga `#vmlinuz-debug` **commentata**, parte solo il 7.0
+- `/mnt/vmlinuz-debug` e `/lib/modules/7.2.0-rc7-intelcam-debug-00011-g...` —
+  ancora sul disco, ma non piu' raggiungibili dall'avvio
+- nessuna misura dinamica ulteriore e' prevista su questa macchina

@@ -140,8 +140,17 @@ attorno al controllo e alla marcatura, per ogni coda.
 
 **Resta da verificare prima di scriverla**: che nessun percorso prenda il lock
 del notificatore v4l2-async tenendo gia' `av->mutex`, altrimenti si crea un
-ordine inverso. Si vede col kernel di debug e `PROVE_LOCKING` — che e' esatta-
-mente lo strumento con cui e' stata trovata la patch. Vedi `docs/10-kernel-di-debug.md`.
+ordine inverso.
+
+**Con lockdep non si verifichera'** — decisione di Nic del 2026-08-22, dopo che
+l'avvio del kernel di debug ha lasciato la macchina senza schermo esterno, dock
+ne' touchscreen (`docs/10-kernel-di-debug.md`, sezione "ANDATA MALE"). Quel
+kernel non e' utilizzabile su questo tablet e non si ricompila.
+
+Resta una sola strada praticabile, piu' debole ma legittima: **leggere i
+sorgenti** e verificare l'ordine dei lock sui percorsi di chiamata, come fa
+qualunque revisore umano. Se il risultato e' pulito, O2 si scrive dichiarando
+onestamente **come** e' stata verificata; se resta un dubbio, O2 non si invia.
 
 ### O3 — `driver` puo' essere NULL, e la riga e' nostra
 
@@ -313,11 +322,13 @@ Gli altri restano dove sono: **O3** in attesa di un umano, **O4** e **O9**
 candidati a patch nuove ma solo dopo averli provocati davvero, **O5**, **O6**
 e **O8** annotati e chiusi.
 
-**Prerequisito di O2**, da non saltare: verificare col kernel di debug e
-`PROVE_LOCKING` che nessun percorso prenda il lock del notificatore
-v4l2-async tenendo gia' `av->mutex`, altrimenti la correzione introduce un
-ordine inverso al posto di un difetto. Vuol dire far ripartire la macchina
-sul kernel di debug, quindi si concorda prima.
+**Prerequisito di O2 — CHIUSO COME LIMITE NOTO, 2026-08-22.** Serviva
+verificare con `PROVE_LOCKING` che nessun percorso prenda il lock del
+notificatore v4l2-async tenendo gia' `av->mutex`. **Non si fara' con lockdep:**
+il kernel di debug e' inservibile su questo tablet (config generata con
+`localmodconfig`, mancano 108 dei 210 moduli in uso, touchscreen e USB-C
+compresi) e si e' deciso di non ricompilarlo. La verifica, se si fa, si fa
+leggendo i sorgenti, e va dichiarata per quello che e'.
 
 ## Storico dei controlli
 
@@ -325,3 +336,4 @@ sul kernel di debug, quindi si concorda prima.
 |---|---|
 | 2026-08-13 | Primo controllo dopo l'invio. Nessuna risposta umana. Thread integro su lore, 3 patch in patchwork stato *New*. Trovata la review Sashiko del 12/08 — da li' O2..O9. La lista e' attiva (Ailus, Verkuil, Pinchart hanno scritto il 10 e l'11), quindi il silenzio non e' un problema di recapito |
 | 2026-08-15 | Secondo controllo. **Niente di nuovo.** Thread lore fermo a 4 messaggi (`newest: 2026-08-12`), ricerca globale `?q=nicfio` 4 risultati su 4 tutti nostri. Le tre patch restano *New*, senza delegato; unica voce in Checks sempre `external-ci/sashiko` → `warning`, nessun check aggiunto. Lista molto attiva il 13 e il 14 (Ruoyu Wang, Pengpeng Hou, Brian Daniels, Thierry Reding, Ribalda), quindi e' coda di review, non lista ferma. Nessuna azione: 3 giorni dall'invio, la finestra del ping e' il 22-26 agosto |
+| 2026-08-21 | Terzo controllo, un giorno prima della data fissata. **Nessuna risposta umana, di nuovo.** Thread lore fermo a 4 messaggi (`newest: 2026-08-12`); ricerca globale `?q=nicfio` 4 su 4 tutti nostri; le tre patch sempre *New*, senza delegato, unica voce in Checks `external-ci/sashiko` → `warning`. Lista attivissima (ultimo messaggio il 21 alle 06:40 UTC), quindi resta coda di review. Due cose viste di passaggio, nessuna delle due e' una risposta a noi: (a) `[syzbot] KASAN: slab-use-after-free Read in __vb2_queue_cancel (2)` del 20/08 — **non ci riguarda**, e' il percorso d'errore di `em28xx_v4l2_init()` su USB, non l'unbind di un sensore; (b) `[PATCH 0/2] Fix static analyser and compiler warnings in int3472` di **Sakari Ailus** del 20/08 — tocca `tps68470.c` e `discrete.c`, la nostra C3 tocca `clk_and_regulator.c`: **nessuna sovrapposizione di file, nessun conflitto**. Vale la pena saperlo lo stesso: Ailus e' fra i CC dell'invio 1 e in questi giorni sta lavorando su int3472 |
