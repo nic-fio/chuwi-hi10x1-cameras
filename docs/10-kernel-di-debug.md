@@ -861,9 +861,16 @@ Nic ha scelto la prima delle due strade: **il kernel di debug non si
 ricompila.** Il prerequisito di O2 e' chiuso come **limite noto** (vedi
 `docs/11-osservazioni-review.md`).
 
-Stato finale, da non cambiare senza chiedere:
+**Pulizia fatta da Nic in giornata.** Stato finale, verificato:
 
-- `/mnt/startup.nsh` — riga `#vmlinuz-debug` **commentata**, parte solo il 7.0
-- `/mnt/vmlinuz-debug` e `/lib/modules/7.2.0-rc7-intelcam-debug-00011-g...` —
-  ancora sul disco, ma non piu' raggiungibili dall'avvio
+- `/mnt/vmlinuz-debug` — **rimosso**
+- `/lib/modules/7.2.0-rc7-intelcam-debug-00011-g7575251abc28` — **rimosso**
+- `/mnt/startup.nsh` — tornato all'originale a due righe, `md5
+  b7589921d91c3ad2db2eca3e0c9c2e76`, **identico** alla copia salvata prima
+  della modifica del 22/08. Non e' rattoppato: e' proprio quello di prima
 - nessuna misura dinamica ulteriore e' prevista su questa macchina
+
+**Quello che resta, e che serve:** l'albero dei sorgenti su
+`nicfio@192.168.0.2:~/linux`, con i 12 commit applicati (HEAD `b3366efad`).
+E' la copia autorevole delle patch da quando quella sul tablet e' stata
+rimossa il 21/08. Non e' un residuo del kernel di debug e non va cancellato.
