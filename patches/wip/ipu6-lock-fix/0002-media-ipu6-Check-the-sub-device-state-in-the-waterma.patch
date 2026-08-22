@@ -1,0 +1,87 @@
+From b3366efade565881c06d791beb0deb528baaa2aa Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Sat, 22 Aug 2026 10:40:29 +0000
+Subject: [PATCH] media: ipu6: Check the sub-device state in the watermark
+ configuration
+
+ipu6_isys_configure_stream_watermark() locks the active state of the CSI-2
+sub-device and reads the source format out of it without checking either
+return value:
+
+	struct v4l2_subdev_state *state =
+		v4l2_subdev_lock_and_get_active_state(&csi2->asd.sd);
+
+	lanes = csi2->nlanes;
+	format = *v4l2_subdev_state_get_format(state, 0, av->source_stream);
+
+v4l2_subdev_lock_and_get_active_state() returns NULL for a sub-device that
+has no active state, and v4l2_subdev_state_get_format() returns NULL for a
+pad or a stream that is not present in the state. The first is dereferenced
+by the second and then handed to v4l2_subdev_unlock_state(), the second is
+dereferenced immediately.
+
+The checks used to be there. Before commit 58410f62e25d the code called
+ipu6_isys_get_stream_pad_fmt(), which returned -EINVAL when the accessor
+gave NULL, and the caller only computed the pixel rate under "if (!ret)".
+Converting to the state accessors dropped both the helper and that path.
+
+Restore the previous behaviour rather than invent a new one: on failure
+leave pixel_rate at zero, which the existing check below already handles by
+disabling iwake and warning about it. The function returns void and its
+caller has no error path, so this is also the only thing it can do.
+
+This is the same regression, introduced by the same commit, that the
+previous patch in this series fixes in ipu6_isys_fw_pin_cfg(). It is a
+separate patch because there the state was additionally taken without
+holding its lock, while here the locking is already correct and only the
+checks are missing.
+
+Reported by an AI review bot on the linux-media CI, and verified against
+the source.
+
+Fixes: 58410f62e25d ("media: ipu6: Drop custom functions to obtain sd state information")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
+---
+ .../media/pci/intel/ipu6/ipu6-isys-video.c    | 26 ++++++++++++-------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
+index 56e239e09..d6db3dd40 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-isys-video.c
+@@ -792,16 +792,22 @@ void ipu6_isys_configure_stream_watermark(struct ipu6_isys_video *av,
+ 	csi2 = ipu6_isys_subdev_to_csi2(av->stream->asd);
+ 	link_freq = ipu6_isys_csi2_get_link_freq(csi2);
+ 	if (link_freq > 0) {
+-		struct v4l2_subdev_state *state =
+-			v4l2_subdev_lock_and_get_active_state(&csi2->asd.sd);
+-
+-		lanes = csi2->nlanes;
+-		format = *v4l2_subdev_state_get_format(state, 0,
+-						       av->source_stream);
+-		bpp = ipu6_isys_mbus_code_to_bpp(format.code);
+-		pixel_rate = mul_u64_u32_div(link_freq, lanes * 2, bpp);
+-
+-		v4l2_subdev_unlock_state(state);
++		struct v4l2_subdev_state *state;
++		struct v4l2_mbus_framefmt *s_fmt;
++
++		state = v4l2_subdev_lock_and_get_active_state(&csi2->asd.sd);
++		if (state) {
++			s_fmt = v4l2_subdev_state_get_format(state, 0,
++							     av->source_stream);
++			if (s_fmt) {
++				lanes = csi2->nlanes;
++				format = *s_fmt;
++				bpp = ipu6_isys_mbus_code_to_bpp(format.code);
++				pixel_rate = mul_u64_u32_div(link_freq,
++							     lanes * 2, bpp);
++			}
++			v4l2_subdev_unlock_state(state);
++		}
+ 	}
+ 
+ 	av->watermark.pixel_rate = pixel_rate;
+-- 
+2.47.3
+

@@ -24,7 +24,7 @@ delle condizioni in fondo.
 |---|---|---|---|
 | 1 | `invio-1-difetti-mainline/` — 3 patch + cover | inviato 2026-08-12 12:53 | **in attesa**: nessuna risposta umana, 1 review automatica |
 | 2 | `mc-pipeline-fix/` | non inviato | trattenuto in attesa della prima review vera |
-| 3 | `ipu6-lock-fix/` | non inviato | trattenuto — **e da modificare prima**, vedi O7 |
+| 3 | `ipu6-lock-fix/` — **2 patch dal 2026-08-22** | non inviato | trattenuto — **O7 fatto**, la modifica che mancava c'e' |
 | 4 | `serie/` — i due driver, 5 patch | non inviato | trattenuto |
 | 5 | `int3472-leak-fix/` + `int3472/` | non inviato | trattenuto |
 
@@ -245,9 +245,30 @@ Quindi il bot ha ragione a meta' sulla seconda funzione — il lock c'e', il
 controllo no — e quella meta' e' un buco vero della nostra patch: copre una
 delle due funzioni con lo stesso difetto nello stesso file.
 
-**Azione, prima di inviare l'invio 3**: estendere `ipu6-lock-fix/` al controllo
-di NULL in `configure_stream_watermark()`, o dire nel commit message perche' no.
-Un revisore che guarda quel file vede tutte e due le occorrenze.
+**FATTO — 2026-08-22.** `ipu6-lock-fix/` e' ora di due patch: la 0002 aggiunge
+i controlli di NULL in `configure_stream_watermark()`. E' una patch separata e
+non un'aggiunta alla 0001 perche' sono due difetti diversi — li' un lock
+mancante, qui solo i controlli — ma portano lo stesso `Fixes:`.
+
+Il tag e' **verificato sul diff vero**, scaricato da git.kernel.org, non
+dedotto: prima di `58410f62e25d` la funzione chiamava
+`ipu6_isys_get_stream_pad_fmt()`, che tornava `-EINVAL` quando l'accessore dava
+NULL, e il calcolo del pixel rate stava sotto `if (!ret)`. Quel commit ha tolto
+l'aiutante e con lui il controllo.
+
+La correzione non inventa un comportamento nuovo: in caso di errore lascia
+`pixel_rate` a zero, che e' esattamente cio' che succedeva prima, e il
+controllo gia' presente poco sotto disabilita iwake e lo segnala. La funzione
+torna `void` e il chiamante non ha percorso d'errore, quindi non c'e' altro da
+fare.
+
+Verifiche fatte: `checkpatch --strict` **0 errori 0 check**; compila pulita con
+`W=1`. **Non provata a runtime** — richiederebbe il kernel di debug, che e'
+stato abbandonato (`docs/10-kernel-di-debug.md`); il difetto e' comunque un
+controllo di NULL mancante su un percorso che in condizioni normali non scatta.
+
+**Resta da fare quando l'invio 3 parte**: assemblare le due patch come serie
+`[PATCH 1/2]` e `[PATCH 2/2]`.
 
 ### O8 — Grosso, strutturale, non nostro
 

@@ -19,7 +19,7 @@ in fondo.
 | `ipu6-fix/` | la correzione dell'oops di `ipu6-isys` |
 | `subdev-fix/` | la correzione dell'oops di `subdev_open()` |
 | `mc-pipeline-fix/` | **2026-08-12** — use-after-free in `__media_pipeline_stop()` |
-| `ipu6-lock-fix/` | **2026-08-12** — stato del sub-device letto senza lock |
+| `ipu6-lock-fix/` | **2026-08-12** — stato del sub-device letto senza lock; **2 patch dal 22/08**, vedi O7 |
 | `int3472-leak-fix/` | **2026-08-12** — perdita del ritorno di `_DSM` |
 | `ipu6-unbind-fix/` | **2026-08-12** — `DQBUF` appeso per sempre dopo l'`unbind` |
 | `invio-1-difetti-mainline/` | le tre qui sopra **assemblate in serie** con cover letter: e' questa la cartella da inviare, non le tre singole |
@@ -61,10 +61,28 @@ vista. Dettagli e prove in `docs/10-kernel-di-debug.md`.
 controller invece di `ipu6-isys`, e altri manutentori. Tenerle insieme
 significherebbe far aspettare l'una per l'altra.
 
-**`ipu6-lock-fix/` va modificata prima di partire.** Una review automatica
-sull'invio 1 ha fatto notare che lo stesso ritorno non controllato c'e' anche in
-`ipu6_isys_configure_stream_watermark()`, che la nostra patch non tocca — li' il
-lock c'e' gia', il controllo di NULL no. Dettagli e verifica in
+**`ipu6-lock-fix/` e' stata estesa il 2026-08-22, ed e' ora di due patch.**
+Una review automatica sull'invio 1 aveva fatto notare che lo stesso ritorno non
+controllato c'e' anche in `ipu6_isys_configure_stream_watermark()`, che la
+prima patch non tocca — li' il lock c'e' gia', il controllo di NULL no (O7).
+
+| File | Cosa fa |
+|---|---|
+| `0001-...-Hold-the-sub-device-state-lock-...` | `fw_pin_cfg()`: prende il lock **e** controlla i due ritorni |
+| `0002-...-Check-the-sub-device-state-in-the-waterma...` | `configure_stream_watermark()`: controlla `state` e `s_fmt`, il lock c'era gia' |
+
+Sono due patch e non una perche' sono due difetti diversi: la prima corregge un
+lock mancante, la seconda solo dei controlli mancanti. Portano lo **stesso**
+`Fixes: 58410f62e25d`, verificato scaricando il diff del commit da git.kernel.org:
+prima di quel commit il controllo c'era, sotto forma di `if (!ret)` attorno al
+calcolo del pixel rate.
+
+`checkpatch --strict` sulla 0002: **0 errori, 0 check**; le due avvertenze
+`Unknown commit id` sono un artefatto del clone shallow sul server, non un
+difetto della patch. Compila pulita anche con `W=1`.
+
+**Quando l'invio 3 parte, le due vanno assemblate come serie** (`[PATCH 1/2]` e
+`[PATCH 2/2]`), non spedite come due messaggi slegati. Dettagli e verifica in
 `docs/11-osservazioni-review.md` § O7.
 
 **`int3472-leak-fix/` e' indipendente da `int3472/`**, benche' tocchino la
