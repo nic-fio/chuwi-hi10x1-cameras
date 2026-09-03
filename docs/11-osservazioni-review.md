@@ -22,7 +22,7 @@ delle condizioni in fondo.
 
 | # | Cosa | Quando | Stato |
 |---|---|---|---|
-| 1 | `invio-1-difetti-mainline/` — 3 patch + cover | inviato 2026-08-12 12:53 | **in attesa**: nessuna risposta umana, 1 review automatica |
+| 1 | `invio-1-difetti-mainline/` — 3 patch + cover | inviato 2026-08-12 12:53 | **in attesa**: nessuna risposta umana, 1 review automatica. Si applica ancora a `v7.3-rc1`; **non** al ramo `ipu6`, vedi O10 |
 | 2 | `mc-pipeline-fix/` | non inviato | trattenuto in attesa della prima review vera |
 | 3 | `ipu6-lock-fix/` — **2 patch dal 2026-08-22** | non inviato | trattenuto — **O7 fatto**, la modifica che mancava c'e' |
 | 4 | `serie/` — i due driver, 5 patch | non inviato | trattenuto |
@@ -75,6 +75,7 @@ se dobbiamo rispondere o no.
 | O7 | 2026-08-12 | bot | 1/3 | High | no | ritorni di `v4l2_subdev_state_get_*()` non controllati | **tocca l'invio 3**, vedi sotto |
 | O8 | 2026-08-12 | bot | 3/3 | Critical | no | `video_device_release_empty` + devres: UAF alla chiusura | solo annotato |
 | O9 | 2026-08-12 | bot | 3/3 | High | no | doppio ciclo sbagliato nel percorso d'errore di `isys_register_video_devices()` | **verificato** — candidato a patch nuova |
+| O10 | 2026-09-03 | noi | 1/3 | — | no | la serie IPU7 in coda nel ramo `ipu6` riscrive le due funzioni che la patch 1 corregge | **verificato, patch rifatta** |
 
 Da O2 a O9 sono tutte dello stesso messaggio: **Sashiko**, un bot di review AI
 agganciato alla CI di `linux-media` (`sashiko-bot@kernel.org`), passato il
@@ -380,6 +381,63 @@ hardware particolare per essere argomentato — ma richiede di essere **provato*
 e provocare un fallimento di `ipu6_isys_video_init()` non e' immediato. Secondo
 candidato a patch nuova, dopo O4.
 
+### O10 — La patch 1 non si applica piu' al ramo `ipu6` del media tree
+
+Trovato al settimo controllo, il 2026-09-03, guardando cosa si e' mosso sulla
+lista mentre noi aspettavamo.
+
+Antti Laakso (Intel) ha mandato **"media: ipu6: Add support for ipu7
+hardware"**, 44 patch: v1 e v2 il 21/08, v3 il 27/08. La sua **28/44, "media:
+ipu6: Split ipu6 csi2 stream enable/disable"**, riscrive
+`ipu6_isys_csi2_enable_streams()` e `ipu6_isys_csi2_disable_streams()` — le
+due funzioni, e solo quelle, che corregge la nostra patch 1/3 — e sposta
+proprio la chiamata che noi riordiniamo.
+
+Non e' una proposta qualsiasi: **la serie e' gia' applicata** sul ramo `ipu6`
+di `git.linuxtv.org/sailus/media_tree.git`, che al 2026-09-03 punta a
+`6f6d9729301f` ("media: ipu6: Enable support for IPU 7 and IPU 7.5").
+
+**Verificato scaricando i file di quel ramo, non dedotto:**
+
+| | Esito |
+|---|---|
+| la patch 1/3 v1 sul ramo `ipu6` | **non applica** — `git apply --check` fallisce a `ipu6-isys-csi2.c:392` |
+| il difetto nel codice nuovo | **c'e' ancora**: `remote_pad` dereferenziato senza controllo in tutt'e due le funzioni |
+| la patch 2/3 | **regge**: `subdev_open()` in `v4l2-subdev.c` e' identico su `master` |
+| la patch 3/3 | **regge**: `isys_async_ops` ha ancora solo `.bound` e `.complete`; `isys_notifier_bound()`, `struct sensor_async_sd`, `av[NR_OF_CSI2_SRC_PADS]` e `ipu6_isys_queue.vbq` sono tutti al loro posto |
+| le tre patch su mainline | **applicano pulite** su `v7.3-rc1`: nessuno dei tre file e' cambiato in mainline dall'invio |
+
+Quindi il conflitto non e' con mainline, e' con il ramo di lavoro del
+manutentore — cioe' arrivera' in mainline con la 7.4, non prima.
+
+**Cosa si e' fatto, il 2026-09-03:**
+
+- `patches/wip/ipu6-fix-su-ramo-ipu7/0001-*.patch` — la patch 1 riscritta sul
+  codice nuovo. Stessa correzione, forma diversa: nel `disable` il ricevitore
+  si ferma prima (ora con le due varianti `IS_IPU7(isp)`), poi si cerca il pad
+  e si esce se non c'e'. Stesso `Fixes:`, che resta giusto perche' il refactor
+  non ha introdotto il difetto, lo ha solo spostato. `checkpatch --strict`:
+  **0 errori, 0 check** (l'unico warning e' `Unknown commit id`, il falso
+  positivo noto). **Non compilata**: non c'e' piu' un albero del kernel ne' sul
+  tablet ne' sul server, ed e' dichiarato dentro la patch stessa, sotto il
+  `---`
+- `patches/wip/risposta-conflitto-ipu7.txt` — il messaggio per il thread, con
+  la patch dentro dopo la riga di forbici. Provato con `git am --scissors` su
+  un albero di prova: si applica e produce il commit giusto, con Nic come
+  autore. **SPEDITO da Nic il 2026-09-03 alle 22:28:10 CEST** (20:28:20 UTC),
+  `Message-ID: <20260903202820.8401-1-nicfio@gmail.com>`, `Result: 250`, un
+  messaggio solo. **Recapito verificato alle 22:45**: il thread e' passato da 5 a
+  **6 messaggi**, il sesto e' il nostro (`2026-09-03 20:28 UTC`), agganciato
+  sotto la cover, con la patch leggibile dopo le forbici
+
+**Perche' un messaggio nel thread e non una v2.** Le tre patch inviate si
+applicano ancora a mainline: una v2 che non cambia il codice non e' una v2,
+e' un secondo ping travestito, e riazzera la coda di review. Il messaggio
+invece porta un fatto nuovo e utile a chi tocca quelle righe adesso — la
+serie IPU7 si porta dietro il difetto — e mette il manutentore davanti a una
+scelta (quale albero preferisce), che e' il modo educato di farsi rispondere.
+Antti Laakso e' in copia perche' il rilievo riguarda la sua serie.
+
 ---
 
 ## Quando si manda la v2
@@ -433,3 +491,6 @@ leggendo i sorgenti, e va dichiarata per quello che e'.
 | 2026-08-15 | Secondo controllo. **Niente di nuovo.** Thread lore fermo a 4 messaggi (`newest: 2026-08-12`), ricerca globale `?q=nicfio` 4 risultati su 4 tutti nostri. Le tre patch restano *New*, senza delegato; unica voce in Checks sempre `external-ci/sashiko` → `warning`, nessun check aggiunto. Lista molto attiva il 13 e il 14 (Ruoyu Wang, Pengpeng Hou, Brian Daniels, Thierry Reding, Ribalda), quindi e' coda di review, non lista ferma. Nessuna azione: 3 giorni dall'invio, la finestra del ping e' il 22-26 agosto |
 | 2026-08-21 | Terzo controllo, un giorno prima della data fissata. **Nessuna risposta umana, di nuovo.** Thread lore fermo a 4 messaggi (`newest: 2026-08-12`); ricerca globale `?q=nicfio` 4 su 4 tutti nostri; le tre patch sempre *New*, senza delegato, unica voce in Checks `external-ci/sashiko` → `warning`. Lista attivissima (ultimo messaggio il 21 alle 06:40 UTC), quindi resta coda di review. Due cose viste di passaggio, nessuna delle due e' una risposta a noi: (a) `[syzbot] KASAN: slab-use-after-free Read in __vb2_queue_cancel (2)` del 20/08 — **non ci riguarda**, e' il percorso d'errore di `em28xx_v4l2_init()` su USB, non l'unbind di un sensore; (b) `[PATCH 0/2] Fix static analyser and compiler warnings in int3472` di **Sakari Ailus** del 20/08 — tocca `tps68470.c` e `discrete.c`, la nostra C3 tocca `clk_and_regulator.c`: **nessuna sovrapposizione di file, nessun conflitto**. Vale la pena saperlo lo stesso: Ailus e' fra i CC dell'invio 1 e in questi giorni sta lavorando su int3472 |
 | 2026-08-22 | **Quarto controllo**, primo giorno della finestra del ping. **Ancora nessuna risposta umana.** Thread lore fermo a 4 messaggi (`newest: 2026-08-12`); ricerca globale `?q=nicfio` 4 su 4 tutti nostri; patch ancora *New*, senza delegato, unica voce in Checks `external-ci/sashiko` &rarr; `warning`. Novita' di contesto, non di merito: **la 7.2 e' uscita e la finestra di merge della 7.3 e' aperta** — periodo in cui i manutentori sono al massimo del carico. Verificato che la serie regge lo stesso: nessuno dei tre file toccati e' cambiato fra `v7.2-rc7` e `v7.2`, quindi si applica identica. Preparato il testo del ping in `patches/wip/ping-invio-1.txt` e **INVIATO da Nic alle 13:22:54 CEST** (11:22:58 UTC), `Message-ID: <20260822112258.7727-1-nicfio@gmail.com>`, `Result: 250`. Il primo tentativo era fallito sull'autenticazione (Gmail vuole una password per le app, non quella dell'account): nessun messaggio era uscito, quindi **non ci sono doppioni**. **Verificato su lore**: il thread e' passato da 4 a 5 messaggi e il ping compare come quarta risposta alla cover (`2026-08-22 11:22`), quindi e' agganciato al thread e non ha aperto un discorso separato |
+| 2026-08-23 | **Quinto controllo**, il giorno dopo il ping. Nessuna novita': thread sempre a **5 messaggi** (l'ultimo e' il nostro ping), `?q=nicfio` 5 su 5 nostri, le tre patch ancora *New* senza delegato. Nota di metodo: l'API di patchwork (`patchwork.linuxtv.org/api/1.2/patches/?submitter=...`) risponde a `curl` senza Anubis, quindi lo stato delle patch si controlla senza browser; per il thread su lore il browser serve ancora |
+| 2026-08-24 | **Sesto controllo.** Tutto invariato: thread a 5 messaggi, `?q=nicfio` 5 su 5 nostri, patch *New* senza delegato. Finestra di merge della 7.3 ancora aperta |
+| 2026-09-03 | **Settimo controllo**, dodici giorni dopo il ping. **Ancora nessuna risposta umana**: thread a 5 messaggi, `?q=nicfio` 5 su 5 nostri, le tre patch *New* senza delegato, e in Gmail non c'e' piu' nulla della lista (la copia di ritorno del ping non e' nemmeno in Cestino). La novita' non e' nel thread ma **intorno**: (a) la pull request `[GIT PULL for v7.3] media updates` e' partita il 19/08 e la nostra serie non c'era; (b) **la serie IPU7 di Antti Laakso e' entrata nel ramo `ipu6` di Sakari e riscrive le funzioni della patch 1** — e' O10, con tutte le verifiche; (c) **Sakari e' attivissimo**: risponde in poche ore ad altre segnalazioni IPU6 (il filo di D. Manresa su `ipu-bridge` che non si rilega dopo l'unbind, 27-31/08, e' arrivato a una serie applicata in pochi giorni), quindi il silenzio sulla nostra serie non e' assenza dalla lista. Preparati la patch rifatta e il messaggio per il thread, e **il messaggio e' partito la sera stessa alle 22:28:10 CEST** (`Result: 250`) |

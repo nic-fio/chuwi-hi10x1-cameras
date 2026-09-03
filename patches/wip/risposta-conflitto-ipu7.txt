@@ -1,0 +1,114 @@
+From: Nicola Fiorillo <nicfio@gmail.com>
+To: linux-media@vger.kernel.org
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, bingbu.cao@intel.com, tian.shu.qiu@intel.com, antti.laakso@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] media: Two oopses and a hang when unbinding a streaming sensor
+In-Reply-To: <20260812105305.32447-1-nicfio@gmail.com>
+References: <20260812105305.32447-1-nicfio@gmail.com>
+
+A note on how this series meets the IPU7 work, since the two touch the
+same lines.
+
+The series still applies to v7.3-rc1 unchanged: none of the three files it
+touches has changed in mainline since it was posted.
+
+It does not apply to the ipu6 branch of the media tree. "media: ipu6:
+Split ipu6 csi2 stream enable/disable" reworks both
+ipu6_isys_csi2_enable_streams() and ipu6_isys_csi2_disable_streams(),
+which is what patch 1/3 changes. The rework is a refactor and leaves the
+bug in place: in the new code remote_pad is still dereferenced without
+being checked in both functions, so unbinding a sensor mid capture oopses
+there as well.
+
+Patch 1/3 rewritten on top of 6f6d9729301f is below, in case that is the
+more convenient base. I am happy to resend the series against whichever
+tree you prefer -- please just say which. Patches 2/3 and 3/3 are not
+affected either way: subdev_open() is unchanged in mainline, and
+isys_async_ops still has no .unbind() in the ipu6 branch either.
+
+Thanks,
+Nicola
+
+-- >8 --
+From: Nicola Fiorillo <nicfio@gmail.com>
+Subject: [PATCH] media: ipu6: Check the remote pad before dereferencing it
+
+Unbinding a sensor driver while a capture is running oopses the kernel:
+
+  BUG: kernel NULL pointer dereference, address: 0000000000000020
+  RIP: 0010:ipu6_isys_csi2_disable_streams+0x3c/0x70 [intel_ipu6_isys]
+  Call Trace:
+   v4l2_subdev_disable_streams+0x1b7/0x370 [videodev]
+   ipu6_isys_video_set_streaming+0x20f/0x930 [intel_ipu6_isys]
+   stop_streaming+0x102/0x110 [intel_ipu6_isys]
+   __vb2_queue_cancel+0x2a/0x2d0 [videobuf2_common]
+   vb2_core_queue_release+0x22/0x80 [videobuf2_common]
+   _vb2_fop_release+0x58/0xb0 [videobuf2_v4l2]
+   v4l2_release+0xbd/0xd0 [videodev]
+   __fput+0xde/0x2a0
+
+media_pad_remote_pad_first() returns NULL once the sensor is gone and the
+link with it, but both the enable and the disable path dereference the
+result unconditionally. The faulting address is the offset of the entity
+member in struct media_pad.
+
+Check it. On enable there is nothing to stream from, so refuse with
+-ENOLINK. On disable the receiver still has to be stopped, so stop it and
+skip only the call towards the sensor that is no longer there.
+
+Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 6.12.86, with
+the CSI-2 port of a sensor being unbound mid capture.
+
+Fixes: 3a5c59ad926b ("media: ipu6: Rework CSI-2 sub-device streaming control")
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
+---
+Based on 6f6d9729301f ("media: ipu6: Enable support for IPU 7 and IPU 7.5").
+Not build tested: the machine that reproduced the oops has no kernel tree
+available at the moment, and the IPU7 paths cannot be exercised here in any
+case. The change adds no new identifiers and no new call sites; it is the
+same fix already tested on IPU6 with the mainline version of the patch.
+
+ drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c b/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
+index 160eace..1ad0a6a 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
+@@ -447,6 +447,9 @@ static int ipu6_isys_csi2_enable_streams(struct v4l2_subdev *sd,
+ 	int ret;
+ 
+ 	remote_pad = media_pad_remote_pad_first(&sd->entity.pads[CSI2_PAD_SINK]);
++	if (!remote_pad)
++		return -ENOLINK;
++
+ 	remote_sd = media_entity_to_v4l2_subdev(remote_pad->entity);
+ 
+ 	sink_streams =
+@@ -486,14 +489,21 @@ static int ipu6_isys_csi2_disable_streams(struct v4l2_subdev *sd,
+ 		v4l2_subdev_state_xlate_streams(state, pad, CSI2_PAD_SINK,
+ 						&streams_mask);
+ 
+-	remote_pad = media_pad_remote_pad_first(&sd->entity.pads[CSI2_PAD_SINK]);
+-	remote_sd = media_entity_to_v4l2_subdev(remote_pad->entity);
+-
+ 	if IS_IPU7(isp)
+ 		ipu7_isys_csi2_stream_disable(csi2);
+ 	else
+ 		ipu6_isys_csi2_stream_disable(csi2);
+ 
++	/*
++	 * The link is gone if the sensor driver was unbound while streaming.
++	 * Stop the receiver anyway, there is just no one left to tell.
++	 */
++	remote_pad = media_pad_remote_pad_first(&sd->entity.pads[CSI2_PAD_SINK]);
++	if (!remote_pad)
++		return 0;
++
++	remote_sd = media_entity_to_v4l2_subdev(remote_pad->entity);
++
+ 	v4l2_subdev_disable_streams(remote_sd, remote_pad->index, sink_streams);
+ 
+ 	return 0;
+-- 
+2.47.3
+

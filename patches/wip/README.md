@@ -23,13 +23,19 @@ in fondo.
 | `int3472-leak-fix/` | **2026-08-12** — perdita del ritorno di `_DSM` |
 | `ipu6-unbind-fix/` | **2026-08-12** — `DQBUF` appeso per sempre dopo l'`unbind` |
 | `invio-1-difetti-mainline/` | le tre qui sopra **assemblate in serie** con cover letter: e' questa la cartella da inviare, non le tre singole |
+| `ipu6-fix-su-ramo-ipu7/` | **2026-09-03** — la patch 1 dell'invio 1 rifatta sul ramo `ipu6` del media tree, dove la serie IPU7 ha riscritto le due funzioni. Vedi O10 in `docs/11` |
+| `risposta-conflitto-ipu7.txt` | **2026-09-03** — il messaggio per il thread che segnala il conflitto, con la patch qui sopra dentro. **Spedito il 03/09 alle 22:28** |
+| `ping-invio-1.txt` | il ping del 22/08, gia' spedito |
 | `cover-letter.txt` | il testo della cover, modificabile a mano |
 | `destinatari.txt` | output di `get_maintainer.pl` per tutti e tre |
 | `gc5035.c`, `gc8034.c`, `galaxycore,gc*.yaml` | copie di lettura |
 | `int3472-clk_and_regulator.c` | copia del file toccato dalla patch int3472 |
 
-La copia autorevole vive in `/home/nicfio/linux`, dove i sei commit sono
-applicati sopra mainline 7.2-rc7. Le copie qui si rigenerano da li'.
+La copia autorevole viveva in `/home/nicfio/linux`, dove i sei commit erano
+applicati sopra mainline 7.2-rc7. **Quell'albero non c'e' piu'** (pulizia del
+2026-08-21) e nemmeno quello del server, quindi da qui in avanti le patch si
+scrivono e si verificano sui file scaricati dal tree pubblico: `checkpatch` e
+`git apply --check` si possono fare comunque, **compilare no**.
 
 ## Tre invii indipendenti, non uno
 
