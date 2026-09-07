@@ -65,8 +65,8 @@ linux-kernel@vger.kernel.org
 
 ### 0001-BOZZA-media-ipu6-Check-the-remote-pad-before-derefer.patch
 Sakari Ailus <sakari.ailus@linux.intel.com>
-Bingbu Cao <bingbu.cao@intel.com>
-Tianshu Qiu <tian.shu.qiu@intel.com>
+~~Bingbu Cao <bingbu.cao@intel.com>~~      INDIRIZZO MORTO — vedi in fondo
+~~Tianshu Qiu <tian.shu.qiu@intel.com>~~   INDIRIZZO MORTO — vedi in fondo
 Mauro Carvalho Chehab <mchehab@kernel.org>
 linux-media@vger.kernel.org
 linux-kernel@vger.kernel.org
@@ -99,8 +99,8 @@ linux-kernel@vger.kernel.org
 
 ## ipu6-lock-fix — stato del sub-device letto senza lock (C2)
 Sakari Ailus <sakari.ailus@linux.intel.com>
-Bingbu Cao <bingbu.cao@intel.com>
-Tianshu Qiu <tian.shu.qiu@intel.com>
+~~Bingbu Cao <bingbu.cao@intel.com>~~      INDIRIZZO MORTO — vedi in fondo
+~~Tianshu Qiu <tian.shu.qiu@intel.com>~~   INDIRIZZO MORTO — vedi in fondo
 Mauro Carvalho Chehab <mchehab@kernel.org>
 linux-media@vger.kernel.org
 linux-kernel@vger.kernel.org
@@ -112,3 +112,41 @@ Hans de Goede <hansg@kernel.org>
 "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
 platform-driver-x86@vger.kernel.org
 linux-kernel@vger.kernel.org
+
+# ---------------------------------------------------------------------------
+# CORREZIONE DEL 2026-09-07 — due indirizzi in CC non esistono piu'
+#
+# Il messaggio del 03/09 al thread dell'invio 1 ha prodotto due rimbalzi
+# immediati (25 secondi dopo la partenza), entrambi `550 #5.1.0 Address
+# rejected`:
+#
+#     bingbu.cao@intel.com      -> indirizzo inesistente
+#     tian.shu.qiu@intel.com    -> indirizzo inesistente
+#
+# Non e' un problema di recapito della serie: il messaggio e' comunque
+# arrivato a linux-media@vger.kernel.org e si legge su lore. Sono i due CC
+# personali a non esistere piu'.
+#
+# Controllato il MAINTAINERS di mainline (2026-09-07). La voce
+# `INTEL IPU6 INPUT SYSTEM DRIVER` oggi e' solo:
+#
+#     M: Sakari Ailus <sakari.ailus@linux.intel.com>
+#     L: linux-media@vger.kernel.org
+#
+# Bingbu Cao non e' piu' fra i manutentori di IPU6: e' passato ad AMD
+# (bingbu.cao@amd.com) e resta solo su alcuni driver di sensori (ov01a10,
+# ov2740, ov9734, imx319). Tianshu Qiu e' sparito del tutto dal MAINTAINERS.
+#
+# Quindi la lista di CC usata dal 12/08 in poi era gia' vecchia quando e'
+# partito il primo invio. Dal prossimo messaggio si usa questa:
+#
+#     To: linux-media@vger.kernel.org
+#     Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+#         Mauro Carvalho Chehab <mchehab@kernel.org>
+#         Antti Laakso <antti.laakso@linux.intel.com>   (solo per la patch 1,
+#                                                        per la sovrapposizione IPU7)
+#         linux-kernel@vger.kernel.org
+#
+# Bingbu Cao al nuovo indirizzo NON si aggiunge: non e' piu' manutentore di
+# questo codice, e scrivergli ad AMD di un driver Intel che ha lasciato non
+# aiuta nessuno.
