@@ -589,3 +589,15 @@ comando non trovato`). Nessun messaggio e' uscito in quel tentativo, quindi
 **non ci sono doppioni**. Rimediato mettendo il comando su una riga sola
 dentro uno script. **Da ricordare per il prossimo invio: comando su una riga
 sola, o in uno script — mai incollato a mano su piu' righe.**
+
+**Recapito verificato su lore alle 22:0x.** Il thread nuovo e' completo e ben
+formato: la cover e, agganciate sotto di lei, tutt'e tre le patch
+(`In-Reply-To` e `References` puntano alla cover, quindi e' un thread solo e
+non quattro discorsi separati). Nota di metodo: al primo controllo, un paio di
+minuti dopo l'invio, lore mostrava **tre** messaggi su quattro — mancava la
+3/3, che pure Gmail dava partita con `Result: 250`. Era solo ritardo di
+indicizzazione: al controllo successivo c'erano tutte e quattro. **Non
+allarmarsi e non rimandare niente se manca un messaggio subito dopo l'invio.**
+
+Il thread della v1 resta fermo a 6 messaggi e non e' stato toccato: la v2 e'
+un thread nuovo, con il link alla v1 dentro la cover, che e' la forma voluta.
