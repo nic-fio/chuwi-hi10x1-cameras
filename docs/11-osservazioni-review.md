@@ -563,3 +563,29 @@ Detto che la patch 1 non si applica al ramo `ipu6` per via del refactor IPU7,
 che il difetto li' c'e' ancora, e che la versione ribasata sta nel thread della
 v1; e chiesto quale base preferisce, offrendo di rimandare su quella. Le patch
 2 e 3 si applicano a tutt'e due gli alberi.
+
+### SPEDITA il 2026-09-11 alle 21:48 CEST
+
+`git send-email` da `patches/wip/invio-1-v2/`, quattro messaggi, tutti
+`Result: 250`. Orari e `Message-ID`:
+
+| | Ora (CEST) | Message-ID |
+|---|---|---|
+| cover `[PATCH v2 0/3]` | 21:48:51 | `<20260911194854.78894-1-nicfio@gmail.com>` |
+| `[PATCH v2 1/3]` | 21:48:52 | `<20260911194854.78894-2-nicfio@gmail.com>` |
+| `[PATCH v2 2/3]` | 21:48:53 | `<20260911194854.78894-3-nicfio@gmail.com>` |
+| `[PATCH v2 3/3]` | 21:48:54 | `<20260911194854.78894-4-nicfio@gmail.com>` |
+
+**Nessun rimbalzo**, ed era il punto: i due indirizzi Intel morti non ci sono
+piu' (O11). L'ultima volta i `550 #5.1.0` erano arrivati 25 secondi dopo la
+partenza.
+
+**Il primo tentativo era fallito, e non per colpa del comando.** Incollando
+nel terminale il comando scritto su piu' righe, i backslash di continuazione
+sono arrivati con degli spazi dopo: bash non ha continuato la riga, `git
+send-email` e' partito senza argomenti (`fatal: argomento ' ' ambiguo`) e le
+righe successive sono finite alla shell come comandi a se' (`--to=...:
+comando non trovato`). Nessun messaggio e' uscito in quel tentativo, quindi
+**non ci sono doppioni**. Rimediato mettendo il comando su una riga sola
+dentro uno script. **Da ricordare per il prossimo invio: comando su una riga
+sola, o in uno script — mai incollato a mano su piu' righe.**
