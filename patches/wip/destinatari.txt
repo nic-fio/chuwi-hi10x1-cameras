@@ -150,3 +150,33 @@ linux-kernel@vger.kernel.org
 # Bingbu Cao al nuovo indirizzo NON si aggiunge: non e' piu' manutentore di
 # questo codice, e scrivergli ad AMD di un driver Intel che ha lasciato non
 # aiuta nessuno.
+
+# ---------------------------------------------------------------------------
+# DESTINATARI DELLA v2 DELL'INVIO 1 — 2026-09-11
+#
+# Rifatti leggendo il MAINTAINERS di v7.3-rc2, non riusando la lista vecchia.
+#
+#     To: linux-media@vger.kernel.org
+#     Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+#         Mauro Carvalho Chehab <mchehab@kernel.org>
+#         Hans Verkuil <hverkuil@kernel.org>
+#         Antti Laakso <antti.laakso@linux.intel.com>
+#         linux-kernel@vger.kernel.org
+#
+# Tre cambiamenti rispetto al primo invio, e il perche' di ciascuno:
+#
+# 1. VIA bingbu.cao@intel.com e tian.shu.qiu@intel.com. Rimbalzati il 03/09
+#    con 550 #5.1.0, e non sono piu' nella voce IPU6 del MAINTAINERS (O11).
+#
+# 2. DENTRO Hans Verkuil, e all'indirizzo NUOVO. La patch 2 tocca
+#    drivers/media/v4l2-core/v4l2-subdev.c: il MAINTAINERS per drivers/media/
+#    nomina solo Mauro, ma il revisore vero del core V4L2 e' Verkuil, ed e'
+#    il buco che destinatari.txt segnalava gia' ("vanno aggiunti a mano se la
+#    lista non li ritrova"). ATTENZIONE all'indirizzo: nel MAINTAINERS di
+#    v7.3-rc2 e' hverkuil@kernel.org, NON il vecchio hverkuil@xs4all.nl.
+#
+# 3. DENTRO Antti Laakso su TUTTA la serie, non solo sulla patch 1 come
+#    diceva la nota del 07/09. La domanda su quale albero usare sta nella
+#    cover letter, non nella patch 1, e lui e' l'autore del lavoro IPU7 che
+#    si sovrappone: mandargli solo la patch senza la domanda non serve.
+#    Indirizzo confermato vivo: Sakari lo ha messo in Cc alla v4 il 07/09.

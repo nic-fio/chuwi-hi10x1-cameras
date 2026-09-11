@@ -1,0 +1,109 @@
+From 7e0b404baf65541ba15b8787e69b13b41109f0b6 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Fri, 11 Sep 2026 21:40:00 +0200
+Subject: [PATCH v2 0/3] media: Two oopses and a hang when unbinding a streaming sensor
+
+This is the second version of a series first posted on 12 August:
+
+  https://lore.kernel.org/linux-media/20260812105305.32447-1-nicfio@gmail.com/
+
+What changed:
+
+  - Rebased and re-verified on v7.3-rc2. No code changes: none of the
+    three files has changed in mainline since the first posting, so all
+    three patches apply unchanged.
+  - Cover letter: the paragraph on patch 1 named
+    ipu6_isys_csi2_get_remote_desc(), which does not exist. The
+    functions are ipu6_isys_csi2_enable_streams() and
+    ipu6_isys_csi2_disable_streams(), as the patch itself says.
+  - Patch 3 now carries a note on why the check and the marking are not
+    done under q->lock, and on what the proper fix would look like.
+  - Dropped bingbu.cao@intel.com and tian.shu.qiu@intel.com from Cc:
+    both bounced with 550 #5.1.0 on the last message, and neither is in
+    the MAINTAINERS entry for this driver any more.
+
+There have been no review comments so far. I am resending because the
+series has been sitting for a month and because patch 1 now overlaps with
+the IPU7 work; there is a question about that at the end.
+
+Unbinding a camera sensor while a capture is running is a scenario that
+nothing in the IPU6 path handles: the kernel oopses twice, corrupts memory
+once, and leaves the application blocked forever. None of this is caused by
+the sensor drivers themselves, and all four failures are present in
+mainline today.
+
+They were found while testing two new sensor drivers on a CHUWI Hi10 X1
+(Intel N100, Alder Lake-N, IPU6) on a kernel built with KASAN, UBSAN,
+KMEMLEAK, PROVE_LOCKING and DETECT_HUNG_TASK. Three of them are fixed here;
+the fourth, a use-after-free in the media controller, is sent separately
+because it belongs to a different subsystem.
+
+Patch 1 is a NULL pointer dereference in ipu6_isys_csi2_enable_streams()
+and ipu6_isys_csi2_disable_streams(). The remote pad is dereferenced
+without being checked, and unbinding the sensor mid-stream makes it NULL.
+Present since May 2024.
+
+Patch 2 is a second NULL pointer dereference, in subdev_open().
+v4l2_device_unregister_subdev() clears sd->v4l2_dev before the device node
+goes away, so anything opening /dev/v4l-subdevN in that window oopses. This
+one was not provoked deliberately: udev's v4l_id walked into it on its own.
+The window has been open since 2011.
+
+Patch 3 is the hang. isys_async_ops has no .unbind() callback, so nothing
+tells the video nodes that the sensor is gone, and a DQBUF already waiting
+in vb2_core_dqbuf() never returns. The sleep is interruptible, so
+DETECT_HUNG_TASK stays quiet and the process is simply stuck until it is
+killed. Reproduced 10 times out of 10 on both sensors of the machine; with
+the patch, all 10 return -EIO and exit.
+
+How each one was verified, since the three differ:
+
+  - patch 1: the oops was provoked deliberately on the unpatched kernel
+    before the fix was written
+  - patch 2: reproduced itself, unprompted, with udev alone; after the fix,
+    150 cycles of a reproducer with four concurrent openers left no oops
+    and no leaked minors
+  - patch 3: rebuilt both ways, same kernel and same test. Without it,
+    3 attempts out of 3 hang; with it, 10 out of 10 wake up and return
+    -EIO
+
+The full test cycle with the three fixes in place is clean: no KASAN or
+UBSAN reports, no KMEMLEAK findings, and lockdep still enabled at the end
+of the run. That last detail matters: lockdep disables itself on its first
+complaint and silently invalidates everything measured afterwards.
+
+All of the above was measured on the first posting. The machine no longer
+has a kernel tree on it, so this one has not been rebuilt; it is the same
+code, and the rebase is a no-op verified with git apply.
+
+The reproducer is a shell script that streams with v4l2-ctl, unbinds the
+sensor after two seconds, then rebinds it, in a loop. I am happy to post it
+if that would be useful.
+
+One open question, on patch 1. The IPU7 series reworks both functions it
+touches: "media: ipu6: Split ipu6 csi2 stream enable/disable" is in the
+ipu6 branch of the media tree and in [PATCH v4 00/45]. The rework is a
+refactor and carries the bug along -- remote_pad is still dereferenced
+unchecked in both functions -- so the fix is still needed there, in a
+different shape. Patch 1 as posted here applies to mainline and not to that
+branch; a version rebased on the branch is in the v1 thread:
+
+https://lore.kernel.org/linux-media/20260903202820.8401-1-nicfio@gmail.com/
+
+Which base would you prefer? I am happy to resend against either, or to
+split the difference: patches 2 and 3 are unaffected and apply to both.
+
+Nicola Fiorillo (3):
+  media: ipu6: Check the remote pad before dereferencing it
+  media: v4l2-subdev: Check v4l2_dev before dereferencing it in open()
+  media: ipu6: Signal the video queues when a sensor is unbound
+
+ drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 14 ++++++-
+ drivers/media/pci/intel/ipu6/ipu6-isys.c      | 41 +++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-subdev.c         | 31 +++++++++++---
+ 3 files changed, 78 insertions(+), 8 deletions(-)
+
+base-commit: df2908090cda368b01ff43709f51890076c56157
+-- 
+2.47.3
+

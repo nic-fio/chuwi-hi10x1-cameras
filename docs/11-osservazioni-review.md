@@ -499,3 +499,67 @@ leggendo i sorgenti, e va dichiarata per quello che e'.
 | | **O11 — due indirizzi in CC non esistono piu'.** Il reperto vero di questo controllo non e' sulla lista ma in posta. Il messaggio del 03/09 ha prodotto **due rimbalzi 25 secondi dopo la partenza**, entrambi `550 #5.1.0 Address rejected`: **`bingbu.cao@intel.com`** e **`tian.shu.qiu@intel.com`**. La serie non ne ha sofferto — il messaggio e' arrivato lo stesso a `linux-media@vger.kernel.org` e si legge su lore — ma i due CC personali sono morti. Letto il MAINTAINERS di mainline: la voce `INTEL IPU6 INPUT SYSTEM DRIVER` oggi ha **solo** Sakari Ailus e la lista; Bingbu Cao e' passato ad AMD (`bingbu.cao@amd.com`) e resta solo su qualche driver di sensori, Tianshu Qiu e' **sparito del tutto** dal file. La lista di CC che usiamo dal 12/08 era quindi gia' vecchia al primo invio. Non si puo' dire se anche i due invii precedenti avessero rimbalzato: la posta di quei giorni non c'e' piu'. Corretto `patches/wip/destinatari.txt`; dal prossimo messaggio i CC sono Sakari, Mauro, `linux-kernel`, piu' Antti Laakso per la patch 1. Bingbu Cao al nuovo indirizzo **non** si aggiunge: non e' piu' manutentore di questo codice. **Nessuna azione ora**: si e' scritto quattro giorni fa, e un rimbalzo non e' un motivo per riscrivere |
 | 2026-09-11 | **Decimo controllo**, otto giorni dopo il messaggio sulla riscrittura IPU7 e trenta dal primo invio. **Ancora nessuna risposta umana.** Thread lore fermo a **6 messaggi** (l'ultimo resta il nostro del 03/09 alle 20:28 UTC); ricerca su `linux-media` `?q=nicfio` **6 su 6 nostri**, e la stessa ricerca su **tutta lore** (`/all/?q=nicfio`) da' anch'essa **6 risultati, tutti nostri** — quindi non c'e' una risposta finita su un'altra lista. Patchwork: le tre patch sempre **New**, senza delegato, **zero commenti** via API e un solo *check* ciascuna, il `sashiko` &rarr; `warning` del 12/08. In posta niente dalla lista: l'unica traccia resta il thread del 03/09 con i due rimbalzi gia' noti (O11). **Il ramo `ipu6` si e' mosso**, ma per un solo commit: la punta e' passata da `6f6d9729301f` a **`83345575c7f9`** (`staging: media: ipu7: Update TODO file`, Sakari, 03/09 22:56), che tocca **solo** `drivers/staging/media/ipu7/TODO`. L'ultimo commit che tocca `ipu6-isys-csi2.c` e' sempre `media: ipu6: Add support for ipu7 csi2 receiver`. **Riverificato scaricando il file dal ramo: la patch 1 rifatta applica ancora pulita**, e le **tre patch dell'invio 1 applicano ancora pulite sul mainline di oggi** (nessuno dei tre file e' cambiato). Contesto: **7.3-rc2 e' uscita il 06/09**, quindi siamo nella finestra delle correzioni per la 7.3 |
 | | **O12 — la serie IPU7 e' arrivata alla v4, e la porta avanti Sakari in persona.** Il 2026-09-07 alle 11:29 UTC e' stata mandata **`[PATCH v4 00/45] media: ipu6: Add support for ipu7 hardware`**, e a mandarla non e' piu' Antti Laakso ma **Sakari Ailus** (44 patch di Antti piu' la sua sul TODO). Cambiamenti dichiarati rispetto alla v3: rinomina dei simboli globali in comune col driver `ipu7`, scelta del driver a runtime via parametri di modulo, aggiornamento del TODO. **Su `ipu6-isys-csi2.c` non cambia niente**: il diffstat e' identico alla v3 (`207 ++-`), la patch `Split ipu6 csi2 stream enable/disable` e' la stessa, e **il difetto e' ancora li'** — lo conferma il fatto che la nostra patch rifatta applica pulita, cioe' le righe di contesto col `remote_pad` dereferenziato senza controllo ci sono ancora tutte. Il punto e' la cronologia: il nostro messaggio del **03/09** diceva a chiare lettere che il refactor si porta dietro l'oops, e **quattro giorni dopo la serie e' stata rimandata senza la correzione e senza una riga di risposta**. **Non e' un silenzio di lista**: nello stesso periodo Sakari ha mandato `[PATCH v2 0/3] Rework IPU6 PCI table` (09/09) e ha risposto **in circa quattordici ore** a una segnalazione IPU6/IVSC nuova di Ricardo Rebou&ccedil;as su Dell XPS 9320 (arrivata il 10/09, risposta l'11/09 alle 07:43 UTC). Come gia' visto col filo di D. Manresa, le segnalazioni di regressione le prende al volo; questa serie no. **Nessuna azione oggi**: si e' scritto otto giorni fa. Ma il piano di questo documento — punto 3, "se anche il ping non muove niente, si rimanda la serie" — e' ormai maturo, e la forma giusta non e' piu' un `RESEND` ma una **v2 con dentro O1 e O2**, visto che la 7.3 e' in `-rc` e la finestra delle correzioni e' aperta |
+
+---
+
+## La v2 dell'invio 1 — preparata il 2026-09-11
+
+In `patches/wip/invio-1-v2/`: cover letter piu' le tre patch, prefisso
+`[PATCH v2 n/3]`, thread nuovo con link alla v1 nella cover (non `In-Reply-To`
+della v1: e' la forma che i manutentori preferiscono per una versione nuova).
+
+**Il codice non cambia di una riga.** Le tre patch spedite sono esattamente
+quelle provate sul silicio ad agosto, e la scelta e' deliberata: non c'e' piu'
+un albero del kernel ne' sul tablet ne' sul server, quindi qualunque riga nuova
+partirebbe non compilata e non provata. La cover lo dichiara.
+
+### Cosa cambia davvero
+
+| | |
+|---|---|
+| **O1 — chiuso** | la cover diceva `ipu6_isys_csi2_get_remote_desc()`, funzione che non esiste. La v2 nomina `ipu6_isys_csi2_enable_streams()` e `..._disable_streams()`, come hanno sempre fatto le patch |
+| **base** | ribasata e riverificata su `v7.3-rc2` (`df2908090cda`): `git apply --check` pulito per tutt'e tre, e `git am` dell'intera serie su un albero di prova produce i tre commit giusti con Nic come autore |
+| **destinatari** | rifatti sul `MAINTAINERS` di `v7.3-rc2` — vedi `patches/wip/destinatari.txt` |
+| **`checkpatch --strict`** | **0 errori, 0 warning, 0 check** sulla cover; sulle tre patch 0 errori e 0 check, solo i noti falsi positivi `Unknown commit id` (non c'e' un albero in cui risolvere gli hash) |
+
+### O2 — NON e' entrata come codice, ed e' la decisione piu' importante
+
+Nel resoconto del decimo controllo avevo scritto che la v2 avrebbe portato
+"O1 e O2". **Era sbagliato**, e la risposta stava gia' in questo documento:
+la verifica sul sorgente del 2026-08-22 conclude testualmente che *«O2 non si
+scrive nella forma originale»*. Prendere `q->lock` attorno al controllo e alla
+marcatura userebbe un mutex gia' distrutto: `isys_remove()` chiama
+`isys_unregister_devices()` **prima** di `isys_notifier_cleanup()`, e la prima
+finisce in `ipu6_isys_video_cleanup()` -> `mutex_destroy(&av->mutex)`.
+Riletto sul sorgente di `v7.3-rc2` l'11/09: l'ordine e' ancora quello.
+
+Quindi la v2 non prende il lock. Porta invece, sotto il `---` della patch 3
+(quindi fuori dal messaggio di commit), una nota che dice tre cose:
+
+1. che il controllo e la marcatura **non** sono sotto lock, e che e' voluto;
+2. **perche'** non si puo': il mutex a quel punto e' distrutto, e prenderlo
+   sarebbe un oops con `CONFIG_DEBUG_MUTEXES`;
+3. che la correzione giusta e' probabilmente **smontare il notificatore prima
+   dei nodi video** — che renderebbe lo smontaggio lo specchio del montaggio,
+   visto che `isys_register_devices()` registra i video per primi e inizializza
+   il notificatore per ultimo, e il suo stesso percorso d'errore srotola in
+   quell'ordine — e che la si scrive volentieri come seguito, se il
+   manutentore e' d'accordo.
+
+**Perche' cosi' e non con la patch dentro.** La patch dello smontaggio e' una
+riga sola e l'argomento e' solido, ma tocca il percorso di rimozione del driver
+e non la si puo' provare. La forza di questa serie e' che ogni riga e' stata
+provata sull'hardware: mettere dentro una riga non provata la indebolisce.
+E quella scelta non era mia da fare in silenzio — il documento la teneva
+aperta apposta (*«non si va oltre finche' non si sceglie»*).
+
+C'e' anche un guadagno secondario: la nota e la domanda sull'albero mettono il
+manutentore davanti a **due domande concrete a cui e' piu' facile rispondere
+che tacere**. Dopo trenta giorni di silenzio, e' l'unica leva che resta.
+
+### La domanda sull'albero, in fondo alla cover
+
+Detto che la patch 1 non si applica al ramo `ipu6` per via del refactor IPU7,
+che il difetto li' c'e' ancora, e che la versione ribasata sta nel thread della
+v1; e chiesto quale base preferisce, offrendo di rimandare su quella. Le patch
+2 e 3 si applicano a tutt'e due gli alberi.
