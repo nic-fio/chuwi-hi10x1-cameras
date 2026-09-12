@@ -1,0 +1,47 @@
+Hi Sakari,
+
+On Sat, Sep 12, 2026 at 01:23:42PM +0300, Sakari Ailus wrote:
+> Thanks for the patchset. These are known issues and unfortunately unbinding
+> drivers while streaming isn't supported on MC-enabled drivers currently.
+> This is a MC/V4L2 framework limitation and cannot be meaningfully worked
+> around in drivers.
+
+Understood, and I won't argue the point for 1/3 and 3/3: both are IPU6
+driver changes for exactly the unsupported scenario you describe. I'll
+drop them.
+
+Could I ask you to look at 2/3 on its own, though? I believe it is a
+different bug, and the cover letter framed it badly -- that is my fault.
+
+2/3 is not a driver change and does not involve streaming at all. It is a
+NULL dereference in subdev_open() in the framework itself, caused by the
+ordering inside v4l2_device_unregister_subdev():
+
+	sd->v4l2_dev = NULL;
+	/* ... */
+	media_device_unregister_entity(&sd->entity);
+	/* clears sd->entity.graph_obj.mdev via media_gobj_destroy() */
+	/* ... */
+	video_unregister_device(sd->devnode);	/* the node goes away last */
+
+Because the device node is removed last, there is a window in which
+/dev/v4l-subdevN can still be opened while both sd->v4l2_dev and
+sd->entity.graph_obj.mdev are already NULL. subdev_open() then runs
+
+	if (sd->v4l2_dev->mdev && sd->entity.graph_obj.mdev->dev)
+
+on those pointers and oopses.
+
+No capture has to be running for this, and it is not specific to IPU6:
+any sub-device with a device node can hit it on any removal path --
+unbind, module unload, or a hot-removed PCI/USB device. Unbinding during
+streaming is simply how I ran into it.
+
+If you would rather have it resent on its own, with a cover letter that
+doesn't mention unbinding a streaming sensor, I'm happy to do that
+instead.
+
+Thanks for taking the time to look.
+
+-- 
+Nicola Fiorillo

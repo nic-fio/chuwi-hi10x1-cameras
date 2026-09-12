@@ -601,3 +601,111 @@ allarmarsi e non rimandare niente se manca un messaggio subito dopo l'invio.**
 
 Il thread della v1 resta fermo a 6 messaggi e non e' stato toccato: la v2 e'
 un thread nuovo, con il link alla v1 dentro la cover, che e' la forma voluta.
+
+## LA PRIMA RISPOSTA UMANA IN UN MESE — 2026-09-12
+
+**Sakari Ailus ha risposto alla cover della v2 il 2026-09-12 alle 12:23 CEST**
+(13:23 EEST da parte sua), circa **quattordici ore e mezza** dopo l'invio, in
+copia a tutta la lista. Message-ID
+`<aqUoLr0JFGEBiJIf@kekkonen.localdomain>`. Dopo trentun giorni di silenzio
+sulla v1, due solleciti ignorati e una serie IPU7 ripubblicata da lui senza
+raccogliere il difetto segnalato: **la v2 come thread nuovo ha funzionato.**
+Non e' una prova, ma e' l'unica variabile che avevamo cambiato.
+
+Il testo, per intero:
+
+> Thanks for the patchset. These are known issues and unfortunately unbinding
+> drivers while streaming isn't supported on MC-enabled drivers currently.
+> This is a MC/V4L2 framework limitation and cannot be meaningfully worked
+> around in drivers.
+
+**E' un no in blocco alla serie**, non una richiesta di modifiche: nessun
+commento riga per riga, nessun `Reviewed-by`, nessun `Nacked-by` formale, e
+**nessuna risposta alle due domande aperte** (quale albero per la patch 1,
+l'ordine dello smontaggio della nota sotto il `---` della patch 3).
+
+Va riconosciuto il lato buono: **«known issues» conferma che i difetti sono
+reali e gia' noti.** Non contesta l'analisi, contesta che valga la pena
+correggerli li'.
+
+### Perche' la risposta non copre tutta la serie
+
+Copre la patch 1 e la patch 3: sono davvero modifiche al driver IPU6 per lo
+scenario che lui dichiara non supportato. **Non copre la patch 2**, e il
+motivo e' verificabile, non opinabile. La patch 2 modifica
+`drivers/media/v4l2-core/v4l2-subdev.c`, cioe' **il framework stesso** — esattamente
+il posto che Sakari indica come quello giusto quando dice che nei driver non
+si puo' fare.
+
+**Catena verificata il 2026-09-12 sul sorgente di mainline attuale**, scaricando
+i file da git.kernel.org (niente Anubis, basta `curl`). Dentro
+`v4l2_device_unregister_subdev()` (`v4l2-device.c`) l'ordine e':
+
+1. `sd->v4l2_dev = NULL;`
+2. `media_device_unregister_entity()` → `__media_device_unregister_entity()`
+   → `media_gobj_destroy()`, che esegue `gobj->mdev = NULL` e quindi azzera
+   `sd->entity.graph_obj.mdev`
+3. `video_unregister_device(sd->devnode)` — **il nodo in `/dev` sparisce per
+   ultimo**
+
+Fra il passo 1 e il passo 3 `/dev/v4l-subdevN` e' ancora apribile mentre i due
+puntatori sono gia' a zero, e `subdev_open()` in mainline **oggi** esegue
+`if (sd->v4l2_dev->mdev && sd->entity.graph_obj.mdev->dev)` senza controllarli.
+Confermato anche che `media_gobj_destroy()` azzera davvero il puntatore, che
+era l'anello su cui l'argomento poteva cadere.
+
+**Il punto forte: non serve nessuna ripresa in corso, e non c'entra l'IPU6.**
+Vale per qualunque sotto-dispositivo con un nodo in `/dev` e per qualunque via
+di rimozione — unbind, scaricamento del modulo, PCI/USB staccata a caldo.
+
+**E questo era gia' scritto nella patch 2 spedita**: il messaggio dice che
+l'oops non e' stato provocato, ci e' inciampato `v4l_id` di udev da solo, e che
+la finestra e' aperta dal 2011. **Il difetto non era nascosto, era mal
+inquadrato**: sepolto sotto un titolo di serie che parlava di scollegamento
+durante la ripresa. Chi ha trecento messaggi da smaltire legge il titolo e la
+cover. **Lezione per i prossimi invii: il titolo della serie decide come viene
+letta ogni patch dentro di essa. Non mettere sotto un cappello ristretto una
+patch che ha portata piu' ampia — va spedita per conto suo.**
+
+**Contro-argomento onesto, da non dimenticare**: l'`unbind` richiede i permessi
+di root, quindi non e' un buco di sicurezza sfruttabile da un utente qualsiasi,
+e un manutentore ha il diritto di metterlo in fondo alla coda.
+
+### La replica — SPEDITA il 2026-09-12 alle 13:20 CEST
+
+Message-ID `<178921105204.97510.7044638844562147207@gmail.com>`.
+**Recapito verificato su lore**: indicizzata e agganciata sotto il messaggio di
+Sakari, thread a 6 messaggi. Corpo in
+`patches/wip/risposta-a-sakari-v2.txt`.
+
+**La strategia, da riusare**: *concedere il grosso per salvare il pezzo che
+regge*.
+
+- **Patch 1 e 3 ritirate esplicitamente.** Su quelle ha ragione. Difenderle
+  avrebbe fatto ripetere la stessa risposta valida per tutte e tre.
+- **Colpa dell'inquadramento presa su di se'** («that is my fault»), cosi' la
+  replica non e' «ti sei sbagliato» ma «mi sono spiegato male».
+- **Le due domande aperte tolte**: chiedere su quale albero ribasare presuppone
+  un'accettazione che non c'e'. Una richiesta sola.
+- **Una via d'uscita facile in fondo**: «se preferisci te la rimando da sola,
+  con una cover che non nomina lo scollegamento». Qualunque risposta dia,
+  resta una strada avanti; e un «si'» esplicito vale piu' di una patch
+  rispedita a freddo.
+
+### Lo script d'invio
+
+`patches/wip/invia-risposta-a-sakari.sh`, **riutilizzabile per le prossime
+risposte**. Risolve le tre trappole note: comando mai su piu' righe incollate a
+mano; `In-Reply-To` e `References` messi a mano cosi' la risposta non apre un
+thread nuovo; password per le app di Google chiesta a ogni invio, mai salvata e
+mai passata dalla riga di comando (sarebbe visibile con `ps`). Legge le
+impostazioni SMTP da `git config`, mostra il messaggio completo, chiede `SI`
+per confermare. Con `--prova` costruisce e mostra tutto senza spedire.
+
+### Prossimo passo
+
+Si aspetta. Se entro sette-dieci giorni non arriva niente, **rispedire la patch
+2 da sola**, con una cover che non nomini mai lo scollegamento durante la
+ripresa: e' la strada con la probabilita' piu' alta, e il silenzio di Sakari
+non la ostacola. Le altre della coda (`int3472-leak-fix` in particolare) non
+sono toccate da questa obiezione.
