@@ -1,0 +1,105 @@
+Hi Sakari,
+
+On Thu, Sep 17, 2026 at 02:39:11PM +0300, Sakari Ailus wrote:
+> +static bool ipu6_isys_csi2_streaming_change(struct ipu6_isys_subdev *asd,
+> +					    struct v4l2_subdev_state *state,
+> +					    u32 pad, u8 *vc, bool enable)
+
+Four things in this function, all found by reading it. I cannot build or
+test a kernel at the moment, so please take this as review and nothing
+more; none of it is reproduced on hardware.
+
+1) The error return does not fit the return type.
+
+> +	ret = v4l2_subdev_call(remote_sd, pad, get_frame_desc,
+> +			       remote_pad->index, &desc);
+> +	if (ret)
+> +		return ret;
+
+The function returns bool, so a negative errno from get_frame_desc()
+becomes true, and both callers read true as "go ahead and change the
+streaming state". In ipu6_isys_csi2_enable_streams() that starts the
+firmware stream and then runs
+
+	csi2->streaming_vc |= BIT(vc);
+
+with vc still uninitialised: *vc is assigned only at the end of the
+function, past this early return. ipu6_isys_csi2_disable_streams() does
+the mirror of it with &= ~BIT(vc). The two "return false" exits are
+fine, they make the caller skip the change; only this one carries a
+value.
+
+2) media_pad_remote_pad_unique() never returns NULL, so the guard below
+   it is dead code.
+
+> +		struct media_pad *video_pad =
+> +			media_pad_remote_pad_unique(&asd->sd.entity.pads[route->source_pad]);
+> +		struct ipu6_isys_video *av = !video_pad ? NULL :
+> +			container_of_const(video_pad,
+> +					   struct ipu6_isys_video, pad);
+> +
+> +		if (!av) {
+
+It returns ERR_PTR(-ENOLINK) when no enabled link is found and
+ERR_PTR(-ENOTUNIQ) when there is more than one. !video_pad is therefore
+never true, the dev_dbg() below is unreachable, and the error pointer
+goes into container_of_const() instead -- where av->streaming, a few
+lines further down, dereferences it.
+
+IS_ERR() is what the check wants. This same file already does it that
+way, in ipu6_isys_csi2_get_link_freq():
+
+	src_pad = media_pad_remote_pad_unique(...);
+	if (IS_ERR(src_pad)) {
+		dev_err(&csi2->isys->adev->auxdev.dev,
+			"can't get source pad of %s (%pe)\n",
+			csi2->asd.sd.name, src_pad);
+		return PTR_ERR(src_pad);
+	}
+
+3) The lookup on the sink pad, higher up in the same function, has no
+   check at all:
+
+> +	struct media_pad *remote_pad =
+> +		media_pad_remote_pad_unique(&asd->sd.entity.pads[this_route->sink_pad]);
+> +	struct v4l2_subdev *remote_sd =
+> +		media_entity_to_v4l2_subdev(remote_pad->entity);
+
+remote_pad->entity is read immediately, so the same error pointer is
+dereferenced here, with no guard to correct.
+
+4) Unless I am misreading it, the inner lookup in the loop does not
+   depend on the loop variable:
+
+> +	for_each_active_route(&state->routing, route) {
+> +		struct v4l2_mbus_frame_desc_entry *entry = NULL;
+> +
+> +		for (unsigned int i = 0; i < desc.num_entries; i++) {
+> +			if (desc.entry[i].stream == this_entry->stream) {
+> +				entry = &desc.entry[i];
+> +				break;
+> +			}
+> +		}
+> +
+> +		if (entry->bus.csi2.vc != this_entry->bus.csi2.vc)
+> +			continue;
+
+The search key is this_entry->stream, which does not change across
+iterations, so entry always ends up as this_entry itself and the vc
+comparison can never differ. The "continue" is never taken and every
+active route is counted, whatever its virtual channel. Going by the
+commit message, the key here was meant to be route->sink_stream.
+
+Finally, a note rather than a request. After the whole series,
+ipu6_isys_csi2_enable_streams() and ipu6_isys_csi2_disable_streams()
+still call media_pad_remote_pad_first() on the sink pad and dereference
+the result unchecked -- and that one does return NULL. It is what my
+[PATCH v2 1/3] touched. I have dropped that patch and I am not
+reopening the question of the scenario behind it; I mention it only
+because if the checks in 2) and 3) go in, that pointer is sitting right
+next to them.
+
+Thanks,
+
+-- 
+Nicola Fiorillo
