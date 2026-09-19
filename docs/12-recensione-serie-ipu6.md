@@ -93,8 +93,37 @@ sotto la cover e non in un thread nuovo. Corpo in
 collaudato: destinatari della patch 09/21, `In-Reply-To` sulla patch e non
 sulla cover, password chiesta a ogni invio).
 
+## La risposta (18/09, 22:56 CEST)
+
+Sakari ha risposto in circa 13 ore, in copia alla lista, **accettando tutti
+e quattro i reperti** e promettendo le correzioni nella v3:
+
+1. tipo di ritorno: "Right", passa a `int` (il `bool` era stato scelto
+   prima di capire che serviva gestire gli errori);
+2. `NULL` mai restituito: "Indeed. This is where others have tripped,
+   too. I'll fix this for v3." Passa a `media_pad_remote_pad_first()` e
+   toglie il controllo, perche' `MEDIA_PAD_FL_MUST_CONNECT` garantisce il
+   collegamento attivo;
+3. stessa cosa sul pad d'ingresso;
+4. confermato: lo stream veniva confrontato con quello sbagliato, deve
+   venire dal routing. Aggiunge da se' un controllo mancante (entry non
+   trovata).
+
+Sulla nota in coda (il nostro puntatore della patch 1): non la liquida, la
+riformula come due domande aperte, se quel puntatore possa essere `NULL` in
+questo driver ("shouldn't be") e se gli analizzatori statici riescano a
+capirlo. E chiude con **"I'll reply to the framework patch separately"**:
+e' la nostra patch 2 (`v4l2-subdev.c`), quella che nella replica del 12/09
+avevamo chiesto di considerare da sola. Al 19/09 mattina quella risposta
+non e' ancora arrivata.
+
+Non serve rispondere: e' un "grazie, lo sistemo nella v3" e un messaggio in
+piu' sarebbe solo rumore.
+
 ## Prossimo passo
 
-Aspettare la risposta a questo. La patch 2 dell'invio 1 resta da rispedire
-da sola, con una cover che non nomini lo scollegamento durante la ripresa:
-quella strada non dipende da come va questa.
+- Aspettare la sua risposta sulla patch 2: **non rispedirla** prima, visto
+  che ha detto che ne scrivera'.
+- Quando esce la v3 della serie, controllare che le quattro correzioni ci
+  siano davvero; se ci sono, un `Reviewed-by` sulla 09/21 e' il modo
+  normale di chiudere.
