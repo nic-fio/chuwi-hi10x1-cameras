@@ -203,3 +203,14 @@ spedito.
 - Lo stesso autore ha spedito il 20/09 `[PATCH v1 0/2] Input: sur40 - fix
   UAF/hang on closing the video node after unplug`: difetto diverso,
   driver diverso, ma stessa famiglia della nostra patch 3.
+
+---
+
+## Controllo del 21 settembre 2026
+
+Niente di nuovo. Sakari non ha scritto sulla lista dal 18/09 alle 20:56
+UTC (terzo giorno di silenzio): niente risposta sulla patch 2, niente v3
+della serie IPU6. Il thread di Nguyen su `subdev_open()` e' fermo ai
+quattro messaggi del 19/09, nessuna v2 e nessuna indicazione nuova di
+Laurent. Nella posta di Nic nessun messaggio dalla lista. Si continua ad
+aspettare; nessun messaggio spedito.
