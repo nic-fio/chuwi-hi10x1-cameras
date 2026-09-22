@@ -262,3 +262,5 @@ Nessun messaggio spedito.
 - Rispondere alla 09/21 v3 con un `Reviewed-by` limitato ai punti 1 e 4,
   oppure con una riga di ringraziamento piu' la domanda sul punto 2/3.
 - Continuare ad aspettare la risposta annunciata sulla patch 2.
+
+**Deciso il 22/09: aspettare un paio di giorni** (fino al 24-25/09) prima di rispondere alla v3, per lasciare spazio agli altri commenti. Poi si riprende la scelta fra Reviewed-by parziale e silenzio.
