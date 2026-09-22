@@ -214,3 +214,51 @@ della serie IPU6. Il thread di Nguyen su `subdev_open()` e' fermo ai
 quattro messaggi del 19/09, nessuna v2 e nessuna indicazione nuova di
 Laurent. Nella posta di Nic nessun messaggio dalla lista. Si continua ad
 aspettare; nessun messaggio spedito.
+
+---
+
+## 22 settembre 2026: uscita la v3, e Nic e' in copia
+
+Il 22/09 alle 12:05 UTC Sakari ha pubblicato `[PATCH v3 00/21] IPU6
+multi-stream and metadata support preparation`. **Nic e' in Cc su tutti e
+22 i messaggi**: nella v2 non c'era. E' il riconoscimento concreto della
+recensione del 18/09, anche senza nome nel registro delle modifiche.
+
+Il registro "since v2" elenca tre voci; due sono i nostri reperti:
+
+- *"Rework return values for ipu6_isys_csi2_streaming_change() in patch 9"*
+  -> reperto 1
+- *"Fix inner loop stream check in ipu6_isys_csi2_streaming_change(), in
+  the same patch"* -> reperto 4
+- *"Fixed handling failed streamon"* -> patch 01, non nostra
+
+### Verifica punto per punto (testo v3 su Gmail, patch 09 e 16)
+
+1. **Corretto.** La funzione ora e' `int`: 1 = cambia stato, 0 = no,
+   negativo = errore. Nella 09 i chiamanti fanno `if (ret <= 0)`; dopo la
+   16 un errore negativo va su `goto err_av_del`, che pulisce anche
+   `list_add` e `stream_ids`.
+2. **Tolto, non corretto nel modo suggerito.** Nel ciclo ora c'e'
+   `media_pad_remote_pad_first()` (che `NULL` lo puo' restituire) e
+   `container_of_const()` senza nessun controllo: il `dev_dbg()` morto e'
+   sparito insieme al controllo. Innocuo se quel collegamento esiste
+   sempre, ma non verificato.
+3. **Non toccato.** Il pad d'ingresso resta senza controllo; dopo la 16 la
+   ricerca e' salita in `enable_streams()`/`disable_streams()`, accanto a
+   `vdev_pad = media_pad_remote_pad_unique()` passato a
+   `container_of_const()` senza `IS_ERR()`: il nostro vecchio difetto.
+4. **Corretto.** La chiave del ciclo interno e' `route->sink_stream`, e la
+   16 la conserva.
+
+Il ramo `ipu6`/`metadata` su git.linuxtv.org alle 12:20 UTC **non era
+ancora aggiornato alla v3** (conteneva ancora `this_entry->stream`): non
+usarlo per confrontare finche' non cambia.
+
+**Sulla patch 2 ancora niente**: Sakari non ha scritto altro dal 18/09.
+Nessun messaggio spedito.
+
+### Prossime mosse possibili (da decidere con Nic)
+
+- Rispondere alla 09/21 v3 con un `Reviewed-by` limitato ai punti 1 e 4,
+  oppure con una riga di ringraziamento piu' la domanda sul punto 2/3.
+- Continuare ad aspettare la risposta annunciata sulla patch 2.
