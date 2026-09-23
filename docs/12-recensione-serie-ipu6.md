@@ -264,3 +264,22 @@ Nessun messaggio spedito.
 - Continuare ad aspettare la risposta annunciata sulla patch 2.
 
 **Deciso il 22/09: aspettare un paio di giorni** (fino al 24-25/09) prima di rispondere alla v3, per lasciare spazio agli altri commenti. Poi si riprende la scelta fra Reviewed-by parziale e silenzio.
+
+---
+
+## Controllo del 23 settembre 2026: primo Reviewed-by sulla v3 (non nostro)
+
+Il 23/09 alle 12:04 UTC **Antti Laakso** (Intel) ha risposto alla cover
+letter della v3 con un `Reviewed-by` su tutta la serie, senza commenti.
+Nic era in Cc, quindi il messaggio e' arrivato anche nella sua posta.
+
+Controllo fatto su Gmail e su patchwork (il browser non era collegato,
+lore non consultato): nessun altro commento sulle 21 patch della v3,
+nessuna risposta di Sakari sulla nostra patch 2, nessuna nuova patch di
+Sakari dopo la v3, il thread di Nguyen su `subdev_open()` senza novita'
+su patchwork. Nessun messaggio spedito.
+
+Per la decisione del 24-25/09: con il `Reviewed-by` di Antti la serie si
+avvicina all'ingresso nell'albero. Se si vuole dire qualcosa sui punti 2 e
+3 (controlli mancanti su `media_pad_remote_pad_first()` e
+`media_pad_remote_pad_unique()`) conviene non aspettare troppo.
