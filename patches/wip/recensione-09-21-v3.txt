@@ -1,0 +1,44 @@
+Hi Sakari,
+
+On Tue, Sep 22, 2026 at 03:05:26PM +0300, Sakari Ailus wrote:
+> +static int ipu6_isys_csi2_streaming_change(struct ipu6_isys_subdev *asd,
+> +					   struct v4l2_subdev_state *state,
+> +					   u32 pad, u8 *vc, bool enable)
+
+Thanks for picking up the return value and the inner loop key; both
+read correctly to me in v3.
+
+One question on the loop, again from reading only:
+
+> +		struct media_pad *video_pad =
+> +			media_pad_remote_pad_first(&asd->sd.entity.pads[route->source_pad]);
+> +		struct ipu6_isys_video *av =
+> +			container_of_const(video_pad, struct ipu6_isys_video,
+> +					   pad);
+> +
+> +		streams_enabled++;
+> +		if (av->streaming || (enable && pad == route->source_pad))
+
+The CSI-2 source pad to video node links are created with no flags in
+isys_csi2_create_media_links(), so they are neither immutable nor
+enabled by default, and media_pad_remote_pad_first() returns NULL for a
+pad whose link is disabled. With two active routes on the same virtual
+channel, say one per source pad, and only one of the two video node
+links enabled, streaming on the enabled node reaches the other route
+here, and av->streaming is read through a pointer derived from NULL.
+
+That does not need anything unusual: it is the multi-stream setup this
+series prepares for, with one of the two outputs simply not in use.
+Even without the oops, that route could never start streaming, so it
+would hold back the first one forever.
+
+Unless something earlier already rejects such a configuration and I
+have missed it, skipping those routes would seem to cover both:
+
+		if (!video_pad)
+			continue;
+
+Thanks,
+
+--
+Nicola Fiorillo
