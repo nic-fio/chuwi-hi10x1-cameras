@@ -283,3 +283,29 @@ Per la decisione del 24-25/09: con il `Reviewed-by` di Antti la serie si
 avvicina all'ingresso nell'albero. Se si vuole dire qualcosa sui punti 2 e
 3 (controlli mancanti su `media_pad_remote_pad_first()` e
 `media_pad_remote_pad_unique()`) conviene non aspettare troppo.
+
+### Spedita la risposta alla 09/21 v3 (23/09, 14:54 UTC)
+
+Approvata da Nic, testo in `patches/wip/recensione-09-21-v3.txt`, spedita
+con `invia-recensione-09-21-v3.sh`. Recapito verificato su lore: il thread
+ha 24 messaggi, il nostro e' agganciato sotto la patch 09 (non sotto la
+cover). Una sola copia in Gmail.
+
+Contenuto: grazie per i punti 1 e 4; **solo il punto 2**, riformulato dopo
+una verifica nuova: i collegamenti fra i pad sorgente del CSI-2 e i nodi
+video nascono con flag `0` (`isys_csi2_create_media_links()`, sia in
+mainline sia nel ramo `metadata`), quindi spenti e non immutabili; con due
+rotte attive sullo stesso VC e un solo collegamento acceso,
+`media_pad_remote_pad_first()` restituisce `NULL` e `av->streaming` viene
+letto da un puntatore derivato da `NULL`. Anche senza oops, quella rotta
+blocca l'altra per sempre. Proposto `if (!video_pad) continue;`, come
+domanda. Oggi i sensori a flusso singolo non ci arrivano (la voce del
+frame descriptor manca prima e si esce con `-EINVAL`); ci arriva lo
+scenario multi-stream che la serie prepara.
+
+**Lasciato fuori apposta**: il punto 3 (e' lo scenario unbind gia'
+respinto) e la patch 2. Nessun `Reviewed-by`: eventualmente dopo la
+correzione.
+
+Nota: lo script NON funziona col prefisso `!` di Claude Code (non si puo'
+digitare SI); va lanciato da un terminale normale.
