@@ -309,3 +309,32 @@ correzione.
 
 Nota: lo script NON funziona col prefisso `!` di Claude Code (non si puo'
 digitare SI); va lanciato da un terminale normale.
+
+---
+
+## 24 settembre 2026: Sakari accetta il punto 2
+
+Il 24/09 alle 10:20 UTC Sakari ha risposto alla nostra mail sulla 09/21 v3
+(indirizzata a Nic, linux-media e tutti gli altri in Cc, quindi pubblica):
+
+> Right, indeed that's possible. I'll add the check.
+
+Riconosce che lo scenario (collegamento spento -> `media_pad_remote_pad_first()`
+restituisce `NULL`) e' possibile e aggiungera' il controllo `if (!video_pad)`,
+presumibilmente nella v4. **Tutti e cinque i reperti mandati sulla 09/21 sono
+ora accettati** (1-4 il 18/09, il 2 riformulato oggi).
+
+Controllato su Gmail: nessun altro messaggio nuovo sulla serie, **ancora
+niente sulla nostra patch 2** (framework, `v4l2-subdev.c`). Non serve
+rispondere: un "grazie" in lista sarebbe solo rumore.
+
+Nota: in Gmail la patch 09, la risposta di Antti e la nostra copia spedita
+risultano nel Cestino (probabilmente pulizia a mano); la risposta di Sakari
+e' in Posta in arrivo.
+
+### Prossimo passo
+
+Quando esce la v4: verificare che nella 09 (o dove finisce il ciclo dopo la
+16) ci sia il controllo su `video_pad`, e se il resto e' invariato dare
+`Reviewed-by` sulla 09/21. Il punto 3 resta fuori (e' lo scenario unbind).
+Continuare ad aspettare la risposta annunciata sulla patch 2.
