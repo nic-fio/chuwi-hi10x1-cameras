@@ -447,3 +447,48 @@ Se la patch va ripresentata: dichiararlo sotto il `---`, aggiungere
 rispondere nel merito all'obiezione di Laurent Pinchart (il controllo
 restringe la corsa, non la chiude). Continuare comunque ad aspettare la
 risposta annunciata da Sakari.
+
+### La risposta a Laurent: patch 2 riscritta (v3, non spedita)
+
+L'obiezione di Laurent Pinchart sulla patch di Nguyen vale anche per la
+nostra v2: controllare `sd->v4l2_dev` e `sd->entity.graph_obj.mdev` dentro
+`subdev_open()` **restringe** la corsa, non la chiude.
+
+Rilettura del 27/09 su `next`:
+
+- Il crash non nasce da un oggetto liberato ma da **due puntatori azzerati
+  apposta** da `v4l2_device_unregister_subdev()`: `sd->v4l2_dev = NULL` e,
+  via `media_gobj_destroy()`, `sd->entity.graph_obj.mdev = NULL`. Sono
+  stato di registrazione del sotto-dispositivo; gli oggetti a cui puntano
+  sono ancora vivi.
+- Il nodo in `/dev` ha **un suo puntatore** allo stesso `v4l2_device`,
+  `vdev->v4l2_dev`: impostato in `__v4l2_device_register_subdev_nodes()`,
+  mai azzerato, e coperto dal riferimento che `__video_register_device()`
+  prende (`v4l2-dev.c:1105`, `v4l2_device_get()`) e che
+  `v4l2_device_release()` rilascia.
+- Quindi `subdev_open()` puo' usare `vdev->v4l2_dev->mdev` per tutti e due
+  gli usi: non resta niente che lo smontaggio possa cambiare sotto di
+  lei. Non e' una finestra piu' stretta, e' nessuna finestra.
+
+La v3 (`patches/wip/subdev-fix-v3/`) cambia **3 righe** invece di 25,
+nessun controllo aggiunto. `git am` pulito su `next`, `checkpatch --strict`
+0 errori (1 avviso: il solito "Unknown commit id" del clone parziale). Il
+messaggio dichiara esplicitamente cosa **non** risolve: la vita del
+sotto-dispositivo e del media device quando i loro driver se ne vanno con
+file aperti, cioe' proprio la "known limitation" di Sakari.
+
+**Non ancora fatto**: compilazione (in attesa della fine dello stress test
+sul server), prova sul tablet (niente riavvii fino al 28/09 sera),
+sotto il `---` la nota su cosa e' stato provato, destinatari.
+
+### Secondo punto con lo stesso difetto (trovato leggendo, non riprodotto)
+
+In `subdev_do_ioctl()`, `VIDIOC_G_EXT_CTRLS`, `VIDIOC_S_EXT_CTRLS` e
+`VIDIOC_TRY_EXT_CTRLS` passano `sd->v4l2_dev->mdev`. `subdev_do_ioctl_lock()`
+controlla `video_is_registered(vdev)`, ma `v4l2_device_unregister_subdev()`
+azzera `sd->v4l2_dev` **prima** di `video_unregister_device()`: una ioctl
+sui controlli da un file gia' aperto, in quella finestra, dereferenzia
+`NULL`. La correzione e' la stessa (`vdev->v4l2_dev->mdev`), ma va in una
+patch a parte con il suo `Fixes:`, e il commit che ha introdotto quel
+`sd->v4l2_dev->mdev` va trovato su una storia completa (il clone del
+server ne ha solo 50 commit).
