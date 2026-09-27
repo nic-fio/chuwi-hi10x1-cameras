@@ -1,16 +1,17 @@
-From ca2f4692805aadb21f4203850f9aa7923bd247f1 Mon Sep 17 00:00:00 2001
+From f07d7e2563c7e4aad9b6ad261f55616fbddf34cf Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
-Date: Sun, 27 Sep 2026 07:31:52 +0000
+Date: Sun, 27 Sep 2026 07:55:46 +0000
 Subject: [PATCH v3 2/2] media: v4l2-subdev: Fix NULL pointer dereference in
  the EXT_CTRLS ioctls
 
 VIDIOC_G_EXT_CTRLS, VIDIOC_S_EXT_CTRLS and VIDIOC_TRY_EXT_CTRLS on a
 sub-device node pass sd->v4l2_dev->mdev to the control framework.
 v4l2_device_unregister_subdev() clears sd->v4l2_dev before it
-unregisters the device node, and the video_is_registered() checks in
-v4l2_ioctl() and subdev_do_ioctl_lock() are not serialised against it,
-as sub-device nodes have no vdev->lock. An EXT_CTRLS ioctl on a file
-handle opened before a driver is unbound can therefore dereference NULL.
+unregisters the device node, and nothing serialises the
+video_is_registered() checks in v4l2_ioctl() and subdev_do_ioctl_lock()
+against it: sub-device nodes have no vdev->lock, and unregistration
+would not take it anyway. An EXT_CTRLS ioctl on a file handle opened
+before a driver is unbound can therefore dereference NULL.
 
 Use vdev->v4l2_dev->mdev instead, as the previous patch does in
 subdev_open(), and as the video node ioctls already do.

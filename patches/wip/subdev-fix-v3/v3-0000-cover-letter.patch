@@ -1,43 +1,48 @@
-From ca2f4692805aadb21f4203850f9aa7923bd247f1 Mon Sep 17 00:00:00 2001
+From f07d7e2563c7e4aad9b6ad261f55616fbddf34cf Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
-Date: Sun, 27 Sep 2026 07:32:48 +0000
+Date: Sun, 27 Sep 2026 07:55:46 +0000
 Subject: [PATCH v3 0/2] media: v4l2-subdev: Fix NULL dereferences racing with unbind
 
 Hi,
 
 v4l2_device_unregister_subdev() clears sd->v4l2_dev and, through
 media_gobj_destroy(), sd->entity.graph_obj.mdev before it unregisters
-the sub-device node. subdev_open() and the EXT_CTRLS ioctls dereference
-those pointers, so a driver unbind racing with an open or an ioctl on
-the node oopses. syzbot hits the open() case by unbinding vimc.
+the sub-device node, and drivers that call media_device_unregister()
+first, as vimc does, clear the latter even earlier. subdev_open()
+dereferences both pointers, and the EXT_CTRLS ioctls the first one, so a
+driver unbind racing with an open or an ioctl on the node oopses. syzbot
+hits the open() case by unbinding vimc.
 
-v2 of patch 1 checked the two pointers in subdev_open(). As Laurent
-pointed out on a similar patch [1], that only narrows the race: the
-sub-device can go away right after the check. This version takes a
-different approach. It stops reading the sub-device's registration
-state from the file operations and uses the node's own vdev->v4l2_dev
-instead, which unregistration never clears. subdev_open() and the
-EXT_CTRLS ioctls no longer read a pointer that the V4L2 core or the
-driver core clears when a driver is unbound.
+Patch 2/3 of v2, now patch 1, checked the two pointers in subdev_open().
+That only narrows the race: the sub-device can be unregistered right
+after the check. A patch along the same lines was also posted in [1].
+This version takes a different approach: it stops reading the
+sub-device's registration state in these file operations and uses the
+node's own vdev->v4l2_dev instead, which unregistration never clears.
+subdev_open() and the EXT_CTRLS ioctls no longer read a pointer that the
+V4L2 core or the driver core clears when a driver is unbound.
 
-What this does not fix is the lifetime of the sub-device and the media
-device when a driver goes away with file handles open, which is the
-known limitation Sakari mentioned on v2 [2]. The commit messages say so.
+What this does not fix is the lifetime of the sub-device and of the
+media device when a driver goes away with file handles open, which is
+the known limitation Sakari mentioned on v2 [2]. The commit messages say
+so.
 
 Changes since v2:
-- Patch 1: use vdev->v4l2_dev->mdev instead of checking sd->v4l2_dev
-  and sd->entity.graph_obj.mdev, and fail with -ENODEV if the media
-  device's driver has been unbound meanwhile.
-- Patch 2 is new: the same dereference in the EXT_CTRLS ioctls, found
-  by reading the code.
-- Dropped the two ipu6 patches of v2 (1/3 and 3/3), as discussed [2].
+- Patch 1 (was 2/3): use vdev->v4l2_dev->mdev instead of checking
+  sd->v4l2_dev and sd->entity.graph_obj.mdev, and fail with -ENODEV if
+  the media device's driver has been unbound meanwhile.
+- Patch 2 is new: the same dereference of sd->v4l2_dev in the EXT_CTRLS
+  ioctls, found by reading the code.
+- Dropped the two ipu6 patches of v2 (1/3 and 3/3), as I said I would
+  in [3].
 - Rebased on media next.
 
-[DA COMPLETARE PRIMA DELL'INVIO: stato delle prove, compilazione e
-prova di funzionamento; vedere docs/12]
+[DA COMPLETARE PRIMA DELL'INVIO: stato delle prove, compilazione e prova
+di funzionamento; vedere docs/12]
 
 [1] https://lore.kernel.org/linux-media/20260919162709.314464-1-ngocthang2710.1999@gmail.com/
-[2] https://lore.kernel.org/linux-media/20260911194854.78894-1-nicfio@gmail.com/
+[2] https://lore.kernel.org/linux-media/aqUoLr0JFGEBiJIf@kekkonen.localdomain/
+[3] https://lore.kernel.org/linux-media/178921203630.98144.13238972861597227362@gmail.com/
 
 Nicola Fiorillo (2):
   media: v4l2-subdev: Fix NULL pointer dereference in subdev_open()

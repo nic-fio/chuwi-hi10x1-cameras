@@ -1,6 +1,6 @@
-From 25b415fbfbda35a4b65a36d33666b21b231512c4 Mon Sep 17 00:00:00 2001
+From 683e31f9fc1cfb019f89fd48c21864533af82724 Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
-Date: Sun, 27 Sep 2026 07:31:52 +0000
+Date: Sun, 27 Sep 2026 07:55:46 +0000
 Subject: [PATCH v3 1/2] media: v4l2-subdev: Fix NULL pointer dereference in
  subdev_open()
 
@@ -19,37 +19,41 @@ the kernel:
    do_sys_openat2+0xae/0xe0
    __x64_sys_openat+0x55/0xa0
 
-v4l2_device_unregister_subdev() clears sd->v4l2_dev, then unregisters the
-media entity, which clears sd->entity.graph_obj.mdev, and only then
-unregisters the device node. subdev_open() dereferences both pointers.
-v4l2_open() has checked that the node is registered, but it drops
-videodev_lock before calling fops->open(), so the whole unregistration
-can run in between. Moving video_unregister_device() earlier, or checking
-the two pointers in subdev_open(), would only narrow the window.
+v4l2_device_unregister_subdev() clears sd->v4l2_dev, then unregisters
+the media entity, which clears sd->entity.graph_obj.mdev, and only then
+unregisters the device node. Drivers that call media_device_unregister()
+before v4l2_device_unregister(), as vimc does, clear
+sd->entity.graph_obj.mdev even earlier, while the sub-device nodes are
+still registered. subdev_open() dereferences both pointers. v4l2_open()
+has checked that the node is registered, but it drops videodev_lock
+before calling fops->open(), so the whole unregistration can run in
+between. Reordering v4l2_device_unregister_subdev() would not help in
+the second case, and checking the two pointers in subdev_open() would
+only narrow the window.
 
 Neither pointer is needed in subdev_open(). Both record that the
 sub-device is registered, and are cleared on purpose when it goes away,
 while open() runs on behalf of the device node. The node has its own
 pointer to the same v4l2_device, vdev->v4l2_dev, which is set when the
 node is registered and never cleared, and the V4L2 core already relies
-on it for as long as the node exists: v4l2_release() and the node's
-release function dereference it. The sub-device's entity is registered
-with vdev->v4l2_dev->mdev, so that is also the media device to take the
+on it for as long as the node exists: v4l2_release() dereferences it on
+every close. The sub-device's entity is registered with
+vdev->v4l2_dev->mdev, so that is also the media device to take the
 module reference through.
 
 That reference goes through mdev->dev->driver, which the driver core
 clears once the media device's own driver has been unbound, as when
-syzbot unbinds vimc. Read it once with READ_ONCE(), as dev_uevent()
-does, and fail the open with -ENODEV if it is gone: unbinding does not
-unload the module, so the pointer read is either still valid or NULL.
+syzbot unbinds vimc. Read it once with READ_ONCE(), as
+dev_driver_string() does, and fail the open with -ENODEV if it is gone:
+unbinding does not unload the module, so the pointer read is either
+still valid or NULL.
 
-With this, subdev_open() no longer reads a pointer that the V4L2 core
-or the driver core clears when a driver is unbound. It can still run on
-a sub-device that has just been unregistered, exactly like a file handle
-opened an instant earlier.
-The lifetime of the sub-device and of the media device when a driver
-goes away with file handles open, and module unloading, are a separate,
-known limitation that this does not address.
+With this, subdev_open() no longer reads a pointer that the V4L2 core or
+the driver core clears when a driver is unbound. It can still run on a
+sub-device that has just been unregistered, exactly like a file handle
+opened an instant earlier. The lifetime of the sub-device and of the
+media device when a driver goes away with file handles open, and module
+unloading, are a separate, known limitation that this does not address.
 
 Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 6.12.86, at
 cycle 7 of a loop unbinding and rebinding a sensor while four processes

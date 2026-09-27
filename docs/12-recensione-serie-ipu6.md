@@ -166,6 +166,12 @@ Laurent ha bocciato quella patch due volte in quindici minuti. La prima:
 LLM». Alla domanda su come preferirebbe che fosse risolto: «by actually
 reasoning about it without the use of an LLM».
 
+> **Correzione del 27/09 (riletto il thread su lore):** Laurent **non** ha
+> scritto che la patch "restringe la finestra". Ha scritto solo le due frasi
+> qui sopra, senza spiegazioni tecniche. "The patch only narrows the window"
+> e' di **Nguyen**, nella sua risposta a Laurent. Quanto segue e' la nostra
+> lettura, non la sua: non attribuirgliela mai in un messaggio.
+
 Sotto il tono c'e' un'obiezione tecnica seria: mettere controlli sui
 puntatori dentro `subdev_open()` **non chiude la corsa, la restringe**. Il
 sub-device puo' sparire subito dopo il controllo, prima che venga chiamata
@@ -492,3 +498,58 @@ sui controlli da un file gia' aperto, in quella finestra, dereferenzia
 patch a parte con il suo `Fixes:`, e il commit che ha introdotto quel
 `sd->v4l2_dev->mdev` va trovato su una storia completa (il clone del
 server ne ha solo 50 commit).
+
+
+---
+
+## 27 settembre 2026, pomeriggio: la serie v3 dopo la doppia verifica
+
+Metodo (vedi la memoria "doppia verifica"): prima passata mia con i
+controlli meccanici, seconda passata avversariale di **Fable 5.1**, piu'
+un revisore del mio modello come confronto. Due giri: sulla patch singola
+e poi sulla serie.
+
+La patch 2 e' diventata una **serie v3 di due patch** con lettera
+(`patches/wip/subdev-fix-v3/`). E' **v3** perche' su lore esistono solo v1
+e v2; la "v3" interna del mattino non e' mai uscita.
+
+- **1/2** `subdev_open()`: usa `vdev->v4l2_dev->mdev` (mai azzerato;
+  `v4l2_release()` lo dereferenzia a ogni chiusura) e legge
+  `mdev->dev->driver` una volta con `READ_ONCE()`, come
+  `dev_driver_string()`, rispondendo `-ENODEV` se il driver del media
+  device e' stato staccato. Il driver core lo scrive con `WRITE_ONCE()`
+  (`device_set_driver()`, `drivers/base/base.h`).
+- **2/2** le tre ioctl `EXT_CTRLS`: `sd->v4l2_dev->mdev` ->
+  `vdev->v4l2_dev->mdev`. `Fixes: c41e9cff704a` (Hans Verkuil, 2018),
+  trovato sulla storia GitHub e verificato sul diff. Dichiarato "trovato
+  leggendo il codice".
+
+Fatti nuovi, tutti verificati sul codice o sulle fonti:
+
+- **vimc** (`vimc_remove()`) chiama `media_device_unregister()` prima di
+  `v4l2_device_unregister()`: `graph_obj.mdev` si azzera mentre i nodi
+  sono ancora registrati. Spiega perche' syzbot cade sulla *seconda*
+  lettura (range 0x0-0x7) e noi sulla prima (0x8).
+- **syzbot** ha segnalato il 7 agosto, **prima** del nostro invio del 12;
+  il suo registro mostra la scrittura di `vimc.0` in
+  `/sys/bus/platform/drivers/vimc/unbind`. La pagina **non ha un
+  riproduttore pubblico**: `#syz test` non e' praticabile.
+- **Nguyen** aveva un riproduttore (QEMU, KASAN, vimc, 16 thread che aprono
+  i nodi contro bind/unbind): 32 crash prima, 0 dopo. E' la strada per
+  provare la nostra serie sul server senza toccare il tablet (dopo lo
+  stress test: serve un kernel intero e QEMU).
+- Message-ID giusti per la lettera: risposta di Sakari alla v2
+  `aqUoLr0JFGEBiJIf@kekkonen.localdomain`; nostro ritiro delle patch ipu6
+  `178921203630.98144.13238972861597227362@gmail.com` (i vecchi appunti
+  riportavano un altro ID: fa fede lore).
+
+Verifiche meccaniche sulla versione finale: `git am` su `next`
+`2dcdfb625`; `checkpatch --strict --codespell` 0 errori (solo "Unknown
+commit id" da clone parziale); `make W=1 drivers/media/v4l2-core/` con
+`allmodconfig` **pulita sia con la sola 1/2 sia con tutta la serie**.
+
+**Manca prima di un eventuale invio**: la prova di funzionamento (tablet
+dopo la sera del 28/09, oppure QEMU+vimc sul server), la dichiarazione
+delle prove nella lettera (segnaposto `[DA COMPLETARE ...]`), l'ultima
+passata di Fable sul testo finale, i destinatari. E resta la regola: non
+prima della risposta di Sakari.
