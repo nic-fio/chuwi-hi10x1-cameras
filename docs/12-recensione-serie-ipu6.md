@@ -384,3 +384,20 @@ Nessuna delle nostre patch lo ha (21 `Signed-off-by`, zero
 patch futura e a un'eventuale ripubblicazione della patch 2.
 
 Sulla patch 2 ancora niente da Sakari. Nessun messaggio spedito.
+
+### Spedito il Reviewed-by sulla v4 (27/09, 05:03 UTC)
+
+Approvato da Nic, testo in `patches/wip/recensione-09-21-v4-tag.txt`,
+spedito con `invia-recensione-09-21-v4.sh`. Recapito verificato su lore:
+il thread ha 27 messaggi, il nostro e' agganciato sotto la v4 1/1 (che a
+sua volta sta sotto la 09/21 v3). Una sola copia in Gmail.
+
+Contenuto: il controllo su `video_pad` va bene anche con `-EINVAL`;
+dichiarazione esplicita che le nostre revisioni sono state fatte con
+l'aiuto di un LLM, con la precisazione che l'`Assisted-by` riguarda la
+revisione e non la patch; poi `Assisted-by: LLM` e `Reviewed-by`.
+
+Perche' il tag e' sicuro in una risposta: verificato sul sorgente di b4
+(`find_trailers`, modo follow-up) che una riga `Xxx-by:` senza indirizzo
+email viene scartata, quindi nel commit di Sakari entra solo il
+`Reviewed-by`. Patchwork raccoglie solo Acked/Reviewed/Tested e simili.
