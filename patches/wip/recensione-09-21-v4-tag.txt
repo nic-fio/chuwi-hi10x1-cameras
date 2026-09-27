@@ -1,0 +1,22 @@
+Hi Sakari,
+
+On Sat, Sep 26, 2026 at 09:25:57PM +0300, Sakari Ailus wrote:
+> +		struct media_pad *video_pad =
+> +			media_pad_remote_pad_first(&asd->sd.entity.pads[route->source_pad]);
+> +		if (!video_pad)
+> +			return -EINVAL;
+
+Thanks, that covers it. Failing the configuration outright is fine by
+me, arguably clearer than skipping the route.
+
+As per Documentation/process/coding-assistants.rst, my reviews of this
+patch were done with the help of an LLM, which did much of the reading
+of the code. I checked the findings against the published patches
+before sending them, and I am accountable for them. The Assisted-by
+below is about my review, not about the patch.
+
+Assisted-by: LLM
+Reviewed-by: Nicola Fiorillo <nicfio@gmail.com>
+
+--
+Nicola Fiorillo
