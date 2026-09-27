@@ -1,4 +1,4 @@
-From 77149bcb8d31cec432fc1126c91e79a70c60adba Mon Sep 17 00:00:00 2001
+From ca89c15ae8151916f29905473472c881b15a8ae3 Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 14:24:16 +0200
 Subject: [PATCH 1/5] media: dt-bindings: Add GalaxyCore GC5035
@@ -10,6 +10,7 @@ yamllint non sono installati su questa macchina.
 Add device tree bindings for the GalaxyCore GC5035 5 Mpixel raw image
 sensor, modelled on the already accepted galaxycore,gc05a2.yaml.
 
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  .../bindings/media/i2c/galaxycore,gc5035.yaml | 109 ++++++++++++++++++
@@ -131,6 +132,8 @@ index 000000000..b87fde508
 +    };
 +
 +...
+
+base-commit: 2dcdfb625c3b8fe87454e19dfbc54b3e3f0ad70e
 -- 
 2.47.3
 

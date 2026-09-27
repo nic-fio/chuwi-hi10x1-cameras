@@ -47,6 +47,7 @@ Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 7.2-rc7 with
 KASAN, by unbinding a GC5035 sensor two seconds into a capture.
 
 Fixes: ae219872834a ("media: mc: entity: Rewrite media_pipeline_start()")
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/media/mc/mc-device.c |  7 +++++++

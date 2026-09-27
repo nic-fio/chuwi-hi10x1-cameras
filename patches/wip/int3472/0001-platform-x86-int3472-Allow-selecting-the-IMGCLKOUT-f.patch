@@ -31,6 +31,7 @@ out to capture correctly at 19.2 MHz with every timing scaled by 0.8,
 so forcing 24 MHz is no longer needed to make that sensor work and the
 new .set_rate path stays unexercised.
 
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  .../x86/intel/int3472/clk_and_regulator.c     | 66 ++++++++++++++++++-

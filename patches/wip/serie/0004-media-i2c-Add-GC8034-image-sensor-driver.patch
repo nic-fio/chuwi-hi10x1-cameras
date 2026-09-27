@@ -1,4 +1,4 @@
-From be29d55fcb529676fee076f3b1fe7fc93641cb22 Mon Sep 17 00:00:00 2001
+From 7d521a11b4ba29b816e29b59a8fbf7f6dd29753c Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 21:36:45 +0200
 Subject: [PATCH 4/5] media: i2c: Add GC8034 image sensor driver
@@ -37,6 +37,7 @@ in xvclk cycles: the BSP hardcoded 350 us, which is its 8192 cycles at
 Target hardware: CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6),
 ACPI HID GCTI8034 at \_SB.PC00.LNK0.
 
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  MAINTAINERS                |    7 +
@@ -47,10 +48,10 @@ Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
  create mode 100644 drivers/media/i2c/gc8034.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 37f03e9f1..5db2fcb83 100644
+index 46bcb9261..37e8f7ced 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -10801,6 +10801,13 @@ S:	Maintained
+@@ -10882,6 +10882,13 @@ S:	Maintained
  F:	Documentation/devicetree/bindings/media/i2c/galaxycore,gc5035.yaml
  F:	drivers/media/i2c/gc5035.c
  
@@ -65,7 +66,7 @@ index 37f03e9f1..5db2fcb83 100644
  M:	Tim Harvey <tharvey@gateworks.com>
  S:	Maintained
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index b793906c3..a7e66ffbb 100644
+index 0230fae3b..d56fb3006 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
 @@ -120,6 +120,16 @@ config VIDEO_GC5035
@@ -86,7 +87,7 @@ index b793906c3..a7e66ffbb 100644
  	tristate "Hynix Hi-556 sensor support"
  	help
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index de46c13ac..07b4545d3 100644
+index 5be51a7ff..8342e6989 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
 @@ -43,6 +43,7 @@ obj-$(CONFIG_VIDEO_GC05A2) += gc05a2.o

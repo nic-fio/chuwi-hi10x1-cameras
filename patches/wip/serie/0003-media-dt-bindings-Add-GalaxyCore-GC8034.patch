@@ -1,4 +1,4 @@
-From 386bd1a0f2aae7cd07598c3ed11a0acfba602000 Mon Sep 17 00:00:00 2001
+From 75c1d99a0814c30c9fac87ead6e86c3d15efa5fe Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 14:24:49 +0200
 Subject: [PATCH 3/5] media: dt-bindings: Add GalaxyCore GC8034
@@ -9,6 +9,7 @@ Signed-off-by, binding non validato (dtschema assente).
 Add device tree bindings for the GalaxyCore GC8034 8 Mpixel raw image
 sensor, modelled on the already accepted galaxycore,gc05a2.yaml.
 
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  .../bindings/media/i2c/galaxycore,gc8034.yaml | 115 ++++++++++++++++++

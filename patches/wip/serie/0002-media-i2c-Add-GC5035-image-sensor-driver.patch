@@ -1,4 +1,4 @@
-From 5d273824d87c932a8e553e7b0633fe156350fbeb Mon Sep 17 00:00:00 2001
+From effcf558e42d95067a1dd4c82c0a2d0b395565a1 Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 21:36:44 +0200
 Subject: [PATCH 2/5] media: i2c: Add GC5035 image sensor driver
@@ -34,6 +34,7 @@ timing model.
 Target hardware: CHUWI Hi10 X1 (Intel N100, Alder Lake-N, IPU6),
 ACPI HID GCTI5035 at \_SB.PC00.LNK1.
 
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  MAINTAINERS                |    7 +
@@ -44,10 +45,10 @@ Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
  create mode 100644 drivers/media/i2c/gc5035.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 8014b9f82..37f03e9f1 100644
+index 4cc4a2dc6..46bcb9261 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -10794,6 +10794,13 @@ T:	git git://linuxtv.org/media.git
+@@ -10875,6 +10875,13 @@ T:	git git://linuxtv.org/media.git
  F:	Documentation/devicetree/bindings/media/i2c/galaxycore,gc2145.yaml
  F:	drivers/media/i2c/gc2145.c
  
@@ -62,7 +63,7 @@ index 8014b9f82..37f03e9f1 100644
  M:	Tim Harvey <tharvey@gateworks.com>
  S:	Maintained
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 5d173e0ec..b793906c3 100644
+index 4d9946479..0230fae3b 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
 @@ -110,6 +110,16 @@ config VIDEO_GC2145
@@ -83,7 +84,7 @@ index 5d173e0ec..b793906c3 100644
  	tristate "Hynix Hi-556 sensor support"
  	help
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index e45359efe..de46c13ac 100644
+index fd1cb2571..5be51a7ff 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
 @@ -42,6 +42,7 @@ obj-$(CONFIG_VIDEO_GC0310) += gc0310.o

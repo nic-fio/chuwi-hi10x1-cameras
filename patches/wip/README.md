@@ -1,5 +1,40 @@
 # patches/wip — lavoro in corso
 
+## Stato al 2026-09-27: ricontrollate sul media tree `next` (`2dcdfb625c3b`)
+
+Verifica fatta sul server (`/media/INTEL-CAMERA/sorgenti/media`), senza
+compilare le patch qui sotto per non disturbare lo stress test in corso:
+solo `git am`, `checkpatch --strict` e lettura del codice.
+
+| Cartella | Si applica su `next`? | Note |
+|---|---|---|
+| `serie/` | **si', dopo ribasatura** | la 0005 (`ipu-bridge`) e' stata ribasata: in testa alla lista e' arrivato `HIMX1092`, i due `GCTI` vanno prima di lui. Le altre cambiano solo nei numeri di riga di `MAINTAINERS`. Contenuto invariato |
+| `mc-pipeline-fix/` | si' | |
+| `int3472-leak-fix/` | si' (su `next` di media) | va a `platform-driver-x86`: ricontrollare sul loro `for-next` prima di spedire |
+| `int3472/` | si' (su `next` di media) | idem |
+| `ipu6-lock-fix/` | **NO, e non va spedita cosi'** | vedi sotto |
+| patch 2 dell'invio 1 | si', compila pulita con `W=1` | vedi `docs/12` |
+
+Tutte le patch qui sopra (tranne `ipu6-lock-fix`) hanno ora
+`Assisted-by: LLM` subito prima del `Signed-off-by`, come chiede
+`Documentation/process/coding-assistants.rst`.
+
+**`ipu6-lock-fix/` e' in sospeso.** La 0001 non si applica perche'
+`ipu6_isys_fw_pin_cfg()` e' stata spostata in `ipu6-fw-isys.c` ed e' nata
+una gemella `ipu7_isys_fw_pin_cfg()` in `ipu7-fw-isys.c`. Su `next` il
+difetto c'e' ancora, in tutte e due: `ipu6_isys_video_set_streaming()`
+rilascia il lock dello stato *prima* di `start_stream_firmware()`. Ma la
+serie di Sakari (v3/v4, 09/21 e 02/21) sposta l'avvio del firmware dentro
+`.enable_streams()` del CSI-2, che il framework chiama con lo stato del
+sotto-dispositivo **gia' bloccato** (`v4l2_subdev_enable_streams()`,
+`lock_and_get_active_state()` prima della chiamata). Quando quella serie
+entra, `v4l2_subdev_get_locked_active_state()` diventa corretto da solo, e
+la nostra 0001 (che prende il lock una seconda volta) **andrebbe in
+deadlock**. La 0002 (watermark) si applica con uno scostamento di 115
+righe, ma la stessa serie riscrive il calcolo del watermark (14/21, 15/21).
+Decisione: aspettare che la serie di Sakari entri, poi rifare lockdep e
+riguardare.
+
 **PRONTE DA INVIARE dal 2026-08-12.** Fino a quel giorno i commit avevano
 `BOZZA` nel subject apposta, per impedire un invio accidentale. Adesso non ce
 l'hanno piu': sono firmate da Nicola Fiorillo <nicfio@gmail.com>, i segnaposto

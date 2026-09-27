@@ -1,4 +1,4 @@
-From d4c5f042fdcfcf62b247a6dc9c0aa679ce97e6de Mon Sep 17 00:00:00 2001
+From b8a7670754a6c975eb2ccc2c2d364457befcebe4 Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
 Date: Tue, 11 Aug 2026 21:36:45 +0200
 Subject: [PATCH 5/5] media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
@@ -17,26 +17,27 @@ Verificato che l'SSDB di questa macchina NON contiene la link
 frequency: il campo maxlanespeed non viene popolato dal BIOS e resta a
 zero, coerentemente con il commento in testa alla tabella.
 
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/media/pci/intel/ipu-bridge.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-index 88581a4c0..3047abd41 100644
+index 77257311d..0cbade2ca 100644
 --- a/drivers/media/pci/intel/ipu-bridge.c
 +++ b/drivers/media/pci/intel/ipu-bridge.c
-@@ -49,6 +49,10 @@
-  * Please keep the list sorted by ACPI HID.
-  */
+@@ -59,6 +59,10 @@ static const u16 ipu6_ov5693_ncont_clk[] = {
+ };
+ 
  static const struct ipu_sensor_config ipu_supported_sensors[] = {
 +	/* GalaxyCore GC5035 */
 +	IPU_SENSOR_CONFIG("GCTI5035", 1, 422400000),
 +	/* GalaxyCore GC8034 */
 +	IPU_SENSOR_CONFIG("GCTI8034", 1, 268800000),
+ 	/* Himax HM1092 */
+ 	IPU_SENSOR_CONFIG("HIMX1092", 2, 180000000, 180480000),
  	/* Himax HM11B1 */
- 	IPU_SENSOR_CONFIG("HIMX11B1", 1, 384000000),
- 	/* Himax HM2170 */
 -- 
 2.47.3
 

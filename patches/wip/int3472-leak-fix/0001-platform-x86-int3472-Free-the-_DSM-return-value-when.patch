@@ -32,6 +32,7 @@ Nothing here looks at what the _DSM returns, so just free it. ACPI_FREE()
 copes with NULL, which is what acpi_evaluate_dsm() returns on failure.
 
 Fixes: e4543de8b6ff ("platform/x86: int3472: Evaluate device's _DSM method to control imaging clock")
+Assisted-by: LLM
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 ---
  drivers/platform/x86/intel/int3472/clk_and_regulator.c | 6 ++++--
