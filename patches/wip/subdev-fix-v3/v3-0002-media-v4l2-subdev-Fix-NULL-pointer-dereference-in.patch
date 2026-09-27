@@ -1,6 +1,6 @@
-From f07d7e2563c7e4aad9b6ad261f55616fbddf34cf Mon Sep 17 00:00:00 2001
+From a41d575655f0a94ad8ac252386cf155912a8d415 Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
-Date: Sun, 27 Sep 2026 07:55:46 +0000
+Date: Sun, 27 Sep 2026 12:27:14 +0000
 Subject: [PATCH v3 2/2] media: v4l2-subdev: Fix NULL pointer dereference in
  the EXT_CTRLS ioctls
 
@@ -11,12 +11,23 @@ unregisters the device node, and nothing serialises the
 video_is_registered() checks in v4l2_ioctl() and subdev_do_ioctl_lock()
 against it: sub-device nodes have no vdev->lock, and unregistration
 would not take it anyway. An EXT_CTRLS ioctl on a file handle opened
-before a driver is unbound can therefore dereference NULL.
+before a driver is unbound can therefore dereference NULL:
+
+  KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+  RIP: 0010:subdev_do_ioctl+0x1926/0x2550
+  Call Trace:
+   subdev_do_ioctl_lock+0x246/0x5c0
+   video_usercopy+0x47b/0xcc0
+   v4l2_ioctl+0x187/0x1f0
+   __x64_sys_ioctl+0x134/0x1c0
 
 Use vdev->v4l2_dev->mdev instead, as the previous patch does in
 subdev_open(), and as the video node ioctls already do.
 
-This was found by reading the code, not by hitting it.
+Found by reading the code, then reproduced in QEMU with KASAN: with the
+previous patch applied, threads looping on VIDIOC_G_EXT_CTRLS on vimc's
+sub-device nodes while vimc is unbound and rebound hit the oops above;
+with this patch the same test shows no oops, KASAN report or warning.
 
 Fixes: c41e9cff704a ("media: v4l2-ctrls: support g/s_ext_ctrls for requests")
 Cc: stable@vger.kernel.org

@@ -1,6 +1,6 @@
-From 683e31f9fc1cfb019f89fd48c21864533af82724 Mon Sep 17 00:00:00 2001
+From 06a38bc63b95546d3146d6d8a09d3309669edd8f Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
-Date: Sun, 27 Sep 2026 07:55:46 +0000
+Date: Sun, 27 Sep 2026 12:27:14 +0000
 Subject: [PATCH v3 1/2] media: v4l2-subdev: Fix NULL pointer dereference in
  subdev_open()
 
@@ -58,7 +58,9 @@ unloading, are a separate, known limitation that this does not address.
 Reproduced on a CHUWI Hi10 X1 (Alder Lake-N, IPU6) running 6.12.86, at
 cycle 7 of a loop unbinding and rebinding a sensor while four processes
 opened every /dev/v4l-subdev*. syzbot hit the second dereference on the
-same line by unbinding vimc.
+same line by unbinding vimc, and so does a test in QEMU with KASAN that
+opens vimc's sub-device nodes while vimc is unbound and rebound; with
+this patch the same test shows no oops, KASAN report or warning.
 
 Reported-by: syzbot+74de6401dbdd377b5746@syzkaller.appspotmail.com
 Closes: https://syzkaller.appspot.com/bug?extid=74de6401dbdd377b5746

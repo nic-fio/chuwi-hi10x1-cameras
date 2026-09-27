@@ -1,6 +1,6 @@
-From f07d7e2563c7e4aad9b6ad261f55616fbddf34cf Mon Sep 17 00:00:00 2001
+From a41d575655f0a94ad8ac252386cf155912a8d415 Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
-Date: Sun, 27 Sep 2026 07:55:46 +0000
+Date: Sun, 27 Sep 2026 12:27:14 +0000
 Subject: [PATCH v3 0/2] media: v4l2-subdev: Fix NULL dereferences racing with unbind
 
 Hi,
@@ -37,8 +37,32 @@ Changes since v2:
   in [3].
 - Rebased on media next.
 
-[DA COMPLETARE PRIMA DELL'INVIO: stato delle prove, compilazione e prova
-di funzionamento; vedere docs/12]
+Testing:
+- Built with W=1 (allmodconfig) at each patch of the series on media
+  next 2dcdfb625c3b.
+- Run in QEMU/KVM (x86_64, 4 vCPUs, KASAN generic inline, vimc built
+  in), one boot per 60 s run. 16 threads either open and close vimc's
+  sub-device nodes, or loop on VIDIOC_G_EXT_CTRLS on handles opened
+  before an unbind, while another thread unbinds and rebinds vimc
+  through sysfs every 1 or 30 ms. Each oops kills the thread that hits
+  it; the test re-creates up to 100 per run, so the counts are capped:
+
+    kernel              open() runs       EXT_CTRLS runs
+    media next          116 + 116 oops    -
+    + patch 1           0 + 0             116 + 116 oops
+    + patches 1 and 2   0 + 0             0 + 0
+
+  The oopses are KASAN null-ptr-derefs in subdev_open() and
+  subdev_do_ioctl() respectively. The EXT_CTRLS runs are not done on
+  plain media next, where the open() in them crashes first. The open()
+  runs with patch 1 and all the runs with both patches showed no oops,
+  KASAN report or warning at all: about 8 million successful opens,
+  1.1 million opens refused with -ENODEV while vimc was being unbound,
+  and, with both patches, 880 million EXT_CTRLS ioctls.
+- Not tested on the IPU6 hardware where I first hit the open() oops.
+  syzbot has not tested the series: its report has no public
+  reproducer.
+- I can post the test program if that helps.
 
 [1] https://lore.kernel.org/linux-media/20260919162709.314464-1-ngocthang2710.1999@gmail.com/
 [2] https://lore.kernel.org/linux-media/aqUoLr0JFGEBiJIf@kekkonen.localdomain/
