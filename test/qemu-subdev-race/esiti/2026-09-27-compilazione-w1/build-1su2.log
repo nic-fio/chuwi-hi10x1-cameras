@@ -1,0 +1,5 @@
+make[1]: Entering directory '/media/INTEL-CAMERA/build/next'
+  DESCEND objtool
+  CC [M]  drivers/media/v4l2-core/v4l2-subdev.o
+  LD [M]  drivers/media/v4l2-core/videodev.o
+make[1]: Leaving directory '/media/INTEL-CAMERA/build/next'

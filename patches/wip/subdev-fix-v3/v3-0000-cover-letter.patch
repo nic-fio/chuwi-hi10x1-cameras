@@ -1,6 +1,6 @@
 From a41d575655f0a94ad8ac252386cf155912a8d415 Mon Sep 17 00:00:00 2001
 From: Nicola Fiorillo <nicfio@gmail.com>
-Date: Sun, 27 Sep 2026 12:27:14 +0000
+Date: Sun, 27 Sep 2026 12:37:04 +0000
 Subject: [PATCH v3 0/2] media: v4l2-subdev: Fix NULL dereferences racing with unbind
 
 Hi,
@@ -42,8 +42,8 @@ Testing:
   next 2dcdfb625c3b.
 - Run in QEMU/KVM (x86_64, 4 vCPUs, KASAN generic inline, vimc built
   in), one boot per 60 s run. 16 threads either open and close vimc's
-  sub-device nodes, or loop on VIDIOC_G_EXT_CTRLS on handles opened
-  before an unbind, while another thread unbinds and rebinds vimc
+  sub-device nodes, or loop on VIDIOC_G_EXT_CTRLS on handles they keep
+  open across unbinds, while another thread unbinds and rebinds vimc
   through sysfs every 1 or 30 ms. Each oops kills the thread that hits
   it; the test re-creates up to 100 per run, so the counts are capped:
 
@@ -54,11 +54,13 @@ Testing:
 
   The oopses are KASAN null-ptr-derefs in subdev_open() and
   subdev_do_ioctl() respectively. The EXT_CTRLS runs are not done on
-  plain media next, where the open() in them crashes first. The open()
-  runs with patch 1 and all the runs with both patches showed no oops,
-  KASAN report or warning at all: about 8 million successful opens,
-  1.1 million opens refused with -ENODEV while vimc was being unbound,
-  and, with both patches, 880 million EXT_CTRLS ioctls.
+  plain media next, since they open the nodes too and would oops in
+  subdev_open() as well. The open() runs with patch 1 and all the runs
+  with both patches showed no oops, KASAN report or warning at all:
+  about 8 million successful opens, 1.1 million opens refused with
+  -ENODEV while vimc was being unbound (the test does not tell
+  v4l2_open()'s own check from the new one), and, with both patches,
+  880 million EXT_CTRLS ioctls.
 - Not tested on the IPU6 hardware where I first hit the open() oops.
   syzbot has not tested the series: its report has no public
   reproducer.
