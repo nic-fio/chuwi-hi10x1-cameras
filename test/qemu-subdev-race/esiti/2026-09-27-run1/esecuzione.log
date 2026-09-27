@@ -1,0 +1,48 @@
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_CTYPE = (unset),
+	LC_NUMERIC = "C",
+	LC_COLLATE = "C",
+	LC_TIME = (unset),
+	LC_MESSAGES = (unset),
+	LC_MONETARY = (unset),
+	LC_ADDRESS = (unset),
+	LC_IDENTIFICATION = (unset),
+	LC_MEASUREMENT = (unset),
+	LC_PAPER = (unset),
+	LC_TELEPHONE = (unset),
+	LC_NAME = (unset),
+	LANG = "it_IT.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the standard locale ("C").
+== base (2dcdfb625c3b), uscita di qemu: 0
+   RACE-START
+   RACE-PHASE what=open period=1ms seconds=60 cycles=10252 ok=35290 enodev=31 enoent=29 other_err=0 no_node=37898 killed=516 create_err=0 unbinder_dead=0 unbind_err=0 bind_err=0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=842 ok=44071 enodev=1684 enoent=2 other_err=460480 no_node=121809420 killed=504 create_err=0 unbinder_dead=0 unbind_err=825 bind_err=825
+   RACE-PHASE what=ioctl period=1ms seconds=60 cycles=27266 ok=254000 enodev=0 enoent=0 other_err=0 no_node=145404071 killed=0 create_err=0 unbinder_dead=0 unbind_err=27177 bind_err=27178
+   RACE-PHASE what=ioctl period=30ms seconds=60 cycles=994 ok=294000 enodev=0 enoent=0 other_err=0 no_node=139381299 killed=0 create_err=0 unbinder_dead=0 unbind_err=990 bind_err=991
+   RACE-END
+   NON VALIDO: fase senza cicli o operazioni riuscite, thread non creati, unbind morto o bind falliti
+   Oops:                 1020
+   KASAN null-ptr-deref: 1020
+   BUG: KASAN (uaf/oob): 0
+   WARNING:              0
+   funzione nel RIP di ogni oops, per fase (0 avvio, 1-2 open, 3-4 ioctl):
+          516 1 subdev_open
+          504 2 subdev_open
+NB: nessun oops in subdev_open sul kernel base: la 1/2 non e' dimostrata da questo run
+NB: nessun oops in subdev_do_ioctl sul kernel base: la 2/2 non e' dimostrata da questo run
+== v3 (f07d7e2563c7), uscita di qemu: 0
+   RACE-START
+   RACE-PHASE what=open period=1ms seconds=60 cycles=418 ok=2234513 enodev=365826 enoent=10804 other_err=0 no_node=799703 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 bind_err=0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=298 ok=2192522 enodev=258538 enoent=7625 other_err=0 no_node=1001757 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 bind_err=0
+   RACE-PHASE what=ioctl period=1ms seconds=60 cycles=648 ok=496452841 enodev=14790 enoent=0 other_err=0 no_node=1165455 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 bind_err=0
+   RACE-PHASE what=ioctl period=30ms seconds=60 cycles=391 ok=493600765 enodev=9365 enoent=0 other_err=0 no_node=1307132 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 bind_err=0
+   RACE-END
+   Oops:                 0
+   KASAN null-ptr-deref: 0
+   BUG: KASAN (uaf/oob): 0
+   WARNING:              0
+   funzione nel RIP di ogni oops, per fase (0 avvio, 1-2 open, 3-4 ioctl):
