@@ -1,0 +1,50 @@
+== base open:1 (2dcdfb625c3b), uscita di qemu: 0
+   RACE-PHASE what=open period=1ms seconds=60 cycles=10150 ok=39559 enodev=2741 enoent=32 other_err=0 no_node=21953 killed=516 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 516, KASAN null-ptr-deref 516, BUG: KASAN 0, WARNING 0; in subdev_open: 516
+          516 1 subdev_open
+== base open:30 (2dcdfb625c3b), uscita di qemu: 0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=674 ok=37284 enodev=5746 enoent=16 other_err=0 no_node=27928 killed=516 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 516, KASAN null-ptr-deref 516, BUG: KASAN 0, WARNING 0; in subdev_open: 516
+          516 1 subdev_open
+== p1 open:1 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=open period=1ms seconds=60 cycles=411 ok=1845876 enodev=298579 enoent=11333 other_err=1 no_node=664281 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== p1 open:30 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=291 ok=1808264 enodev=225873 enoent=7977 other_err=1 no_node=863403 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== v3 open:1 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=open period=1ms seconds=60 cycles=428 ok=2491735 enodev=401321 enoent=10821 other_err=1 no_node=862369 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== v3 open:30 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=307 ok=1961177 enodev=226580 enoent=8214 other_err=0 no_node=900416 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== p1 ioctl:1 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=ioctl period=1ms seconds=60 cycles=332 ok=250023949 enodev=6576 enoent=0 other_err=0 no_node=1820248 killed=286 create_err=0 unbinder_dead=0 unbind_err=163 unbind_errno=19 bind_err=164 bind_errno=23
+   NON VALIDO: senza cicli, operazioni riuscite o corse con l'unbind (enodev), thread non creati, unbind morto o bind falliti
+   Oops 286, KASAN null-ptr-deref 286, BUG: KASAN 2121, WARNING 0; in subdev_do_ioctl: 286
+          286 1 subdev_do_ioctl
+== p1 ioctl:30 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=[   60.139132] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+   Oops 301, KASAN null-ptr-deref 301, BUG: KASAN 1607, WARNING 0; in subdev_do_ioctl: 301
+          301 1 subdev_do_ioctl
+   NB: thread uccisi ? diversi dagli oops della fase
+== v3 ioctl:1 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=ioctl period=1ms seconds=60 cycles=656 ok=457692516 enodev=14663 enoent=0 other_err=0 no_node=1248168 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_do_ioctl: 0
+== v3 ioctl:30 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=ioctl period=30ms seconds=60 cycles=388 ok=470060455 enodev=9418 enoent=0 other_err=0 no_node=1099144 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_do_ioctl: 0
+
+== Riepilogo: oops nella funzione della patch / tutti gli oops, KASAN e WARNING (NV = avvio non valido)
+   base open:1    516 / 516
+   base open:30   516 / 516
+   p1 open:1      0 / 0
+   p1 open:30     0 / 0
+   v3 open:1      0 / 0
+   v3 open:30     0 / 0
+   p1 ioctl:1     NV / NV
+   p1 ioctl:30    301 / 1908
+   v3 ioctl:1     0 / 0
+   v3 ioctl:30    0 / 0
+1/2: DIMOSTRATA (base crasha 1032 volte nella funzione della patch, p1 nessun oops, KASAN o WARNING)
+2/2: NESSUNA CONCLUSIONE, ci sono avvii non validi
