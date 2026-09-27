@@ -338,3 +338,49 @@ Quando esce la v4: verificare che nella 09 (o dove finisce il ciclo dopo la
 16) ci sia il controllo su `video_pad`, e se il resto e' invariato dare
 `Reviewed-by` sulla 09/21. Il punto 3 resta fuori (e' lo scenario unbind).
 Continuare ad aspettare la risposta annunciata sulla patch 2.
+
+---
+
+## Controllo del 27 settembre 2026: uscita la v4 della 09/21
+
+Il 26/09 alle 18:25 UTC Sakari ha pubblicato `[PATCH v4 1/1] media: ipu6:
+Start streaming once all streams have started, stop when not`: **solo la
+patch 09**, ripubblicata da sola, con Nic in Cc. Registro "since v3":
+
+> Check video_pad isn't NULL in ipu6_isys_csi2_streaming_change().
+
+E' il nostro punto 2. Confrontata riga per riga con la v3 (entrambe da
+Gmail): l'unica differenza nel codice sono le tre righe
+
+    if (!video_pad)
+            return -EINVAL;
+
+dopo `media_pad_remote_pad_first()`, piu' il `Reviewed-by` di Antti
+Laakso. Il resto e' identico.
+
+Differenza rispetto alla nostra proposta: avevamo suggerito `continue`
+(ignorare la rotta senza collegamento acceso), lui ha scelto `-EINVAL`
+(rifiutare l'avvio). Con `-EINVAL` lo scenario "due rotte sullo stesso VC,
+un solo collegamento acceso" non fa piu' oops e non resta appeso: fallisce
+subito con un errore. E' una scelta difendibile (una rotta attiva senza
+nodo video e' una configurazione sbagliata) e **non vale una replica**.
+
+### Altro in lista, rilevante per noi
+
+- 23-24/09, Felipe Calliari, `[PATCH 0/2] media: ipu6: Stop calling ISR
+  hooks of unloaded drivers` (rmmod di isys/psys). Sakari al 24/09 gli ha
+  risposto con la **stessa posizione data a noi** ("we currently can't
+  safely remove the ISYS driver if the userspace isn't guaranteed to have
+  no file handles open") e in piu' **"This patch looks very much
+  LLM-generated. Are the tags in Documentation/process/coding-assistants.rst
+  relevant for this?"**.
+- 24/09, Antti Laakso, `media: ipu6: Fix bus device use-after-free` in
+  `ipu6_pci_remove()`: Sakari ha solo aggiunto un `Closes:`.
+
+**Il tag `Assisted-by`**: `coding-assistants.rst` chiede
+`Assisted-by: LLM [strumenti]` sulle patch fatte con un assistente IA.
+Nessuna delle nostre patch lo ha (21 `Signed-off-by`, zero
+`Assisted-by`), nemmeno la patch 2 ancora in attesa. Da aggiungere a ogni
+patch futura e a un'eventuale ripubblicazione della patch 2.
+
+Sulla patch 2 ancora niente da Sakari. Nessun messaggio spedito.
