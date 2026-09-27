@@ -9,8 +9,10 @@
  *   ioctl phases: keep a handle open across unbinds and loop
  *                 VIDIOC_G_EXT_CTRLS on it              (EXT_CTRLS, 2/2)
  *
- * Separate phases keep the attribution of a crash unambiguous, and keep
- * the ioctl threads from being starved when the open threads die.
+ * The phases to run come from the kernel command line, e.g.
+ * "race.phases=open:1,ioctl:30"; the host boots a fresh kernel for each
+ * phase, because the threads an oops kills never release the nodes they
+ * hold open, and after enough of them vimc cannot be bound again.
  *
  * Each oops kills the thread that hit it, not PID 1. Dead workers are
  * noticed with pthread_tryjoin_np() and re-created (up to MAX_RESPAWN per
@@ -51,6 +53,7 @@
 static atomic_int stop;
 static atomic_long n_ok, n_enodev, n_enoent, n_other_err;
 static atomic_long n_cycles, n_bind_err, n_unbind_err, n_no_node;
+static atomic_int first_bind_errno, first_unbind_errno;
 
 static void flush_out(void)
 {
@@ -175,11 +178,15 @@ static void *unbinder(void *arg)
 	unsigned int period_ms = (unsigned long)arg;
 
 	while (!stop) {
-		if (write_str(VIMC_DRV "/unbind", VIMC_DEV) < 0)
-			n_unbind_err++;
+		int err;
+
+		err = write_str(VIMC_DRV "/unbind", VIMC_DEV);
+		if (err < 0 && !n_unbind_err++)
+			first_unbind_errno = -err;
 		msleep(period_ms);
-		if (write_str(VIMC_DRV "/bind", VIMC_DEV) < 0)
-			n_bind_err++;
+		err = write_str(VIMC_DRV "/bind", VIMC_DEV);
+		if (err < 0 && !n_bind_err++)
+			first_bind_errno = -err;
 		msleep(period_ms);
 		n_cycles++;
 	}
@@ -198,6 +205,7 @@ static void run_phase(const char *what, unsigned int period_ms)
 	stop = 0;
 	n_ok = n_enodev = n_enoent = n_other_err = 0;
 	n_cycles = n_bind_err = n_unbind_err = n_no_node = 0;
+	first_bind_errno = first_unbind_errno = 0;
 
 	for (i = 0; i < N_THREADS; i++) {
 		alive[i] = !pthread_create(&t[i], NULL, fn, (void *)i);
@@ -243,12 +251,50 @@ static void run_phase(const char *what, unsigned int period_ms)
 	/* Leave vimc bound for the next phase. */
 	write_str(VIMC_DRV "/bind", VIMC_DEV);
 
-	printf("RACE-PHASE what=%s period=%ums seconds=%u cycles=%ld ok=%ld enodev=%ld enoent=%ld other_err=%ld no_node=%ld killed=%ld create_err=%ld unbinder_dead=%d unbind_err=%ld bind_err=%ld\n",
+	printf("RACE-PHASE what=%s period=%ums seconds=%u cycles=%ld ok=%ld enodev=%ld enoent=%ld other_err=%ld no_node=%ld killed=%ld create_err=%ld unbinder_dead=%d unbind_err=%ld unbind_errno=%d bind_err=%ld bind_errno=%d\n",
 	       what, period_ms, PHASE_SECONDS, (long)n_cycles, (long)n_ok,
 	       (long)n_enodev, (long)n_enoent, (long)n_other_err,
 	       (long)n_no_node, killed, create_err, unbinder_dead,
-	       (long)n_unbind_err, (long)n_bind_err);
+	       (long)n_unbind_err, (int)first_unbind_errno,
+	       (long)n_bind_err, (int)first_bind_errno);
 	flush_out();
+}
+
+/* Runs the phases listed in race.phases=what:period[,what:period...]. */
+static int run_cmdline_phases(void)
+{
+	char buf[4096], *p, *tok, *save;
+	int fd, n, done = 0;
+
+	fd = open("/proc/cmdline", O_RDONLY);
+	if (fd < 0)
+		return -1;
+	n = read(fd, buf, sizeof(buf) - 1);
+	close(fd);
+	if (n <= 0)
+		return -1;
+	buf[n] = '\0';
+
+	p = strstr(buf, "race.phases=");
+	if (!p)
+		return -1;
+	p += strlen("race.phases=");
+	p[strcspn(p, " \n")] = '\0';
+
+	for (tok = strtok_r(p, ",", &save); tok; tok = strtok_r(NULL, ",", &save)) {
+		char *colon = strchr(tok, ':');
+		unsigned int period;
+
+		if (!colon)
+			return -1;
+		*colon = '\0';
+		period = strtoul(colon + 1, NULL, 10);
+		if ((strcmp(tok, "open") && strcmp(tok, "ioctl")) || !period)
+			return -1;
+		run_phase(tok, period);
+		done++;
+	}
+	return done ? 0 : -1;
 }
 
 int main(void)
@@ -271,10 +317,10 @@ int main(void)
 
 	printf("RACE-START\n");
 	flush_out();
-	run_phase("open", 1);
-	run_phase("open", 30);
-	run_phase("ioctl", 1);
-	run_phase("ioctl", 30);
+	if (run_cmdline_phases()) {
+		printf("RACE-ERROR bad or missing race.phases= on the command line\n");
+		goto out;
+	}
 	printf("RACE-END\n");
 
 out:
