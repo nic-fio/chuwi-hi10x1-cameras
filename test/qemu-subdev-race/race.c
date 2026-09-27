@@ -49,7 +49,12 @@
 #define MAX_NODES	32
 #define N_THREADS	16
 #define PHASE_SECONDS	60
-#define MAX_RESPAWN	500
+/*
+ * Every dead worker keeps its node's minor forever; past ~280 of them the
+ * video minors run out, vimc can no longer be bound and its probe error
+ * path hits a use-after-free of its own. Stay well below that.
+ */
+#define MAX_RESPAWN	100
 
 static atomic_int stop;
 static atomic_long n_ok, n_enodev, n_enoent, n_other_err;
@@ -251,6 +256,9 @@ static void run_phase(const char *what, unsigned int period_ms)
 
 	/* Leave vimc bound for the next phase. */
 	write_str(VIMC_DRV "/bind", VIMC_DEV);
+
+	/* Let the kernel finish printing, so no oops splits the next line. */
+	sleep(2);
 
 	printf("RACE-PHASE what=%s period=%ums seconds=%u cycles=%ld ok=%ld enodev=%ld enoent=%ld other_err=%ld no_node=%ld killed=%ld create_err=%ld unbinder_dead=%d unbind_err=%ld unbind_errno=%d bind_err=%ld bind_errno=%d\n",
 	       what, period_ms, PHASE_SECONDS, (long)n_cycles, (long)n_ok,

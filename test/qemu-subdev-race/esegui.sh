@@ -88,7 +88,7 @@ avvio() {	# $1 = kernel, $2 = fase (what:period), $3 = funzione attesa
 		-append "console=ttyS0 panic=-1 loglevel=8 kasan_multi_shot race.phases=$2" \
 		-nographic -no-reboot > "$log" 2>&1
 	rc=$?
-	riga=$(grep '^RACE-PHASE' "$log")
+	riga=$(grep '^RACE-PHASE' "$log" | tr -d '\r')	# la console seriale usa \r\n
 	echo "== $1 $2 ($(cut -c1-12 "$OUT/bzImage-$1.rev")), uscita di qemu: $rc"
 	grep '^RACE-ERROR' "$log" | sed 's/^/   /'
 	echo "   ${riga:-(nessuna riga RACE-PHASE)}"
@@ -99,6 +99,8 @@ avvio() {	# $1 = kernel, $2 = fase (what:period), $3 = funzione attesa
 		{ echo "   NON VALIDO: manca RACE-END (non avviato o appeso)"; valido=0; }
 	[[ $(grep -c '^RACE-PHASE' "$log") == 1 ]] ||
 		{ echo "   NON VALIDO: non c'e' esattamente una fase"; valido=0; }
+	[[ "$riga" =~ ^RACE-PHASE\ what=(open|ioctl)\ period=[0-9]+ms\ .*\ bind_errno=[0-9]+$ ]] ||
+		{ echo "   NON VALIDO: riga RACE-PHASE incompleta o spezzata"; valido=0; }
 	if [[ "$riga" =~ \ cycles=0\ |\ ok=0\ |\ enodev=0\ |\ create_err=[1-9]|\ unbinder_dead=1|\ unbind_err=[1-9]|\ bind_err=[1-9] ]]; then
 		echo "   NON VALIDO: senza cicli, operazioni riuscite o corse con l'unbind (enodev), thread non creati, unbind morto o bind falliti"
 		valido=0
