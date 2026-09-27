@@ -1,0 +1,48 @@
+== base open:1 (2dcdfb625c3b), uscita di qemu: 0
+   RACE-PHASE what=open period=1ms seconds=60 cycles=11803 ok=7234 enodev=1 enoent=1 other_err=0 no_node=8778 killed=116 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 116, KASAN null-ptr-deref 116, BUG: KASAN 0, WARNING 0; in subdev_open: 116
+          116 1 subdev_open
+== base open:30 (2dcdfb625c3b), uscita di qemu: 0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=788 ok=9244 enodev=7 enoent=0 other_err=0 no_node=4678 killed=116 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 116, KASAN null-ptr-deref 116, BUG: KASAN 0, WARNING 0; in subdev_open: 116
+          116 1 subdev_open
+== p1 open:1 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=open period=1ms seconds=60 cycles=423 ok=2137890 enodev=359376 enoent=11075 other_err=0 no_node=774957 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== p1 open:30 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=291 ok=1782180 enodev=220007 enoent=7783 other_err=1 no_node=861773 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== v3 open:1 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=open period=1ms seconds=60 cycles=418 ok=1975977 enodev=325675 enoent=10900 other_err=0 no_node=707907 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== v3 open:30 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=open period=30ms seconds=60 cycles=297 ok=2062844 enodev=235592 enoent=7386 other_err=0 no_node=953811 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_open: 0
+== p1 ioctl:1 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=ioctl period=1ms seconds=60 cycles=9976 ok=43049028 enodev=957 enoent=0 other_err=0 no_node=107543 killed=116 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 116, KASAN null-ptr-deref 116, BUG: KASAN 0, WARNING 0; in subdev_do_ioctl: 116
+          116 1 subdev_do_ioctl
+== p1 ioctl:30 (683e31f9fc1c), uscita di qemu: 0
+   RACE-PHASE what=ioctl period=30ms seconds=60 cycles=718 ok=78212019 enodev=1277 enoent=0 other_err=0 no_node=198811 killed=116 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 116, KASAN null-ptr-deref 116, BUG: KASAN 0, WARNING 0; in subdev_do_ioctl: 116
+          116 1 subdev_do_ioctl
+== v3 ioctl:1 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=ioctl period=1ms seconds=60 cycles=644 ok=451175848 enodev=14340 enoent=0 other_err=0 no_node=1229036 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_do_ioctl: 0
+== v3 ioctl:30 (f07d7e2563c7), uscita di qemu: 0
+   RACE-PHASE what=ioctl period=30ms seconds=60 cycles=391 ok=429045476 enodev=9062 enoent=0 other_err=0 no_node=1112919 killed=0 create_err=0 unbinder_dead=0 unbind_err=0 unbind_errno=0 bind_err=0 bind_errno=0
+   Oops 0, KASAN null-ptr-deref 0, BUG: KASAN 0, WARNING 0; in subdev_do_ioctl: 0
+
+== Riepilogo: oops nella funzione della patch / tutti gli oops, KASAN e WARNING (NV = avvio non valido)
+   base open:1    116 / 116
+   base open:30   116 / 116
+   p1 open:1      0 / 0
+   p1 open:30     0 / 0
+   v3 open:1      0 / 0
+   v3 open:30     0 / 0
+   p1 ioctl:1     116 / 116
+   p1 ioctl:30    116 / 116
+   v3 ioctl:1     0 / 0
+   v3 ioctl:30    0 / 0
+1/2: DIMOSTRATA (base crasha 232 volte nella funzione della patch, p1 nessun oops, KASAN o WARNING)
+2/2: DIMOSTRATA (p1 crasha 232 volte nella funzione della patch, v3 nessun oops, KASAN o WARNING)
