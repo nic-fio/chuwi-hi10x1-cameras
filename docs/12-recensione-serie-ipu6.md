@@ -553,3 +553,24 @@ dopo la sera del 28/09, oppure QEMU+vimc sul server), la dichiarazione
 delle prove nella lettera (segnaposto `[DA COMPLETARE ...]`), l'ultima
 passata di Fable sul testo finale, i destinatari. E resta la regola: non
 prima della risposta di Sakari.
+
+### Stato a fine giornata (27/09): serie v3 provata e rivista, non spedita
+
+- **Prova di funzionamento fatta** in QEMU/KVM con KASAN e vimc sul server
+  (`test/qemu-subdev-race/`, run 3 in `esiti/2026-09-27-run3/`): senza la
+  1/2, 232 null-ptr-deref in `subdev_open()`; con, zero oops/KASAN/WARNING.
+  Con la sola 1/2, 232 null-ptr-deref in `subdev_do_ioctl()`; con la serie
+  intera, zero. Il difetto della 2/2, trovato leggendo, e' quindi reale.
+  Il test e' passato da tre revisioni avversariali di Fable; i run 1 e 2
+  avevano difetti del test, documentati nelle rispettive cartelle.
+- **Messaggi e lettera aggiornati** con le prove e con cio' che non e'
+  stato provato (hardware IPU6, syzbot senza riproduttore pubblico).
+  Ultima revisione avversariale di Fable: ogni numero ricalcolato dai log,
+  contenuto giudicato pronto, correzioni applicate.
+- **Compilazione W=1** sugli stessi commit del test:
+  `esiti/2026-09-27-compilazione-w1/`.
+- **Manca**: i destinatari. E resta la regola: non spedire prima della
+  risposta annunciata da Sakari sulla patch 2.
+- Visto di passaggio: il percorso di errore di `vimc_probe()` ha un
+  use-after-free quando i minori video finiscono (segnalato da Nguyen il
+  19/09 come "unrelated finding"). Possibile patch futura, non ora.
