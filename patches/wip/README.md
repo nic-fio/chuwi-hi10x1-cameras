@@ -35,6 +35,30 @@ righe, ma la stessa serie riscrive il calcolo del watermark (14/21, 15/21).
 Decisione: aspettare che la serie di Sakari entri, poi rifare lockdep e
 riguardare.
 
+**Doppia verifica (27/09), esito concorde: NON spedire ne' la 0001 ne' la
+0002.** Due revisori indipendenti, Fable 5.1 in modalita' avversariale e un
+secondo modello senza il nostro contesto, hanno cercato di smentire la
+conclusione sul codice di `next` e sul ramo `ipu6` di Sakari (contenuto v4)
+e l'hanno confermata punto per punto. In piu':
+
+- la serie sostituisce l'unica altra chiamata che in quel percorso prendeva
+  il lock da se' (`ipu6_isys_get_src_stream_by_src_pad()`) con la variante
+  senza lock `__ipu6_isys_get_src_stream_by_src_pad(state, pad)`: prova che
+  l'autore vuole `fw_pin_cfg` eseguita con il lock gia' preso;
+- con la serie `ipu6_isys_configure_stream_watermark()` sparisce; la sua
+  sostituta riceve lo stato gia' bloccato e ha `WARN_ON(!fmt)`. Su `next`
+  il caso `NULL` della 0002 non risulta raggiungibile
+  (`v4l2_subdev_init_finalize()` sul CSI-2): era difensiva, non la
+  correzione di un difetto dimostrato;
+- la 0001 oggi sarebbe corretta ma non si applica (funzione spostata) e non
+  copre la gemella `ipu7_isys_fw_pin_cfg()`.
+
+**Residuo utile, solo candidato**: nel ramo di Sakari `fw_pin_cfg()`
+dereferenzia `v4l2_subdev_state_get_format()`/`get_crop()` senza controllo
+di `NULL` (ipu6-fw-isys.c ~772-776, ipu7 ~180). Prima di farne un commento
+alla serie va verificato sul testo pubblicato su lore, non sul ramo, e va
+passato dalla stessa doppia verifica.
+
 **PRONTE DA INVIARE dal 2026-08-12.** Fino a quel giorno i commit avevano
 `BOZZA` nel subject apposta, per impedire un invio accidentale. Adesso non ce
 l'hanno piu': sono firmate da Nicola Fiorillo <nicfio@gmail.com>, i segnaposto
