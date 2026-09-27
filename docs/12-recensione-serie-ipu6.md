@@ -401,3 +401,49 @@ Perche' il tag e' sicuro in una risposta: verificato sul sorgente di b4
 (`find_trailers`, modo follow-up) che una riga `Xxx-by:` senza indirizzo
 email viene scartata, quindi nel commit di Sakari entra solo il
 `Reviewed-by`. Patchwork raccoglie solo Acked/Reviewed/Tested e simili.
+
+---
+
+## 27 settembre 2026: patch 2 verificata sul media tree `next`, di nuovo sul server
+
+Il server `192.168.0.2` e' tornato disponibile (chiave SSH nuova). Dopo
+il riavvio post-assistenza Nic ha reinstallato gli strumenti
+(`apt-get install --no-upgrade`, simulato prima: 0 pacchetti aggiornati,
+nessun servizio dell'altro progetto toccato). Server e tablet non si
+riavviano fino alla sera del 28/09.
+
+Base scelta: **`next` di `git.linuxtv.org/media.git`**, cima `2dcdfb625c3b`
+("media: vivid: drop unused 'j' variable"). E' l'albero dove verrebbe
+applicata ed e' la stessa base dichiarata dalla patch di Felipe Calliari
+del 23/09. Clone con `--depth 50` in `/media/INTEL-CAMERA/sorgenti/media`.
+
+Esito sulla patch 2 (`patches/wip/invio-1-v2/0002-...patch`, la v2 senza
+modifiche):
+
+- `subdev_open()` in `next` e' **identica** a quella che correggiamo: il
+  difetto c'e' ancora, nessuna correzione (ne' quella di syzbot/Nguyen)
+  e' entrata.
+- `git am -3`: **si applica pulita**, senza fuzz.
+- `allmodconfig` (`VIDEO_V4L2_SUBDEV_API=y`), `make W=1
+  drivers/media/v4l2-core/`, `nice -n 19 -j12`: **zero avvisi, zero
+  errori**, sia prima sia dopo la patch. Verificato che l'oggetto fosse
+  ricompilato dal sorgente con la patch (`CC [M] ... v4l2-subdev.o` con
+  `-Wextra`).
+- `checkpatch.pl --strict --codespell`: 0 errori, 0 check, 2 avvisi, tutti
+  e due "Unknown commit id" dovuti al clone parziale. I due commit citati
+  esistono in mainline con il titolo giusto (verificati sul mirror
+  GitHub di torvalds/linux): `61f5db549dde` ("[media] v4l: Make
+  v4l2_subdev inherit from media_entity") e `218bf10e39ed` ("media:
+  v4l2-subdev: handle module refcounting here").
+- `get_maintainer.pl --nogit`: Mauro Carvalho Chehab, linux-media,
+  linux-kernel. (Un "Sergey Lebedev" che compare con l'euristica su git e'
+  un artefatto del clone parziale: il commit di confine contiene tutto
+  l'albero.)
+
+**Non fatto**: nessun avvio sul tablet (niente riavvii fino al 28/09 sera)
+e nessuna prova della corsa sul kernel attuale; `sparse` non installato.
+Se la patch va ripresentata: dichiararlo sotto il `---`, aggiungere
+`Assisted-by: LLM`, aggiornare "unchanged in v7.3-rc2" alla base nuova, e
+rispondere nel merito all'obiezione di Laurent Pinchart (il controllo
+restringe la corsa, non la chiude). Continuare comunque ad aspettare la
+risposta annunciata da Sakari.
