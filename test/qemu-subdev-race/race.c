@@ -3,20 +3,27 @@
  * Race test for the v4l2-subdev NULL dereferences on unbind.
  *
  * Runs as /init of an initramfs inside QEMU. While one thread unbinds and
- * rebinds vimc through sysfs, other threads:
+ * rebinds vimc through sysfs, other threads exercise one path at a time:
  *
- *   - open and close every /dev/v4l-subdevN   (subdev_open(), patch 1/2)
- *   - keep a handle open and loop VIDIOC_G_EXT_CTRLS on it
- *                                             (EXT_CTRLS ioctls, patch 2/2)
+ *   open  phases: open and close /dev/v4l-subdevN     (subdev_open(), 1/2)
+ *   ioctl phases: keep a handle open across unbinds and loop
+ *                 VIDIOC_G_EXT_CTRLS on it              (EXT_CTRLS, 2/2)
  *
- * The kernel log goes to the serial console, which the host saves: the
- * host counts oopses and KASAN reports there, not this program.
+ * Separate phases keep the attribution of a crash unambiguous, and keep
+ * the ioctl threads from being starved when the open threads die.
  *
- * Build: gcc -O2 -static -pthread -o init race.c
+ * Each oops kills the thread that hit it, not PID 1, so a crash count is
+ * "threads killed", not "race hits". The kernel log goes to the serial
+ * console, which the host saves and counts; this program only reports
+ * whether each phase really exercised the path (RACE-PHASE lines), so
+ * that a hung or idle run cannot pass for a clean one.
+ *
+ * Build: gcc -O2 -Wall -static -pthread -o init race.c
  */
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <pthread.h>
 #include <stdatomic.h>
 #include <stdio.h>
@@ -27,18 +34,18 @@
 #include <sys/reboot.h>
 #include <sys/stat.h>
 #include <time.h>
-#include <limits.h>
 #include <unistd.h>
 #include <linux/videodev2.h>
 
 #define VIMC_DRV	"/sys/bus/platform/drivers/vimc"
 #define VIMC_DEV	"vimc.0"
 #define MAX_NODES	32
-#define N_OPENERS	16
-#define N_IOCTLERS	4
+#define N_THREADS	16
+#define PHASE_SECONDS	60
 
 static atomic_int stop;
-static atomic_long n_open_ok, n_open_err, n_ioctl_ok, n_ioctl_err, n_cycles;
+static atomic_long n_ok, n_enodev, n_enoent, n_other_err;
+static atomic_long n_cycles, n_bind_err, n_unbind_err, n_no_node;
 
 static void msleep(unsigned int ms)
 {
@@ -81,6 +88,16 @@ static int pick_node(char *buf, size_t len, unsigned int seed)
 	return 0;
 }
 
+static void count_err(int err)
+{
+	if (err == ENODEV)
+		n_enodev++;
+	else if (err == ENOENT)
+		n_enoent++;
+	else
+		n_other_err++;
+}
+
 static void *opener(void *arg)
 {
 	unsigned int seed = (unsigned long)arg;
@@ -89,14 +106,16 @@ static void *opener(void *arg)
 	while (!stop) {
 		int fd;
 
-		if (pick_node(path, sizeof(path), seed++))
-			continue;
-		fd = open(path, O_RDWR);
-		if (fd < 0) {
-			n_open_err++;
+		if (pick_node(path, sizeof(path), seed++)) {
+			n_no_node++;
 			continue;
 		}
-		n_open_ok++;
+		fd = open(path, O_RDWR);
+		if (fd < 0) {
+			count_err(errno);
+			continue;
+		}
+		n_ok++;
 		close(fd);
 	}
 	return NULL;
@@ -111,8 +130,10 @@ static void *ioctler(void *arg)
 		struct v4l2_ext_controls ctrls;
 		int fd, i;
 
-		if (pick_node(path, sizeof(path), seed++))
+		if (pick_node(path, sizeof(path), seed++)) {
+			n_no_node++;
 			continue;
+		}
 		fd = open(path, O_RDWR);
 		if (fd < 0)
 			continue;
@@ -121,11 +142,16 @@ static void *ioctler(void *arg)
 			memset(&ctrls, 0, sizeof(ctrls));
 			ctrls.which = V4L2_CTRL_WHICH_CUR_VAL;
 			if (ioctl(fd, VIDIOC_G_EXT_CTRLS, &ctrls) < 0) {
-				n_ioctl_err++;
-				if (errno == ENODEV)
+				int err = errno;
+
+				/* No control handler on this node: pick another. */
+				if (err == ENOTTY)
+					break;
+				count_err(err);
+				if (err == ENODEV)
 					break;
 			} else {
-				n_ioctl_ok++;
+				n_ok++;
 			}
 		}
 		close(fd);
@@ -138,46 +164,50 @@ static void *unbinder(void *arg)
 	unsigned int period_ms = (unsigned long)arg;
 
 	while (!stop) {
-		write_str(VIMC_DRV "/unbind", VIMC_DEV);
+		if (write_str(VIMC_DRV "/unbind", VIMC_DEV) < 0)
+			n_unbind_err++;
 		msleep(period_ms);
-		write_str(VIMC_DRV "/bind", VIMC_DEV);
+		if (write_str(VIMC_DRV "/bind", VIMC_DEV) < 0)
+			n_bind_err++;
 		msleep(period_ms);
 		n_cycles++;
 	}
 	return NULL;
 }
 
-static void run_phase(unsigned int period_ms, unsigned int seconds)
+static void run_phase(const char *what, unsigned int period_ms)
 {
-	pthread_t t[N_OPENERS + N_IOCTLERS + 1];
-	unsigned long i, n = 0;
+	void *(*fn)(void *) = strcmp(what, "open") ? ioctler : opener;
+	pthread_t t[N_THREADS + 1];
+	unsigned long i;
 
 	stop = 0;
-	n_open_ok = n_open_err = n_ioctl_ok = n_ioctl_err = n_cycles = 0;
+	n_ok = n_enodev = n_enoent = n_other_err = 0;
+	n_cycles = n_bind_err = n_unbind_err = n_no_node = 0;
 
-	for (i = 0; i < N_OPENERS; i++)
-		pthread_create(&t[n++], NULL, opener, (void *)i);
-	for (i = 0; i < N_IOCTLERS; i++)
-		pthread_create(&t[n++], NULL, ioctler, (void *)(i * 7));
-	pthread_create(&t[n++], NULL, unbinder, (void *)(unsigned long)period_ms);
+	for (i = 0; i < N_THREADS; i++)
+		pthread_create(&t[i], NULL, fn, (void *)(i * 7));
+	pthread_create(&t[N_THREADS], NULL, unbinder,
+		       (void *)(unsigned long)period_ms);
 
-	sleep(seconds);
+	sleep(PHASE_SECONDS);
 	stop = 1;
-	for (i = 0; i < n; i++)
+	for (i = 0; i <= N_THREADS; i++)
 		pthread_join(t[i], NULL);
 
 	/* Leave vimc bound for the next phase. */
 	write_str(VIMC_DRV "/bind", VIMC_DEV);
 
-	printf("RACE-PHASE period=%ums seconds=%u cycles=%ld open_ok=%ld open_err=%ld ioctl_ok=%ld ioctl_err=%ld\n",
-	       period_ms, seconds, (long)n_cycles, (long)n_open_ok,
-	       (long)n_open_err, (long)n_ioctl_ok, (long)n_ioctl_err);
+	printf("RACE-PHASE what=%s period=%ums seconds=%u cycles=%ld ok=%ld enodev=%ld enoent=%ld other_err=%ld no_node=%ld unbind_err=%ld bind_err=%ld\n",
+	       what, period_ms, PHASE_SECONDS, (long)n_cycles, (long)n_ok,
+	       (long)n_enodev, (long)n_enoent, (long)n_other_err,
+	       (long)n_no_node, (long)n_unbind_err, (long)n_bind_err);
 	fflush(stdout);
 }
 
 int main(void)
 {
-	unsigned int seconds = 60;
+	char path[PATH_MAX];
 	struct stat st;
 
 	mount("proc", "/proc", "proc", 0, NULL);
@@ -188,16 +218,23 @@ int main(void)
 		printf("RACE-ERROR vimc.0 not bound at start\n");
 		goto out;
 	}
+	if (pick_node(path, sizeof(path), 0)) {
+		printf("RACE-ERROR no /dev/v4l-subdev* nodes at start\n");
+		goto out;
+	}
 
 	printf("RACE-START\n");
 	fflush(stdout);
-	run_phase(1, seconds);
-	run_phase(30, seconds);
+	run_phase("open", 1);
+	run_phase("open", 30);
+	run_phase("ioctl", 1);
+	run_phase("ioctl", 30);
 	printf("RACE-END\n");
 
 out:
 	fflush(stdout);
 	sync();
+	sleep(1);
 	reboot(RB_POWER_OFF);
 	return 0;
 }
