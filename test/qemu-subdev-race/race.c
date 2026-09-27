@@ -12,14 +12,17 @@
  * Separate phases keep the attribution of a crash unambiguous, and keep
  * the ioctl threads from being starved when the open threads die.
  *
- * Each oops kills the thread that hit it, not PID 1, so a crash count is
- * "threads killed", not "race hits". The kernel log goes to the serial
+ * Each oops kills the thread that hit it, not PID 1. Dead workers are
+ * noticed with pthread_tryjoin_np() and re-created (up to MAX_RESPAWN per
+ * phase), so a phase keeps exercising its path after the first crashes;
+ * "killed" must then match the oopses the host counts in that phase. The kernel log goes to the serial
  * console, which the host saves and counts; this program only reports
  * whether each phase really exercised the path (RACE-PHASE lines), so
  * that a hung or idle run cannot pass for a clean one.
  *
  * Build: gcc -O2 -Wall -static -pthread -o init race.c
  */
+#define _GNU_SOURCE
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -33,6 +36,7 @@
 #include <sys/mount.h>
 #include <sys/reboot.h>
 #include <sys/stat.h>
+#include <termios.h>
 #include <time.h>
 #include <unistd.h>
 #include <linux/videodev2.h>
@@ -42,10 +46,17 @@
 #define MAX_NODES	32
 #define N_THREADS	16
 #define PHASE_SECONDS	60
+#define MAX_RESPAWN	500
 
 static atomic_int stop;
 static atomic_long n_ok, n_enodev, n_enoent, n_other_err;
 static atomic_long n_cycles, n_bind_err, n_unbind_err, n_no_node;
+
+static void flush_out(void)
+{
+	fflush(stdout);
+	tcdrain(STDOUT_FILENO);
+}
 
 static void msleep(unsigned int ms)
 {
@@ -178,31 +189,66 @@ static void *unbinder(void *arg)
 static void run_phase(const char *what, unsigned int period_ms)
 {
 	void *(*fn)(void *) = strcmp(what, "open") ? ioctler : opener;
-	pthread_t t[N_THREADS + 1];
+	long killed = 0, create_err = 0, respawn = 0;
+	int alive[N_THREADS], unbinder_dead = 0;
+	pthread_t t[N_THREADS], ub;
+	struct timespec start, now;
 	unsigned long i;
 
 	stop = 0;
 	n_ok = n_enodev = n_enoent = n_other_err = 0;
 	n_cycles = n_bind_err = n_unbind_err = n_no_node = 0;
 
-	for (i = 0; i < N_THREADS; i++)
-		pthread_create(&t[i], NULL, fn, (void *)(i * 7));
-	pthread_create(&t[N_THREADS], NULL, unbinder,
-		       (void *)(unsigned long)period_ms);
+	for (i = 0; i < N_THREADS; i++) {
+		alive[i] = !pthread_create(&t[i], NULL, fn, (void *)i);
+		if (!alive[i])
+			create_err++;
+	}
+	if (pthread_create(&ub, NULL, unbinder, (void *)(unsigned long)period_ms)) {
+		printf("RACE-ERROR cannot create the unbind thread\n");
+		flush_out();
+		stop = 1;
+		unbinder_dead = 1;
+	}
 
-	sleep(PHASE_SECONDS);
+	/* Workers only return when told to stop: an early exit is a death. */
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	do {
+		msleep(10);
+		for (i = 0; i < N_THREADS; i++) {
+			if (!alive[i] || pthread_tryjoin_np(t[i], NULL))
+				continue;
+			killed++;
+			alive[i] = 0;
+			if (respawn < MAX_RESPAWN) {
+				respawn++;
+				alive[i] = !pthread_create(&t[i], NULL, fn,
+							   (void *)(i + respawn));
+				if (!alive[i])
+					create_err++;
+			}
+		}
+		if (!unbinder_dead && !pthread_tryjoin_np(ub, NULL))
+			unbinder_dead = 1;
+		clock_gettime(CLOCK_MONOTONIC, &now);
+	} while (!stop && now.tv_sec - start.tv_sec < PHASE_SECONDS);
+
 	stop = 1;
-	for (i = 0; i <= N_THREADS; i++)
-		pthread_join(t[i], NULL);
+	for (i = 0; i < N_THREADS; i++)
+		if (alive[i])
+			pthread_join(t[i], NULL);
+	if (!unbinder_dead)
+		pthread_join(ub, NULL);
 
 	/* Leave vimc bound for the next phase. */
 	write_str(VIMC_DRV "/bind", VIMC_DEV);
 
-	printf("RACE-PHASE what=%s period=%ums seconds=%u cycles=%ld ok=%ld enodev=%ld enoent=%ld other_err=%ld no_node=%ld unbind_err=%ld bind_err=%ld\n",
+	printf("RACE-PHASE what=%s period=%ums seconds=%u cycles=%ld ok=%ld enodev=%ld enoent=%ld other_err=%ld no_node=%ld killed=%ld create_err=%ld unbinder_dead=%d unbind_err=%ld bind_err=%ld\n",
 	       what, period_ms, PHASE_SECONDS, (long)n_cycles, (long)n_ok,
 	       (long)n_enodev, (long)n_enoent, (long)n_other_err,
-	       (long)n_no_node, (long)n_unbind_err, (long)n_bind_err);
-	fflush(stdout);
+	       (long)n_no_node, killed, create_err, unbinder_dead,
+	       (long)n_unbind_err, (long)n_bind_err);
+	flush_out();
 }
 
 int main(void)
@@ -224,7 +270,7 @@ int main(void)
 	}
 
 	printf("RACE-START\n");
-	fflush(stdout);
+	flush_out();
 	run_phase("open", 1);
 	run_phase("open", 30);
 	run_phase("ioctl", 1);
@@ -232,7 +278,7 @@ int main(void)
 	printf("RACE-END\n");
 
 out:
-	fflush(stdout);
+	flush_out();
 	sync();
 	sleep(1);
 	reboot(RB_POWER_OFF);
