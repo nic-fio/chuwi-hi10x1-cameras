@@ -41,7 +41,7 @@ trap 'git -C "$SRC" checkout -q "$TORNA"' EXIT
 
 compila() {	# $1 = revisione, $2 = nome
 	git checkout -q "$1" || muori "checkout di $1"
-	if [[ ! -f "$OUT/.config.fatto" ]]; then
+	if ! cmp -s "$QUI/race.config" "$OUT/.config.fatto"; then
 		rm -f "$OUT/.config"
 		$N make -s O="$OUT" x86_64_defconfig || muori "defconfig"
 		$N ./scripts/kconfig/merge_config.sh -m -O "$OUT" "$OUT/.config" \
@@ -52,7 +52,7 @@ compila() {	# $1 = revisione, $2 = nome
 			 DEVTMPFS SERIAL_8250_CONSOLE; do
 			grep -q "^CONFIG_$o=y" "$OUT/.config" || muori "CONFIG_$o non attivo"
 		done
-		touch "$OUT/.config.fatto"
+		cp "$QUI/race.config" "$OUT/.config.fatto"
 	fi
 	$N make -s -j"$JOBS" O="$OUT" bzImage || muori "compilazione di $2"
 	cp "$OUT/arch/x86/boot/bzImage" "$OUT/bzImage-$2"
@@ -76,10 +76,13 @@ oops_rip() {
 	                       print (s ? f+1 : 0), r; o=0}' "$1"
 }
 
-# Stampa l'esito di un avvio e scrive in $CONTA il numero di oops nella
-# funzione $3 durante la fase; ritorna 1 se l'avvio non e' valido.
+# Stampa l'esito di un avvio. Scrive in $CONTA gli oops nella funzione $3
+# durante la fase (per il kernel senza la patch) e in $TOTALE ogni oops,
+# report KASAN o WARNING dell'avvio (per il kernel con la patch: deve
+# essere zero ovunque, non solo nella funzione corretta). Ritorna 1 se
+# l'avvio non e' valido.
 avvio() {	# $1 = kernel, $2 = fase (what:period), $3 = funzione attesa
-	local log="$OUT/esito-$1-${2/:/-}.log" valido=1 rc riga ucc tutti nella
+	local log="$OUT/esito-$1-${2/:/-}.log" valido=1 rc riga ucc tutti nella tot
 	timeout 600 $N qemu-system-x86_64 -enable-kvm -cpu host -smp 4 -m 4G \
 		-kernel "$OUT/bzImage-$1" -initrd "$OUT/initramfs.cpio" \
 		-append "console=ttyS0 panic=-1 loglevel=8 kasan_multi_shot race.phases=$2" \
@@ -90,16 +93,19 @@ avvio() {	# $1 = kernel, $2 = fase (what:period), $3 = funzione attesa
 	grep '^RACE-ERROR' "$log" | sed 's/^/   /'
 	echo "   ${riga:-(nessuna riga RACE-PHASE)}"
 
+	grep -q "Linux version .*-g$(cut -c1-12 "$OUT/bzImage-$1.rev")" "$log" ||
+		{ echo "   NON VALIDO: il kernel avviato non e' $1"; valido=0; }
 	grep -q '^RACE-END' "$log" ||
 		{ echo "   NON VALIDO: manca RACE-END (non avviato o appeso)"; valido=0; }
 	[[ $(grep -c '^RACE-PHASE' "$log") == 1 ]] ||
 		{ echo "   NON VALIDO: non c'e' esattamente una fase"; valido=0; }
-	if [[ "$riga" =~ \ cycles=0\ |\ ok=0\ |\ create_err=[1-9]|\ unbinder_dead=1|\ unbind_err=[1-9]|\ bind_err=[1-9] ]]; then
-		echo "   NON VALIDO: senza cicli o operazioni riuscite, thread non creati, unbind morto o bind falliti"
+	if [[ "$riga" =~ \ cycles=0\ |\ ok=0\ |\ enodev=0\ |\ create_err=[1-9]|\ unbinder_dead=1|\ unbind_err=[1-9]|\ bind_err=[1-9] ]]; then
+		echo "   NON VALIDO: senza cicli, operazioni riuscite o corse con l'unbind (enodev), thread non creati, unbind morto o bind falliti"
 		valido=0
 	fi
 
 	tutti=$(oops_rip "$log")
+	tot=$(grep -c -E 'Oops:|BUG: KASAN|WARNING:|kernel BUG at|BUG: unable' "$log")
 	nella=$(awk -v f="$3" '$1 == 1 && $2 ~ "^" f' <<<"$tutti" | wc -l)
 	ucc=$(sed -n 's/.* killed=\([0-9]*\) .*/\1/p' <<<"$riga")
 	echo "   Oops $(grep -c 'Oops:' "$log"), KASAN null-ptr-deref $(grep -c 'KASAN: null-ptr-deref' "$log"), BUG: KASAN $(grep -c 'BUG: KASAN' "$log"), WARNING $(grep -c 'WARNING:' "$log"); in $3: $nella"
@@ -108,6 +114,7 @@ avvio() {	# $1 = kernel, $2 = fase (what:period), $3 = funzione attesa
 		echo "   NB: thread uccisi ${ucc:-?} diversi dagli oops della fase"
 
 	CONTA=$nella
+	TOTALE=$tot
 	return $(( 1 - valido ))
 }
 
@@ -117,41 +124,49 @@ compila "$SERIE" v3
 initramfs
 
 esito=0
-declare -A OOPS
+declare -A OOPS TOT
 for caso in "base open:1 subdev_open" "base open:30 subdev_open" \
 	    "p1 open:1 subdev_open" "p1 open:30 subdev_open" \
 	    "v3 open:1 subdev_open" "v3 open:30 subdev_open" \
 	    "p1 ioctl:1 subdev_do_ioctl" "p1 ioctl:30 subdev_do_ioctl" \
 	    "v3 ioctl:1 subdev_do_ioctl" "v3 ioctl:30 subdev_do_ioctl"; do
 	set -- $caso
-	CONTA=0
+	CONTA=0 TOTALE=0
 	if avvio "$1" "$2" "$3"; then
 		OOPS["$1 $2"]=$CONTA
+		TOT["$1 $2"]=$TOTALE
 	else
 		OOPS["$1 $2"]=NV
+		TOT["$1 $2"]=NV
 		esito=1
 	fi
 done
 
 echo
-echo "== Riepilogo (oops nella funzione della patch; NV = avvio non valido)"
+echo "== Riepilogo: oops nella funzione della patch / tutti gli oops, KASAN e WARNING (NV = avvio non valido)"
 for k in "base open:1" "base open:30" "p1 open:1" "p1 open:30" "v3 open:1" \
 	 "v3 open:30" "p1 ioctl:1" "p1 ioctl:30" "v3 ioctl:1" "v3 ioctl:30"; do
-	printf '   %-14s %s\n' "$k" "${OOPS[$k]}"
+	printf '   %-14s %s / %s\n' "$k" "${OOPS[$k]}" "${TOT[$k]}"
 done
 
-# Una patch e' dimostrata se il kernel senza crasha, con validita', e
-# quello con resta a zero, con validita', in tutte e due le fasi.
-dimostrata() {	# $1 = kernel senza, $2 = kernel con, $3 = fase
+# Verdetto per una patch: $1 kernel senza, $2 kernel con, $3 fase, $4 nome.
+# Senza: servono avvii validi e almeno un oops nella funzione della patch.
+# Con: servono avvii validi e zero oops, KASAN e WARNING di qualunque tipo.
+verdetto() {
 	local s1=${OOPS["$1 $3:1"]} s2=${OOPS["$1 $3:30"]}
-	local c1=${OOPS["$2 $3:1"]} c2=${OOPS["$2 $3:30"]}
-	[[ $s1 != NV && $s2 != NV && $c1 == 0 && $c2 == 0 ]] &&
-		(( s1 + s2 > 0 ))
+	local c1=${TOT["$2 $3:1"]} c2=${TOT["$2 $3:30"]}
+	if [[ $s1 == NV || $s2 == NV || $c1 == NV || $c2 == NV ]]; then
+		echo "$4: NESSUNA CONCLUSIONE, ci sono avvii non validi"
+	elif (( c1 + c2 > 0 )); then
+		echo "$4: ATTENZIONE, il kernel con la patch ($2) ha oops, KASAN o WARNING nelle fasi $3"
+	elif (( s1 + s2 == 0 )); then
+		echo "$4: NESSUNA CONCLUSIONE, nemmeno il kernel senza ($1) crasha: il test non ha centrato la finestra"
+	else
+		echo "$4: DIMOSTRATA ($1 crasha $((s1 + s2)) volte nella funzione della patch, $2 nessun oops, KASAN o WARNING)"
+	fi
 }
-dimostrata base p1 open && echo "1/2: DIMOSTRATA (base crasha in subdev_open, solo-1/2 no)" ||
-	echo "1/2: NON dimostrata da questo run"
-[[ ${OOPS["v3 open:1"]} == 0 && ${OOPS["v3 open:30"]} == 0 ]] ||
+verdetto base p1 open "1/2"
+verdetto p1 v3 ioctl "2/2"
+[[ ${TOT["v3 open:1"]} == 0 && ${TOT["v3 open:30"]} == 0 ]] ||
 	echo "   attenzione: la serie intera non ha fasi open valide e pulite"
-dimostrata p1 v3 ioctl && echo "2/2: DIMOSTRATA (solo-1/2 crasha in subdev_do_ioctl, serie intera no)" ||
-	echo "2/2: NON dimostrata da questo run"
 exit $esito

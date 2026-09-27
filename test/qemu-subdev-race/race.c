@@ -37,6 +37,7 @@
 #include <sys/ioctl.h>
 #include <sys/mount.h>
 #include <sys/reboot.h>
+#include <sys/resource.h>
 #include <sys/stat.h>
 #include <termios.h>
 #include <time.h>
@@ -305,6 +306,17 @@ int main(void)
 	mount("proc", "/proc", "proc", 0, NULL);
 	mount("sysfs", "/sys", "sysfs", 0, NULL);
 	mount("devtmpfs", "/dev", "devtmpfs", 0, NULL);
+
+	/*
+	 * A thread killed inside open() never releases the descriptor slot
+	 * the syscall had reserved; with the default limit of 1024, about a
+	 * thousand deaths make every later open() fail with EMFILE, including
+	 * the unbind thread's writes to sysfs.
+	 */
+	struct rlimit rl = { 1 << 20, 1 << 20 };
+
+	if (setrlimit(RLIMIT_NOFILE, &rl))
+		printf("RACE-NOTE cannot raise RLIMIT_NOFILE: %d\n", errno);
 
 	if (stat(VIMC_DRV "/" VIMC_DEV, &st)) {
 		printf("RACE-ERROR vimc.0 not bound at start\n");
