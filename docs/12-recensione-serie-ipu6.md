@@ -574,3 +574,34 @@ prima della risposta di Sakari.
 - Visto di passaggio: il percorso di errore di `vimc_probe()` ha un
   use-after-free quando i minori video finiscono (segnalato da Nguyen il
   19/09 come "unrelated finding"). Possibile patch futura, non ora.
+
+---
+
+## 1 ottobre 2026: sollecito a Sakari sulla patch 2
+
+Controllo del 01/10: sul thread della v2 niente dal 12/09 (19 giorni);
+patch v1 e v2 ancora `new` su patchwork linuxtv; thread di Nguyen fermo al
+19/09; in Gmail niente dalla lista. Sakari invece e' attivissimo (una
+dozzina di messaggi il 01/10, anche sulla serie IPU8): la patch 2 e'
+rimasta indietro nella sua coda, non e' lui assente.
+
+Deciso con Nic: **sollecito, non invio della v3**. La regola "non spedire
+prima della risposta di Sakari" resta rispettata.
+
+Spedito il 01/10 alle 17:27 UTC, in risposta alla nostra replica del 12/09
+(`178921203630.98144.13238972861597227362@gmail.com`), stessi destinatari.
+Corpo in `patches/wip/sollecito-patch2.txt`, invio con
+`patches/wip/invia-sollecito-patch2.sh`. Contenuto: richiama il suo "I'll
+reply to the framework patch separately" del 18/09, gli dice di non
+perdere tempo sulla 2/3 v2 perche' c'e' una versione rifatta
+(`vdev->v4l2_dev`, piu' la 2/2 sugli EXT_CTRLS), riassume la prova in QEMU
+per configurazione (media next: oops in `subdev_open()`; sola 1/2: oops
+in `subdev_do_ioctl()`; serie intera: zero), ricorda che il limite sulla
+vita degli oggetti resta, e chiede se postare la v3 o se preferisce
+commentare prima la v2. Niente syzbot/Nguyen/Laurent: stanno nella lettera
+della v3.
+
+### Prossimo passo
+
+Aspettare la risposta. Se dice di postarla: v3 da
+`patches/wip/subdev-fix-v3/` (manca ancora la scelta dei destinatari).

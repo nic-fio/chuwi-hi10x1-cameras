@@ -1,0 +1,28 @@
+Hi Sakari,
+
+On 18 September you mentioned you would reply to the framework patch
+(2/3 of this series) separately. Before you spend time on it: I have
+reworked it, and I would rather you look at the new version than at
+this one.
+
+The v2 patch only checked the two pointers in subdev_open(), which
+narrows the race but does not close it. The rework stops reading the
+sub-device's registration state in the file operations altogether and
+uses the node's own vdev->v4l2_dev, which unregistration never clears.
+Reading the code further, the same sd->v4l2_dev dereference is also in
+the EXT_CTRLS ioctls, so it is now a two-patch series touching only
+v4l2-subdev.c.
+
+I tested it in QEMU with KASAN and vimc, unbinding and rebinding vimc
+in a loop while 16 threads open the sub-device nodes or issue EXT_CTRLS
+ioctls. On media next every run oopsed in subdev_open(); with the first
+patch only, every EXT_CTRLS run oopsed in subdev_do_ioctl(); with both,
+there was no oops or KASAN report at all. It does not address the
+lifetime limitation you described on v2, and the commit messages say
+so.
+
+Shall I post it as v3, or would you prefer to comment on the v2 patch
+first?
+
+Thanks,
+Nicola
