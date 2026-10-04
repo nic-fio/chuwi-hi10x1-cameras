@@ -61,8 +61,34 @@ Testing:
   -ENODEV while vimc was being unbound (the test does not tell
   v4l2_open()'s own check from the new one), and, with both patches,
   880 million EXT_CTRLS ioctls.
-- Not tested on the IPU6 hardware where I first hit the open() oops.
-  syzbot has not tested the series: its report has no public
+- Run on the IPU6 tablet where I first hit the open() oops (Intel N100,
+  Chuwi Hi10 X1), with two GalaxyCore sensors, GC5035 and GC8034, whose
+  drivers I have not posted yet. Kernel: media next 9cfc1aca0 plus
+  those drivers and their ipu-bridge and int3472 changes, with KASAN
+  (generic inline), lockdep and UBSAN. 4 processes either open and
+  close every sub-device node, or loop on VIDIOC_G_EXT_CTRLS on the
+  sensor's node, keeping it open across unbinds, while the sensor's
+  I2C driver is unbound and rebound 300 times through sysfs. One run
+  per sensor and test:
+
+    kernel              open() runs          EXT_CTRLS runs
+    media next          oops at the 4th      -
+                        unbind of the first
+    + patches 1 and 2   0 + 0                0 + 0
+
+  On media next the oops is the KASAN null-ptr-deref in subdev_open().
+  The test stops at the first oops, so the other runs were not done
+  there, and the tablet gives no before and after for patch 2. With
+  both patches: 2.9 million successful opens, 1048 refused with
+  -ENODEV (again from either check), 81 million EXT_CTRLS ioctls, and
+  v4l2-compliance and a 10-frame capture from each sensor still pass
+  after the runs. One warning in the open() run on GC5035:
+  DEBUG_LOCKS_WARN_ON(lock->magic != lock), from
+  __v4l2_subdev_state_alloc() in subdev_open(). The GC5035 driver uses
+  its control handler's mutex as the state lock, and the open took it
+  after the unbind had destroyed it in v4l2_ctrl_handler_free(): that
+  is the lifetime limitation above, which these patches do not touch.
+- syzbot has not tested the series: its report has no public
   reproducer.
 - I can post the test program if that helps.
 

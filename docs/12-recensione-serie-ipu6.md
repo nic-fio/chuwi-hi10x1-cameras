@@ -693,3 +693,11 @@ serie, non un suo difetto. Un caso solo su 1,38 milioni di open.
 Per la lettera della v3: il punto "Not tested on the IPU6 hardware" si
 puo' sostituire con questi numeri (base: oops al 4o ciclo; v3: 1200
 cicli senza oops, un warning da lifetime).
+
+Lettera v3 aggiornata: il punto "Not tested on the IPU6 hardware" e'
+sostituito dalla prova sul tablet (tabella base/v3, numeri sommati sui
+due sensori, il WARNING spiegato come limite di lifetime). Detto
+esplicitamente che sul tablet manca il prima/dopo della patch 2: sul
+base la prova si ferma al crash della fase open. **Da fare prima di
+spedire:** lo sha di `next` e' scritto abbreviato (`9cfc1aca0`, 9
+caratteri): prendere i 12 caratteri dal worktree sul server.
