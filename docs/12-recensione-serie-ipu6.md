@@ -662,3 +662,34 @@ Da sapere leggendo i risultati: gc5035/gc8034 usano `devm_kzalloc()`,
 quindi un use-after-free KASAN su un nodo tenuto aperto attraverso
 l'unbind e' il limite sulla vita degli oggetti, non un difetto della
 serie.
+
+### 4 ottobre, sera: esito della prova sul tablet
+
+Stesso script (`prova-serie-v3.sh`, 300 cicli per fase, 4 lavoratori),
+stessa macchina, i due kernel di debug:
+
+| fase                  | base (`g1b4a83d60ea1`)          | v3 (`g22c29125bc70`)                 |
+|-----------------------|---------------------------------|--------------------------------------|
+| prima (compliance)    | 8/8, 46/46, 46/46, cattura ok   | 8/8, 46/46, 46/46, cattura ok        |
+| open gc5035           | **KASAN null-ptr-deref in `subdev_open` al ciclo 4** | 300 cicli, 1,38 M open, 533 ENODEV, 1 WARNING (sotto) |
+| open gc8034           | non eseguita (fermata al crash) | 300 cicli, 1,48 M open, 515 ENODEV, nessun reperto |
+| ioctl gc5035          | non eseguita                    | 300 cicli, 44 M ioctl, nessun reperto |
+| ioctl gc8034          | non eseguita                    | 300 cicli, 37 M ioctl, nessun reperto |
+| dopo (compliance)     | non eseguita                    | 8/8, 46/46, 46/46, cattura ok        |
+
+Fuori dalla serie e identici sui due kernel: i WARNING di i915 al boot
+(`adlp_tc_phy_connect`, `get_pin_assignment`) e i due in
+`ipu6_isys_buffer_list_get` durante la prima cattura.
+
+L'unico reperto della v3: `DEBUG_LOCKS_WARN_ON(lock->magic != lock)` in
+`__mutex_lock`, da `__v4l2_subdev_state_alloc()` <- `subdev_open()`.
+gc5035 imposta `sd.state_lock = ctrls.lock` e all'unbind
+`v4l2_ctrl_handler_free()` fa `mutex_destroy()` su quel mutex: una open
+partita prima dell'unbind ha bloccato il lock di un sotto-dispositivo
+gia' smontato, in memoria devm non ancora liberata (per questo KASAN
+tace). E' il limite sulla vita degli oggetti dichiarato fuori dalla
+serie, non un suo difetto. Un caso solo su 1,38 milioni di open.
+
+Per la lettera della v3: il punto "Not tested on the IPU6 hardware" si
+puo' sostituire con questi numeri (base: oops al 4o ciclo; v3: 1200
+cicli senza oops, un warning da lifetime).

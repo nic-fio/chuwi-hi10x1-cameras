@@ -1,0 +1,668 @@
+[  119.589292] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  119.593560] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  120.141849] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  120.153175] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  120.734968] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  120.741676] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  121.280378] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  121.287202] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  121.866024] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  121.870686] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  122.346642] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  122.352853] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  122.939382] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  122.940623] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  123.490579] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  123.517518] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  124.044141] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  124.048269] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  124.567413] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  124.568649] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  125.071627] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  125.081675] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  125.530825] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  125.532087] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  126.021705] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  126.025315] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  126.541019] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  126.564168] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  127.135131] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  127.137339] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  127.627683] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  127.628942] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  128.116745] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  128.122308] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  128.635598] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  128.637543] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  129.152202] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  129.156118] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  129.702563] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  129.709042] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  130.257358] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  130.267195] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  130.760688] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  130.764673] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  131.278319] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  131.281425] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  131.805465] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  131.807226] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  132.331747] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  132.338941] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  132.881138] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  132.886395] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  133.326946] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  133.328181] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  133.857812] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  133.872669] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  134.381092] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  134.386113] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  134.912632] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  134.913841] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  135.475424] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  135.479182] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  136.029407] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  136.032655] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  136.611778] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  136.615522] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  137.236568] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  137.240549] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  137.714712] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  137.720464] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  138.230870] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  138.237617] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  138.829690] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  138.835884] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  139.422577] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  139.423790] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  139.960666] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  139.966356] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  140.480493] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  140.490847] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  141.158105] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  141.159387] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  141.890690] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  141.914398] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  142.512667] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  142.520024] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  143.154990] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  143.158425] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  143.811928] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  143.816163] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  144.267382] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  144.269084] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  144.788967] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  144.801142] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  145.317159] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  145.320643] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  145.857692] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  145.861053] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  146.366973] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  146.377781] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  146.970957] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  146.979851] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  147.481240] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  147.485169] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  147.984087] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  147.993793] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  148.553104] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  148.554345] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  149.106215] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  149.111444] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  149.722205] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  149.723468] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  149.821650] FAT-fs (sda1): Volume was not properly unmounted. Some data may be corrupt. Please run fsck.
+[  150.314922] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  150.327511] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  150.885205] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  150.886485] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  151.361249] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  151.365762] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  151.909296] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  151.915857] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  152.416426] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  152.418626] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  152.901383] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  152.906795] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  153.467046] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  153.468314] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  153.969031] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  153.972437] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  154.456898] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  154.458300] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  154.953021] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  154.959301] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  155.443869] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  155.449559] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  155.910198] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  155.914942] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  156.377386] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  156.385018] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  156.931914] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  156.936976] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  157.536090] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  157.558974] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  158.098981] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  158.103835] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  158.613262] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  158.620683] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  159.065881] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  159.070090] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  159.586833] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  159.590432] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  160.115961] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  160.121473] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  160.602637] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  160.606071] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  161.145828] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  161.147138] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  161.674002] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  161.686081] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  162.260358] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  162.263746] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  162.807899] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  162.813688] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  163.371082] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  163.373628] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  163.842390] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  163.843609] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  164.373813] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  164.375554] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  164.953977] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  164.955647] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  165.557691] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  165.564740] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  166.077320] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  166.078966] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  166.642756] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  166.647511] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  167.160724] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  167.166507] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  167.722508] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  167.730611] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  168.165317] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  168.170870] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  168.786580] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  168.791336] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  169.293897] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  169.299195] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  169.879631] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  169.888778] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  170.430403] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  170.434157] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  170.936276] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  170.940405] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  171.462283] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  171.469487] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  172.106878] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  172.128755] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  172.604487] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  172.608889] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  173.173183] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  173.175531] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  173.699443] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  173.702820] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  174.203247] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  174.205704] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  174.705271] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  174.710700] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  175.232243] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  175.239142] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  175.707565] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  175.717259] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  176.240030] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  176.243444] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  176.836249] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  176.837489] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  177.368962] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  177.372348] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  177.892060] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  177.898685] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  178.339186] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  178.346988] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  178.848579] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  178.850913] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  179.373135] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  179.378738] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  179.635262] ------------[ cut here ]------------
+[  179.635278] DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+[  179.635282] WARNING: kernel/locking/mutex.c:625 at __mutex_lock+0xc9d/0x24f0, CPU#3: python3/5589
+[  179.635297] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl btintel btbcm intel_ipu6_isys videobuf2_dma_sg bluetooth videobuf2_memops ecdh_generic iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 kpp videobuf2_common x86_pkg_temp_thermal cfg80211 ecc gc5035 gc8034 intel_skl_int3472_discrete intel_skl_int3472_common v4l2_cci regmap_i2c i915 drm_buddy i2c_algo_bit intel_ipu6 ttm ipu_bridge drm_display_helper
+[  179.635362] CPU: 3 UID: 0 PID: 5589 Comm: python3 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g22c29125bc70 #2 PREEMPT(lazy) 
+[  179.635372] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[  179.635375] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  179.635379] RIP: 0010:__mutex_lock+0xca4/0x24f0
+[  179.635387] Code: 0f b6 14 11 38 d0 7c 08 84 d2 0f 85 6b 16 00 00 44 8b 0d 4f 99 98 01 45 85 c9 75 13 48 8d 3d 53 7a 99 01 48 c7 c6 80 3a 88 9e <67> 48 0f b9 3a 90 e9 c2 f4 ff ff 4d 8d a7 50 0a 00 00 4c 89 e7 e8
+[  179.635392] RSP: 0018:ffff88815789f760 EFLAGS: 00010246
+[  179.635398] RAX: 0000000000000003 RBX: ffff88810124d260 RCX: 1ffffffff40229e8
+[  179.635403] RDX: 0000000000000000 RSI: ffffffff9e883a80 RDI: ffffffffa0123050
+[  179.635407] RBP: ffff88815789f8d0 R08: 0000000000000001 R09: 0000000000000000
+[  179.635411] R10: ffffffffa0114f47 R11: 0000000000000000 R12: 0000000000000000
+[  179.635414] R13: 0000000000000000 R14: dffffc0000000000 R15: ffff88810a75c000
+[  179.635418] FS:  00007fc4f3b6f780(0000) GS:ffff8882978bb000(0000) knlGS:0000000000000000
+[  179.635422] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  179.635426] CR2: 00007f0c3c600000 CR3: 0000000146da6000 CR4: 0000000000f50ef0
+[  179.635430] PKRU: 55555554
+[  179.635434] Call Trace:
+[  179.635437]  <TASK>
+[  179.635441]  ? __v4l2_subdev_state_alloc+0x18e/0x3b0
+[  179.635449]  ? __pfx___mutex_lock+0x10/0x10
+[  179.635456]  ? __kvmalloc_node_noprof+0x532/0x8b0
+[  179.635464]  ? __v4l2_subdev_state_alloc+0x271/0x3b0
+[  179.635470]  ? __v4l2_subdev_state_alloc+0x18e/0x3b0
+[  179.635474]  __v4l2_subdev_state_alloc+0x18e/0x3b0
+[  179.635479]  subdev_open+0xe9/0x4a0
+[  179.635485]  v4l2_open+0x1a0/0x400
+[  179.635491]  chrdev_open+0x1e5/0x5d0
+[  179.635497]  ? __pfx_chrdev_open+0x10/0x10
+[  179.635502]  ? do_dentry_open+0x74/0x1250
+[  179.635507]  ? lock_release+0xc4/0x2a0
+[  179.635513]  ? __pfx_chrdev_open+0x10/0x10
+[  179.635518]  do_dentry_open+0x409/0x1250
+[  179.635524]  vfs_open+0x7d/0x350
+[  179.635529]  path_openat+0x16a3/0x2040
+[  179.635536]  ? __pfx_path_openat+0x10/0x10
+[  179.635541]  ? __lock_acquire+0x4c5/0x1e60
+[  179.635546]  do_file_open+0x1cd/0x400
+[  179.635552]  ? __pfx_do_file_open+0x10/0x10
+[  179.635560]  ? _raw_spin_unlock+0x1e/0x40
+[  179.635565]  ? alloc_fd+0x33f/0x610
+[  179.635573]  do_sys_openat2+0xe2/0x180
+[  179.635577]  ? __pfx_do_sys_openat2+0x10/0x10
+[  179.635582]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[  179.635587]  ? trace_hardirqs_on+0x18/0x160
+[  179.635593]  ? __call_rcu_common.constprop.0+0x5af/0xbc0
+[  179.635600]  __x64_sys_openat+0x103/0x1d0
+[  179.635604]  ? __pfx___x64_sys_openat+0x10/0x10
+[  179.635610]  do_syscall_64+0x109/0x5d0
+[  179.635617]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  179.635622] RIP: 0033:0x7fc4f3c033a7
+[  179.635648] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  179.635656] RSP: 002b:00007ffd242ac820 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
+[  179.635663] RAX: ffffffffffffffda RBX: 00007fc4f3b6f780 RCX: 00007fc4f3c033a7
+[  179.635667] RDX: 0000000000080002 RSI: 00007fc4f35962d0 RDI: ffffffffffffff9c
+[  179.635670] RBP: 00007fc4f3eac090 R08: 0000000000000000 R09: 0000000000000000
+[  179.635674] R10: 0000000000000000 R11: 0000000000000202 R12: 00000000000001ff
+[  179.635677] R13: 00007fc4f3596370 R14: 00007ffd242ac900 R15: 00007fc4f35962d0
+[  179.635683]  </TASK>
+[  179.635687] irq event stamp: 21067967
+[  179.635690] hardirqs last  enabled at (21067967): [<ffffffff9e7a3260>] _raw_spin_unlock_irqrestore+0x40/0x50
+[  179.635697] hardirqs last disabled at (21067966): [<ffffffff9e7a2e90>] _raw_spin_lock_irqsave+0x50/0x60
+[  179.635702] softirqs last  enabled at (21067954): [<ffffffff9bd15541>] __irq_exit_rcu+0xd1/0x1e0
+[  179.635708] softirqs last disabled at (21067727): [<ffffffff9bd15541>] __irq_exit_rcu+0xd1/0x1e0
+[  179.635713] ---[ end trace 0000000000000000 ]---
+[  179.738369] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  179.739118] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  180.081222] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  180.081983] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  180.393748] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  180.394404] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  180.726299] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  180.729620] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  181.042303] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  181.047470] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  181.379865] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  181.380524] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  181.709465] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  181.712448] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  181.998464] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  182.001848] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  182.341160] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  182.341818] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  182.632216] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  182.635231] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  182.967156] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  182.971440] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  183.277277] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  183.286062] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  183.625339] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  183.628176] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  183.906397] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  183.907027] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  184.192999] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  184.197565] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  184.514200] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  184.514916] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  184.824201] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  184.827355] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  185.141856] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  185.144013] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  185.520121] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  185.520793] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  185.820893] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  185.826205] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  186.130357] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  186.133320] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  186.447272] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  186.450746] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  186.746888] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  186.747544] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  187.057428] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  187.060838] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  187.391185] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  187.396601] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  187.706857] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  187.709838] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  188.008966] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  188.009896] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  188.319140] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  188.319944] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  188.585895] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  188.588669] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  188.884960] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  188.886151] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  189.189745] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  189.190651] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  189.460354] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  189.462651] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  189.690480] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  189.691089] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  189.985785] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  189.986480] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  190.323625] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  190.324251] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  190.618323] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  190.620599] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  190.943296] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  190.949338] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  191.245495] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  191.246924] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  191.562161] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  191.566914] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  191.869701] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  191.880114] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  192.157540] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  192.158145] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  192.425247] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  192.425983] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  192.713950] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  192.718598] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  193.074119] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  193.076464] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  193.430499] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  193.431119] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  193.733140] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  193.734870] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  194.028415] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  194.029048] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  194.292075] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  194.297761] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  194.618070] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  194.622226] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  194.964166] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  194.981843] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  195.261311] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  195.261946] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  195.588365] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  195.588996] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  195.906128] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  195.909167] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  196.219601] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  196.220831] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  196.520448] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  196.521091] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  196.832566] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  196.833202] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  197.172498] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  197.175272] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  197.476916] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  197.483561] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  197.795192] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  197.795840] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  198.101687] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  198.105180] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  198.405858] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  198.409017] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  198.742967] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  198.743665] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  199.046981] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  199.050538] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  199.359690] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  199.360337] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  199.635951] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  199.637027] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  199.935518] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  199.936171] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  200.239747] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  200.245948] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  200.534977] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  200.537065] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  200.841005] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  200.846063] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  201.174603] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  201.175311] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  201.501739] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  201.502427] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  201.790079] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  201.793504] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  202.060615] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  202.062311] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  202.372973] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  202.373782] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  202.646727] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  202.649835] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  202.924619] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  202.932767] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  203.200097] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  203.201874] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  203.521514] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  203.524734] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  203.840377] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  203.843470] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  204.157842] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  204.158509] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  204.517642] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  204.520555] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  204.825381] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  204.830249] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  205.124470] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  205.125833] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  205.429621] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  205.432621] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  205.752435] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  205.753088] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  206.072978] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  206.077081] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  206.366678] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  206.368424] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  206.676260] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  206.676913] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  206.967003] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  206.972297] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  207.277096] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  207.277705] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  207.596659] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  207.600396] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  207.920958] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  207.926461] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  208.240498] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  208.243313] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  208.543328] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  208.543948] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  208.859681] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  208.863388] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  209.161788] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  209.166883] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  209.513257] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  209.513905] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  209.815611] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  209.816325] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  210.125245] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  210.125918] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  210.438788] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  210.439446] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  210.765734] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  210.768927] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  211.069743] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  211.073667] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  211.397486] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  211.398174] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  211.723588] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  211.724889] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  212.006808] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  212.008002] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  212.349614] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  212.355174] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  212.674655] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  212.675370] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  213.024466] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  213.027804] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  213.333306] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  213.342502] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  213.665670] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  213.668938] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  213.912439] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  213.915995] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  214.224699] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  214.228308] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  214.544251] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  214.547901] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  214.882044] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  214.882707] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  215.217075] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  215.217713] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  215.503698] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  215.504793] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  215.815622] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  215.816265] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  216.135184] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  216.135813] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  216.448554] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  216.449580] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  216.791125] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  216.797377] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  217.112414] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  217.115393] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  217.408772] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  217.410725] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  217.733280] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  217.734466] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  218.064623] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  218.069159] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  218.373582] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  218.374342] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  218.746583] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  218.749050] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  219.078238] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  219.084324] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  219.413584] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  219.419656] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  219.744876] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  219.745558] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  220.064198] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  220.067555] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  220.357161] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  220.358415] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  220.653898] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  220.657509] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  220.979682] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  220.980405] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  221.307412] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  221.308058] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  221.641430] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  221.646309] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  221.967563] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  221.968234] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  222.244152] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  222.244873] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  222.569098] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  222.569737] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  222.868173] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  222.871199] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  223.147846] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  223.148480] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  223.493545] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  223.497001] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  223.800334] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  223.804269] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  224.115821] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  224.118978] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  224.458489] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  224.461227] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  224.798461] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  224.799137] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  225.118286] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  225.123363] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  225.423507] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  225.426762] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  225.738306] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  225.738997] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  226.059870] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  226.060509] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  226.352817] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  226.353453] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  226.649273] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  226.654102] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  226.956471] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  226.959609] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  227.277527] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  227.280754] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  227.595434] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  227.596124] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  227.933750] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  227.936783] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  228.276992] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  228.277676] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  228.579691] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  228.582987] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  228.925381] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  228.931478] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  229.272604] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  229.273235] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  229.588177] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  229.593594] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  229.903124] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  229.910671] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  230.251230] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  230.251856] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  230.596976] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  230.597641] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  230.913367] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  230.917114] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  231.256231] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  231.256903] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  231.570631] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  231.571333] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  231.898439] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  231.899077] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  232.205571] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  232.211169] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  232.508905] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  232.509845] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  232.831132] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  232.831759] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  233.135727] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  233.136400] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  233.475740] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  233.476417] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  233.795268] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  233.800358] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  234.129948] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  234.131175] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  234.455445] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  234.456127] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  234.770055] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  234.774139] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  235.073710] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  235.074324] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  235.388641] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  235.389285] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  235.709225] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  235.714826] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  236.042000] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  236.043883] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  236.375048] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  236.380890] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  236.679150] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  236.684314] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  236.992688] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  236.994475] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  237.328548] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  237.330995] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  237.624111] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  237.627833] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  237.942896] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  237.946228] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  238.253787] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  238.254477] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[  238.590650] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[  238.591353] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator

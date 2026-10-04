@@ -1,0 +1,4 @@
+gc5035 2-003f -> Intel IPU6 CSI2 2 -> Intel IPU6 ISYS Capture 16 (/dev/video16)
+<<<<<<<<<<
+/home/nicfio/Documenti/INTEL-CAMERA/data/prova-v3-7.3.0-rc1-intelcam-debug-g22c29125bc70-20261004-214816/prima-gc5035.raw — 100776960 byte, 10 fotogrammi da 2592x1944
+per guardarli:  scripts/raw-to-png.py /home/nicfio/Documenti/INTEL-CAMERA/data/prova-v3-7.3.0-rc1-intelcam-debug-g22c29125bc70-20261004-214816/prima-gc5035.raw 2592 1944 grbg

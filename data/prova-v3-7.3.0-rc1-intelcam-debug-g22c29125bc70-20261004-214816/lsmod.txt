@@ -1,0 +1,35 @@
+Module                  Size  Used by
+uhid                   45056  3
+iwlmvm               2179072  0
+mac80211             4460544  1 iwlmvm
+libarc4                12288  1 mac80211
+btusb                 147456  0
+btrtl                  61440  1 btusb
+btintel               135168  1 btusb
+btbcm                  40960  1 btusb
+intel_ipu6_isys       311296  0
+videobuf2_dma_sg       36864  1 intel_ipu6_isys
+bluetooth            2052096  44 btrtl,btintel,btbcm,btusb
+videobuf2_memops       12288  1 videobuf2_dma_sg
+ecdh_generic           16384  2 bluetooth
+iwlwifi              1474560  1 iwlmvm
+videobuf2_v4l2         77824  1 intel_ipu6_isys
+intel_skl_int3472_tps68470    40960  0
+kpp                    16384  2 ecdh_generic,bluetooth
+videobuf2_common      192512  4 videobuf2_v4l2,intel_ipu6_isys,videobuf2_dma_sg,videobuf2_memops
+x86_pkg_temp_thermal    24576  0
+cfg80211             3321856  3 iwlmvm,iwlwifi,mac80211
+ecc                   110592  1 ecdh_generic
+gc5035                 40960  1
+gc8034                 40960  1
+intel_skl_int3472_discrete    45056  2
+intel_skl_int3472_common    12288  2 intel_skl_int3472_tps68470,intel_skl_int3472_discrete
+v4l2_cci               12288  2 gc8034,gc5035
+regmap_i2c             20480  2 intel_skl_int3472_tps68470,v4l2_cci
+i915                12853248  10
+drm_buddy              12288  1 i915
+i2c_algo_bit           28672  1 i915
+intel_ipu6            225280  1 intel_ipu6_isys
+ttm                   319488  1 i915
+ipu_bridge             61440  2 intel_ipu6,intel_ipu6_isys
+drm_display_helper    536576  1 i915
