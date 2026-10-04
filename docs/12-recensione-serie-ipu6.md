@@ -605,3 +605,60 @@ della v3.
 
 Aspettare la risposta. Se dice di postarla: v3 da
 `patches/wip/subdev-fix-v3/` (manca ancora la scelta dei destinatari).
+
+---
+
+## Controllo del 4 ottobre 2026
+
+Il dubbio di Nic: progetto arenato, oppure Sakari si e' preso la patch 2?
+Verificato:
+
+- **`subdev_open()` in `next`** (git.linuxtv.org, 04/10): ancora la riga
+  `if (sd->v4l2_dev->mdev && sd->entity.graph_obj.mdev->dev)`, invariata.
+  Nessuno ha corretto il difetto.
+- **Patchwork linuxtv** (cercando `subdev`, `v4l2-subdev`, `subdev_open`
+  dal 15/09): nessuna patch di Sakari su `v4l2-subdev.c`. Le sue patch dal
+  28/09 riguardano IPU6/IPU8 Kconfig, ov05c10, revisori MAINTAINERS e una
+  pull per la 7.4. Nella stessa zona solo patch di altri su problemi
+  diversi: Heidelberg (`v4l2_subdev_release()`, 17/09) e Hauer
+  (`v4l2_subdev_notify()` con SRCU, 24/09). Nguyen: `rejected`.
+- **Le nostre 2/3 v1 e v2**: ancora `new`, **nessun delegato** assegnato.
+- **Gmail** (Cestino compreso): nessuna risposta dopo il sollecito del
+  01/10.
+- **Lore** letto solo attraverso il feed salvato il 03/10 mattina (Anubis):
+  niente di rilevante.
+
+Conclusione: nessun segno di appropriazione. Il punto e' fermo, ma il
+sollecito ha solo 3 giorni, e 2 sono di fine settimana. L'idea
+`vdev->v4l2_dev` e' gia' pubblica e datata: sta nel sollecito su lore
+del 01/10.
+
+### 4 ottobre, sera: due kernel di debug per la prova sul tablet
+
+Obiettivo: dati sull'hardware IPU6 per la lettera della v3 (prima/dopo,
+non un fiume di log). Costruiti sul server, worktree
+`/media/INTEL-CAMERA/sorgenti/media-tablet`, `next` a `9cfc1aca0`:
+
+- `tablet-base` = next + `serie/` (gc5035, gc8034, ipu-bridge) + int3472
+  + commit **SOLO PROVA** che adatta i due driver alla nuova firma di
+  `set_fmt`/`get_selection` (argomento `const struct
+  v4l2_subdev_client_info *`, arrivato in `next` dopo il 27/09).
+  **La serie dei sensori non compila piu' su `next`: va ribasata prima
+  di spedirla.**
+- `tablet-v3` = base + le due patch della serie v3, che si applicano
+  pulite sul `next` di oggi.
+
+Kernel `7.3.0-rc1-intelcam-debug-g1b4a83d60ea1` (base) e `...-g22c29125bc70`
+(v3), config identiche (KASAN, lockdep, UBSAN, KMEMLEAK; wifi, BT e
+`uhid` per tastiera e mouse BLE). Copiati in `~/kernel-prova/{base,v3}`.
+
+Script nuovi: `build-tablet-debug.sh` (server), `installa-kernel-prova.sh`
+(ESP `/mnt/vmlinuz-new[-v3]` + `initrd-new[-v3]`, moduli in
+`/lib/modules`), `prova-serie-v3.sh` (uso normale, corsa open, corsa
+ioctl, uso normale, dmesg classificato per fase). Classificatore
+verificato sui log del run 3 QEMU: stessi numeri della tabella.
+
+Da sapere leggendo i risultati: gc5035/gc8034 usano `devm_kzalloc()`,
+quindi un use-after-free KASAN su un nodo tenuto aperto attraverso
+l'unbind e' il limite sulla vita degli oggetti, non un difetto della
+serie.

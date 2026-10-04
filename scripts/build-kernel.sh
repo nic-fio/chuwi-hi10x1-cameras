@@ -45,7 +45,7 @@ JOBS="$(nproc)"
 # ---------------------------------------------------------------------------
 # 1. sorgenti
 # ---------------------------------------------------------------------------
-if [ ! -d "$KDIR/.git" ]; then
+if [ ! -e "$KDIR/.git" ]; then   # -e: in un worktree .git e' un file
     echo "== clone vanilla in $KDIR (shallow) =="
     git clone --depth=1 --single-branch --branch master \
         https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git "$KDIR"
@@ -71,7 +71,12 @@ make x86_64_defconfig
 # moduli CARICATI. Siccome il kernel attuale non ha pinctrl-alderlake, la
 # config generata eredita lo stesso difetto (CONFIG_PINCTRL finisce
 # disabilitato del tutto). I simboli qui sotto vanno quindi forzati DOPO.
-if [ -r /proc/modules ]; then
+#
+# Compilando su un'altra macchina (il server) l'lsmod locale e' quello
+# sbagliato: LSMOD_FILE punta a un "lsmod > file" preso sul tablet.
+if [ -n "${LSMOD_FILE:-}" ]; then
+    yes '' 2>/dev/null | make LSMOD="$LSMOD_FILE" localmodconfig || true
+elif [ -r /proc/modules ]; then
     lsmod > /tmp/lsmod-intelcam.txt
     yes '' 2>/dev/null | make LSMOD=/tmp/lsmod-intelcam.txt localmodconfig || true
 fi
@@ -202,6 +207,10 @@ done
 ./scripts/config --module BT_HIDP
 ./scripts/config --enable BT_BREDR
 ./scripts/config --enable BT_LE
+# Tastiera TK-KB005 e mouse Pebble M350s sono BLE (indirizzi casuali
+# statici): bluetoothd li consegna al kernel via /dev/uhid, non via hidp.
+# Senza UHID si accoppiano ma non scrivono niente. Visto il 2026-10-04.
+./scripts/config --module UHID
 
 # --- i915 DEVE essere un modulo, non built-in -----------------------------
 # L'altra causa del boot fallito del 2026-08-11, indipendente dalla precedente.
@@ -272,7 +281,7 @@ for s in PINCTRL PINCTRL_INTEL PINCTRL_ALDERLAKE INTEL_SKL_INT3472 \
          VIDEO_GC05A2 VIDEO_GC08A3 \
          ACPI_DEBUGGER ACPI_DEBUGGER_USER \
          FRAMEBUFFER_CONSOLE DRM_FBDEV_EMULATION IWLWIFI IWLMVM \
-         BT BT_HCIBTUSB BT_HIDP; do
+         BT BT_HCIBTUSB BT_HIDP UHID; do
     check "$s"
 done
 
@@ -345,6 +354,7 @@ fi
 
 SUFFIX=""
 [ "$DEBUG" -eq 1 ] && SUFFIX="-debug"
+mkdir -p "$PROJECT_DIR/config"
 cp .config "$PROJECT_DIR/config/intelcam-$(make -s kernelversion)$SUFFIX.config"
 
 # ---------------------------------------------------------------------------
