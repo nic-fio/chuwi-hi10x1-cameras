@@ -1,0 +1,2331 @@
+[    0.000000] Linux version 7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 (nicfio@NIC-OS) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #1 SMP PREEMPT_DYNAMIC Sun Oct  4 19:30:22 UTC 2026
+[    0.000000] Command line: vmlinuz-new initrd=initrd-new root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI
+[    0.000000] x86/CPU: Running old microcode
+[    0.000000] x86/split lock detection: #AC: crashing the kernel on kernel split_locks and warning on user-space split_locks
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009dfff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x000000000009e000-0x000000000009efff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x000000000009f000-0x000000000009ffff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x00000000000a0000-0x00000000000fffff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000003f527fff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x000000003f528000-0x000000003f528fff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x000000003f529000-0x0000000040192fff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x0000000040193000-0x0000000040193fff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000040194000-0x000000007264dfff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x000000007264e000-0x000000007574dfff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x000000007574e000-0x0000000075821fff]  ACPI data
+[    0.000000] BIOS-e820: [mem 0x0000000075822000-0x00000000758e1fff]  ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x00000000758e2000-0x0000000075ffefff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000075fff000-0x0000000075ffffff]  System RAM
+[    0.000000] BIOS-e820: [mem 0x0000000076000000-0x0000000079ffffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x000000007a000000-0x000000007a9fffff]
+[    0.000000] BIOS-e820: [mem 0x000000007aa00000-0x000000007abfffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x000000007ac00000-0x000000007affffff]
+[    0.000000] BIOS-e820: [mem 0x000000007b000000-0x00000000803fffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x0000000080400000-0x00000000bfffffff]
+[    0.000000] BIOS-e820: [mem 0x00000000c0000000-0x00000000cfffffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000d0000000-0x00000000fdffffff]
+[    0.000000] BIOS-e820: [mem 0x00000000fe000000-0x00000000fe010fff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000fe011000-0x00000000febfffff]
+[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000fec01000-0x00000000fecfffff]
+[    0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed00fff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000fed01000-0x00000000fed1ffff]
+[    0.000000] BIOS-e820: [mem 0x00000000fed20000-0x00000000fed7ffff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000fed80000-0x00000000fedfffff]
+[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff]  device reserved
+[    0.000000] BIOS-e820: [gap 0x00000000fee01000-0x00000000feffffff]
+[    0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff]  device reserved
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000027fbfffff]  System RAM
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] efi: EFI v2.8 by American Megatrends
+[    0.000000] efi: ACPI=0x75821000 ACPI 2.0=0x75821014 TPMFinalLog=0x7588f000 SMBIOS=0x75d9d000 SMBIOS 3.0=0x75d9c000 MEMATTR=0x6e959298 ESRT=0x6c25b598 INITRD=0x6c200f18 TPMEventLog=0x75777018 
+[    0.000000] efi: Remove mem72: MMIO range=[0xc0000000-0xcfffffff] (256MB) from e820 map
+[    0.000000] e820: remove [mem 0xc0000000-0xcfffffff] device reserved
+[    0.000000] efi: Not removing mem73: MMIO range=[0xfe000000-0xfe010fff] (68KB) from e820 map
+[    0.000000] efi: Not removing mem74: MMIO range=[0xfec00000-0xfec00fff] (4KB) from e820 map
+[    0.000000] efi: Not removing mem75: MMIO range=[0xfed00000-0xfed00fff] (4KB) from e820 map
+[    0.000000] efi: Not removing mem77: MMIO range=[0xfee00000-0xfee00fff] (4KB) from e820 map
+[    0.000000] efi: Remove mem78: MMIO range=[0xff000000-0xffffffff] (16MB) from e820 map
+[    0.000000] e820: remove [mem 0xff000000-0xffffffff] device reserved
+[    0.000000] DMI: SMBIOS 3.5.0 present.
+[    0.000000] DMI: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[    0.000000] DMI: Memory slots populated: 4/8
+[    0.000000] tsc: Detected 800.000 MHz processor
+[    0.000000] tsc: Detected 806.400 MHz TSC
+[    0.000182] e820: update [mem 0x00000000-0x00000fff] System RAM ==> device reserved
+[    0.000187] e820: remove [mem 0x000a0000-0x000fffff] System RAM
+[    0.000200] last_pfn = 0x27fc00 max_arch_pfn = 0x400000000
+[    0.000205] MTRR map: 5 entries (3 fixed + 2 variable; max 23), built from 10 variable MTRRs
+[    0.000208] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.000317] last_pfn = 0x76000 max_arch_pfn = 0x400000000
+[    0.021813] esrt: Reserving ESRT space from 0x000000006c25b598 to 0x000000006c25b648.
+[    0.021826] e820: update [mem 0x6c25b000-0x6c25bfff] System RAM ==> device reserved
+[    0.021856] Using GB pages for direct mapping
+[    0.021858] Incomplete global flushes, disabling PCID
+[    0.023046] Secure boot disabled
+[    0.023047] RAMDISK: [mem 0x69219000-0x69bc2fff]
+[    0.023052] ACPI: Early table checksum verification disabled
+[    0.023057] ACPI: RSDP 0x0000000075821014 000024 (v02 ALASKA)
+[    0.023062] ACPI: XSDT 0x0000000075820728 00011C (v01 ALASKA A M I    01072009 AMI  01000013)
+[    0.023073] ACPI: FACP 0x000000007581D000 000114 (v06 ALASKA A M I    01072009 AMI  01000013)
+[    0.023085] ACPI: DSDT 0x00000000757AA000 072B07 (v02 ALASKA A M I    01072009 INTL 20200717)
+[    0.023092] ACPI: FACS 0x00000000758E1000 000040
+[    0.023096] ACPI: SSDT 0x000000007581E000 001459 (v02 DptfTb DptfTabl 00001000 INTL 20200717)
+[    0.023104] ACPI: FIDT 0x00000000757A9000 00009C (v01 ALASKA A M I    01072009 AMI  00010013)
+[    0.023111] ACPI: MSDM 0x00000000757A8000 000055 (v03 ALASKA A M I    01072009 AMI  01000013)
+[    0.023118] ACPI: SSDT 0x00000000757A7000 00038C (v02 PmaxDv Pmax_Dev 00000001 INTL 20200717)
+[    0.023125] ACPI: SSDT 0x00000000757A1000 005D0B (v02 CpuRef CpuSsdt  00003000 INTL 20200717)
+[    0.023132] ACPI: SSDT 0x000000007579E000 002AA1 (v02 SaSsdt SaSsdt   00003000 INTL 20200717)
+[    0.023139] ACPI: SSDT 0x000000007579A000 0033D3 (v02 INTEL  IgfxSsdt 00003000 INTL 20200717)
+[    0.023146] ACPI: SSDT 0x0000000075799000 000150 (v02 INTEL  IpuSsdt  00001000 INTL 20200717)
+[    0.023152] ACPI: HPET 0x0000000075798000 000038 (v01 ALASKA A M I    01072009 AMI  01000013)
+[    0.023159] ACPI: APIC 0x0000000075797000 0001DC (v05 ALASKA A M I    01072009 AMI  01000013)
+[    0.023166] ACPI: MCFG 0x0000000075796000 00003C (v01 ALASKA A M I    01072009 AMI  01000013)
+[    0.023173] ACPI: SSDT 0x0000000075794000 001F47 (v02 ALASKA Ther_Rvp 00001000 INTL 20200717)
+[    0.023180] ACPI: UEFI 0x0000000075875000 000048 (v01 ALASKA A M I    01072009 AMI  01000013)
+[    0.023187] ACPI: NHLT 0x0000000075793000 00002D (v00 ALASKA A M I    01072009 AMI  01000013)
+[    0.023194] ACPI: LPIT 0x0000000075792000 0000CC (v01 ALASKA A M I    01072009 AMI  01000013)
+[    0.023200] ACPI: SSDT 0x000000007578E000 002A83 (v02 ALASKA PtidDevc 00001000 INTL 20200717)
+[    0.023207] ACPI: SSDT 0x000000007578B000 002357 (v02 ALASKA TbtTypeC 00000000 INTL 20200717)
+[    0.023214] ACPI: DBGP 0x000000007578A000 000034 (v01 ALASKA A M I    01072009 AMI  01000013)
+[    0.023221] ACPI: DBG2 0x0000000075789000 000054 (v00 ALASKA A M I    01072009 AMI  01000013)
+[    0.023228] ACPI: SSDT 0x0000000075787000 0014CC (v02 ALASKA UsbCTabl 00001000 INTL 20200717)
+[    0.023235] ACPI: DMAR 0x0000000075786000 0000A0 (v02 INTEL  EDK2     00000002      01000013)
+[    0.023242] ACPI: SSDT 0x0000000075785000 0006B7 (v02 INTEL  xh_adl_N 00000000 INTL 20200717)
+[    0.023249] ACPI: SSDT 0x0000000075781000 003AEA (v02 SocGpe SocGpe   00003000 INTL 20200717)
+[    0.023256] ACPI: SSDT 0x000000007577D000 0039DA (v02 SocCmn SocCmn   00003000 INTL 20200717)
+[    0.023263] ACPI: SSDT 0x000000007577C000 000144 (v02 Intel  ADebTabl 00001000 INTL 20200717)
+[    0.023270] ACPI: TPM2 0x000000007577A000 00004C (v04 ALASKA A M I    00000001 AMI  00000000)
+[    0.023277] ACPI: PHAT 0x0000000075779000 0005F1 (v01 ALASKA A M I    00000005 MSFT 0100000D)
+[    0.023284] ACPI: WSMT 0x0000000075791000 000028 (v01 ALASKA A M I    01072009 AMI  00010013)
+[    0.023292] ACPI: FPDT 0x0000000075778000 000044 (v01 ALASKA A M I    01072009 AMI  01000013)
+[    0.023298] ACPI: BGRT 0x000000007577B000 000038 (v01 ALASKA A M I    01072009 AMI  00010013)
+[    0.023305] ACPI: Reserving FACP table memory at [mem 0x7581d000-0x7581d113]
+[    0.023307] ACPI: Reserving DSDT table memory at [mem 0x757aa000-0x7581cb06]
+[    0.023309] ACPI: Reserving FACS table memory at [mem 0x758e1000-0x758e103f]
+[    0.023310] ACPI: Reserving SSDT table memory at [mem 0x7581e000-0x7581f458]
+[    0.023312] ACPI: Reserving FIDT table memory at [mem 0x757a9000-0x757a909b]
+[    0.023313] ACPI: Reserving MSDM table memory at [mem 0x757a8000-0x757a8054]
+[    0.023314] ACPI: Reserving SSDT table memory at [mem 0x757a7000-0x757a738b]
+[    0.023316] ACPI: Reserving SSDT table memory at [mem 0x757a1000-0x757a6d0a]
+[    0.023317] ACPI: Reserving SSDT table memory at [mem 0x7579e000-0x757a0aa0]
+[    0.023319] ACPI: Reserving SSDT table memory at [mem 0x7579a000-0x7579d3d2]
+[    0.023320] ACPI: Reserving SSDT table memory at [mem 0x75799000-0x7579914f]
+[    0.023321] ACPI: Reserving HPET table memory at [mem 0x75798000-0x75798037]
+[    0.023323] ACPI: Reserving APIC table memory at [mem 0x75797000-0x757971db]
+[    0.023324] ACPI: Reserving MCFG table memory at [mem 0x75796000-0x7579603b]
+[    0.023326] ACPI: Reserving SSDT table memory at [mem 0x75794000-0x75795f46]
+[    0.023327] ACPI: Reserving UEFI table memory at [mem 0x75875000-0x75875047]
+[    0.023328] ACPI: Reserving NHLT table memory at [mem 0x75793000-0x7579302c]
+[    0.023330] ACPI: Reserving LPIT table memory at [mem 0x75792000-0x757920cb]
+[    0.023331] ACPI: Reserving SSDT table memory at [mem 0x7578e000-0x75790a82]
+[    0.023332] ACPI: Reserving SSDT table memory at [mem 0x7578b000-0x7578d356]
+[    0.023334] ACPI: Reserving DBGP table memory at [mem 0x7578a000-0x7578a033]
+[    0.023335] ACPI: Reserving DBG2 table memory at [mem 0x75789000-0x75789053]
+[    0.023336] ACPI: Reserving SSDT table memory at [mem 0x75787000-0x757884cb]
+[    0.023337] ACPI: Reserving DMAR table memory at [mem 0x75786000-0x7578609f]
+[    0.023339] ACPI: Reserving SSDT table memory at [mem 0x75785000-0x757856b6]
+[    0.023340] ACPI: Reserving SSDT table memory at [mem 0x75781000-0x75784ae9]
+[    0.023341] ACPI: Reserving SSDT table memory at [mem 0x7577d000-0x757809d9]
+[    0.023343] ACPI: Reserving SSDT table memory at [mem 0x7577c000-0x7577c143]
+[    0.023344] ACPI: Reserving TPM2 table memory at [mem 0x7577a000-0x7577a04b]
+[    0.023345] ACPI: Reserving PHAT table memory at [mem 0x75779000-0x757795f0]
+[    0.023347] ACPI: Reserving WSMT table memory at [mem 0x75791000-0x75791027]
+[    0.023348] ACPI: Reserving FPDT table memory at [mem 0x75778000-0x75778043]
+[    0.023349] ACPI: Reserving BGRT table memory at [mem 0x7577b000-0x7577b037]
+[    0.024040] No NUMA configuration found
+[    0.024042] Faking a node at [mem 0x0000000000000000-0x000000027fbfffff]
+[    0.024049] NODE_DATA(0) allocated [mem 0x27fbfc380-0x27fbfffff]
+[    0.143422] KernelAddressSanitizer initialized (generic)
+[    0.143475] Reserving Intel graphics memory at [mem 0x7c800000-0x803fffff]
+[    0.145227] ACPI: PM-Timer IO Port: 0x1808
+[    0.145240] ACPI: LAPIC_NMI (acpi_id[0x01] high edge lint[0x1])
+[    0.145242] ACPI: LAPIC_NMI (acpi_id[0x02] high edge lint[0x1])
+[    0.145243] ACPI: LAPIC_NMI (acpi_id[0x03] high edge lint[0x1])
+[    0.145244] ACPI: LAPIC_NMI (acpi_id[0x04] high edge lint[0x1])
+[    0.145245] ACPI: LAPIC_NMI (acpi_id[0x05] high edge lint[0x1])
+[    0.145247] ACPI: LAPIC_NMI (acpi_id[0x06] high edge lint[0x1])
+[    0.145248] ACPI: LAPIC_NMI (acpi_id[0x07] high edge lint[0x1])
+[    0.145249] ACPI: LAPIC_NMI (acpi_id[0x08] high edge lint[0x1])
+[    0.145250] ACPI: LAPIC_NMI (acpi_id[0x09] high edge lint[0x1])
+[    0.145251] ACPI: LAPIC_NMI (acpi_id[0x0a] high edge lint[0x1])
+[    0.145252] ACPI: LAPIC_NMI (acpi_id[0x0b] high edge lint[0x1])
+[    0.145253] ACPI: LAPIC_NMI (acpi_id[0x0c] high edge lint[0x1])
+[    0.145254] ACPI: LAPIC_NMI (acpi_id[0x0d] high edge lint[0x1])
+[    0.145255] ACPI: LAPIC_NMI (acpi_id[0x0e] high edge lint[0x1])
+[    0.145256] ACPI: LAPIC_NMI (acpi_id[0x0f] high edge lint[0x1])
+[    0.145257] ACPI: LAPIC_NMI (acpi_id[0x10] high edge lint[0x1])
+[    0.145259] ACPI: LAPIC_NMI (acpi_id[0x11] high edge lint[0x1])
+[    0.145260] ACPI: LAPIC_NMI (acpi_id[0x12] high edge lint[0x1])
+[    0.145261] ACPI: LAPIC_NMI (acpi_id[0x13] high edge lint[0x1])
+[    0.145262] ACPI: LAPIC_NMI (acpi_id[0x14] high edge lint[0x1])
+[    0.145263] ACPI: LAPIC_NMI (acpi_id[0x15] high edge lint[0x1])
+[    0.145264] ACPI: LAPIC_NMI (acpi_id[0x16] high edge lint[0x1])
+[    0.145265] ACPI: LAPIC_NMI (acpi_id[0x17] high edge lint[0x1])
+[    0.145266] ACPI: LAPIC_NMI (acpi_id[0x00] high edge lint[0x1])
+[    0.145399] IOAPIC[0]: apic_id 2, version 32, address 0xfec00000, GSI 0-119
+[    0.145403] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.145406] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.145412] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.145413] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.145429] e820: update [mem 0x6a044000-0x6a332fff] System RAM ==> device reserved
+[    0.145449] TSC deadline timer available
+[    0.145452] CPU topo: Max. logical packages:   1
+[    0.145454] CPU topo: Max. logical nodes:      1
+[    0.145454] CPU topo: Num. nodes per package:  1
+[    0.145457] CPU topo: Max. logical dies:       1
+[    0.145457] CPU topo: Max. dies per package:   1
+[    0.145461] CPU topo: Max. threads per core:   1
+[    0.145462] CPU topo: Num. cores per package:     4
+[    0.145463] CPU topo: Num. threads per package:   4
+[    0.145464] CPU topo: Allowing 4 present CPUs plus 0 hotplug CPUs
+[    0.145515] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.145519] PM: hibernation: Registered nosave memory: [mem 0x0009e000-0x0009efff]
+[    0.145522] PM: hibernation: Registered nosave memory: [mem 0x000a0000-0x000fffff]
+[    0.145524] PM: hibernation: Registered nosave memory: [mem 0x3f528000-0x3f528fff]
+[    0.145527] PM: hibernation: Registered nosave memory: [mem 0x40193000-0x40193fff]
+[    0.145530] PM: hibernation: Registered nosave memory: [mem 0x6a044000-0x6a332fff]
+[    0.145533] PM: hibernation: Registered nosave memory: [mem 0x6c25b000-0x6c25bfff]
+[    0.145536] PM: hibernation: Registered nosave memory: [mem 0x7264e000-0x75ffefff]
+[    0.145539] PM: hibernation: Registered nosave memory: [mem 0x76000000-0xffffffff]
+[    0.145542] [gap 0x80400000-0xfdffffff] available for PCI devices
+[    0.145544] Booting paravirtualized kernel on bare hardware
+[    0.145547] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.160962] Zone ranges:
+[    0.160966]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.160972]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+[    0.160974]   Normal   [mem 0x0000000100000000-0x000000027fbfffff]
+[    0.160976] Movable zone start for each node
+[    0.160977] Early memory node ranges
+[    0.160977]   node   0: [mem 0x0000000000001000-0x000000000009dfff]
+[    0.160979]   node   0: [mem 0x000000000009f000-0x000000000009ffff]
+[    0.160981]   node   0: [mem 0x0000000000100000-0x000000003f527fff]
+[    0.160982]   node   0: [mem 0x000000003f529000-0x0000000040192fff]
+[    0.160983]   node   0: [mem 0x0000000040194000-0x000000007264dfff]
+[    0.160984]   node   0: [mem 0x0000000075fff000-0x0000000075ffffff]
+[    0.160986]   node   0: [mem 0x0000000100000000-0x000000027fbfffff]
+[    0.160988] Initmem setup node 0 [mem 0x0000000000001000-0x000000027fbfffff]
+[    0.161147] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.161150] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.161226] On node 0, zone DMA: 96 pages in unavailable ranges
+[    0.166101] On node 0, zone DMA32: 1 pages in unavailable ranges
+[    0.169972] On node 0, zone DMA32: 1 pages in unavailable ranges
+[    0.170325] On node 0, zone DMA32: 14769 pages in unavailable ranges
+[    0.200069] On node 0, zone Normal: 8192 pages in unavailable ranges
+[    0.200101] On node 0, zone Normal: 1024 pages in unavailable ranges
+[    0.200130] setup_percpu: NR_CPUS:64 nr_cpumask_bits:4 nr_cpu_ids:4 nr_node_ids:1
+[    0.200487] percpu: Embedded 67 pages/cpu s236880 r8192 d29360 u524288
+[    0.200503] pcpu-alloc: s236880 r8192 d29360 u524288 alloc=1*2097152
+[    0.200508] pcpu-alloc: [0] 0 1 2 3 
+[    0.200543] Kernel command line: vmlinuz-new initrd=initrd-new root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI
+[    0.200617] Unknown kernel command line parameters "vmlinuz-new", will be passed to user space.
+[    0.200650] random: crng init done
+[    0.200652] printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes
+[    0.201654] Dentry cache hash table entries: 1048576 (order: 11, 8388608 bytes, linear)
+[    0.202159] Inode-cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.202401] software IO TLB: area num 4.
+[    0.218087] Fallback order for Node 0: 0 
+[    0.218098] Built 1 zonelists, mobility grouping on.  Total pages: 2040299
+[    0.218100] Policy zone: Normal
+[    0.218106] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.218108] stackdepot: allocating hash table via alloc_large_system_hash
+[    0.218118] stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
+[    0.219791] stackdepot: allocating space for 8192 stack pools via memblock
+[    0.553536] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[    0.558906] Dynamic Preempt: lazy
+[    0.560581] Running RCU self tests
+[    0.560583] Running RCU synchronous self tests
+[    0.560585] rcu: Preemptible hierarchical RCU implementation.
+[    0.560586] rcu: 	RCU event tracing is enabled.
+[    0.560587] rcu: 	RCU lockdep checking is enabled.
+[    0.560588] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=4.
+[    0.560590] 	Trampoline variant of Tasks RCU enabled.
+[    0.560591] 	Tracing variant of Tasks RCU enabled.
+[    0.560592] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+[    0.560594] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=4
+[    0.560852] Running RCU synchronous self tests
+[    0.560865] RCU Tasks: Setting shift to 2 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=4.
+[    0.623572] NR_IRQS: 4352, nr_irqs: 1024, preallocated irqs: 16
+[    0.624582] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.625102] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.625850] Console: colour dummy device 80x25
+[    0.625878] printk: legacy console [tty0] enabled
+[    0.626039] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+[    0.626042] ... MAX_LOCKDEP_SUBCLASSES:  8
+[    0.626045] ... MAX_LOCK_DEPTH:          48
+[    0.626047] ... MAX_LOCKDEP_KEYS:        8192
+[    0.626049] ... CLASSHASH_SIZE:          4096
+[    0.626051] ... MAX_LOCKDEP_ENTRIES:     32768
+[    0.626053] ... MAX_LOCKDEP_CHAINS:      65536
+[    0.626055] ... CHAINHASH_SIZE:          32768
+[    0.626057]  memory used by lock dependency info: 6429 kB
+[    0.626059]  memory used for stack traces: 16896 kB
+[    0.626061]  per task-struct memory footprint: 1920 bytes
+[    0.626326] ACPI: Core revision 20260408
+[    0.629786] hpet: HPET dysfunctional in PC10. Force disabled.
+[    0.629958] APIC: Switch to symmetric I/O mode setup
+[    0.629963] DMAR: Host address width 39
+[    0.629966] DMAR: DRHD base: 0x000000fed90000 flags: 0x0
+[    0.630106] DMAR: dmar0: reg_base_addr fed90000 ver 4:0 cap 1c0000c40660462 ecap 29a00f0505e
+[    0.630111] DMAR: DRHD base: 0x000000fed92000 flags: 0x0
+[    0.630217] DMAR: dmar1: reg_base_addr fed92000 ver 1:0 cap d2008c40660462 ecap f050da
+[    0.630222] DMAR: DRHD base: 0x000000fed91000 flags: 0x1
+[    0.630315] DMAR: dmar2: reg_base_addr fed91000 ver 5:0 cap d2008c40660462 ecap f050da
+[    0.630319] DMAR: RMRR base: 0x0000007c000000 end: 0x000000803fffff
+[    0.630353] DMAR-IR: IOAPIC id 2 under DRHD base  0xfed91000 IOMMU 2
+[    0.630356] DMAR-IR: HPET id 0 under DRHD base 0xfed91000
+[    0.630359] DMAR-IR: Queued invalidation will be enabled to support x2apic and Intr-remapping.
+[    0.636331] DMAR-IR: Enabled IRQ remapping in x2apic mode
+[    0.636341] x2apic enabled
+[    0.636617] APIC: Switched APIC routing to: cluster x2apic
+[    0.653052] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0xb9fb05486c, max_idle_ns: 440795231721 ns
+[    0.653083] Calibrating delay loop (skipped), value calculated using timer frequency.. 1612.80 BogoMIPS (lpj=806400)
+[    0.653126] CPU0: Thermal monitoring enabled (TM1)
+[    0.653131] x86/cpu: User Mode Instruction Prevention (UMIP) activated
+[    0.653304] CET detected: Indirect Branch Tracking enabled
+[    0.653307] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+[    0.653310] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+[    0.653318] process: using mwait in idle threads
+[    0.653323] mitigations: Enabled attack vectors: user_kernel, user_user, SMT mitigations: auto
+[    0.653332] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl
+[    0.653335] Spectre V2 : Mitigation: Enhanced / Automatic IBRS
+[    0.653338] Register File Data Sampling: Vulnerable: No microcode
+[    0.653341] VMSCAPE: Vulnerable
+[    0.653343] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.653346] Spectre V2 : Spectre v2 / PBRSB-eIBRS: Retire a single CALL on VMEXIT
+[    0.653351] Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
+[    0.653373] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.653376] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.653378] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.653381] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.653383] x86/fpu: Supporting XSAVE feature 0x800: 'Control-flow User registers'
+[    0.653386] x86/fpu: Supporting XSAVE feature 0x1000: 'Control-flow Kernel registers (KVM only)'
+[    0.653389] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.653392] x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+[    0.653394] x86/fpu: xstate_offset[11]:  840, xstate_sizes[11]:   16
+[    0.653397] x86/fpu: xstate_offset[12]:  856, xstate_sizes[12]:   24
+[    0.653400] x86/fpu: Enabled xstate features 0x1a07, context size is 880 bytes, using 'compacted' format.
+[    0.654069] pid_max: default: 32768 minimum: 301
+[    0.654069] SELinux:  Initializing.
+[    0.654069] Mount-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.654069] Mountpoint-cache hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.654069] VFS: Finished mounting rootfs on nullfs
+[    0.654069] Running RCU synchronous self tests
+[    0.654069] Running RCU synchronous self tests
+[    0.654069] smpboot: CPU0: Intel(R) N100 (family: 0x6, model: 0xbe, stepping: 0x0)
+[    0.655059] Performance Events: PEBS fmt4+-baseline, PEBS-via-PT, Gracemont events, AnyThread deprecated, XSAVE Architectural LBR, 32-deep LBR, full-width counters, Intel PMU driver.
+[    0.655238] ... version:                   5
+[    0.655241] ... bit width:                 48
+[    0.655243] ... generic counters:          6
+[    0.655245] ... generic bitmap:            000000000000003f
+[    0.655248] ... fixed-purpose counters:    3
+[    0.655249] ... fixed-purpose bitmap:      0000000000000007
+[    0.655252] ... value mask:                0000ffffffffffff
+[    0.655254] ... max period:                00007fffffffffff
+[    0.655256] ... global_ctrl mask:          000000070000003f
+[    0.655679] signal: max sigframe size: 3632
+[    0.655718] Estimated ratio of average max frequency by base frequency (times 1024): 3712
+[    0.656015] rcu: Hierarchical SRCU implementation.
+[    0.656018] rcu: 	Max phase no-delay instances is 400.
+[    0.656508] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+[    0.662288] smp: Bringing up secondary CPUs ...
+[    0.663465] smpboot: x86: Booting SMP configuration:
+[    0.663470] .... node  #0, CPUs:      #1 #2 #3
+[    0.667133] smp: Brought up 1 node, 4 CPUs
+[    0.667133] smpboot: Total of 4 processors activated (6451.20 BogoMIPS)
+[    0.669471] Memory: 6647752K/8161196K available (48806K kernel code, 13421K rwdata, 12092K rodata, 5972K init, 40940K bss, 1497828K reserved, 0K cma-reserved)
+[    0.673074] devtmpfs: initialized
+[    0.686213] ACPI: PM: Registering ACPI NVS region [mem 0x75822000-0x758e1fff] (786432 bytes)
+[    0.689696] Running RCU synchronous self tests
+[    0.689727] Running RCU synchronous self tests
+[    0.689774] Running RCU Tasks wait API self tests
+[    0.690114] Running RCU Tasks Trace wait API self tests
+[    0.690272] posixtimers hash table entries: 2048 (order: 6, 147456 bytes, linear)
+[    0.690342] futex hash table entries: 1024 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.696031] PM: RTC time: 19:38:33, date: 2026-10-04
+[    0.698051] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.699084] Callback from call_rcu_tasks_trace() invoked.
+[    0.701857] audit: initializing netlink subsys (disabled)
+[    0.702183] audit: type=2000 audit(1791142713.049:1): state=initialized audit_enabled=0 res=1
+[    0.704978] thermal_sys: Registered thermal governor 'step_wise'
+[    0.705164] cpuidle: using governor menu
+[    0.723356] efi: Freeing EFI boot services memory: 92200K
+[    0.725811] PCI: ECAM [mem 0xc0000000-0xcfffffff] (base 0xc0000000) for domain 0000 [bus 00-ff]
+[    0.725906] PCI: Using configuration type 1 for base access
+[    0.726446] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[    0.728545] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.728545] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.734605] ACPI: Added _OSI(Module Device)
+[    0.734611] ACPI: Added _OSI(Processor Device)
+[    0.734614] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.797119] Callback from call_rcu_tasks() invoked.
+[    4.388037] ACPI BIOS Error (bug): Could not resolve symbol [\_SB.PC00.TXHC.RHUB.SS01], AE_NOT_FOUND (20260408/dswload2-162)
+[    4.388336] ACPI Error: AE_NOT_FOUND, During name lookup/catalog (20260408/psobject-220)
+[    4.388372] ACPI: Skipping parse of AML opcode: Scope (0x0010)
+[    4.388397] ACPI BIOS Error (bug): Could not resolve symbol [\_SB.PC00.TXHC.RHUB.SS02], AE_NOT_FOUND (20260408/dswload2-162)
+[    4.388560] ACPI Error: AE_NOT_FOUND, During name lookup/catalog (20260408/psobject-220)
+[    4.388591] ACPI: Skipping parse of AML opcode: Scope (0x0010)
+[    4.393317] ACPI BIOS Error (bug): Failure creating named object [\_SB.PC00.XHCI.RHUB.HS04._UPC], AE_ALREADY_EXISTS (20260408/dswload2-326)
+[    4.393510] ACPI Error: AE_ALREADY_EXISTS, During name lookup/catalog (20260408/psobject-220)
+[    4.393542] ACPI: Skipping parse of AML opcode: Method (0x0014)
+[    4.393564] ACPI BIOS Error (bug): Failure creating named object [\_SB.PC00.XHCI.RHUB.HS04._PLD], AE_ALREADY_EXISTS (20260408/dswload2-326)
+[    4.393727] ACPI Error: AE_ALREADY_EXISTS, During name lookup/catalog (20260408/psobject-220)
+[    4.393758] ACPI: Skipping parse of AML opcode: Method (0x0014)
+[    4.512412] ACPI: 15 ACPI AML tables successfully acquired and loaded
+[    5.181232] ACPI: \_SB_: platform _OSC: OS support mask [002a7eee]
+[    5.267575] ACPI: \_SB_: platform _OSC: OS control mask [002a7eea]
+[    5.431675] ACPI: Dynamic OEM Table Load:
+[    5.431717] ACPI: SSDT 0xFFFF8881038EC800 000394 (v02 PmRef  Cpu0Cst  00003001 INTL 20200717)
+[    5.454830] ACPI: Dynamic OEM Table Load:
+[    5.454864] ACPI: SSDT 0xFFFF88810128F400 0001A3 (v02 PmRef  Cpu0Ist  00003000 INTL 20200717)
+[    5.473450] ACPI: Dynamic OEM Table Load:
+[    5.473483] ACPI: SSDT 0xFFFF88810128F000 0001AB (v02 PmRef  Cpu0Psd  00003000 INTL 20200717)
+[    5.487444] ACPI: Dynamic OEM Table Load:
+[    5.487477] ACPI: SSDT 0xFFFF8881069D7000 0004BA (v02 PmRef  Cpu0Hwp  00003000 INTL 20200717)
+[    5.537647] ACPI: Dynamic OEM Table Load:
+[    5.537725] ACPI: SSDT 0xFFFF8881069EC000 001BAF (v02 PmRef  ApIst    00003000 INTL 20200717)
+[    5.724494] ACPI: Dynamic OEM Table Load:
+[    5.724533] ACPI: SSDT 0xFFFF8881069E8000 001038 (v02 PmRef  ApHwp    00003000 INTL 20200717)
+[    5.833259] ACPI: Dynamic OEM Table Load:
+[    5.833297] ACPI: SSDT 0xFFFF8881069E4000 001349 (v02 PmRef  ApPsd    00003000 INTL 20200717)
+[    5.942002] ACPI: Dynamic OEM Table Load:
+[    5.942040] ACPI: SSDT 0xFFFF88810172A000 000FBB (v02 PmRef  ApCst    00003000 INTL 20200717)
+[    6.125727] ACPI: EC: EC started
+[    6.125745] ACPI: EC: interrupt blocked
+[    6.260933] ACPI: EC: EC_CMD/EC_SC=0x66, EC_DATA=0x62
+[    6.260964] ACPI: \_SB_.PC00.LPCB.H_EC: Boot DSDT EC used to handle transactions
+[    6.260979] ACPI: Interpreter enabled
+[    6.261562] ACPI: PM: (supports S0 S3 S4 S5)
+[    6.261577] ACPI: Using IOAPIC for interrupt routing
+[    6.262541] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    6.262546] PCI: Ignoring E820 reservations for host bridge windows
+[    6.435682] ACPI: Enabled 7 GPEs in block 00 to 7F
+[    7.584819] ACPI: \_SB_.PC00.XHCI.RHUB.HS10.BTRT: New power resource
+[    8.174053] ACPI: \_SB_.PC00.CNVW.WRST: New power resource
+[    9.414194] ACPI: \_TZ_.FN00: New power resource
+[    9.420517] ACPI: \_TZ_.FN01: New power resource
+[    9.426697] ACPI: \_TZ_.FN02: New power resource
+[    9.435832] ACPI: \_TZ_.FN03: New power resource
+[    9.441996] ACPI: \_TZ_.FN04: New power resource
+[    9.457532] ACPI: \PIN_: New power resource
+[    9.493175] ACPI: PCI Root Bridge [PC00] (domain 0000 [bus 00-fe])
+[    9.493262] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+[    9.540076] acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability LTR]
+[    9.583464] PCI host bridge to bus 0000:00
+[    9.583807] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    9.583832] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    9.583853] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    9.583923] pci_bus 0000:00: root bus resource [mem 0x000e0000-0x000fffff window]
+[    9.583944] pci_bus 0000:00: root bus resource [mem 0x80400000-0xbfffffff window]
+[    9.583965] pci_bus 0000:00: root bus resource [mem 0x4000000000-0x7fffffffff window]
+[    9.583988] pci_bus 0000:00: root bus resource [bus 00-fe]
+[    9.584199] pci 0000:00:00.0: [8086:461c] type 00 class 0x060000 conventional PCI endpoint
+[    9.589564] pci 0000:00:02.0: [8086:46d1] type 00 class 0x030000 PCIe Root Complex Integrated Endpoint
+[    9.589593] pci 0000:00:02.0: BAR 0 [mem 0x6001000000-0x6001ffffff 64bit]
+[    9.589601] pci 0000:00:02.0: BAR 2 [mem 0x4000000000-0x400fffffff 64bit pref]
+[    9.589606] pci 0000:00:02.0: BAR 4 [io  0x3000-0x303f]
+[    9.589762] pci 0000:00:02.0: DMAR: Skip IOMMU disabling for graphics
+[    9.589769] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+[    9.603776] pci 0000:00:04.0: [8086:461d] type 00 class 0x118000 conventional PCI endpoint
+[    9.603820] pci 0000:00:04.0: BAR 0 [mem 0x6002100000-0x600211ffff 64bit]
+[    9.624064] pci 0000:00:05.0: [8086:462e] type 00 class 0x048000 PCIe Root Complex Integrated Endpoint
+[    9.624097] pci 0000:00:05.0: BAR 0 [mem 0x6000000000-0x6000ffffff 64bit]
+[    9.624111] pci 0000:00:05.0: enabling Extended Tags
+[    9.640118] pci 0000:00:0a.0: [8086:467d] type 00 class 0x118000 PCIe Root Complex Integrated Endpoint
+[    9.640148] pci 0000:00:0a.0: BAR 0 [mem 0x6002140000-0x6002147fff 64bit]
+[    9.640161] pci 0000:00:0a.0: enabling Extended Tags
+[    9.641823] pci 0000:00:12.0: [8086:54fc] type 00 class 0x070000 conventional PCI endpoint
+[    9.641902] pci 0000:00:12.0: BAR 0 [mem 0x6002130000-0x600213ffff 64bit]
+[    9.642131] pci 0000:00:12.0: PME# supported from D0 D3hot
+[    9.675892] pci 0000:00:12.6: [8086:54fb] type 00 class 0x0c8000 conventional PCI endpoint
+[    9.678725] pci 0000:00:12.6: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[    9.708104] pci 0000:00:14.0: [8086:54ed] type 00 class 0x0c0330 conventional PCI endpoint
+[    9.708189] pci 0000:00:14.0: BAR 0 [mem 0x6002120000-0x600212ffff 64bit]
+[    9.708439] pci 0000:00:14.0: PME# supported from D3hot D3cold
+[    9.795297] pci 0000:00:14.2: [8086:54ef] type 00 class 0x050000 conventional PCI endpoint
+[    9.795382] pci 0000:00:14.2: BAR 0 [mem 0x6002150000-0x6002153fff 64bit]
+[    9.795407] pci 0000:00:14.2: BAR 2 [mem 0x600215c000-0x600215cfff 64bit]
+[    9.797142] pci 0000:00:14.3: [8086:54f0] type 00 class 0x028000 PCIe Root Complex Integrated Endpoint
+[    9.797254] pci 0000:00:14.3: BAR 0 [mem 0x600214c000-0x600214ffff 64bit]
+[    9.797749] pci 0000:00:14.3: PME# supported from D0 D3hot D3cold
+[    9.826992] pci 0000:00:15.0: [8086:54e8] type 00 class 0x0c8000 conventional PCI endpoint
+[    9.827161] pci 0000:00:15.0: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[    9.852681] pci 0000:00:15.1: [8086:54e9] type 00 class 0x0c8000 conventional PCI endpoint
+[    9.852817] pci 0000:00:15.1: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[    9.878074] pci 0000:00:15.2: [8086:54ea] type 00 class 0x0c8000 conventional PCI endpoint
+[    9.878237] pci 0000:00:15.2: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[    9.904167] pci 0000:00:15.3: [8086:54eb] type 00 class 0x0c8000 conventional PCI endpoint
+[    9.904315] pci 0000:00:15.3: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[    9.930247] pci 0000:00:16.0: [8086:54e0] type 00 class 0x078000 conventional PCI endpoint
+[    9.930333] pci 0000:00:16.0: BAR 0 [mem 0x6002157000-0x6002157fff 64bit]
+[    9.930573] pci 0000:00:16.0: PME# supported from D3hot
+[    9.961110] pci 0000:00:17.0: [8086:54d3] type 00 class 0x010601 conventional PCI endpoint
+[    9.961190] pci 0000:00:17.0: BAR 0 [mem 0x80400000-0x80401fff]
+[    9.961215] pci 0000:00:17.0: BAR 1 [mem 0x80403000-0x804030ff]
+[    9.961235] pci 0000:00:17.0: BAR 2 [io  0x3090-0x3097]
+[    9.961255] pci 0000:00:17.0: BAR 3 [io  0x3080-0x3083]
+[    9.961275] pci 0000:00:17.0: BAR 4 [io  0x3060-0x307f]
+[    9.961295] pci 0000:00:17.0: BAR 5 [mem 0x80402000-0x804027ff]
+[    9.961521] pci 0000:00:17.0: PME# supported from D3hot
+[    9.994075] pci 0000:00:19.0: [8086:54c5] type 00 class 0x0c8000 conventional PCI endpoint
+[    9.994223] pci 0000:00:19.0: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[   10.008148] pci 0000:00:19.1: [8086:54c6] type 00 class 0x0c8000 conventional PCI endpoint
+[   10.008298] pci 0000:00:19.1: BAR 0 [mem 0x00000000-0x00000fff 64bit]
+[   10.034167] pci 0000:00:1f.0: [8086:5481] type 00 class 0x060100 conventional PCI endpoint
+[   10.051522] pci 0000:00:1f.3: [8086:54c8] type 00 class 0x040380 conventional PCI endpoint
+[   10.051681] pci 0000:00:1f.3: BAR 0 [mem 0x6002148000-0x600214bfff 64bit]
+[   10.051720] pci 0000:00:1f.3: BAR 4 [mem 0x6002000000-0x60020fffff 64bit]
+[   10.052021] pci 0000:00:1f.3: PME# supported from D3hot D3cold
+[   10.089836] pci 0000:00:1f.4: [8086:54a3] type 00 class 0x0c0500 conventional PCI endpoint
+[   10.090011] pci 0000:00:1f.4: BAR 0 [mem 0x6002154000-0x60021540ff 64bit]
+[   10.090051] pci 0000:00:1f.4: BAR 4 [io  0xefa0-0xefbf]
+[   10.108899] pci 0000:00:1f.5: [8086:54a4] type 00 class 0x0c8000 conventional PCI endpoint
+[   10.108986] pci 0000:00:1f.5: BAR 0 [mem 0xfe010000-0xfe010fff]
+[   10.262560] ACPI: PCI: Interrupt link LNKA configured for IRQ 0
+[   10.267046] ACPI: PCI: Interrupt link LNKB configured for IRQ 1
+[   10.272627] ACPI: PCI: Interrupt link LNKC configured for IRQ 0
+[   10.279150] ACPI: PCI: Interrupt link LNKD configured for IRQ 0
+[   10.284129] ACPI: PCI: Interrupt link LNKE configured for IRQ 0
+[   10.289218] ACPI: PCI: Interrupt link LNKF configured for IRQ 0
+[   10.293584] ACPI: PCI: Interrupt link LNKG configured for IRQ 0
+[   10.300666] ACPI: PCI: Interrupt link LNKH configured for IRQ 0
+[   10.972067] ACPI: EC: interrupt unblocked
+[   10.972735] ACPI: EC: event unblocked
+[   10.972786] ACPI: EC: EC_CMD/EC_SC=0x66, EC_DATA=0x62
+[   10.972791] ACPI: EC: GPE=0x6e
+[   10.972816] ACPI: \_SB_.PC00.LPCB.H_EC: Boot DSDT EC initialization complete
+[   10.972852] ACPI: \_SB_.PC00.LPCB.H_EC: EC: Used to handle transactions and events
+[   10.974361] iommu: Default domain type: Translated
+[   10.974367] iommu: DMA domain TLB invalidation policy: lazy mode
+[   10.978365] SCSI subsystem initialized
+[   10.978525] libata version 3.00 loaded.
+[   10.979747] ACPI: bus type USB registered
+[   10.980560] usbcore: registered new interface driver usbfs
+[   10.980862] usbcore: registered new interface driver hub
+[   10.981106] usbcore: registered new device driver usb
+[   10.981806] mc: Linux media interface: v0.10
+[   10.982133] videodev: Linux video capture interface: v2.00
+[   10.982337] pps_core: LinuxPPS API ver. 1 registered
+[   10.982341] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[   10.982432] PTP clock support registered
+[   10.984237] efivars: Registered efivars operations
+[   10.985416] Advanced Linux Sound Architecture Driver Initialized.
+[   10.990431] NetLabel: Initializing
+[   10.990437] NetLabel:  domain hash size = 128
+[   10.990440] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[   10.990855] NetLabel:  unlabeled traffic allowed by default
+[   10.991486] PCI: Using ACPI for IRQ routing
+[   11.125695] PCI: pci_cache_line_size set to 64 bytes
+[   11.125860] pci 0000:00:1f.5: BAR 0 [mem 0xfe010000-0xfe010fff]: can't claim; no compatible bridge window
+[   11.126002] e820: register RAM buffer resource [mem 0x0009e000-0x0009ffff]
+[   11.126053] e820: register RAM buffer resource [mem 0x3f528000-0x3fffffff]
+[   11.126083] e820: register RAM buffer resource [mem 0x40193000-0x43ffffff]
+[   11.126108] e820: register RAM buffer resource [mem 0x6a044000-0x6bffffff]
+[   11.126131] e820: register RAM buffer resource [mem 0x6c25b000-0x6fffffff]
+[   11.126154] e820: register RAM buffer resource [mem 0x7264e000-0x73ffffff]
+[   11.126178] e820: register RAM buffer resource [mem 0x76000000-0x77ffffff]
+[   11.126201] e820: register RAM buffer resource [mem 0x27fc00000-0x27fffffff]
+[   11.128269] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[   11.128269] pci 0000:00:02.0: vgaarb: bridge control possible
+[   11.128269] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[   11.128269] vgaarb: loaded
+[   11.138132] clocksource: Switched to clocksource tsc-early
+[   11.144216] VFS: Disk quotas dquot_6.6.0
+[   11.144378] VFS: Dquot-cache hash table entries: 512 (4096 bytes)
+[   11.150931] acpi PNP0C02:00: Skipped [io  0x002e-0x002f]
+[   11.150942] acpi PNP0C02:00: Skipped [io  0x004e-0x004f]
+[   11.150946] acpi PNP0C02:00: Skipped [io  0x0061]
+[   11.150950] acpi PNP0C02:00: Skipped [io  0x0063]
+[   11.150953] acpi PNP0C02:00: Skipped [io  0x0065]
+[   11.150956] acpi PNP0C02:00: Skipped [io  0x0067]
+[   11.150959] acpi PNP0C02:00: Skipped [io  0x0070]
+[   11.150962] acpi PNP0C02:00: Skipped [io  0x0080]
+[   11.150965] acpi PNP0C02:00: Skipped [io  0x0092]
+[   11.151013] acpi PNP0C02:00: Skipped [io  0x00b2-0x00b3]
+[   11.151037] acpi PNP0C02:00: Reserved [io  0x0680-0x069f]
+[   11.151053] acpi PNP0C02:00: Reserved [io  0x164e-0x164f]
+[   11.158930] acpi PNP0C02:01: Reserved [mem 0xfedc0000-0xfedc7fff]
+[   11.158949] acpi PNP0C02:01: Reserved [mem 0xfeda0000-0xfeda0fff]
+[   11.158964] acpi PNP0C02:01: Reserved [mem 0xfeda1000-0xfeda1fff]
+[   11.158987] acpi PNP0C02:01: Reserved [mem 0xc0000000-0xcfffffff]
+[   11.159013] acpi PNP0C02:01: Could not reserve [mem 0xfed20000-0xfed7ffff]
+[   11.159035] acpi PNP0C02:01: Could not reserve [mem 0xfed90000-0xfed93fff]
+[   11.159057] acpi PNP0C02:01: Could not reserve [mem 0xfed45000-0xfed8ffff]
+[   11.159079] acpi PNP0C02:01: Could not reserve [mem 0xfee00000-0xfeefffff]
+[   11.169059] acpi PNP0C02:02: Could not reserve [mem 0xfe000000-0xfe01ffff]
+[   11.169089] acpi PNP0C02:02: Reserved [mem 0xfe04c000-0xfe04ffff]
+[   11.169104] acpi PNP0C02:02: Reserved [mem 0xfe050000-0xfe0affff]
+[   11.169118] acpi PNP0C02:02: Reserved [mem 0xfe0d0000-0xfe0fffff]
+[   11.169139] acpi PNP0C02:02: Reserved [mem 0xfe200000-0xfe7fffff]
+[   11.169153] acpi PNP0C02:02: Reserved [mem 0xff000000-0xffffffff]
+[   11.169177] acpi PNP0C02:02: Could not reserve [io  0x1800-0x18fe]
+[   11.169191] acpi PNP0C02:02: Reserved [mem 0xfd000000-0xfd68ffff]
+[   11.169206] acpi PNP0C02:02: Reserved [mem 0xfd6b0000-0xfd6cffff]
+[   11.169220] acpi PNP0C02:02: Reserved [mem 0xfd6f0000-0xfdffffff]
+[   11.177041] acpi PNP0C02:03: Reserved [io  0x2000-0x20fe]
+[   11.197846] pnp: PnP ACPI init
+[   11.293358] pnp: PnP ACPI: found 1 devices
+[   11.340807] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[   11.341701] NET: Registered PF_INET protocol family
+[   11.342128] IP idents hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[   11.348198] tcp_listen_portaddr_hash hash table entries: 4096 (order: 7, 294912 bytes, linear)
+[   11.348278] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[   11.348496] TCP established hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[   11.348900] TCP bind hash table entries: 65536 (order: 12, 9437184 bytes, vmalloc hugepage)
+[   11.351106] TCP: Hash tables configured (established 65536 bind 65536)
+[   11.351656] UDP hash table entries: 4096 (order: 8, 1048576 bytes, linear)
+[   11.353051] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[   11.355754] RPC: Registered named UNIX socket transport module.
+[   11.355766] RPC: Registered udp transport module.
+[   11.355769] RPC: Registered tcp transport module.
+[   11.355772] RPC: Registered tcp-with-tls transport module.
+[   11.355774] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[   11.355898] pci 0000:00:12.6: BAR 0 [mem 0x4010000000-0x4010000fff 64bit]: assigned
+[   11.355949] pci 0000:00:15.0: BAR 0 [mem 0x4010001000-0x4010001fff 64bit]: assigned
+[   11.356030] pci 0000:00:15.1: BAR 0 [mem 0x4010002000-0x4010002fff 64bit]: assigned
+[   11.356071] pci 0000:00:15.2: BAR 0 [mem 0x4010003000-0x4010003fff 64bit]: assigned
+[   11.356111] pci 0000:00:15.3: BAR 0 [mem 0x4010004000-0x4010004fff 64bit]: assigned
+[   11.356153] pci 0000:00:19.0: BAR 0 [mem 0x4010005000-0x4010005fff 64bit]: assigned
+[   11.356193] pci 0000:00:19.1: BAR 0 [mem 0x4010006000-0x4010006fff 64bit]: assigned
+[   11.356233] pci 0000:00:1f.5: BAR 0 [mem 0x80404000-0x80404fff]: assigned
+[   11.356331] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[   11.356337] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[   11.356341] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[   11.356345] pci_bus 0000:00: resource 7 [mem 0x000e0000-0x000fffff window]
+[   11.356348] pci_bus 0000:00: resource 8 [mem 0x80400000-0xbfffffff window]
+[   11.356352] pci_bus 0000:00: resource 9 [mem 0x4000000000-0x7fffffffff window]
+[   11.384135] pci 0000:00:14.0: quirk_usb_early_handoff+0x0/0xc00 took 21896 usecs
+[   11.384364] PCI: CLS 64 bytes, default 64
+[   11.384738] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+[   11.384742] software IO TLB: mapped [mem 0x0000000065219000-0x0000000069219000] (64MB)
+[   11.384897] RAPL PMU: API unit is 2^-32 Joules, 3 fixed counters, 655360 ms ovfl timer
+[   11.384901] RAPL PMU: hw unit of domain pp0-core 2^-14 Joules
+[   11.384905] RAPL PMU: hw unit of domain package 2^-14 Joules
+[   11.384908] RAPL PMU: hw unit of domain pp1-gpu 2^-14 Joules
+[   11.385819] Unpacking initramfs...
+[   11.387850] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0xb9fb05486c, max_idle_ns: 440795231721 ns
+[   11.388589] clocksource: Switched to clocksource tsc
+[   11.389276] platform rtc_cmos: registered fallback platform RTC device
+[   11.414703] Initialise system trusted keyrings
+[   11.415249] workingset: timestamp_bits=56 (anon: 51) max_order=21 bucket_order=0 (anon: 0)
+[   11.421594] NFS: Registering the id_resolver key type
+[   11.421687] Key type id_resolver registered
+[   11.421696] Key type id_legacy registered
+[   11.421715] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[   11.421771] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[   11.422611] 9p: Installing v9fs 9p2000 file system support
+[   11.427509] Key type asymmetric registered
+[   11.427527] Asymmetric key parser 'x509' registered
+[   11.427984] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+[   11.428242] io scheduler mq-deadline registered
+[   11.428247] io scheduler kyber registered
+[   11.453454] ACPI: AC: AC Adapter [ADP1] (on-line)
+[   11.456193] input: Lid Switch as /devices/pci0000:00/0000:00:1f.0/PNP0C09:00/PNP0C0D:00/input/input0
+[   11.457150] ACPI: button: Lid Switch [LID0]
+[   11.459114] input: Power Button as /devices/platform/PNP0C0C:00/input/input1
+[   11.459814] ACPI: button: Power Button [PWRB]
+[   11.461701] input: Sleep Button as /devices/platform/PNP0C0E:00/input/input2
+[   11.462596] ACPI: button: Sleep Button [SLPB]
+[   11.463819] input: Power Button as /devices/platform/LNXPWRBN:00/input/input3
+[   11.464872] ACPI: button: Power Button [PWRF]
+[   11.486556] Monitor-Mwait will be used to enter C-1 state
+[   11.486605] Monitor-Mwait will be used to enter C-2 state
+[   11.486624] Monitor-Mwait will be used to enter C-3 state
+[   11.604110] Freeing initrd memory: 9896K
+[   11.628450] acpi LNXTHERM:00: registered as thermal_zone0
+[   11.628476] ACPI: thermal: Thermal Zone [TZ00] (28 C)
+[   11.632222] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[   11.677190] hpet_acpi_probe: no address or irqs in _CRS
+[   11.679341] Non-volatile memory driver v1.3
+[   11.680402] ACPI: bus type drm_connector registered
+[   11.689411] ACPI: battery: Slot [BAT0] (battery present)
+[   11.730027] loop: module loaded
+[   11.730858] mei_me 0000:00:16.0: enabling device (0000 -> 0002)
+[   11.731143] intel-lpss 0000:00:12.6: enabling device (0004 -> 0006)
+[   11.753642] intel-lpss 0000:00:15.0: enabling device (0004 -> 0006)
+[   12.234830] intel-lpss 0000:00:15.1: enabling device (0004 -> 0006)
+[   12.704013] intel-lpss 0000:00:15.2: enabling device (0004 -> 0006)
+[   13.184425] intel-lpss 0000:00:15.3: enabling device (0004 -> 0006)
+[   13.666631] intel-lpss 0000:00:19.0: enabling device (0004 -> 0006)
+[   14.157754] intel-lpss 0000:00:19.1: enabling device (0004 -> 0006)
+[   14.657509] ahci 0000:00:17.0: AHCI vers 0001.0301, 32 command slots, 6 Gbps, SATA mode
+[   14.657521] ahci 0000:00:17.0: 2/2 ports implemented (port mask 0x3)
+[   14.657525] ahci 0000:00:17.0: flags: 64bit ncq sntf pm clo only pio slum part deso sadm sds 
+[   14.667044] scsi host0: ahci
+[   14.670651] scsi host1: ahci
+[   14.672777] ata1: SATA max UDMA/133 abar m2048@0x80402000 port 0x80402100 irq 121 lpm-pol 3
+[   14.672804] ata2: SATA max UDMA/133 abar m2048@0x80402000 port 0x80402180 irq 121 lpm-pol 3
+[   14.678002] e100: Intel(R) PRO/100 Network Driver
+[   14.678007] e100: Copyright(c) 1999-2006 Intel Corporation
+[   14.678269] e1000: Intel(R) PRO/1000 Network Driver
+[   14.678272] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[   14.678603] e1000e: Intel(R) PRO/1000 Network Driver
+[   14.678606] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[   14.678898] sky2: driver version 1.30
+[   14.694143] xhci_hcd 0000:00:14.0: xHCI Host Controller
+[   14.695656] xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus number 1
+[   14.698332] xhci_hcd 0000:00:14.0: hcc params 0x20007fc1 hci version 0x120 quirks 0x0000100200009810
+[   14.708403] xhci_hcd 0000:00:14.0: xHCI Host Controller
+[   14.709415] xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus number 2
+[   14.709458] xhci_hcd 0000:00:14.0: Host supports USB 3.1 Enhanced SuperSpeed
+[   14.709843] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 7.03
+[   14.710792] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[   14.710797] usb usb1: Product: xHCI Host Controller
+[   14.710800] usb usb1: Manufacturer: Linux 7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 xhci-hcd
+[   14.710803] usb usb1: SerialNumber: 0000:00:14.0
+[   14.714823] hub 1-0:1.0: USB hub found
+[   14.715188] hub 1-0:1.0: 12 ports detected
+[   14.979224] ata2: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+[   14.979351] ata1: SATA link down (SStatus 4 SControl 300)
+[   14.987043] ata2.00: ATA-9: RS256GSSD310, W1212A0, max UDMA/133
+[   14.987817] ata2.00: 500118192 sectors, multi 1: LBA48 NCQ (depth 32), AA
+[   14.990457] ata2.00: Features: Dev-Sleep HIPM DIPM
+[   14.997761] ata2.00: configured for UDMA/133
+[   14.998557] ahci 0000:00:17.0: port does not support device sleep
+[   15.000951] scsi 1:0:0:0: Direct-Access     ATA      RS256GSSD310     2A0  PQ: 0 ANSI: 5
+[   15.009471] sd 1:0:0:0: Attached scsi generic sg0 type 0
+[   15.009866] sd 1:0:0:0: [sda] 500118192 512-byte logical blocks: (256 GB/238 GiB)
+[   15.010057] sd 1:0:0:0: [sda] Write Protect is off
+[   15.010099] sd 1:0:0:0: [sda] Mode Sense: 00 3a 00 00
+[   15.010249] sd 1:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[   15.010515] sd 1:0:0:0: [sda] Preferred minimum I/O size 512 bytes
+[   15.027699]  sda: sda1 sda2
+[   15.030114] sd 1:0:0:0: [sda] Attached SCSI disk
+[   15.077860] usb usb2: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 7.03
+[   15.078802] usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[   15.078808] usb usb2: Product: xHCI Host Controller
+[   15.078811] usb usb2: Manufacturer: Linux 7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 xhci-hcd
+[   15.078814] usb usb2: SerialNumber: 0000:00:14.0
+[   15.082470] hub 2-0:1.0: USB hub found
+[   15.082758] hub 2-0:1.0: 4 ports detected
+[   15.211364] usbcore: registered new interface driver usblp
+[   15.211654] usbcore: registered new interface driver usb-storage
+[   15.212078] i8042: PNP: PS/2 Controller [PNP0303:PS2K] at 0x60,0x64 irq 1
+[   15.212083] i8042: PNP: PS/2 appears to have AUX port disabled, if this is incorrect please boot with i8042.nopnp
+[   15.213988] serio: i8042 KBD port at 0x60,0x64 irq 1
+[   15.218832] rtc_cmos rtc_cmos: RTC can wake from S4
+[   15.225529] rtc_cmos rtc_cmos: registered as rtc0
+[   15.226245] rtc_cmos rtc_cmos: alarms up to one month, y3k, 114 bytes nvram
+[   15.226657] i2c_dev: i2c /dev entries driver
+[   15.229882] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input4
+[   15.232715] i801_smbus 0000:00:1f.4: enabling device (0000 -> 0003)
+[   15.236011] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+[   15.236145] intel_pstate: Intel P-state driver initializing
+[   15.239143] intel_pstate: HWP enabled
+[   15.240244] hid: raw HID events driver (C) Jiri Kosina
+[   15.243013] usbcore: registered new interface driver usbhid
+[   15.243018] usbhid: USB HID core driver
+[   15.244855] i801_smbus 0000:00:1f.4: SPD Write Disable is set
+[   15.245238] i801_smbus 0000:00:1f.4: SMBus using PCI interrupt
+[   15.247340] snd_hda_intel 0000:00:1f.3: enabling device (0000 -> 0002)
+[   15.274854] nf_conntrack_irc: The irc conntrack helper is scheduled for removal.
+               Please contact the netfilter-devel mailing list if you still need this.
+[   15.275527] Initializing XFRM netlink socket
+[   15.276315] NET: Registered PF_INET6 protocol family
+[   15.281519] Segment Routing with IPv6
+[   15.281709] In-situ OAM (IOAM) with IPv6
+[   15.282071] NET: Registered PF_PACKET protocol family
+[   15.282485] 9pnet: Installing 9P2000 support
+[   15.282709] Key type dns_resolver registered
+[   15.283003] start plist test
+[   15.284017] end plist test
+[   15.289739] ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
+[   15.291982] microcode: Current revision: 0x00000007
+[   15.293378] IPI shorthand broadcast: enabled
+[   15.319056] usb 1-1: new full-speed USB device number 2 using xhci_hcd
+[   15.384824] sched_clock: Marking stable (15356001754, 27968122)->(15467258514, -83288638)
+[   15.387565] registered taskstats version 1
+[   15.387611] Loading compiled-in X.509 certificates
+[   15.432182] usb 1-1: device descriptor read/64, error -71
+[   15.502493] Demotion targets for Node 0: null
+[   15.502889] kmemleak: Kernel memory leak detector initialized (mem pool available: 62473)
+[   15.502935] kmemleak: Automatic memory scanning thread started
+[   15.556806] PM:   Magic number: 14:920:646
+[   15.556858] scsi_host host0: hash matches
+[   15.556877] scsi host0: hash matches
+[   15.557266] netconsole: network logging started
+[   15.560165] clk: Disabling unused clocks
+[   15.560271] ALSA device list:
+[   15.560521]   No soundcards found.
+[   15.646342] usb 1-1: device descriptor read/64, error -71
+[   15.734100] i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+[   15.734250] i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+[   15.734329] i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+[   15.734403] i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+[   15.734477] i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+[   15.734550] i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+[   15.734624] i801_smbus 0000:00:1f.4: SMBus is busy, can't use it!
+[   15.740572] Freeing unused kernel image (initmem) memory: 5972K
+[   15.740601] Write protecting the kernel read-only data: 61440k
+[   15.741427] Freeing unused kernel image (text/rodata gap) memory: 344K
+[   15.741628] Freeing unused kernel image (rodata/data gap) memory: 196K
+[   15.762225] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[   15.762279] Run /init as init process
+[   15.762283]   with arguments:
+[   15.762285]     /init
+[   15.762287]     vmlinuz-new
+[   15.762289]   with environment:
+[   15.762291]     HOME=/
+[   15.762293]     TERM=linux
+[   15.768907] mkdir (74) used greatest stack depth: 26648 bytes left
+[   15.782695] mkdir (77) used greatest stack depth: 26328 bytes left
+[   15.862042] usb 1-1: new full-speed USB device number 3 using xhci_hcd
+[   15.901376] systemd-udevd (96) used greatest stack depth: 25008 bytes left
+[   15.978181] usb 1-1: device descriptor read/64, error -71
+[   16.200156] usb 1-1: device descriptor read/64, error -71
+[   16.306088] usb usb1-port1: attempt power cycle
+[   16.690007] usb 1-1: new full-speed USB device number 4 using xhci_hcd
+[   16.690288] usb 1-1: Device not responding to setup address.
+[   16.896112] usb 1-1: Device not responding to setup address.
+[   17.102025] usb 1-1: device not accepting address 4, error -71
+[   17.102364] usb 1-1: WARN: invalid context state for evaluate context command.
+[   17.216043] usb 1-1: new full-speed USB device number 5 using xhci_hcd
+[   17.216315] usb 1-1: Device not responding to setup address.
+[   17.421272] usb 1-1: Device not responding to setup address.
+[   17.630924] usb 1-1: device not accepting address 5, error -71
+[   17.631898] usb 1-1: WARN: invalid context state for evaluate context command.
+[   17.633076] usb usb1-port1: unable to enumerate USB device
+[   17.748051] usb 1-4: new full-speed USB device number 6 using xhci_hcd
+[   17.871699] usb 1-4: New USB device found, idVendor=1234, idProduct=abcd, bcdDevice= 0.00
+[   17.873861] usb 1-4: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[   17.873870] usb 1-4: Product: TCA9537-B32
+[   17.873874] usb 1-4: Manufacturer: NYM
+[   17.923068] input: NYM TCA9537-B32 Touchscreen as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:1234:ABCD.0001/input/input5
+[   17.929539] hid-generic 0003:1234:ABCD.0001: input,hiddev96,hidraw0: USB HID v1.00 Device [NYM TCA9537-B32] on usb-0000:00:14.0-4/input0
+[   18.048041] usb 1-10: new full-speed USB device number 7 using xhci_hcd
+[   18.182029] usb 1-10: New USB device found, idVendor=8087, idProduct=0026, bcdDevice= 0.02
+[   18.184231] usb 1-10: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+[   19.643026] EXT4-fs (sda2): mounted filesystem bbf08cd1-b31b-4a2f-8f42-9659c613ae4a r/w with ordered data mode. Quota mode: none.
+[   19.643898] mount (139) used greatest stack depth: 24592 bytes left
+[   20.133043] systemd[1]: systemd 257.13-1~deb13u1 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +IPE +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF -XKBCOMMON -UTMP +SYSVINIT +LIBARCHIVE)
+[   20.133076] systemd[1]: Detected architecture x86-64.
+[   20.192758] systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled in the kernel, BPF LSM not supported.
+[   21.149925] systemd[1]: Queued start job for default target graphical.target.
+[   21.165251] systemd[1]: Created slice system-getty.slice - Slice /system/getty.
+[   21.168293] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[   21.170371] systemd[1]: Created slice user.slice - User and Session Slice.
+[   21.171926] systemd[1]: Started systemd-ask-password-console.path - Dispatch Password Requests to Console Directory Watch.
+[   21.172468] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[   21.174722] systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point.
+[   21.174817] systemd[1]: Reached target nss-user-lookup.target - User and Group Name Lookups.
+[   21.174853] systemd[1]: Reached target remote-fs.target - Remote File Systems.
+[   21.174883] systemd[1]: Reached target slices.target - Slice Units.
+[   21.174922] systemd[1]: Reached target swap.target - Swaps.
+[   21.177053] systemd[1]: Listening on systemd-creds.socket - Credential Encryption/Decryption.
+[   21.177656] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[   21.178617] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[   21.179918] systemd[1]: Listening on systemd-journald.socket - Journal Sockets.
+[   21.180079] systemd[1]: systemd-pcrextend.socket - TPM PCR Measurements skipped, unmet condition check ConditionSecurity=measured-uki
+[   21.180114] systemd[1]: systemd-pcrlock.socket - Make TPM PCR Policy skipped, unmet condition check ConditionSecurity=measured-uki
+[   21.180778] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[   21.181207] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+[   21.189510] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
+[   21.195729] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
+[   21.201874] systemd[1]: Mounting run-lock.mount - Legacy Locks Directory /run/lock...
+[   21.211083] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[   21.228843] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+[   21.242363] systemd[1]: Mounting tmp.mount - Temporary Directory /tmp...
+[   21.266581] systemd[1]: Starting kmod-static-nodes.service - Create List of Static Device Nodes...
+[   21.280029] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+[   21.300790] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+[   21.311851] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+[   21.331030] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+[   21.331247] systemd[1]: systemd-hibernate-clear.service - Clear Stale Hibernate Storage Info skipped, unmet condition check ConditionPathExists=/sys/firmware/efi/efivars/HibernateLocation-8cf2644b-4b0b-428f-9387-6d876050dc67
+[   21.331688] systemd[1]: systemd-journald.service: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.
+[   21.331719] systemd[1]: systemd-journald.service: (This warning is only shown for the first unit using IP firewalling.)
+[   21.341445] systemd[1]: Starting systemd-journald.service - Journal Service...
+[   21.359842] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+[   21.359900] systemd[1]: systemd-pcrmachine.service - TPM PCR Machine ID Measurement skipped, unmet condition check ConditionSecurity=measured-uki
+[   21.379903] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+[   21.380861] systemd[1]: systemd-tpm2-setup-early.service - Early TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-uki
+[   21.389724] systemd[1]: Starting systemd-udev-load-credentials.service - Load udev Rules from Credentials...
+[   21.408575] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
+[   21.469236] systemd[1]: Mounted dev-hugepages.mount - Huge Pages File System.
+[   21.470423] systemd[1]: Mounted dev-mqueue.mount - POSIX Message Queue File System.
+[   21.471616] systemd[1]: Mounted run-lock.mount - Legacy Locks Directory /run/lock.
+[   21.473477] systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.
+[   21.474582] systemd[1]: Mounted sys-kernel-tracing.mount - Kernel Trace File System.
+[   21.475691] systemd[1]: Mounted tmp.mount - Temporary Directory /tmp.
+[   21.479213] systemd[1]: Finished kmod-static-nodes.service - Create List of Static Device Nodes.
+[   21.485770] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+[   21.491887] systemd[1]: Finished modprobe@configfs.service - Load Kernel Module configfs.
+[   21.497909] systemd[1]: modprobe@drm.service: Deactivated successfully.
+[   21.502486] systemd[1]: Finished modprobe@drm.service - Load Kernel Module drm.
+[   21.506543] systemd[1]: modprobe@efi_pstore.service: Deactivated successfully.
+[   21.506985] systemd-journald[191]: Collecting audit messages is disabled.
+[   21.508150] systemd[1]: Finished modprobe@efi_pstore.service - Load Kernel Module efi_pstore.
+[   21.516986] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+[   21.518485] systemd[1]: Finished modprobe@fuse.service - Load Kernel Module fuse.
+[   21.523265] systemd[1]: Finished systemd-modules-load.service - Load Kernel Modules.
+[   21.525815] systemd[1]: Finished systemd-remount-fs.service - Remount Root and Kernel File Systems.
+[   21.530856] systemd[1]: Finished systemd-udev-load-credentials.service - Load udev Rules from Credentials.
+[   21.536866] systemd[1]: sys-fs-fuse-connections.mount - FUSE Control File System skipped, unmet condition check ConditionPathExists=/sys/fs/fuse/connections
+[   21.537172] systemd[1]: sys-kernel-config.mount - Kernel Configuration File System skipped, unmet condition check ConditionPathExists=/sys/kernel/config
+[   21.538620] systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database skipped, unmet condition check ConditionNeedsUpdate=/etc
+[   21.538754] systemd[1]: systemd-pstore.service - Platform Persistent Storage Archival skipped, unmet condition check ConditionDirectoryNotEmpty=/sys/fs/pstore
+[   21.544501] systemd[1]: Starting systemd-random-seed.service - Load/Save OS Random Seed...
+[   21.559001] systemd[1]: Starting systemd-sysctl.service - Apply Kernel Variables...
+[   21.580091] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[   21.580165] systemd[1]: systemd-tpm2-setup.service - TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-uki
+[   21.646658] systemd[1]: Finished systemd-random-seed.service - Load/Save OS Random Seed.
+[   21.730857] systemd[1]: Finished systemd-sysctl.service - Apply Kernel Variables.
+[   21.751160] systemd[1]: Finished systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+[   21.752484] systemd[1]: systemd-sysusers.service - Create System Users skipped, no trigger condition checks were met.
+[   21.760168] systemd[1]: Starting systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev...
+[   21.874674] systemd[1]: Finished systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+[   21.877018] systemd[1]: Reached target local-fs-pre.target - Preparation for Local File Systems.
+[   21.877071] systemd[1]: Reached target local-fs.target - Local File Systems.
+[   21.879283] systemd[1]: Listening on systemd-sysext.socket - System Extension Image Management.
+[   21.889511] systemd[1]: Starting systemd-binfmt.service - Set Up Additional Binary Formats...
+[   21.896956] systemd[1]: Starting systemd-udevd.service - Rule-based Manager for Device Events and Files...
+[   21.962698] systemd[1]: proc-sys-fs-binfmt_misc.automount: Got automount request for /proc/sys/fs/binfmt_misc, triggered by 209 (systemd-binfmt)
+[   22.145242] systemd[1]: Started systemd-udevd.service - Rule-based Manager for Device Events and Files.
+[   22.273683] systemd[1]: Started systemd-journald.service - Journal Service.
+[   22.374894] systemd-journald[191]: Received client request to flush runtime journal.
+[   22.896891] journal-offline (232) used greatest stack depth: 24576 bytes left
+[   25.113670] intel-ipu6 0000:00:05.0: enabling device (0000 -> 0002)
+[   25.304843] intel-ipu6 0000:00:05.0: Found supported sensor GCTI5035:00 (\_SB.PC00.LNK1)
+[   25.393193] intel-ipu6 0000:00:05.0: Found supported sensor GCTI8034:00 (\_SB.PC00.LNK0)
+[   25.403895] intel-ipu6 0000:00:05.0: Connected 2 cameras
+[   25.498020] intel-ipu6 0000:00:05.0: Sending BOOT_LOAD to CSE
+[   25.517622] intel-ipu6 0000:00:05.0: Sending AUTHENTICATE_RUN to CSE
+[   25.589004] intel-ipu6 0000:00:05.0: CSE authenticate_run done
+[   25.589295] intel-ipu6 0000:00:05.0: IPU6-v3[462e] hardware version 4
+[   26.398946] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[   26.408359] i915 0000:00:02.0: [drm] Found alderlake_p/alderlake_n (device ID 46d1) integrated display version 13.00 stepping D0
+[   26.418275] i915 0000:00:02.0: vgaarb: deactivate vga console
+[   26.418575] i915 0000:00:02.0: [drm] Transparent Hugepage support is recommended for optimal performance on this platform!
+[   26.456679] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   26.459342] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[   26.459629] gc8034 i2c-GCTI8034:00: supply dvdd not found, using dummy regulator
+[   26.473216] i915 0000:00:02.0: [drm] Finished loading DMC firmware i915/adlp_dmc.bin (v2.20)
+[   26.476131] cfg80211: loaded regulatory.db is malformed or signature is missing/invalid
+[   26.492080] gc8034 i2c-GCTI8034:00: supply dovdd not found, using dummy regulator
+[   27.044891] gc5035 i2c-GCTI5035:00: supply dvdd not found, using dummy regulator
+[   27.056872] gc5035 i2c-GCTI5035:00: supply dovdd not found, using dummy regulator
+[   27.270890] Bluetooth: Core ver 2.22
+[   27.271588] NET: Registered PF_BLUETOOTH protocol family
+[   27.271596] Bluetooth: HCI device and connection manager initialized
+[   27.271708] Bluetooth: HCI socket layer initialized
+[   27.271739] Bluetooth: L2CAP socket layer initialized
+[   27.271860] Bluetooth: SCO socket layer initialized
+[   27.282787] iwlwifi 0000:00:14.3: enabling device (0000 -> 0002)
+[   27.333190] usbcore: registered new interface driver btusb
+[   27.341216] Bluetooth: hci0: Device revision is 2
+[   27.341238] Bluetooth: hci0: Secure boot is enabled
+[   27.341242] Bluetooth: hci0: OTP lock is enabled
+[   27.341246] Bluetooth: hci0: API lock is enabled
+[   27.341249] Bluetooth: hci0: Debug lock is disabled
+[   27.341252] Bluetooth: hci0: Minimum firmware build 1 week 10 2014
+[   27.341256] Bluetooth: hci0: Bootloader timestamp 2019.40 buildtype 1 build 38
+[   27.404442] Bluetooth: hci0: DSM reset method type: 0x00
+[   27.439934] i915 0000:00:02.0: [drm] *ERROR* Port F/TC#3: timeout waiting for PHY ready
+[   27.440131] ------------[ cut here ]------------
+[   27.440138] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[   27.440142] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#1: (udev-worker)/253
+[   27.440506] Modules linked in: btusb btrtl intel_ipu6_isys(+) btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi(+) videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915(+) v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   27.440589] CPU: 1 UID: 0 PID: 253 Comm: (udev-worker) Tainted: G S                  7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   27.440598] Tainted: [S]=CPU_OUT_OF_SPEC
+[   27.440600] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   27.440605] RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+[   27.440926] Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 e8 65 47 ce 48 89 c6 48 8d 3d be 08 38 00 48 8b 14 24 48 c7 c1 e0 c8 34 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+[   27.440933] RSP: 0000:ffff8881045aef88 EFLAGS: 00010246
+[   27.440940] RAX: ffffffffc12a5640 RBX: ffff88812005d800 RCX: ffffffffc134c8e0
+[   27.440944] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dee0
+[   27.440948] RBP: ffff8881157ac000 R08: 0000000000000000 R09: fffffbfff23a28cb
+[   27.440951] R10: ffffffff91d1465f R11: 0000000000000000 R12: 0000000000000019
+[   27.440954] R13: 0000000000000001 R14: ffff88812005d808 R15: ffff8881096e20c8
+[   27.440958] FS:  00007f0b2f7469c0(0000) GS:ffff8882a5bbb000(0000) knlGS:0000000000000000
+[   27.440962] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   27.440966] CR2: 00007f4beaf6a978 CR3: 000000010e210000 CR4: 0000000000f50ef0
+[   27.440969] PKRU: 55555554
+[   27.440972] Call Trace:
+[   27.440976]  <TASK>
+[   27.440982]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   27.441282]  ? intel_display_power_is_enabled+0x32/0x40 [i915]
+[   27.441599]  intel_tc_port_init_mode+0x377/0x9d0 [i915]
+[   27.441926]  intel_tc_port_init+0x4ed/0x7a0 [i915]
+[   27.442234]  intel_ddi_init+0x1b72/0x37e0 [i915]
+[   27.442540]  ? do_raw_spin_lock+0x128/0x260
+[   27.442550]  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+[   27.442852]  ? find_held_lock+0x2b/0x80
+[   27.442862]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[   27.442871]  ? __pfx___drm_dev_dbg+0x10/0x10
+[   27.442881]  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+[   27.443198]  intel_bios_for_each_encoder+0x56/0xa0 [i915]
+[   27.443528]  intel_setup_outputs+0x4b3/0x1e40 [i915]
+[   27.443854]  ? intel_update_max_cdclk+0x259/0xd40 [i915]
+[   27.444193]  intel_display_driver_probe_nogem+0x25e/0x4c0 [i915]
+[   27.444529]  i915_driver_probe+0xd58/0x1aa0 [i915]
+[   27.444813]  ? __pfx_i915_driver_probe+0x10/0x10 [i915]
+[   27.445094]  ? find_held_lock+0x2b/0x80
+[   27.445103]  ? __pm_runtime_resume+0x78/0x110
+[   27.445111]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[   27.445119]  ? i915_pci_probe+0x2aa/0x390 [i915]
+[   27.445393]  ? __pfx_i915_pci_probe+0x10/0x10 [i915]
+[   27.445680]  local_pci_probe+0xd0/0x170
+[   27.445690]  pci_call_probe+0x143/0x5a0
+[   27.445695]  ? pci_match_device+0x5d5/0x900
+[   27.445700]  ? __pfx_pci_call_probe+0x10/0x10
+[   27.445708]  ? __pfx_pci_match_device+0x10/0x10
+[   27.445716]  ? __pfx_pci_assign_irq+0x10/0x10
+[   27.445723]  ? up_write+0x4aa/0x6f0
+[   27.445731]  pci_device_probe+0x138/0x1d0
+[   27.445737]  ? __pfx_pci_device_probe+0x10/0x10
+[   27.445744]  ? kernfs_put+0x17/0x30
+[   27.445750]  ? sysfs_do_create_link_sd+0x89/0x100
+[   27.445758]  really_probe+0x1eb/0x630
+[   27.445766]  __driver_probe_device+0x1ad/0x300
+[   27.445774]  driver_probe_device+0x45/0xf0
+[   27.445780]  __driver_attach+0x157/0x400
+[   27.445786]  ? __pfx___driver_attach+0x10/0x10
+[   27.445791]  bus_for_each_dev+0x103/0x180
+[   27.445797]  ? __pfx_bus_for_each_dev+0x10/0x10
+[   27.445801]  ? bus_add_driver+0x1d1/0x420
+[   27.445806]  ? lock_release+0xc4/0x2a0
+[   27.445814]  bus_add_driver+0x20b/0x420
+[   27.445821]  driver_register+0x1a0/0x350
+[   27.445826]  ? __pfx_i915_mock_selftests+0x10/0x10 [i915]
+[   27.446124]  i915_init+0x56/0x160 [i915]
+[   27.446389]  ? __pfx_init_module+0x10/0x10 [i915]
+[   27.446644]  do_one_initcall+0xc9/0x440
+[   27.446652]  ? __pfx_do_one_initcall+0x10/0x10
+[   27.446660]  ? memset+0x11/0x30
+[   27.446667]  ? kasan_unpoison+0x27/0x60
+[   27.446675]  do_init_module+0x27c/0x7b0
+[   27.446684]  ? trace_hardirqs_on+0x18/0x160
+[   27.446690]  ? __pfx_do_init_module+0x10/0x10
+[   27.446695]  ? kasan_quarantine_put+0xc7/0x1d0
+[   27.446701]  ? load_module+0x58e6/0x62b0
+[   27.446705]  ? kfree+0x1b0/0x500
+[   27.446714]  load_module+0x56f8/0x62b0
+[   27.446729]  ? __pfx_load_module+0x10/0x10
+[   27.446736]  ? security_file_permission+0x1d/0x40
+[   27.446754]  init_module_from_file+0x152/0x170
+[   27.446760]  ? __pfx_init_module_from_file+0x10/0x10
+[   27.446773]  ? find_held_lock+0x2b/0x80
+[   27.446779]  ? idempotent_init_module+0x5e4/0x760
+[   27.446785]  ? lock_release+0xc4/0x2a0
+[   27.446790]  ? do_raw_spin_unlock+0x53/0x210
+[   27.446797]  idempotent_init_module+0x228/0x760
+[   27.446802]  ? cred_has_capability.isra.0+0x12e/0x220
+[   27.446808]  ? __pfx_idempotent_init_module+0x10/0x10
+[   27.446813]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+[   27.446828]  __x64_sys_finit_module+0xbf/0x120
+[   27.446835]  do_syscall_64+0x109/0x5d0
+[   27.446842]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   27.446848] RIP: 0033:0x7f0b302aa4f9
+[   27.446854] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e7 68 0d 00 f7 d8 64 89 01 48
+[   27.446858] RSP: 002b:00007ffecce2e0a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[   27.446865] RAX: ffffffffffffffda RBX: 00005625ca1c01a0 RCX: 00007f0b302aa4f9
+[   27.446869] RDX: 0000000000000000 RSI: 00007f0b2e9d044d RDI: 0000000000000024
+[   27.446872] RBP: 0000000000000000 R08: 0000000000000000 R09: 00005625ca127370
+[   27.446876] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0b2e9d044d
+[   27.446879] R13: 0000000000020000 R14: 00005625ca1c0a50 R15: 0000000000000000
+[   27.446889]  </TASK>
+[   27.446892] irq event stamp: 265823
+[   27.446895] hardirqs last  enabled at (265829): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   27.446901] hardirqs last disabled at (265834): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   27.447041] softirqs last  enabled at (265332): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   27.447049] softirqs last disabled at (265323): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   27.447054] ---[ end trace 0000000000000000 ]---
+[   27.450570] Bluetooth: hci0: Found device firmware: intel/ibt-0040-1050.sfi
+[   27.450609] Bluetooth: hci0: Boot Address: 0x100800
+[   27.450615] Bluetooth: hci0: Firmware Version: 200-48.24
+[   27.962790] ------------[ cut here ]------------
+[   27.962802] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[   27.962807] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#2: (udev-worker)/253
+[   27.963983] Modules linked in: btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi(+) videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915(+) v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   27.964058] CPU: 2 UID: 0 PID: 253 Comm: (udev-worker) Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   27.964067] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   27.964070] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   27.964074] RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+[   27.964991] Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 8c d9 47 ce 48 89 c6 48 8d 3d 02 7b 38 00 48 8b 54 24 08 48 c7 c1 00 bf 34 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+[   27.964999] RSP: 0018:ffff8881045aef10 EFLAGS: 00010246
+[   27.965006] RAX: ffffffffc12a5640 RBX: ffff8881157ac000 RCX: ffffffffc134bf00
+[   27.965010] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dd80
+[   27.965013] RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff23a28cb
+[   27.965017] R10: ffffffff91d1465f R11: 0000000000000000 R12: ffff8881096e20c8
+[   27.965020] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   27.965023] FS:  00007f0b2f7469c0(0000) GS:ffff8882a5c3b000(0000) knlGS:0000000000000000
+[   27.965028] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   27.965031] CR2: 00007efc7c5ca018 CR3: 000000010e210000 CR4: 0000000000f50ef0
+[   27.965035] PKRU: 55555554
+[   27.965038] Call Trace:
+[   27.965041]  <TASK>
+[   27.965047]  read_pin_configuration+0x12/0x560 [i915]
+[   27.966171]  ? intel_display_power_get+0x48/0x60 [i915]
+[   27.967153]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   27.968089]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   27.969029]  ? intel_display_power_is_enabled+0x32/0x40 [i915]
+[   27.969995]  intel_tc_port_init_mode+0x377/0x9d0 [i915]
+[   27.970876]  intel_tc_port_init+0x4ed/0x7a0 [i915]
+[   27.971535]  intel_ddi_init+0x1b72/0x37e0 [i915]
+[   27.971837]  ? do_raw_spin_lock+0x128/0x260
+[   27.971848]  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+[   27.972685]  ? find_held_lock+0x2b/0x80
+[   27.972696]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[   27.972704]  ? __pfx___drm_dev_dbg+0x10/0x10
+[   27.972713]  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+[   27.973262]  intel_bios_for_each_encoder+0x56/0xa0 [i915]
+[   27.973818]  intel_setup_outputs+0x4b3/0x1e40 [i915]
+[   27.974152]  ? intel_update_max_cdclk+0x259/0xd40 [i915]
+[   27.974462]  intel_display_driver_probe_nogem+0x25e/0x4c0 [i915]
+[   27.975120]  i915_driver_probe+0xd58/0x1aa0 [i915]
+[   27.975387]  ? __pfx_i915_driver_probe+0x10/0x10 [i915]
+[   27.975657]  ? find_held_lock+0x2b/0x80
+[   27.975665]  ? __pm_runtime_resume+0x78/0x110
+[   27.975673]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[   27.975682]  ? i915_pci_probe+0x2aa/0x390 [i915]
+[   27.975959]  ? __pfx_i915_pci_probe+0x10/0x10 [i915]
+[   27.976572]  local_pci_probe+0xd0/0x170
+[   27.976583]  pci_call_probe+0x143/0x5a0
+[   27.976588]  ? pci_match_device+0x5d5/0x900
+[   27.976592]  ? __pfx_pci_call_probe+0x10/0x10
+[   27.976601]  ? __pfx_pci_match_device+0x10/0x10
+[   27.976609]  ? __pfx_pci_assign_irq+0x10/0x10
+[   27.976615]  ? up_write+0x4aa/0x6f0
+[   27.976623]  pci_device_probe+0x138/0x1d0
+[   27.976629]  ? __pfx_pci_device_probe+0x10/0x10
+[   27.976635]  ? kernfs_put+0x17/0x30
+[   27.976640]  ? sysfs_do_create_link_sd+0x89/0x100
+[   27.976649]  really_probe+0x1eb/0x630
+[   27.976657]  __driver_probe_device+0x1ad/0x300
+[   27.976664]  driver_probe_device+0x45/0xf0
+[   27.976670]  __driver_attach+0x157/0x400
+[   27.976676]  ? __pfx___driver_attach+0x10/0x10
+[   27.976682]  bus_for_each_dev+0x103/0x180
+[   27.976687]  ? __pfx_bus_for_each_dev+0x10/0x10
+[   27.976691]  ? bus_add_driver+0x1d1/0x420
+[   27.976696]  ? lock_release+0xc4/0x2a0
+[   27.976704]  bus_add_driver+0x20b/0x420
+[   27.976711]  driver_register+0x1a0/0x350
+[   27.976717]  ? __pfx_i915_mock_selftests+0x10/0x10 [i915]
+[   27.976995]  i915_init+0x56/0x160 [i915]
+[   27.977601]  ? __pfx_init_module+0x10/0x10 [i915]
+[   27.977858]  do_one_initcall+0xc9/0x440
+[   27.977866]  ? __pfx_do_one_initcall+0x10/0x10
+[   27.977874]  ? memset+0x11/0x30
+[   27.977881]  ? kasan_unpoison+0x27/0x60
+[   27.977897]  do_init_module+0x27c/0x7b0
+[   27.977906]  ? trace_hardirqs_on+0x18/0x160
+[   27.977913]  ? __pfx_do_init_module+0x10/0x10
+[   27.977918]  ? kasan_quarantine_put+0xc7/0x1d0
+[   27.977923]  ? load_module+0x58e6/0x62b0
+[   27.977928]  ? kfree+0x1b0/0x500
+[   27.977936]  load_module+0x56f8/0x62b0
+[   27.977952]  ? __pfx_load_module+0x10/0x10
+[   27.977958]  ? security_file_permission+0x1d/0x40
+[   27.977977]  init_module_from_file+0x152/0x170
+[   27.977983]  ? __pfx_init_module_from_file+0x10/0x10
+[   27.977996]  ? find_held_lock+0x2b/0x80
+[   27.978002]  ? idempotent_init_module+0x5e4/0x760
+[   27.978008]  ? lock_release+0xc4/0x2a0
+[   27.978014]  ? do_raw_spin_unlock+0x53/0x210
+[   27.978020]  idempotent_init_module+0x228/0x760
+[   27.978026]  ? cred_has_capability.isra.0+0x12e/0x220
+[   27.978031]  ? __pfx_idempotent_init_module+0x10/0x10
+[   27.978036]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+[   27.978051]  __x64_sys_finit_module+0xbf/0x120
+[   27.978058]  do_syscall_64+0x109/0x5d0
+[   27.978065]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   27.978071] RIP: 0033:0x7f0b302aa4f9
+[   27.978077] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e7 68 0d 00 f7 d8 64 89 01 48
+[   27.978081] RSP: 002b:00007ffecce2e0a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[   27.978090] RAX: ffffffffffffffda RBX: 00005625ca1c01a0 RCX: 00007f0b302aa4f9
+[   27.978093] RDX: 0000000000000000 RSI: 00007f0b2e9d044d RDI: 0000000000000024
+[   27.978097] RBP: 0000000000000000 R08: 0000000000000000 R09: 00005625ca127370
+[   27.978100] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0b2e9d044d
+[   27.978103] R13: 0000000000020000 R14: 00005625ca1c0a50 R15: 0000000000000000
+[   27.978114]  </TASK>
+[   27.978117] irq event stamp: 273821
+[   27.978120] hardirqs last  enabled at (273827): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   27.978127] hardirqs last disabled at (273832): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   27.978131] softirqs last  enabled at (273592): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   27.978137] softirqs last disabled at (273541): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   27.978142] ---[ end trace 0000000000000000 ]---
+[   28.059700] ------------[ cut here ]------------
+[   28.059713] Missing case (pin_assignment == 15)
+[   28.059718] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#3: (udev-worker)/253
+[   28.060115] Modules linked in: btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi(+) videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915(+) v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   28.060190] CPU: 3 UID: 0 PID: 253 Comm: (udev-worker) Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   28.060199] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   28.060203] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   28.060207] RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+[   28.060513] Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d df 7b 38 00 48 c7 c6 e0 bf 34 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+[   28.060519] RSP: 0018:ffff8881045aef10 EFLAGS: 00010206
+[   28.060526] RAX: 000000000000000f RBX: ffff8881157ac000 RCX: 0000000000000000
+[   28.060530] RDX: 000000000000000f RSI: ffffffffc134bfe0 RDI: ffffffffc100dd70
+[   28.060534] RBP: 000000000000000f R08: 0000000000000001 R09: ffffed10208b5dc7
+[   28.060538] R10: ffff8881045aee3f R11: 0000000000000000 R12: 000000000000000f
+[   28.060541] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   28.060545] FS:  00007f0b2f7469c0(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   28.060549] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   28.060553] CR2: 00005625ca12e2a8 CR3: 000000010e210000 CR4: 0000000000f50ef0
+[   28.060556] PKRU: 55555554
+[   28.060560] Call Trace:
+[   28.060565]  <TASK>
+[   28.060571]  read_pin_configuration+0x12/0x560 [i915]
+[   28.060897]  ? intel_display_power_get+0x48/0x60 [i915]
+[   28.061249]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   28.061569]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   28.061878]  ? intel_display_power_is_enabled+0x32/0x40 [i915]
+[   28.062231]  intel_tc_port_init_mode+0x377/0x9d0 [i915]
+[   28.062542]  intel_tc_port_init+0x4ed/0x7a0 [i915]
+[   28.062855]  intel_ddi_init+0x1b72/0x37e0 [i915]
+[   28.063183]  ? do_raw_spin_lock+0x128/0x260
+[   28.063194]  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+[   28.063506]  ? find_held_lock+0x2b/0x80
+[   28.063515]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[   28.063522]  ? __pfx___drm_dev_dbg+0x10/0x10
+[   28.063532]  ? __pfx_intel_ddi_init+0x10/0x10 [i915]
+[   28.063839]  intel_bios_for_each_encoder+0x56/0xa0 [i915]
+[   28.064174]  intel_setup_outputs+0x4b3/0x1e40 [i915]
+[   28.064506]  ? intel_update_max_cdclk+0x259/0xd40 [i915]
+[   28.064832]  intel_display_driver_probe_nogem+0x25e/0x4c0 [i915]
+[   28.065180]  i915_driver_probe+0xd58/0x1aa0 [i915]
+[   28.065453]  ? __pfx_i915_driver_probe+0x10/0x10 [i915]
+[   28.065737]  ? find_held_lock+0x2b/0x80
+[   28.065746]  ? __pm_runtime_resume+0x78/0x110
+[   28.065753]  ? _raw_spin_unlock_irqrestore+0x40/0x50
+[   28.065762]  ? i915_pci_probe+0x2aa/0x390 [i915]
+[   28.066045]  ? __pfx_i915_pci_probe+0x10/0x10 [i915]
+[   28.066314]  local_pci_probe+0xd0/0x170
+[   28.066324]  pci_call_probe+0x143/0x5a0
+[   28.066329]  ? pci_match_device+0x5d5/0x900
+[   28.066334]  ? __pfx_pci_call_probe+0x10/0x10
+[   28.066342]  ? __pfx_pci_match_device+0x10/0x10
+[   28.066350]  ? __pfx_pci_assign_irq+0x10/0x10
+[   28.066357]  ? up_write+0x4aa/0x6f0
+[   28.066364]  pci_device_probe+0x138/0x1d0
+[   28.066370]  ? __pfx_pci_device_probe+0x10/0x10
+[   28.066377]  ? kernfs_put+0x17/0x30
+[   28.066382]  ? sysfs_do_create_link_sd+0x89/0x100
+[   28.066391]  really_probe+0x1eb/0x630
+[   28.066399]  __driver_probe_device+0x1ad/0x300
+[   28.066407]  driver_probe_device+0x45/0xf0
+[   28.066413]  __driver_attach+0x157/0x400
+[   28.066419]  ? __pfx___driver_attach+0x10/0x10
+[   28.066424]  bus_for_each_dev+0x103/0x180
+[   28.066430]  ? __pfx_bus_for_each_dev+0x10/0x10
+[   28.066434]  ? bus_add_driver+0x1d1/0x420
+[   28.066439]  ? lock_release+0xc4/0x2a0
+[   28.066447]  bus_add_driver+0x20b/0x420
+[   28.066455]  driver_register+0x1a0/0x350
+[   28.066460]  ? __pfx_i915_mock_selftests+0x10/0x10 [i915]
+[   28.066721]  i915_init+0x56/0x160 [i915]
+[   28.066988]  ? __pfx_init_module+0x10/0x10 [i915]
+[   28.067246]  do_one_initcall+0xc9/0x440
+[   28.067253]  ? __pfx_do_one_initcall+0x10/0x10
+[   28.067261]  ? memset+0x11/0x30
+[   28.067268]  ? kasan_unpoison+0x27/0x60
+[   28.067276]  do_init_module+0x27c/0x7b0
+[   28.067284]  ? trace_hardirqs_on+0x18/0x160
+[   28.067291]  ? __pfx_do_init_module+0x10/0x10
+[   28.067295]  ? kasan_quarantine_put+0xc7/0x1d0
+[   28.067301]  ? load_module+0x58e6/0x62b0
+[   28.067306]  ? kfree+0x1b0/0x500
+[   28.067314]  load_module+0x56f8/0x62b0
+[   28.067331]  ? __pfx_load_module+0x10/0x10
+[   28.067338]  ? security_file_permission+0x1d/0x40
+[   28.067357]  init_module_from_file+0x152/0x170
+[   28.067363]  ? __pfx_init_module_from_file+0x10/0x10
+[   28.067376]  ? find_held_lock+0x2b/0x80
+[   28.067382]  ? idempotent_init_module+0x5e4/0x760
+[   28.067388]  ? lock_release+0xc4/0x2a0
+[   28.067394]  ? do_raw_spin_unlock+0x53/0x210
+[   28.067400]  idempotent_init_module+0x228/0x760
+[   28.067406]  ? cred_has_capability.isra.0+0x12e/0x220
+[   28.067412]  ? __pfx_idempotent_init_module+0x10/0x10
+[   28.067417]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+[   28.067431]  __x64_sys_finit_module+0xbf/0x120
+[   28.067439]  do_syscall_64+0x109/0x5d0
+[   28.067446]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   28.067452] RIP: 0033:0x7f0b302aa4f9
+[   28.067458] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e7 68 0d 00 f7 d8 64 89 01 48
+[   28.067463] RSP: 002b:00007ffecce2e0a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[   28.067471] RAX: ffffffffffffffda RBX: 00005625ca1c01a0 RCX: 00007f0b302aa4f9
+[   28.067475] RDX: 0000000000000000 RSI: 00007f0b2e9d044d RDI: 0000000000000024
+[   28.067479] RBP: 0000000000000000 R08: 0000000000000000 R09: 00005625ca127370
+[   28.067482] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0b2e9d044d
+[   28.067485] R13: 0000000000020000 R14: 00005625ca1c0a50 R15: 0000000000000000
+[   28.067496]  </TASK>
+[   28.067499] irq event stamp: 274731
+[   28.067502] hardirqs last  enabled at (274737): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   28.067508] hardirqs last disabled at (274742): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   28.067513] softirqs last  enabled at (274228): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   28.067519] softirqs last disabled at (274219): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   28.067524] ---[ end trace 0000000000000000 ]---
+[   28.161452] i915 0000:00:02.0: vgaarb: VGA decodes changed: olddecodes=io+mem,decodes=io:owns=io+mem
+[   28.164795] iwlwifi 0000:00:14.3: Detected crf-id 0x501, cnv-id 0x80400 wfpm id 0x80000030
+[   28.164856] iwlwifi 0000:00:14.3: PCI dev 54f0/0244, rev=0x370, rfid=0x10c000
+[   28.164864] iwlwifi 0000:00:14.3: Detected Intel(R) Wi-Fi 6 AX101
+[   28.235703] iwlwifi 0000:00:14.3: loaded firmware version 89.4d42c933.0 so-a0-hr-b0-89.ucode op_mode iwlmvm
+[   28.563005] gc8034 i2c-GCTI8034:00: Instantiated dw9714 VCM
+[   28.976617] i915 0000:00:02.0: [drm] GT0: GuC firmware i915/tgl_guc_70.bin version 70.36.0
+[   28.976640] i915 0000:00:02.0: [drm] GT0: HuC firmware i915/tgl_huc.bin version 7.9.3
+[   28.998126] i915 0000:00:02.0: [drm] GT0: HuC: authenticated for all workloads
+[   29.009293] i915 0000:00:02.0: [drm] GT0: GUC: submission enabled
+[   29.009309] i915 0000:00:02.0: [drm] GT0: GUC: SLPC enabled
+[   29.010052] i915 0000:00:02.0: [drm] GT0: GUC: RC enabled
+[   29.747396] [drm] Initialized i915 1.6.0 for 0000:00:02.0 on minor 0
+[   29.841501] iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION: 0x20
+[   29.841546] iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+[   29.841595] iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+[   29.841607] iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x10
+[   29.842084] iwlwifi 0000:00:14.3: Detected RF HR1 B3, rfid=0x10c000
+[   29.842729] iwlwifi 0000:00:14.3: RFIm is deactivated, reason = 4
+[   29.884587] iwlwifi 0000:00:14.3: base HW address: b0:47:e9:4f:ee:df
+[   29.963424] ACPI: video: Video Device [GFX0] (multi-head: yes  rom: no  post: no)
+[   30.007085] modprobe (424) used greatest stack depth: 24088 bytes left
+[   30.025551] input: Video Bus as /devices/pci0000:00/acpi.video_bus.0/input/input7
+[   30.042404] iwlwifi 0000:00:14.3 wlo1: renamed from wlan0
+[   30.090649] ------------[ cut here ]------------
+[   30.090666] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[   30.090672] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#3: kworker/3:1/49
+[   30.091044] Modules linked in: iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915(+) v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   30.091140] CPU: 3 UID: 0 PID: 49 Comm: kworker/3:1 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   30.091150] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   30.091153] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   30.091159] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[   30.091482] RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+[   30.091785] Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 e8 65 47 ce 48 89 c6 48 8d 3d be 08 38 00 48 8b 14 24 48 c7 c1 e0 c8 34 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+[   30.091791] RSP: 0000:ffff8881025877c8 EFLAGS: 00010246
+[   30.091808] RAX: ffffffffc12a5640 RBX: ffff88812005d800 RCX: ffffffffc134c8e0
+[   30.091814] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dee0
+[   30.091817] RBP: ffff8881157ac000 R08: 0000000000000000 R09: fffffbfff23a28cb
+[   30.091821] R10: ffffffff91d1465f R11: 0000000000000000 R12: 0000000000000019
+[   30.091825] R13: 0000000000000001 R14: ffff88812005d808 R15: ffff8881096e20c8
+[   30.091829] FS:  0000000000000000(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   30.091834] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   30.091838] CR2: 00007fed5787db90 CR3: 000000010d595000 CR4: 0000000000f50ef0
+[   30.091842] PKRU: 55555554
+[   30.091845] Call Trace:
+[   30.091850]  <TASK>
+[   30.091857]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   30.092141]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   30.092430]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   30.092741]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   30.093048]  ? __pfx___might_resched+0x10/0x10
+[   30.093061]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   30.093343]  ? ww_mutex_lock+0x37/0x160
+[   30.093355]  drm_helper_probe_detect_ctx+0xd9/0x1e0
+[   30.093363]  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
+[   30.093379]  ? drm_connector_list_iter_next+0x20d/0x310
+[   30.093391]  intel_hotplug_detect_connector+0xa7/0x3d0 [i915]
+[   30.093701]  i915_hpd_poll_init_work+0x4ac/0x7b0 [i915]
+[   30.094018]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   30.094334]  ? process_one_work+0x88d/0x1670
+[   30.094346]  ? lock_release+0xc4/0x2a0
+[   30.094356]  process_one_work+0x8fc/0x1670
+[   30.094370]  ? __pfx_process_one_work+0x10/0x10
+[   30.094378]  ? lock_acquire+0x192/0x300
+[   30.094387]  ? lock_is_held_type+0x85/0xf0
+[   30.094396]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   30.094720]  worker_thread+0x4ea/0xd60
+[   30.094731]  ? __kthread_parkme+0xac/0x1f0
+[   30.094740]  ? __pfx_worker_thread+0x10/0x10
+[   30.094746]  kthread+0x300/0x3e0
+[   30.094752]  ? __pfx_kthread+0x10/0x10
+[   30.094760]  ret_from_fork+0x559/0x7e0
+[   30.094767]  ? __pfx_ret_from_fork+0x10/0x10
+[   30.094775]  ? __switch_to+0x58b/0xe10
+[   30.094781]  ? __pfx_kthread+0x10/0x10
+[   30.094788]  ret_from_fork_asm+0x1a/0x30
+[   30.095207]  </TASK>
+[   30.095212] irq event stamp: 39639
+[   30.095215] hardirqs last  enabled at (39645): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   30.095223] hardirqs last disabled at (39650): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   30.095228] softirqs last  enabled at (39468): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   30.095234] softirqs last disabled at (39457): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   30.095240] ---[ end trace 0000000000000000 ]---
+[   30.314069] iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION: 0x20
+[   30.314125] iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+[   30.314186] iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+[   30.314247] iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x10
+[   30.315345] iwlwifi 0000:00:14.3: RFIm is deactivated, reason = 4
+[   30.597058] ------------[ cut here ]------------
+[   30.597072] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[   30.597077] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#3: kworker/3:1/49
+[   30.597471] Modules linked in: iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915(+) v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   30.597575] CPU: 3 UID: 0 PID: 49 Comm: kworker/3:1 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   30.597587] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   30.597590] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   30.597596] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[   30.599283] RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+[   30.599627] Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 8c d9 47 ce 48 89 c6 48 8d 3d 02 7b 38 00 48 8b 54 24 08 48 c7 c1 00 bf 34 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+[   30.599633] RSP: 0018:ffff888102587750 EFLAGS: 00010246
+[   30.599641] RAX: ffffffffc12a5640 RBX: ffff8881157ac000 RCX: ffffffffc134bf00
+[   30.599645] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dd80
+[   30.599649] RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff23a28cb
+[   30.599653] R10: ffffffff91d1465f R11: ffff8881025876c0 R12: ffff8881096e20c8
+[   30.599657] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   30.599661] FS:  0000000000000000(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   30.599665] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   30.599669] CR2: 00007fed8b5b5a00 CR3: 000000011e78b000 CR4: 0000000000f50ef0
+[   30.599673] PKRU: 55555554
+[   30.599677] Call Trace:
+[   30.599681]  <TASK>
+[   30.599688]  read_pin_configuration+0x12/0x560 [i915]
+[   30.600228]  ? intel_display_power_get+0x48/0x60 [i915]
+[   30.600581]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   30.601065]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   30.601552]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   30.602017]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   30.602320]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   30.602620]  ? __pfx___might_resched+0x10/0x10
+[   30.602633]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   30.603117]  ? ww_mutex_lock+0x37/0x160
+[   30.603130]  drm_helper_probe_detect_ctx+0xd9/0x1e0
+[   30.603139]  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
+[   30.603155]  ? drm_connector_list_iter_next+0x20d/0x310
+[   30.603167]  intel_hotplug_detect_connector+0xa7/0x3d0 [i915]
+[   30.603488]  i915_hpd_poll_init_work+0x4ac/0x7b0 [i915]
+[   30.603965]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   30.604256]  ? process_one_work+0x88d/0x1670
+[   30.604267]  ? lock_release+0xc4/0x2a0
+[   30.604275]  process_one_work+0x8fc/0x1670
+[   30.604288]  ? __pfx_process_one_work+0x10/0x10
+[   30.604295]  ? lock_acquire+0x192/0x300
+[   30.604303]  ? lock_is_held_type+0x85/0xf0
+[   30.604311]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   30.604608]  worker_thread+0x4ea/0xd60
+[   30.604619]  ? __kthread_parkme+0xac/0x1f0
+[   30.604628]  ? __pfx_worker_thread+0x10/0x10
+[   30.604633]  kthread+0x300/0x3e0
+[   30.604639]  ? __pfx_kthread+0x10/0x10
+[   30.604647]  ret_from_fork+0x559/0x7e0
+[   30.604654]  ? __pfx_ret_from_fork+0x10/0x10
+[   30.604662]  ? __switch_to+0x58b/0xe10
+[   30.604669]  ? __pfx_kthread+0x10/0x10
+[   30.604676]  ret_from_fork_asm+0x1a/0x30
+[   30.604689]  </TASK>
+[   30.604693] irq event stamp: 45875
+[   30.604696] hardirqs last  enabled at (45881): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   30.604703] hardirqs last disabled at (45886): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   30.604708] softirqs last  enabled at (45756): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   30.604714] softirqs last disabled at (45681): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   30.604720] ---[ end trace 0000000000000000 ]---
+[   30.611864] ------------[ cut here ]------------
+[   30.611878] Missing case (pin_assignment == 15)
+[   30.611885] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#3: kworker/3:1/49
+[   30.612229] Modules linked in: iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915(+) v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   30.612314] CPU: 3 UID: 0 PID: 49 Comm: kworker/3:1 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   30.612323] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   30.612326] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   30.612332] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[   30.612676] RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+[   30.613014] Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d df 7b 38 00 48 c7 c6 e0 bf 34 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+[   30.613021] RSP: 0018:ffff888102587750 EFLAGS: 00010206
+[   30.613029] RAX: 000000000000000f RBX: ffff8881157ac000 RCX: 0000000000000000
+[   30.613033] RDX: 000000000000000f RSI: ffffffffc134bfe0 RDI: ffffffffc100dd70
+[   30.613037] RBP: 000000000000000f R08: 0000000000000001 R09: ffffed10204b0ecf
+[   30.613040] R10: ffff88810258767f R11: 0000000000000000 R12: 000000000000000f
+[   30.613044] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   30.613047] FS:  0000000000000000(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   30.613052] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   30.613055] CR2: 00007f4bea5caa60 CR3: 000000011e78b000 CR4: 0000000000f50ef0
+[   30.613059] PKRU: 55555554
+[   30.613063] Call Trace:
+[   30.613067]  <TASK>
+[   30.613074]  read_pin_configuration+0x12/0x560 [i915]
+[   30.613384]  ? intel_display_power_get+0x48/0x60 [i915]
+[   30.613702]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   30.614017]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   30.614313]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   30.614605]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   30.614908]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   30.615203]  ? __pfx___might_resched+0x10/0x10
+[   30.615215]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   30.615501]  ? ww_mutex_lock+0x37/0x160
+[   30.615512]  drm_helper_probe_detect_ctx+0xd9/0x1e0
+[   30.615521]  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
+[   30.615537]  ? drm_connector_list_iter_next+0x20d/0x310
+[   30.615549]  intel_hotplug_detect_connector+0xa7/0x3d0 [i915]
+[   30.615871]  i915_hpd_poll_init_work+0x4ac/0x7b0 [i915]
+[   30.616187]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   30.616489]  ? process_one_work+0x88d/0x1670
+[   30.616501]  ? lock_release+0xc4/0x2a0
+[   30.616510]  process_one_work+0x8fc/0x1670
+[   30.616524]  ? __pfx_process_one_work+0x10/0x10
+[   30.616531]  ? lock_acquire+0x192/0x300
+[   30.616540]  ? lock_is_held_type+0x85/0xf0
+[   30.616548]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   30.616864]  worker_thread+0x4ea/0xd60
+[   30.616876]  ? __kthread_parkme+0xac/0x1f0
+[   30.616884]  ? __pfx_worker_thread+0x10/0x10
+[   30.616890]  kthread+0x300/0x3e0
+[   30.616897]  ? __pfx_kthread+0x10/0x10
+[   30.616904]  ret_from_fork+0x559/0x7e0
+[   30.616911]  ? __pfx_ret_from_fork+0x10/0x10
+[   30.616919]  ? __switch_to+0x58b/0xe10
+[   30.616926]  ? __pfx_kthread+0x10/0x10
+[   30.616933]  ret_from_fork_asm+0x1a/0x30
+[   30.616947]  </TASK>
+[   30.616951] irq event stamp: 46485
+[   30.616954] hardirqs last  enabled at (46491): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   30.616960] hardirqs last disabled at (46496): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   30.616965] softirqs last  enabled at (46184): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   30.616971] softirqs last disabled at (46175): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   30.616976] ---[ end trace 0000000000000000 ]---
+[   30.679319] snd_hda_intel 0000:00:1f.3: bound 0000:00:02.0 (ops intel_audio_component_bind_ops [i915])
+[   30.686592] fbcon: i915drmfb (fb0) is primary device
+[   30.710431] iwlwifi 0000:00:14.3: WFPM_UMAC_PD_NOTIFICATION: 0x20
+[   30.710503] iwlwifi 0000:00:14.3: WFPM_LMAC2_PD_NOTIFICATION: 0x1f
+[   30.710515] iwlwifi 0000:00:14.3: WFPM_AUTH_KEY_0: 0x90
+[   30.710567] iwlwifi 0000:00:14.3: CNVI_SCU_SEQ_DATA_DW9: 0x10
+[   30.711514] iwlwifi 0000:00:14.3: RFIm is deactivated, reason = 4
+[   30.729737] snd_hda_intel 0000:00:1f.3: Cannot probe codecs, giving up
+[   30.856791] Bluetooth: hci0: Waiting for firmware download to complete
+[   30.857387] Bluetooth: hci0: Firmware loaded in 3327095 usecs
+[   30.858060] Bluetooth: hci0: Waiting for device to boot
+[   30.873131] Bluetooth: hci0: Device booted in 15118 usecs
+[   30.877808] Bluetooth: hci0: Found Intel DDC parameters: intel/ibt-0040-1050.ddc
+[   30.880961] Bluetooth: hci0: Applying Intel DDC parameters completed
+[   30.905186] Bluetooth: hci0: Firmware timestamp 2024.48 buildtype 1 build 81864
+[   30.905200] Bluetooth: hci0: Firmware SHA1: 0xc115e35a
+[   30.912313] Bluetooth: hci0: Fseq status: Success (0x00)
+[   30.912332] Bluetooth: hci0: Fseq executed: 00.00.02.41
+[   30.912336] Bluetooth: hci0: Fseq BT Top: 00.00.02.41
+[   30.989860] usb 1-4: USB disconnect, device number 6
+[   30.996365] Bluetooth: MGMT ver 1.23
+[   32.316803] usb 1-4: new full-speed USB device number 8 using xhci_hcd
+[   32.442220] usb 1-4: New USB device found, idVendor=1234, idProduct=abcd, bcdDevice= 0.00
+[   32.444398] usb 1-4: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[   32.444405] usb 1-4: Product: TCA9537-B32
+[   32.444408] usb 1-4: Manufacturer: NYM
+[   32.473543] Console: switching to colour frame buffer device 100x80
+[   32.505750] i915 0000:00:02.0: [drm] fb0: i915drmfb frame buffer device
+[   32.505873] input: NYM TCA9537-B32 Touchscreen as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:1234:ABCD.0002/input/input8
+[   32.514426] hid-generic 0003:1234:ABCD.0002: input,hiddev96,hidraw0: USB HID v1.00 Device [NYM TCA9537-B32] on usb-0000:00:14.0-4/input0
+[   32.554181] ------------[ cut here ]------------
+[   32.554198] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[   32.554204] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#3: kworker/3:1/49
+[   32.554483] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   32.554585] CPU: 3 UID: 0 PID: 49 Comm: kworker/3:1 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   32.554595] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   32.554599] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   32.554604] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[   32.556120] RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+[   32.556379] Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 e8 65 47 ce 48 89 c6 48 8d 3d be 08 38 00 48 8b 14 24 48 c7 c1 e0 c8 34 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+[   32.556385] RSP: 0018:ffff888102587588 EFLAGS: 00010246
+[   32.556393] RAX: ffffffffc12a5640 RBX: ffff88812005d800 RCX: ffffffffc134c8e0
+[   32.556397] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dee0
+[   32.556402] RBP: ffff8881157ac000 R08: 0000000000000000 R09: fffffbfff23a28cb
+[   32.556406] R10: ffffffff91d1465f R11: 0000000000000000 R12: 0000000000000019
+[   32.556409] R13: 0000000000000001 R14: ffff88812005d808 R15: ffff8881096e20c8
+[   32.556413] FS:  0000000000000000(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   32.556418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   32.556422] CR2: 00005625ca1d6058 CR3: 0000000101eaa000 CR4: 0000000000f50ef0
+[   32.556426] PKRU: 55555554
+[   32.556430] Call Trace:
+[   32.556434]  <TASK>
+[   32.556441]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   32.556861]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   32.557110]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   32.557355]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   32.557598]  ? __pfx___might_resched+0x10/0x10
+[   32.557611]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   32.558031]  ? ww_mutex_lock+0x37/0x160
+[   32.558040]  ? ww_mutex_lock+0x37/0x160
+[   32.558050]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   32.558066]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   32.558085]  ? __kmalloc_noprof+0x459/0x6f0
+[   32.558093]  ? drm_client_modeset_probe+0x25c/0x3090
+[   32.558103]  drm_client_modeset_probe+0x343/0x3090
+[   32.558117]  ? __pfx___drm_dev_dbg+0x10/0x10
+[   32.558126]  ? __pfx_drm_client_modeset_probe+0x10/0x10
+[   32.558138]  drm_fb_helper_hotplug_event+0x244/0x400
+[   32.558143]  ? drm_sysfs_hotplug_event+0xf3/0x150
+[   32.558151]  drm_client_hotplug+0x198/0x2f0
+[   32.558159]  drm_client_dev_hotplug+0x163/0x1e0
+[   32.558167]  i915_hpd_poll_init_work+0x538/0x7b0 [i915]
+[   32.558436]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   32.558832]  ? process_one_work+0x88d/0x1670
+[   32.558844]  ? lock_release+0xc4/0x2a0
+[   32.558853]  process_one_work+0x8fc/0x1670
+[   32.558868]  ? __pfx_process_one_work+0x10/0x10
+[   32.558875]  ? lock_acquire+0x192/0x300
+[   32.558884]  ? lock_is_held_type+0x85/0xf0
+[   32.558892]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   32.559156]  worker_thread+0x4ea/0xd60
+[   32.559167]  ? __kthread_parkme+0xac/0x1f0
+[   32.559176]  ? __pfx_worker_thread+0x10/0x10
+[   32.559182]  kthread+0x300/0x3e0
+[   32.559188]  ? __pfx_kthread+0x10/0x10
+[   32.559195]  ret_from_fork+0x559/0x7e0
+[   32.559203]  ? __pfx_ret_from_fork+0x10/0x10
+[   32.559211]  ? __switch_to+0x58b/0xe10
+[   32.559218]  ? __pfx_kthread+0x10/0x10
+[   32.559225]  ret_from_fork_asm+0x1a/0x30
+[   32.559240]  </TASK>
+[   32.559244] irq event stamp: 54727
+[   32.559248] hardirqs last  enabled at (54733): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   32.559254] hardirqs last disabled at (54738): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   32.559260] softirqs last  enabled at (54614): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   32.559266] softirqs last disabled at (54551): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   32.559271] ---[ end trace 0000000000000000 ]---
+[   33.068938] ------------[ cut here ]------------
+[   33.068950] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[   33.068955] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#3: kworker/3:1/49
+[   33.069241] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   33.069340] CPU: 3 UID: 0 PID: 49 Comm: kworker/3:1 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   33.069350] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   33.069353] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   33.069359] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[   33.069623] RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+[   33.071176] Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 8c d9 47 ce 48 89 c6 48 8d 3d 02 7b 38 00 48 8b 54 24 08 48 c7 c1 00 bf 34 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+[   33.071184] RSP: 0018:ffff888102587510 EFLAGS: 00010246
+[   33.071192] RAX: ffffffffc12a5640 RBX: ffff8881157ac000 RCX: ffffffffc134bf00
+[   33.071196] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dd80
+[   33.071200] RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff23a28cb
+[   33.071204] R10: ffffffff91d1465f R11: ffff888102587480 R12: ffff8881096e20c8
+[   33.071208] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   33.071212] FS:  0000000000000000(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   33.071216] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   33.071221] CR2: 00005572872f9608 CR3: 0000000103664000 CR4: 0000000000f50ef0
+[   33.071224] PKRU: 55555554
+[   33.071228] Call Trace:
+[   33.071232]  <TASK>
+[   33.071239]  read_pin_configuration+0x12/0x560 [i915]
+[   33.071506]  ? intel_display_power_get+0x48/0x60 [i915]
+[   33.071946]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   33.072213]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   33.072479]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   33.073181]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   33.073431]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   33.073906]  ? __pfx___might_resched+0x10/0x10
+[   33.073920]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   33.074165]  ? ww_mutex_lock+0x37/0x160
+[   33.074173]  ? ww_mutex_lock+0x37/0x160
+[   33.074182]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   33.074199]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   33.074219]  ? __kmalloc_noprof+0x459/0x6f0
+[   33.074226]  ? drm_client_modeset_probe+0x25c/0x3090
+[   33.074237]  drm_client_modeset_probe+0x343/0x3090
+[   33.074251]  ? __pfx___drm_dev_dbg+0x10/0x10
+[   33.074260]  ? __pfx_drm_client_modeset_probe+0x10/0x10
+[   33.074272]  drm_fb_helper_hotplug_event+0x244/0x400
+[   33.074278]  ? drm_sysfs_hotplug_event+0xf3/0x150
+[   33.074285]  drm_client_hotplug+0x198/0x2f0
+[   33.074294]  drm_client_dev_hotplug+0x163/0x1e0
+[   33.074301]  i915_hpd_poll_init_work+0x538/0x7b0 [i915]
+[   33.074564]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   33.075074]  ? process_one_work+0x88d/0x1670
+[   33.075086]  ? lock_release+0xc4/0x2a0
+[   33.075095]  process_one_work+0x8fc/0x1670
+[   33.075110]  ? __pfx_process_one_work+0x10/0x10
+[   33.075117]  ? lock_acquire+0x192/0x300
+[   33.075126]  ? lock_is_held_type+0x85/0xf0
+[   33.075135]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   33.075398]  worker_thread+0x4ea/0xd60
+[   33.075409]  ? __kthread_parkme+0xac/0x1f0
+[   33.075418]  ? __pfx_worker_thread+0x10/0x10
+[   33.075425]  kthread+0x300/0x3e0
+[   33.075431]  ? __pfx_kthread+0x10/0x10
+[   33.075439]  ret_from_fork+0x559/0x7e0
+[   33.075446]  ? __pfx_ret_from_fork+0x10/0x10
+[   33.075455]  ? __switch_to+0x58b/0xe10
+[   33.075461]  ? __pfx_kthread+0x10/0x10
+[   33.075468]  ret_from_fork_asm+0x1a/0x30
+[   33.075483]  </TASK>
+[   33.075487] irq event stamp: 58881
+[   33.075491] hardirqs last  enabled at (58887): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   33.075497] hardirqs last disabled at (58892): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   33.075502] softirqs last  enabled at (58768): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   33.075509] softirqs last disabled at (58655): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   33.075514] ---[ end trace 0000000000000000 ]---
+[   33.077308] ------------[ cut here ]------------
+[   33.077316] Missing case (pin_assignment == 15)
+[   33.077321] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#3: kworker/3:1/49
+[   33.077592] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   33.078189] CPU: 3 UID: 0 PID: 49 Comm: kworker/3:1 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   33.078199] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   33.078203] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   33.078208] Workqueue: display_unordered i915_hpd_poll_init_work [i915]
+[   33.078474] RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+[   33.078733] Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d df 7b 38 00 48 c7 c6 e0 bf 34 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+[   33.078740] RSP: 0018:ffff888102587510 EFLAGS: 00010206
+[   33.078747] RAX: 000000000000000f RBX: ffff8881157ac000 RCX: 0000000000000000
+[   33.078751] RDX: 000000000000000f RSI: ffffffffc134bfe0 RDI: ffffffffc100dd70
+[   33.078754] RBP: 000000000000000f R08: 0000000000000001 R09: ffffed10204b0e87
+[   33.078758] R10: ffff88810258743f R11: 0000000000000000 R12: 000000000000000f
+[   33.078762] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   33.078765] FS:  0000000000000000(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   33.078770] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   33.078773] CR2: 00005572872f9608 CR3: 000000020c0aa000 CR4: 0000000000f50ef0
+[   33.078777] PKRU: 55555554
+[   33.078781] Call Trace:
+[   33.078785]  <TASK>
+[   33.078792]  read_pin_configuration+0x12/0x560 [i915]
+[   33.079046]  ? intel_display_power_get+0x48/0x60 [i915]
+[   33.079314]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   33.079569]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   33.080055]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   33.080519]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   33.081666]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   33.082124]  ? __pfx___might_resched+0x10/0x10
+[   33.082137]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   33.082374]  ? ww_mutex_lock+0x37/0x160
+[   33.082381]  ? ww_mutex_lock+0x37/0x160
+[   33.082390]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   33.082407]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   33.082426]  ? __kmalloc_noprof+0x459/0x6f0
+[   33.082433]  ? drm_client_modeset_probe+0x25c/0x3090
+[   33.082444]  drm_client_modeset_probe+0x343/0x3090
+[   33.082457]  ? __pfx___drm_dev_dbg+0x10/0x10
+[   33.082466]  ? __pfx_drm_client_modeset_probe+0x10/0x10
+[   33.082478]  drm_fb_helper_hotplug_event+0x244/0x400
+[   33.082484]  ? drm_sysfs_hotplug_event+0xf3/0x150
+[   33.082491]  drm_client_hotplug+0x198/0x2f0
+[   33.082500]  drm_client_dev_hotplug+0x163/0x1e0
+[   33.082507]  i915_hpd_poll_init_work+0x538/0x7b0 [i915]
+[   33.082914]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   33.083187]  ? process_one_work+0x88d/0x1670
+[   33.083199]  ? lock_release+0xc4/0x2a0
+[   33.083208]  process_one_work+0x8fc/0x1670
+[   33.083223]  ? __pfx_process_one_work+0x10/0x10
+[   33.083231]  ? lock_acquire+0x192/0x300
+[   33.083240]  ? lock_is_held_type+0x85/0xf0
+[   33.083249]  ? __pfx_i915_hpd_poll_init_work+0x10/0x10 [i915]
+[   33.083516]  worker_thread+0x4ea/0xd60
+[   33.083527]  ? __kthread_parkme+0xac/0x1f0
+[   33.083536]  ? __pfx_worker_thread+0x10/0x10
+[   33.083542]  kthread+0x300/0x3e0
+[   33.083548]  ? __pfx_kthread+0x10/0x10
+[   33.083556]  ret_from_fork+0x559/0x7e0
+[   33.083564]  ? __pfx_ret_from_fork+0x10/0x10
+[   33.083572]  ? __switch_to+0x58b/0xe10
+[   33.083578]  ? __pfx_kthread+0x10/0x10
+[   33.083586]  ret_from_fork_asm+0x1a/0x30
+[   33.083600]  </TASK>
+[   33.083604] irq event stamp: 60329
+[   33.083607] hardirqs last  enabled at (60335): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   33.083613] hardirqs last disabled at (60340): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   33.083618] softirqs last  enabled at (60210): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   33.083624] softirqs last disabled at (60143): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   33.083630] ---[ end trace 0000000000000000 ]---
+[   34.461607] wlo1: authenticate with 6c:99:61:4b:65:b5 (local address=b0:47:e9:4f:ee:df)
+[   34.463111] wlo1: send auth to 6c:99:61:4b:65:b5 (try 1/3)
+[   34.493175] wlo1: authenticated
+[   34.496108] wlo1: associate with 6c:99:61:4b:65:b5 (try 1/3)
+[   34.500000] wlo1: RX AssocResp from 6c:99:61:4b:65:b5 (capab=0x1011 status=0 aid=14)
+[   34.500053] wlo1: Ignore NSS change to invalid 4 in VHT opmode notif from 6c:99:61:4b:65:b5
+[   34.510685] wlo1: associated
+[   34.608088] wlo1: Ignore NSS change to invalid 4 in VHT opmode notif from 6c:99:61:4b:65:b5
+[   34.608103] wlo1: Limiting TX power to 23 (23 - 0) dBm as advertised by 6c:99:61:4b:65:b5
+[   36.452498] ------------[ cut here ]------------
+[   36.452514] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[   36.452518] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#0: KMS thread/878
+[   36.452832] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   36.452917] CPU: 0 UID: 103 PID: 878 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   36.452924] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   36.452927] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   36.452931] RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+[   36.453175] Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 e8 65 47 ce 48 89 c6 48 8d 3d be 08 38 00 48 8b 14 24 48 c7 c1 e0 c8 34 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+[   36.453180] RSP: 0018:ffff8881059a7758 EFLAGS: 00010246
+[   36.453187] RAX: ffffffffc12a5640 RBX: ffff88812005d800 RCX: ffffffffc134c8e0
+[   36.453191] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dee0
+[   36.453194] RBP: ffff8881157ac000 R08: 0000000000000000 R09: fffffbfff23a28cb
+[   36.453197] R10: ffffffff91d1465f R11: 0000000000000000 R12: 0000000000000019
+[   36.453200] R13: 0000000000000001 R14: ffff88812005d808 R15: ffff8881096e20c8
+[   36.453204] FS:  00007fcdd693c6c0(0000) GS:ffff8882a5b3b000(0000) knlGS:0000000000000000
+[   36.453207] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   36.453211] CR2: 00007fcdd00314c8 CR3: 000000011e711000 CR4: 0000000000f50ef0
+[   36.453214] PKRU: 55555554
+[   36.453217] Call Trace:
+[   36.453222]  <TASK>
+[   36.453229]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   36.453475]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   36.453814]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   36.454049]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   36.454277]  ? __pfx___might_resched+0x10/0x10
+[   36.454288]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   36.454513]  ? ww_mutex_lock+0x37/0x160
+[   36.454520]  ? ww_mutex_lock+0x37/0x160
+[   36.454543]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   36.454552]  ? __pfx___might_resched+0x10/0x10
+[   36.454563]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   36.454578]  ? lock_release+0xc4/0x2a0
+[   36.454586]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   36.454592]  drm_mode_getconnector+0x4af/0x1600
+[   36.454602]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.454607]  ? lock_acquire+0x192/0x300
+[   36.454614]  ? drm_dev_exit+0x2b/0x50
+[   36.454619]  ? lock_release+0xc4/0x2a0
+[   36.454625]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.454630]  drm_ioctl_kernel+0x168/0x2f0
+[   36.454637]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   36.454646]  drm_ioctl+0x4cf/0xb60
+[   36.454654]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.454659]  ? __pfx_drm_ioctl+0x10/0x10
+[   36.454664]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   36.454681]  __x64_sys_ioctl+0x134/0x1c0
+[   36.454686]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   36.454692]  do_syscall_64+0x109/0x5d0
+[   36.454699]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   36.454704] RIP: 0033:0x7fcdff03565b
+[   36.454709] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   36.454713] RSP: 002b:00007fcdd693b0c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   36.454721] RAX: ffffffffffffffda RBX: 00007fcdd002b550 RCX: 00007fcdff03565b
+[   36.454724] RDX: 00007fcdd693b160 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   36.454727] RBP: 00007fcdd693b160 R08: 0000000000000060 R09: 0000000000000002
+[   36.454730] R10: 00007fcdd00307b0 R11: 0000000000000246 R12: 00000000c05064a7
+[   36.454733] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcdd693b160
+[   36.454743]  </TASK>
+[   36.454746] irq event stamp: 11843
+[   36.454749] hardirqs last  enabled at (11849): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   36.454755] hardirqs last disabled at (11854): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   36.454759] softirqs last  enabled at (11654): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   36.454765] softirqs last disabled at (11647): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   36.454770] ---[ end trace 0000000000000000 ]---
+[   36.955572] ------------[ cut here ]------------
+[   36.955583] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[   36.955588] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#1: KMS thread/878
+[   36.955829] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   36.955904] CPU: 1 UID: 103 PID: 878 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   36.955911] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   36.955914] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   36.955918] RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+[   36.956128] Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 8c d9 47 ce 48 89 c6 48 8d 3d 02 7b 38 00 48 8b 54 24 08 48 c7 c1 00 bf 34 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+[   36.956132] RSP: 0018:ffff8881059a76e0 EFLAGS: 00010246
+[   36.956138] RAX: ffffffffc12a5640 RBX: ffff8881157ac000 RCX: ffffffffc134bf00
+[   36.956141] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dd80
+[   36.956144] RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff23a28cb
+[   36.956147] R10: ffffffff91d1465f R11: ffff8881059a7650 R12: ffff8881096e20c8
+[   36.956149] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   36.956152] FS:  00007fcdd693c6c0(0000) GS:ffff8882a5bbb000(0000) knlGS:0000000000000000
+[   36.956156] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   36.956159] CR2: 00007fffa951b2cc CR3: 000000011e711000 CR4: 0000000000f50ef0
+[   36.956162] PKRU: 55555554
+[   36.956165] Call Trace:
+[   36.956170]  <TASK>
+[   36.956175]  read_pin_configuration+0x12/0x560 [i915]
+[   36.956383]  ? intel_display_power_get+0x48/0x60 [i915]
+[   36.956654]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   36.956895]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   36.957192]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   36.957535]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   36.957848]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   36.958166]  ? __pfx___might_resched+0x10/0x10
+[   36.958180]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   36.958498]  ? ww_mutex_lock+0x37/0x160
+[   36.958519]  ? ww_mutex_lock+0x37/0x160
+[   36.958531]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   36.958543]  ? __pfx___might_resched+0x10/0x10
+[   36.958559]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   36.958582]  ? lock_release+0xc4/0x2a0
+[   36.958593]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   36.958602]  drm_mode_getconnector+0x4af/0x1600
+[   36.958617]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.958624]  ? lock_acquire+0x192/0x300
+[   36.958635]  ? drm_dev_exit+0x2b/0x50
+[   36.958643]  ? lock_release+0xc4/0x2a0
+[   36.958652]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.958660]  drm_ioctl_kernel+0x168/0x2f0
+[   36.958670]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   36.958684]  drm_ioctl+0x4cf/0xb60
+[   36.958696]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.958704]  ? __pfx_drm_ioctl+0x10/0x10
+[   36.958710]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   36.958735]  __x64_sys_ioctl+0x134/0x1c0
+[   36.958743]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   36.958752]  do_syscall_64+0x109/0x5d0
+[   36.958763]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   36.958771] RIP: 0033:0x7fcdff03565b
+[   36.958778] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   36.958784] RSP: 002b:00007fcdd693b0c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   36.958793] RAX: ffffffffffffffda RBX: 00007fcdd002b550 RCX: 00007fcdff03565b
+[   36.958798] RDX: 00007fcdd693b160 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   36.958803] RBP: 00007fcdd693b160 R08: 0000000000000060 R09: 0000000000000002
+[   36.958807] R10: 00007fcdd00307b0 R11: 0000000000000246 R12: 00000000c05064a7
+[   36.958812] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcdd693b160
+[   36.958827]  </TASK>
+[   36.958831] irq event stamp: 15343
+[   36.958835] hardirqs last  enabled at (15349): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   36.958844] hardirqs last disabled at (15354): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   36.958850] softirqs last  enabled at (15094): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   36.958858] softirqs last disabled at (15089): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   36.958865] ---[ end trace 0000000000000000 ]---
+[   36.958876] ------------[ cut here ]------------
+[   36.958879] Missing case (pin_assignment == 15)
+[   36.958884] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#1: KMS thread/878
+[   36.959220] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   36.959321] CPU: 1 UID: 103 PID: 878 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   36.959330] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   36.959333] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   36.959338] RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+[   36.959678] Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d df 7b 38 00 48 c7 c6 e0 bf 34 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+[   36.959684] RSP: 0018:ffff8881059a76e0 EFLAGS: 00010206
+[   36.959692] RAX: 000000000000000f RBX: ffff8881157ac000 RCX: 0000000000000000
+[   36.959696] RDX: 000000000000000f RSI: ffffffffc134bfe0 RDI: ffffffffc100dd70
+[   36.959700] RBP: 000000000000000f R08: 0000000000000001 R09: ffffed1020b34ec1
+[   36.959705] R10: ffff8881059a760f R11: 0000000000000000 R12: 000000000000000f
+[   36.959709] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   36.959713] FS:  00007fcdd693c6c0(0000) GS:ffff8882a5bbb000(0000) knlGS:0000000000000000
+[   36.959718] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   36.959723] CR2: 00007fffa951b2cc CR3: 000000011e711000 CR4: 0000000000f50ef0
+[   36.959727] PKRU: 55555554
+[   36.959731] Call Trace:
+[   36.959735]  <TASK>
+[   36.959743]  read_pin_configuration+0x12/0x560 [i915]
+[   36.960062]  ? intel_display_power_get+0x48/0x60 [i915]
+[   36.960410]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   36.960758]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   36.961090]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   36.961403]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   36.961714]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   36.962042]  ? __pfx___might_resched+0x10/0x10
+[   36.962055]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   36.962362]  ? ww_mutex_lock+0x37/0x160
+[   36.962370]  ? ww_mutex_lock+0x37/0x160
+[   36.962380]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   36.962390]  ? __pfx___might_resched+0x10/0x10
+[   36.962404]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   36.962425]  ? lock_release+0xc4/0x2a0
+[   36.962435]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   36.962443]  drm_mode_getconnector+0x4af/0x1600
+[   36.962457]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.962463]  ? lock_acquire+0x192/0x300
+[   36.962473]  ? drm_dev_exit+0x2b/0x50
+[   36.962481]  ? lock_release+0xc4/0x2a0
+[   36.962489]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.962496]  drm_ioctl_kernel+0x168/0x2f0
+[   36.962524]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   36.962539]  drm_ioctl+0x4cf/0xb60
+[   36.962549]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   36.962557]  ? __pfx_drm_ioctl+0x10/0x10
+[   36.962562]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   36.962585]  __x64_sys_ioctl+0x134/0x1c0
+[   36.962592]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   36.962600]  do_syscall_64+0x109/0x5d0
+[   36.962609]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   36.962616] RIP: 0033:0x7fcdff03565b
+[   36.962621] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   36.962627] RSP: 002b:00007fcdd693b0c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   36.962635] RAX: ffffffffffffffda RBX: 00007fcdd002b550 RCX: 00007fcdff03565b
+[   36.962639] RDX: 00007fcdd693b160 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   36.962643] RBP: 00007fcdd693b160 R08: 0000000000000060 R09: 0000000000000002
+[   36.962647] R10: 00007fcdd00307b0 R11: 0000000000000246 R12: 00000000c05064a7
+[   36.962651] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcdd693b160
+[   36.962665]  </TASK>
+[   36.962669] irq event stamp: 15987
+[   36.962672] hardirqs last  enabled at (15993): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   36.962679] hardirqs last disabled at (15998): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   36.962685] softirqs last  enabled at (15872): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   36.962691] softirqs last disabled at (15867): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   36.962698] ---[ end trace 0000000000000000 ]---
+[   39.306588] (udev-worker) (239) used greatest stack depth: 23888 bytes left
+[   39.321646] (udev-worker) (253) used greatest stack depth: 20792 bytes left
+[   41.749844] rfkill: input handler disabled
+[   44.380163] ------------[ cut here ]------------
+[   44.380174] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[   44.380178] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#3: KMS thread/878
+[   44.380426] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   44.380501] CPU: 3 UID: 103 PID: 878 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   44.380509] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   44.380512] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   44.380516] RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+[   44.380728] Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 e8 65 47 ce 48 89 c6 48 8d 3d be 08 38 00 48 8b 14 24 48 c7 c1 e0 c8 34 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+[   44.380732] RSP: 0018:ffff8881059a7758 EFLAGS: 00010246
+[   44.380738] RAX: ffffffffc12a5640 RBX: ffff88812005d800 RCX: ffffffffc134c8e0
+[   44.380741] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dee0
+[   44.380744] RBP: ffff8881157ac000 R08: 0000000000000000 R09: fffffbfff23a28cb
+[   44.380747] R10: ffffffff91d1465f R11: 0000000000000000 R12: 0000000000000019
+[   44.380750] R13: 0000000000000001 R14: ffff88812005d808 R15: ffff8881096e20c8
+[   44.380753] FS:  00007fcdd693c6c0(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   44.380756] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   44.380759] CR2: 00007fcdd0031000 CR3: 000000011e711000 CR4: 0000000000f50ef0
+[   44.380762] PKRU: 55555554
+[   44.380765] Call Trace:
+[   44.380768]  <TASK>
+[   44.380775]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   44.380992]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   44.381240]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   44.381522]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   44.381896]  ? __pfx___might_resched+0x10/0x10
+[   44.381912]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   44.382307]  ? ww_mutex_lock+0x37/0x160
+[   44.382318]  ? ww_mutex_lock+0x37/0x160
+[   44.382330]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   44.382343]  ? __pfx___might_resched+0x10/0x10
+[   44.382361]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   44.382386]  ? lock_release+0xc4/0x2a0
+[   44.382398]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   44.382408]  drm_mode_getconnector+0x4af/0x1600
+[   44.382424]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.382432]  ? lock_acquire+0x192/0x300
+[   44.382444]  ? drm_dev_exit+0x2b/0x50
+[   44.382453]  ? lock_release+0xc4/0x2a0
+[   44.382463]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.382471]  drm_ioctl_kernel+0x168/0x2f0
+[   44.382482]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   44.382497]  drm_ioctl+0x4cf/0xb60
+[   44.382510]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.382519]  ? __pfx_drm_ioctl+0x10/0x10
+[   44.382526]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   44.382554]  __x64_sys_ioctl+0x134/0x1c0
+[   44.382562]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   44.382572]  do_syscall_64+0x109/0x5d0
+[   44.382584]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   44.382592] RIP: 0033:0x7fcdff03565b
+[   44.382599] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   44.382606] RSP: 002b:00007fcdd693b2c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   44.382621] RAX: ffffffffffffffda RBX: 00007fcdd0036180 RCX: 00007fcdff03565b
+[   44.382626] RDX: 00007fcdd693b360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   44.382631] RBP: 00007fcdd693b360 R08: 0000000000000060 R09: 0000000000000002
+[   44.382636] R10: 00007fcdd00307b0 R11: 0000000000000246 R12: 00000000c05064a7
+[   44.382640] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcdd693b360
+[   44.382656]  </TASK>
+[   44.382661] irq event stamp: 48049
+[   44.382665] hardirqs last  enabled at (48055): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   44.382674] hardirqs last disabled at (48060): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   44.382680] softirqs last  enabled at (47458): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   44.382689] softirqs last disabled at (47449): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   44.382696] ---[ end trace 0000000000000000 ]---
+[   44.884277] ------------[ cut here ]------------
+[   44.884287] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[   44.884292] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#2: KMS thread/878
+[   44.884591] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   44.884663] CPU: 2 UID: 103 PID: 878 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   44.884671] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   44.884673] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   44.884677] RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+[   44.884885] Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 8c d9 47 ce 48 89 c6 48 8d 3d 02 7b 38 00 48 8b 54 24 08 48 c7 c1 00 bf 34 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+[   44.884889] RSP: 0018:ffff8881059a76e0 EFLAGS: 00010246
+[   44.884895] RAX: ffffffffc12a5640 RBX: ffff8881157ac000 RCX: ffffffffc134bf00
+[   44.884898] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dd80
+[   44.884901] RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff23a28cb
+[   44.884904] R10: ffffffff91d1465f R11: ffff8881059a7650 R12: ffff8881096e20c8
+[   44.884907] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   44.884909] FS:  00007fcdd693c6c0(0000) GS:ffff8882a5c3b000(0000) knlGS:0000000000000000
+[   44.884913] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   44.884916] CR2: 00007f796dbfc608 CR3: 000000011e711000 CR4: 0000000000f50ef0
+[   44.884919] PKRU: 55555554
+[   44.884922] Call Trace:
+[   44.884925]  <TASK>
+[   44.884931]  read_pin_configuration+0x12/0x560 [i915]
+[   44.885188]  ? intel_display_power_get+0x48/0x60 [i915]
+[   44.885552]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   44.885933]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   44.888185]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   44.888395]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   44.888787]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   44.889040]  ? __pfx___might_resched+0x10/0x10
+[   44.889059]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   44.889479]  ? ww_mutex_lock+0x37/0x160
+[   44.889492]  ? ww_mutex_lock+0x37/0x160
+[   44.889506]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   44.889525]  ? __pfx___might_resched+0x10/0x10
+[   44.889535]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   44.889550]  ? lock_release+0xc4/0x2a0
+[   44.889558]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   44.889564]  drm_mode_getconnector+0x4af/0x1600
+[   44.889574]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.889579]  ? lock_acquire+0x192/0x300
+[   44.889586]  ? drm_dev_exit+0x2b/0x50
+[   44.889591]  ? lock_release+0xc4/0x2a0
+[   44.889597]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.889602]  drm_ioctl_kernel+0x168/0x2f0
+[   44.889609]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   44.889618]  drm_ioctl+0x4cf/0xb60
+[   44.889626]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.889631]  ? __pfx_drm_ioctl+0x10/0x10
+[   44.889636]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   44.889873]  __x64_sys_ioctl+0x134/0x1c0
+[   44.889881]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   44.889887]  do_syscall_64+0x109/0x5d0
+[   44.889894]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   44.889899] RIP: 0033:0x7fcdff03565b
+[   44.889904] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   44.889909] RSP: 002b:00007fcdd693b2c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   44.889916] RAX: ffffffffffffffda RBX: 00007fcdd0036180 RCX: 00007fcdff03565b
+[   44.889919] RDX: 00007fcdd693b360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   44.889922] RBP: 00007fcdd693b360 R08: 0000000000000060 R09: 0000000000000002
+[   44.889925] R10: 00007fcdd00307b0 R11: 0000000000000246 R12: 00000000c05064a7
+[   44.889928] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcdd693b360
+[   44.889938]  </TASK>
+[   44.889941] irq event stamp: 52643
+[   44.889944] hardirqs last  enabled at (52649): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   44.889950] hardirqs last disabled at (52654): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   44.889954] softirqs last  enabled at (52558): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   44.889959] softirqs last disabled at (52447): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   44.889964] ---[ end trace 0000000000000000 ]---
+[   44.894455] ------------[ cut here ]------------
+[   44.894471] Missing case (pin_assignment == 15)
+[   44.894481] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#0: KMS thread/878
+[   44.895033] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   44.895214] CPU: 0 UID: 103 PID: 878 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   44.895231] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   44.895238] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   44.895245] RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+[   44.895760] Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d df 7b 38 00 48 c7 c6 e0 bf 34 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+[   44.895771] RSP: 0018:ffff8881059a76e0 EFLAGS: 00010206
+[   44.895783] RAX: 000000000000000f RBX: ffff8881157ac000 RCX: 0000000000000000
+[   44.895791] RDX: 000000000000000f RSI: ffffffffc134bfe0 RDI: ffffffffc100dd70
+[   44.895798] RBP: 000000000000000f R08: 0000000000000001 R09: ffffed1020b34ec1
+[   44.895804] R10: ffff8881059a760f R11: 0000000000000000 R12: 000000000000000f
+[   44.895811] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   44.895818] FS:  00007fcdd693c6c0(0000) GS:ffff8882a5b3b000(0000) knlGS:0000000000000000
+[   44.895826] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   44.895833] CR2: 00007f6f665e018c CR3: 000000011e711000 CR4: 0000000000f50ef0
+[   44.895840] PKRU: 55555554
+[   44.895846] Call Trace:
+[   44.895853]  <TASK>
+[   44.895865]  read_pin_configuration+0x12/0x560 [i915]
+[   44.896385]  ? intel_display_power_get+0x48/0x60 [i915]
+[   44.896904]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   44.897391]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   44.897849]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   44.898322]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   44.898605]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   44.898938]  ? __pfx___might_resched+0x10/0x10
+[   44.898956]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   44.899216]  ? ww_mutex_lock+0x37/0x160
+[   44.899227]  ? ww_mutex_lock+0x37/0x160
+[   44.899238]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   44.899254]  ? __pfx___might_resched+0x10/0x10
+[   44.899273]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   44.899301]  ? lock_release+0xc4/0x2a0
+[   44.899315]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   44.899326]  drm_mode_getconnector+0x4af/0x1600
+[   44.899344]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.899353]  ? lock_acquire+0x192/0x300
+[   44.899366]  ? drm_dev_exit+0x2b/0x50
+[   44.899376]  ? lock_release+0xc4/0x2a0
+[   44.899383]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.899389]  drm_ioctl_kernel+0x168/0x2f0
+[   44.899396]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   44.899406]  drm_ioctl+0x4cf/0xb60
+[   44.899415]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   44.899420]  ? __pfx_drm_ioctl+0x10/0x10
+[   44.899425]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   44.899443]  __x64_sys_ioctl+0x134/0x1c0
+[   44.899449]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   44.899455]  do_syscall_64+0x109/0x5d0
+[   44.899463]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   44.899468] RIP: 0033:0x7fcdff03565b
+[   44.899474] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   44.899478] RSP: 002b:00007fcdd693b2c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   44.899485] RAX: ffffffffffffffda RBX: 00007fcdd0036180 RCX: 00007fcdff03565b
+[   44.899489] RDX: 00007fcdd693b360 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   44.899492] RBP: 00007fcdd693b360 R08: 0000000000000060 R09: 0000000000000002
+[   44.899495] R10: 00007fcdd00307b0 R11: 0000000000000246 R12: 00000000c05064a7
+[   44.899498] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcdd693b360
+[   44.899508]  </TASK>
+[   44.899510] irq event stamp: 53669
+[   44.899513] hardirqs last  enabled at (53675): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   44.899518] hardirqs last disabled at (53680): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   44.899522] softirqs last  enabled at (53426): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   44.899527] softirqs last disabled at (53421): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   44.899531] ---[ end trace 0000000000000000 ]---
+[   46.090890] input: TK-KB005 Keyboard as /devices/virtual/misc/uhid/0005:245A:8276.0003/input/input10
+[   46.160855] hid-generic 0005:245A:8276.0003: input,hidraw1: BLUETOOTH HID v0.71 Keyboard [TK-KB005] on b0:47:e9:4f:ee:e3
+[   49.728792] rfkill: input handler enabled
+[   51.698266] ------------[ cut here ]------------
+[   51.698278] i915 0000:00:02.0: [drm] drm_WARN_ON(tc->mode == TC_PORT_LEGACY)
+[   51.698282] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:933 at adlp_tc_phy_connect+0x2d2/0x690 [i915], CPU#3: KMS thread/1911
+[   51.698520] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   51.698596] CPU: 3 UID: 1000 PID: 1911 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   51.698604] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   51.698606] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   51.698611] RIP: 0010:adlp_tc_phy_connect+0x2dd/0x690 [i915]
+[   51.698855] Code: 48 85 d2 0f 84 32 02 00 00 4c 89 ff 48 89 14 24 e8 e8 65 47 ce 48 89 c6 48 8d 3d be 08 38 00 48 8b 14 24 48 c7 c1 e0 c8 34 c1 <67> 48 0f b9 3a 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03
+[   51.698867] RSP: 0018:ffff88810a54f758 EFLAGS: 00010246
+[   51.698873] RAX: ffffffffc12a5640 RBX: ffff88812005d800 RCX: ffffffffc134c8e0
+[   51.698877] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dee0
+[   51.698881] RBP: ffff8881157ac000 R08: 0000000000000000 R09: fffffbfff23a28cb
+[   51.698884] R10: ffffffff91d1465f R11: 0000000000000000 R12: 0000000000000019
+[   51.698887] R13: 0000000000000001 R14: ffff88812005d808 R15: ffff8881096e20c8
+[   51.698891] FS:  00007fcd8e93c6c0(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   51.698894] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   51.698898] CR2: 00007fcd880318c8 CR3: 0000000131551000 CR4: 0000000000f50ef0
+[   51.698901] PKRU: 55555554
+[   51.698904] Call Trace:
+[   51.698909]  <TASK>
+[   51.698915]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   51.699164]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   51.699399]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   51.699625]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   51.699863]  ? __pfx___might_resched+0x10/0x10
+[   51.699876]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   51.700099]  ? ww_mutex_lock+0x37/0x160
+[   51.700105]  ? ww_mutex_lock+0x37/0x160
+[   51.700113]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   51.700121]  ? __pfx___might_resched+0x10/0x10
+[   51.700131]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   51.700147]  ? lock_release+0xc4/0x2a0
+[   51.700155]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   51.700161]  drm_mode_getconnector+0x4af/0x1600
+[   51.700171]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   51.700176]  ? lock_acquire+0x192/0x300
+[   51.700183]  ? drm_dev_exit+0x2b/0x50
+[   51.700189]  ? lock_release+0xc4/0x2a0
+[   51.700195]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   51.700200]  drm_ioctl_kernel+0x168/0x2f0
+[   51.700206]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   51.700216]  drm_ioctl+0x4cf/0xb60
+[   51.700224]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   51.700230]  ? __pfx_drm_ioctl+0x10/0x10
+[   51.700234]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   51.700251]  __x64_sys_ioctl+0x134/0x1c0
+[   51.700257]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   51.700263]  do_syscall_64+0x109/0x5d0
+[   51.700270]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   51.700275] RIP: 0033:0x7fcdb741b65b
+[   51.700279] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   51.700283] RSP: 002b:00007fcd8e93b0c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   51.700290] RAX: ffffffffffffffda RBX: 00007fcd8802b950 RCX: 00007fcdb741b65b
+[   51.700293] RDX: 00007fcd8e93b160 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   51.700296] RBP: 00007fcd8e93b160 R08: 0000000000000060 R09: 0000000000000002
+[   51.700299] R10: 00007fcd88030bb0 R11: 0000000000000246 R12: 00000000c05064a7
+[   51.700303] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcd8e93b160
+[   51.700313]  </TASK>
+[   51.700316] irq event stamp: 14129
+[   51.700319] hardirqs last  enabled at (14135): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   51.700325] hardirqs last disabled at (14140): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   51.700329] softirqs last  enabled at (13804): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   51.700334] softirqs last disabled at (13799): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   51.700339] ---[ end trace 0000000000000000 ]---
+[   52.202013] ------------[ cut here ]------------
+[   52.202027] i915 0000:00:02.0: [drm] drm_WARN_ON(val == 0xffffffff)
+[   52.202035] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:315 at get_pin_assignment+0x3be/0x610 [i915], CPU#3: KMS thread/1911
+[   52.202398] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   52.202497] CPU: 3 UID: 1000 PID: 1911 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   52.202509] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   52.202513] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   52.202518] RIP: 0010:get_pin_assignment+0x3ca/0x610 [i915]
+[   52.202847] Code: 24 50 48 85 d2 74 2d 4c 89 e7 48 89 54 24 08 e8 8c d9 47 ce 48 89 c6 48 8d 3d 02 7b 38 00 48 8b 54 24 08 48 c7 c1 00 bf 34 c1 <67> 48 0f b9 3a e9 da fd ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89
+[   52.202855] RSP: 0018:ffff88810a54f6e0 EFLAGS: 00010246
+[   52.202863] RAX: ffffffffc12a5640 RBX: ffff8881157ac000 RCX: ffffffffc134bf00
+[   52.202868] RDX: ffff8881095cf4a0 RSI: ffffffffc12a5640 RDI: ffffffffc100dd80
+[   52.202872] RBP: 00000000ffffffff R08: 0000000000000000 R09: fffffbfff23a28cb
+[   52.202876] R10: ffffffff91d1465f R11: ffff88810a54f650 R12: ffff8881096e20c8
+[   52.202880] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   52.202885] FS:  00007fcd8e93c6c0(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   52.202890] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   52.202894] CR2: 00007efe96ae10ac CR3: 0000000131551000 CR4: 0000000000f50ef0
+[   52.202898] PKRU: 55555554
+[   52.202902] Call Trace:
+[   52.202907]  <TASK>
+[   52.202915]  read_pin_configuration+0x12/0x560 [i915]
+[   52.203276]  ? intel_display_power_get+0x48/0x60 [i915]
+[   52.203680]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   52.204086]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   52.204469]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   52.204870]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   52.205246]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   52.205623]  ? __pfx___might_resched+0x10/0x10
+[   52.205640]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   52.207837]  ? ww_mutex_lock+0x37/0x160
+[   52.207853]  ? ww_mutex_lock+0x37/0x160
+[   52.207867]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   52.207882]  ? __pfx___might_resched+0x10/0x10
+[   52.207902]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   52.207932]  ? lock_release+0xc4/0x2a0
+[   52.207946]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   52.207957]  drm_mode_getconnector+0x4af/0x1600
+[   52.207976]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   52.207986]  ? lock_acquire+0x192/0x300
+[   52.208000]  ? drm_dev_exit+0x2b/0x50
+[   52.208010]  ? lock_release+0xc4/0x2a0
+[   52.208022]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   52.208032]  drm_ioctl_kernel+0x168/0x2f0
+[   52.208044]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   52.208062]  drm_ioctl+0x4cf/0xb60
+[   52.208077]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   52.208087]  ? __pfx_drm_ioctl+0x10/0x10
+[   52.208095]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   52.208128]  __x64_sys_ioctl+0x134/0x1c0
+[   52.208138]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   52.208150]  do_syscall_64+0x109/0x5d0
+[   52.208163]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   52.208172] RIP: 0033:0x7fcdb741b65b
+[   52.208181] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   52.208189] RSP: 002b:00007fcd8e93b0c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   52.208201] RAX: ffffffffffffffda RBX: 00007fcd8802b950 RCX: 00007fcdb741b65b
+[   52.208208] RDX: 00007fcd8e93b160 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   52.208213] RBP: 00007fcd8e93b160 R08: 0000000000000060 R09: 0000000000000002
+[   52.208219] R10: 00007fcd88030bb0 R11: 0000000000000246 R12: 00000000c05064a7
+[   52.208225] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcd8e93b160
+[   52.208245]  </TASK>
+[   52.208251] irq event stamp: 18373
+[   52.208256] hardirqs last  enabled at (18379): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   52.208266] hardirqs last disabled at (18384): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   52.208275] softirqs last  enabled at (18170): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   52.208285] softirqs last disabled at (17507): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   52.208294] ---[ end trace 0000000000000000 ]---
+[   52.208308] ------------[ cut here ]------------
+[   52.208314] Missing case (pin_assignment == 15)
+[   52.208319] WARNING: drivers/gpu/drm/i915/display/intel_tc.c:332 at get_pin_assignment+0x2d1/0x610 [i915], CPU#3: KMS thread/1911
+[   52.208765] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl intel_ipu6_isys btintel videobuf2_dma_sg btbcm bluetooth videobuf2_memops iwlwifi videobuf2_v4l2 intel_skl_int3472_tps68470 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete gc8034 gc5035 intel_skl_int3472_common i915 v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm intel_ipu6 drm_display_helper ipu_bridge
+[   52.209340] CPU: 3 UID: 1000 PID: 1911 Comm: KMS thread Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[   52.209353] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   52.209359] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[   52.209365] RIP: 0010:get_pin_assignment+0x2db/0x610 [i915]
+[   52.210237] Code: 00 00 00 41 d3 e5 44 89 2c 24 e9 46 fe ff ff 41 83 fc 06 0f 84 1d ff ff ff 48 8d 3d df 7b 38 00 48 c7 c6 e0 bf 34 c1 44 89 e2 <67> 48 0f b9 3a e9 31 ff ff ff 48 b8 00 00 00 00 00 fc ff df 48 89
+[   52.210246] RSP: 0018:ffff88810a54f6e0 EFLAGS: 00010206
+[   52.210257] RAX: 000000000000000f RBX: ffff8881157ac000 RCX: 0000000000000000
+[   52.210263] RDX: 000000000000000f RSI: ffffffffc134bfe0 RDI: ffffffffc100dd70
+[   52.210269] RBP: 000000000000000f R08: 0000000000000001 R09: ffffed10214a9ec1
+[   52.210274] R10: ffff88810a54f60f R11: 0000000000000000 R12: 000000000000000f
+[   52.210280] R13: 000000000000000f R14: ffff8881157ac5e8 R15: ffff88812005d800
+[   52.210286] FS:  00007fcd8e93c6c0(0000) GS:ffff8882a5cbb000(0000) knlGS:0000000000000000
+[   52.210294] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   52.210300] CR2: 00007efe96ae10ac CR3: 0000000131551000 CR4: 0000000000f50ef0
+[   52.210306] PKRU: 55555554
+[   52.210311] Call Trace:
+[   52.210317]  <TASK>
+[   52.210327]  read_pin_configuration+0x12/0x560 [i915]
+[   52.210771]  ? intel_display_power_get+0x48/0x60 [i915]
+[   52.211683]  adlp_tc_phy_connect+0x3ae/0x690 [i915]
+[   52.212578]  intel_tc_port_update_mode+0x722/0xf40 [i915]
+[   52.213468]  __intel_tc_port_lock+0x238/0x460 [i915]
+[   52.214352]  intel_digital_port_connected+0x84/0x1c0 [i915]
+[   52.215058]  intel_dp_detect+0x2a2/0x1c60 [i915]
+[   52.215510]  ? __pfx___might_resched+0x10/0x10
+[   52.215528]  ? __pfx_intel_dp_detect+0x10/0x10 [i915]
+[   52.216368]  ? ww_mutex_lock+0x37/0x160
+[   52.216382]  ? ww_mutex_lock+0x37/0x160
+[   52.216398]  drm_helper_probe_single_connector_modes+0x955/0x14a0
+[   52.216412]  ? __pfx___might_resched+0x10/0x10
+[   52.216433]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   52.216464]  ? lock_release+0xc4/0x2a0
+[   52.216480]  ? __pfx_drm_helper_probe_single_connector_modes+0x10/0x10
+[   52.216491]  drm_mode_getconnector+0x4af/0x1600
+[   52.216511]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   52.216521]  ? lock_acquire+0x192/0x300
+[   52.216536]  ? drm_dev_exit+0x2b/0x50
+[   52.216547]  ? lock_release+0xc4/0x2a0
+[   52.216559]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   52.216570]  drm_ioctl_kernel+0x168/0x2f0
+[   52.216582]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+[   52.216602]  drm_ioctl+0x4cf/0xb60
+[   52.216618]  ? __pfx_drm_mode_getconnector+0x10/0x10
+[   52.216629]  ? __pfx_drm_ioctl+0x10/0x10
+[   52.216638]  ? __pfx_ioctl_has_perm.constprop.0.isra.0+0x10/0x10
+[   52.216672]  __x64_sys_ioctl+0x134/0x1c0
+[   52.216682]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[   52.216687]  do_syscall_64+0x109/0x5d0
+[   52.216694]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   52.216698] RIP: 0033:0x7fcdb741b65b
+[   52.216702] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[   52.216705] RSP: 002b:00007fcd8e93b0c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   52.216711] RAX: ffffffffffffffda RBX: 00007fcd8802b950 RCX: 00007fcdb741b65b
+[   52.216713] RDX: 00007fcd8e93b160 RSI: 00000000c05064a7 RDI: 000000000000000c
+[   52.216716] RBP: 00007fcd8e93b160 R08: 0000000000000060 R09: 0000000000000002
+[   52.216719] R10: 00007fcd88030bb0 R11: 0000000000000246 R12: 00000000c05064a7
+[   52.216722] R13: 000000000000000c R14: 00000000c05064a7 R15: 00007fcd8e93b160
+[   52.216731]  </TASK>
+[   52.216734] irq event stamp: 19865
+[   52.216736] hardirqs last  enabled at (19871): [<ffffffff8da9ab0d>] __up_console_sem+0x4d/0x60
+[   52.216741] hardirqs last disabled at (19876): [<ffffffff8da9aaf2>] __up_console_sem+0x32/0x60
+[   52.216745] softirqs last  enabled at (19662): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   52.216749] softirqs last disabled at (19559): [<ffffffff8d915541>] __irq_exit_rcu+0xd1/0x1e0
+[   52.216754] ---[ end trace 0000000000000000 ]---
+[   55.790021] rfkill: input handler disabled
+[   58.394293] usb 1-4: USB disconnect, device number 8
+[   63.283566] input: Pebble M350s Mouse as /devices/virtual/misc/uhid/0005:046D:B036.0004/input/input11
+[   63.292362] hid-generic 0005:046D:B036.0004: input,hidraw0: BLUETOOTH HID v0.07 Mouse [Pebble M350s] on b0:47:e9:4f:ee:e3

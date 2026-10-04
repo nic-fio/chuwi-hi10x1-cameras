@@ -79,6 +79,8 @@ for i, r in enumerate(righe):
         trovati.append(('lockdep', m.group(1)[:60]))
     elif m := re.match(r'WARNING: CPU: \d+ PID: \d+ at \S+ ([\w.]+)', r):
         trovati.append(('WARNING', m.group(1)))
+    elif m := re.match(r'WARNING: \S+:\d+ at ([\w.]+)', r):   # formato 7.x
+        trovati.append(('WARNING', m.group(1)))
     elif m := re.match(r'UBSAN: ([\w-]+) in (\S+)', r):
         trovati.append(('UBSAN ' + m.group(1), m.group(2)))
     elif m := re.match(r'INFO: task (\S+) blocked', r):

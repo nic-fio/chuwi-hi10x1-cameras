@@ -1,0 +1,30 @@
+prova serie v3 — 2026-10-04T21:42:59+02:00
+kernel  : 7.3.0-rc1-intelcam-debug-g1b4a83d60ea1
+versione: Linux version 7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 (nicfio@NIC-OS) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #1 SMP PREEMPT_DYNAMIC Sun Oct  4 19:30:22 UTC 2026
+cmdline : vmlinuz-new initrd=initrd-new root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI
+cicli   : 300 per fase
+
+== fase avvio
+  reperti nel dmesg (avvio):
+        6  WARNING                      adlp_tc_phy_connect
+       12  WARNING                      get_pin_assignment
+== fase prima: uso normale
+  media0: Total for intel-ipu6 device /dev/media0: 8, Succeeded: 8, Failed: 0, Warnings: 0
+  gc5035 (/dev/v4l-subdev4): Total for device /dev/v4l-subdev4: 46, Succeeded: 46, Failed: 0, Warnings: 0
+  gc5035: cattura ok, 100776960 byte
+  gc8034 (/dev/v4l-subdev5): Total for device /dev/v4l-subdev5: 46, Succeeded: 46, Failed: 0, Warnings: 0
+  gc8034: cattura ok, 159805440 byte
+  reperti nel dmesg (prima):
+        2  WARNING                      ipu6_isys_buffer_list_get
+== fase open/gc5035: 300 cicli unbind/bind di i2c-GCTI5035:00, 4 lavoratori
+  CRASH al ciclo 4
+  lavoratori: 16666 riusciti, 12 errori (di cui ENODEV 10)
+  sensore ancora agganciato: si
+  reperti nel dmesg (open-gc5035):
+        1  KASAN null-ptr-deref         subdev_open
+
+Prova fermata al primo crash: riavviare prima di altro.
+kmemleak: 6 oggetti sospetti (tutto il boot)
+tainted: 644
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/prova-v3-7.3.0-rc1-intelcam-debug-g1b4a83d60ea1-20261004-214259

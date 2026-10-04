@@ -1,0 +1,4 @@
+gc8034 1-0037 -> Intel IPU6 CSI2 1 -> Intel IPU6 ISYS Capture 8 (/dev/video8)
+<<<<<<<<<<
+/home/nicfio/Documenti/INTEL-CAMERA/data/prova-v3-7.3.0-rc1-intelcam-debug-g1b4a83d60ea1-20261004-214259/prima-gc8034.raw — 159805440 byte, 10 fotogrammi da 3264x2448
+per guardarli:  scripts/raw-to-png.py /home/nicfio/Documenti/INTEL-CAMERA/data/prova-v3-7.3.0-rc1-intelcam-debug-g1b4a83d60ea1-20261004-214259/prima-gc8034.raw 3264 2448 rggb
