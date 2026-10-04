@@ -701,3 +701,46 @@ esplicitamente che sul tablet manca il prima/dopo della patch 2: sul
 base la prova si ferma al crash della fase open. **Da fare prima di
 spedire:** lo sha di `next` e' scritto abbreviato (`9cfc1aca0`, 9
 caratteri): prendere i 12 caratteri dal worktree sul server.
+
+### 4 ottobre, notte: v3 pronta da spedire, invio rimandato a venerdi'
+
+Deciso con Nic: **non si spedisce niente adesso**. Se entro **venerdi'
+9 ottobre** Sakari non da' segni di vita (risposta al sollecito del 01/10
+o alla v2, commento su patchwork), si spedisce la v3. Se risponde, si
+segue quello che dice.
+
+Preparato e verificato sul server (`192.168.0.2`), worktree
+`/media/INTEL-CAMERA/sorgenti/v3-invio` (staccato, `next` + serie):
+
+- **`next` invariato** dal 01/10: `9cfc1aca0781` (fetch del 04/10 sera).
+- **Le patch da spedire sono quelle provate**: `patch-id --stable`
+  identico tra i file di `patches/wip/subdev-fix-v3/` e i commit di
+  `tablet-v3` girati sul tablet.
+- **`git am`** su `9cfc1aca0781`: pulito.
+- **`checkpatch.pl --strict`**: 0 errori, 0 check; 1 avviso per patch,
+  "Unknown commit id" sui `Fixes:` (clone parziale; `61f5db549dde`
+  verificato su mainline il 27/09). Codespell non girato: dizionario
+  assente sul server.
+- **W=1** (`allmodconfig` + `VIDEO_V4L2_SUBDEV_API=y`,
+  `drivers/media/v4l2-core/`): 0 avvisi, 0 errori su `next`, con la 1/2,
+  con la serie; `v4l2-subdev.o` ricompilato ogni volta. Script
+  `/media/INTEL-CAMERA/tablet/v3-invio/w1.sh`, log in
+  `/media/INTEL-CAMERA/sorgenti/v3-invio-build/`.
+- **Tra `2dcdfb625c3b` (base delle prove QEMU) e `9cfc1aca0781`** in
+  `drivers/media/v4l2-core/` cambia solo `v4l2-isp.c`: le prove QEMU
+  valgono sulla base nuova.
+
+Lettera: compilazione e `base-commit` portati a `9cfc1aca0781`, prove
+QEMU dichiarate sulla base vecchia con lo stesso `v4l2-subdev.c`, sha
+del tablet a 12 caratteri (il "da fare" sopra e' chiuso).
+
+**Destinatari** (proposta, in `patches/wip/invia-serie-v3.sh` con i
+motivi): To Sakari; Cc Mauro, Hans Verkuil (Fixes della 2/2), Laurent
+Pinchart (Fixes della 1/2 e obiezione che motiva la v3), Nguyen (patch
+citata in [1]), linux-media, linux-kernel. Fuori Antti Laakso (era in Cc
+solo per le patch ipu6), stable@ e syzbot (bastano i trailer). Thread
+nuovo, `--suppress-cc=all`. Prova a vuoto (`--prova`) riuscita.
+
+**Venerdi', prima dell'invio**: Gmail (Cestino compreso), lore,
+patchwork; `git fetch` di `next` e, se si e' mosso, ripetere `git am`,
+W=1 e aggiornare sha e `base-commit`. Poi `./patches/wip/invia-serie-v3.sh`.

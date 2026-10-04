@@ -39,9 +39,10 @@ Changes since v2:
 
 Testing:
 - Built with W=1 (allmodconfig) at each patch of the series on media
-  next 2dcdfb625c3b.
+  next 9cfc1aca0781.
 - Run in QEMU/KVM (x86_64, 4 vCPUs, KASAN generic inline, vimc built
-  in), one boot per 60 s run. 16 threads either open and close vimc's
+  in) on media next 2dcdfb625c3b, which has the same v4l2-subdev.c,
+  one boot per 60 s run. 16 threads either open and close vimc's
   sub-device nodes, or loop on VIDIOC_G_EXT_CTRLS on handles they keep
   open across unbinds, while another thread unbinds and rebinds vimc
   through sysfs every 1 or 30 ms. Each oops kills the thread that hits
@@ -63,7 +64,7 @@ Testing:
   880 million EXT_CTRLS ioctls.
 - Run on the IPU6 tablet where I first hit the open() oops (Intel N100,
   Chuwi Hi10 X1), with two GalaxyCore sensors, GC5035 and GC8034, whose
-  drivers I have not posted yet. Kernel: media next 9cfc1aca0 plus
+  drivers I have not posted yet. Kernel: media next 9cfc1aca0781 plus
   those drivers and their ipu-bridge and int3472 changes, with KASAN
   (generic inline), lockdep and UBSAN. 4 processes either open and
   close every sub-device node, or loop on VIDIOC_G_EXT_CTRLS on the
@@ -105,7 +106,7 @@ Nicola Fiorillo (2):
  1 file changed, 13 insertions(+), 5 deletions(-)
 
 
-base-commit: 2dcdfb625c3b8fe87454e19dfbc54b3e3f0ad70e
+base-commit: 9cfc1aca0781ce08e307b6c9dd617d37021544a8
 -- 
 2.47.3
 
