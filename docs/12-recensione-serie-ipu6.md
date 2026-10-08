@@ -768,3 +768,16 @@ niente). Controlli della lista "venerdi', prima dell'invio", fatti oggi:
 
 Lettera: sha della compilazione e `base-commit` portati a
 `8e26d4c20ed2`. Prova a vuoto di `invia-serie-v3.sh --prova` riuscita.
+
+### 8 ottobre, 06:26: v3 spedita
+
+Spedita da Nic con `invia-serie-v3.sh` alle 04:25 UTC. Arrivata su
+linux-media (verificato via NNTP), patch in risposta alla lettera:
+
+- lettera: `<20261008042600.275884-1-nicfio@gmail.com>`
+  https://lore.kernel.org/linux-media/20261008042600.275884-1-nicfio@gmail.com/
+- 1/2: `<20261008042600.275884-2-nicfio@gmail.com>`
+- 2/2: `<20261008042600.275884-3-nicfio@gmail.com>`
+
+Prossimo passo: aspettare. Su patchwork la v2 andra' segnata come
+superseded (lo fa il manutentore o, con un account, noi).
