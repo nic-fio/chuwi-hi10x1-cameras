@@ -95,3 +95,24 @@ Fonti:
 | Review 2020 del GC5035 (Sakari, Rob Herring) | agente in corso |
 | Revisione avversariale indipendente di gc5035.c e gc8034.c | agenti in corso |
 | Modello del guadagno; sequenza di accensione | agenti in corso |
+
+### Rilievi raccolti (da verificare sul codice prima di correggere)
+
+Review 2020 GC5035 (agente, thread V3/v4 letti per intero):
+- R20-1 regolatori: iovdd/dovdd prima, almeno 50 µs, poi avdd/dvdd; spegnimento inverso. Figa: «regulator_bulk_enable() is async», Sakari «Ack» (20200831174057.GO31019). Vale per gc5035 e gc8034.
+- R20-2 ritardi senza fonte in gc5035 (5 ms); la v4 usava 1200 cicli MCLK prima dell'I2C e 2000 cicli dopo lo stop.
+- R20-3 `ret = 0` superfluo in set_ctrl (entrambi).
+- R20-4 0xf8=0x49 in gc5035_init_regs è residuo dei 24 MHz (sovrascritto dal modo con 0x58): solo nota, le tabelle restano identiche al vendor.
+- R20-5 i modi binned della v4 cambiano anche il PLL: il commento che dichiara sbagliati i loro HBLANK va riformulato.
+
+Revisione avversariale gc8034:
+- G8-A set_format ACTIVE riporta l'esposizione al massimo di vts_def ignorando VBLANK: fare come imx219 (riporta anche VBLANK al default).
+- G8-B massimo/default dell'esposizione dispari con passo 2: round_down e default fisso.
+- G8-C selezioni: tabelle programmano finestra 3284x2464 e crop ISP a (9,8) 3264x2448; il driver dichiara NATIVE_SIZE 3264x2448 e crop a (0,0).
+- G8-D offset VTS: il BSP lo dichiara (VB = VTS - 2448 - 36), non è inferito; correggere il commento. PIXEL_RATE ricavato dai fps misurati assorbe un errore dell'offset: misurare fps a due VBLANK.
+- G8-E accensione: BSP regolatori in ordine, 100-200 µs, clock, 1 ms, pwdn, 0,5-1 ms, reset, 6 ms + 8192 cicli.
+- G8-F pagina 0 non riscritta in set_ctrl/disable_streams: dopo un errore I2C a metà della sequenza bias si scrive in pagina 1.
+- G8-G scritture CCI_REG16 con autoincremento mai verificate in scrittura: rileggere 0x03/0x04 e 0x07/0x08.
+- G8-I ANALOGUE_GAIN contiene guadagno digitale (UAPI): codici analogici + DIGITAL_GAIN separato.
+- G8-J commento su PIXEL_RATE misurato; default esposizione fisso.
+- G8-K scrittura guadagno non atomica: al più un commento.
