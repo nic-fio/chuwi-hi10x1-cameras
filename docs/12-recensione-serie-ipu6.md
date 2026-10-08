@@ -1196,3 +1196,34 @@ identica a base. Gia' installato: `/mnt/vmlinuz-new-isys` +
 `initrd-new-isys` (08/10 10:01, bzImage = `out/isys`), moduli in
 `/lib/modules`. Sulla stessa ESP anche `vmlinuz-new-fin` (msleep in
 `__media_ioctl()`, branch `tablet-isys-finestra`).
+
+### 8 ottobre, 11:09: unbind a streaming acceso col kernel p1+p2, nessun blocco
+
+Stesso script (`riproduci-unbind-isys-streaming.sh gc5035`), kernel
+`vmlinuz-new-isys` (`g1afcfc3dc305`, `tablet-base` + p1 + p2), primo
+tentativo. Cartella `data/unbind-isys-streaming-…-20261008-110915/`;
+video della console (31 s) tenuto fuori dal repository.
+
+```
+454.574 intelcam-prova: 2 unbind-isys     schermo su tty3, unbind adesso
+455.016 intelcam-prova: 2 unbind-isys     esito 0 , isys agganciato: no
+456.342 intelcam-prova: 3 fine-cattura    uscita da sola: VIDIOC_DQBUF: failed: Invalid argument
+```
+
+- Nessun oops, nessun rapporto KASAN, nessun `stream stop/close time
+  out`: l'unbind dura 0,44 s, quindi stop e close hanno avuto risposta
+  dal firmware (con `1b4a83d60` erano due attese da 2 s a vuoto).
+- `v4l2-ctl` esce da solo con `DQBUF: Invalid argument` (coda fermata
+  dall'unregister), non resta appeso.
+- Il tablet non si blocca: il journal del boot va avanti ~30 s fino al
+  riavvio manuale, con soli i WARNING i915 `intel_tc.c` di ogni boot.
+- Il WARNING `ipu6-isys-queue.c:203` allo STREAMON e' quello
+  preesistente (lockdep su `stream->mutex`), non legato alla bozza.
+
+Prima/dopo, per ora: `1b4a83d60` 3 blocchi su 3 tentativi; p1+p2 0 su 1.
+Un solo tentativo non basta (memoria «rigore patch kernel»):
+- ripetere la prova «dopo» piu' volte, riavviando tra una e l'altra;
+- questa prova non tocca le finestre 1 e 2 della nota delle 12:00
+  (runtime suspend asincrona, ISR gia' entrata): il firmware ha
+  risposto, quindi non e' passata dal ramo dei timeout. Restano da
+  provare col kernel col ritardo in `isys_runtime_pm_suspend()`.
