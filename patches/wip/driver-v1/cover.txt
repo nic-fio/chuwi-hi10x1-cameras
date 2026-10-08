@@ -26,6 +26,26 @@ vendor code, which is wrong for this platform in both cases:
 
 The same values are used in the ipu-bridge entries in patch 3.
 
+Gain, power sequencing and geometry
+-----------------------------------
+
+V4L2_CID_ANALOGUE_GAIN is the index of the analogue gain step, 17 steps
+on the GC5035 and 7 on the GC8034, and the digital gain is left at the
+1.0x the register tables program. The vendor drivers fill the gap between
+two steps with digital gain; that is left to userspace.
+
+No datasheet is available for either sensor. The GC5035 power sequence
+follows the one Tomasz Figa described in the 2020 series (IOVDD first,
+MCLK cycles before the first I2C transaction and after streaming stops),
+the GC8034 one follows the Rockchip driver. On this machine only AVDD is
+a real, GPIO switched regulator: DVDD and DOVDD are dummies, and the
+GC8034 has no reset or powerdown GPIO.
+
+The register tables read out a window slightly larger than the output
+size and crop it: 2608x1960 cropped at (8, 8) on the GC5035, 3284x2464
+cropped at (9, 8) on the GC8034. The size of the full pixel arrays is not
+documented, so the readout windows are reported as the native sizes.
+
 Provenance
 ----------
 
@@ -57,12 +77,14 @@ Not covered
 -----------
 
   - One mode per sensor: 2592x1944 on the GC5035, 3264x2448 on the GC8034.
-    The binned modes in the vendor code have inconsistent timings and
-    were left out.
-  - The GC8034 frame length register holds an offset whose value is
-    inferred from the vendor defaults. An error of a few lines would
-    change the frame rate by about 0.1%, which I cannot measure.
-  - The sensor OTP is not read.
+    The binned modes of the vendor drivers have not been tested and were
+    left out.
+  - The GC8034 blanking register holds the frame length minus the height
+    and 36 lines, as computed by the Rockchip driver. I have not been able
+    to confirm the 36 lines independently: an error of a few lines would
+    change the frame rate by about 0.1%.
+  - The sensor OTP is not read. On the GC5035 it holds factory register
+    settings and defect pixel tables, which the 2020 series applied.
   - The GC8034 module has a dw9714 VCM, instantiated by ipu-bridge; focus
     has not been tested.
   - Tested on one machine, with one sample of each sensor.
