@@ -1514,7 +1514,7 @@ A 702,9 s kmemleak segnala 6 oggetti da 32 byte (salvati in
 `skl_int3472_clk_prepare()`/`_unprepare()` durante probe e runtime
 suspend di gc8034. Nessuno passa per ipu6. Un avviso simile (5
 oggetti, 707,5 s) c'e' gia' nel log sul server della corsa delle 10:32
-col kernel `g1b4a83d60ea1`, senza dettaglio salvato; nelle altre corse
-il tablet e' stato riavviato prima della scansione dei 700 s circa.
+col kernel `g1b4a83d60ea1`, senza dettaglio salvato; nelle altre corse,
+nei file salvati non compare.
 
 Finestra 1 col candidato: 0 su 3.
