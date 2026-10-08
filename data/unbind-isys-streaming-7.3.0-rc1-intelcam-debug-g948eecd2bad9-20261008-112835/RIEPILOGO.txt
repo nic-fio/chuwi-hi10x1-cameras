@@ -1,0 +1,11 @@
+unbind di ipu6-isys a streaming acceso — 2026-10-08T11:28:38+02:00
+kernel  : 7.3.0-rc1-intelcam-debug-g948eecd2bad9
+versione: Linux version 7.3.0-rc1-intelcam-debug-g948eecd2bad9 (nicfio@NIC-OS) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #5 SMP PREEMPT_DYNAMIC Thu Oct  8 09:18:11 UTC 2026
+cmdline : vmlinuz-new-pm initrd=initrd-new-pm root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI kasan_multi_shot
+driver  : /sys/bus/auxiliary/drivers/intel_ipu6_isys.isys
+device  : intel_ipu6.isys.40
+sensore : gc5035
+pipeline: gc5035 2-003f -> Intel IPU6 CSI2 2 -> Intel IPU6 ISYS Capture 16 (/dev/video16)
+
+1 streaming       acceso su /dev/video16 (0 fotogrammi in 3 s)
+2 unbind-isys     sta per partire (console livello 8, 150 ms per riga)

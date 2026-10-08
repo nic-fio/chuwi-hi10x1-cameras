@@ -16,6 +16,7 @@
 #   1 streaming acceso (v4l2-ctl --stream-mmap), controllo che sia partito
 #   2 unbind di isys
 #   3 fine del processo di cattura (da solo, o kill dopo la grazia)
+#   4 (solo con ATTESA=<s>) dmesg dopo altri <s> secondi
 #
 # Isys non viene ricollegato. Dopo la prova il kernel non e' attendibile:
 # RIAVVIARE prima di qualsiasi altra cosa.
@@ -127,6 +128,15 @@ LINEA=$("$PROJECT_DIR/scripts/cattura.sh" "$SENS" 1 /dev/null 2>&1 | head -1)
 VID=$(echo "$LINEA" | grep -oE "/dev/video[0-9]+")
 [ -n "$VID" ] || { log "pipeline non configurata: $LINEA"; exit 1; }
 log "pipeline: $LINEA"
+# La chiusura di cattura.sh avvia una runtime suspend. Col kernel col ritardo
+# (tablet-isys-pm) dura 5 s e blocca la resume dello streaming: va lasciata
+# finire, altrimenti la suspend della finestra 1 non parte all'unbind.
+PM="/sys/bus/auxiliary/devices/$DEV/power/runtime_status"
+for _ in $(seq 1 30); do
+    [ "$(cat "$PM")" = suspended ] && break
+    sleep 0.5
+done
+log "runtime : isys $(cat "$PM") prima dello streaming"
 dmesg -C
 log ""
 
@@ -168,6 +178,13 @@ else
 fi
 wait "$SPID" 2>/dev/null
 passo 3 fine-cattura
+# Con il kernel col ritardo nella runtime suspend (tablet-isys-pm) la suspend
+# riparte 5 s dopo l'unbind: ATTESA=10 la fa rientrare nel dmesg della prova.
+if [ "${ATTESA:-0}" -gt 0 ]; then
+    sleep "$ATTESA"
+    log "4 attesa          ${ATTESA}s dopo la fine della cattura"
+    passo 4 attesa
+fi
 echo 0 > /proc/sys/kernel/printk_delay
 echo "$PRINTK_ORIG" > /proc/sys/kernel/printk
 vt "$VT_ORIG"

@@ -1264,3 +1264,23 @@ Previsione con il ritardo (scritta prima della prova):
 Se succede, la p2 ha bisogno di una suspend sincrona (o di
 `pm_runtime_barrier()`) dentro `isys_remove()` prima di
 `v4l2_device_put()`.
+
+### 8 ottobre, 11:28: prima corsa col kernel `-pm`, non valida
+
+Dati in `data/unbind-isys-streaming-…-g948eecd2bad9-20261008-112835/`
+(journal del boot, dmesg del server, due fotogrammi dal video).
+
+- L'unbind **non e' mai partito**: in nessun log c'e' la riga «schermo su
+  tty3, unbind adesso». La previsione non e' ne' confermata ne' smentita.
+- La suspend col ritardo e' partita alla chiusura di `cattura.sh`
+  (212,95 s) e ha bloccato la resume di `v4l2-ctl`: «0 fotogrammi in
+  3 s», lo streaming parte solo a 218,9 s, dopo «riparte». Corretto lo
+  script: prima dello streaming aspetta `runtime_status = suspended`.
+- Il cambio di console (VT_RELDISP di systemd-logind) ha fatto ripartire
+  il rilevamento della porta Type-C di i915: tre WARN `intel_tc.c`
+  (933, 315, 332) stampati a 150 ms per riga, su due CPU. Il monitor
+  esterno resta nero, iwlwifi va in timeout a 221 s (il dmesg sul server
+  si ferma li'), il journal a 245 s. `VT_WAITACTIVE` non e' tornato
+  prima del riavvio.
+- Prossima corsa: monitor esterno staccato (schermo del tablet), cosi'
+  il cambio di console non passa dalla porta Type-C.
