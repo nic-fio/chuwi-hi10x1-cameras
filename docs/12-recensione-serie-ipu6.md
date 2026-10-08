@@ -1518,3 +1518,29 @@ col kernel `g1b4a83d60ea1`, senza dettaglio salvato; nelle altre corse,
 nei file salvati non compare.
 
 Finestra 1 col candidato: 0 su 3.
+
+### 8 ottobre, 12:47: quarta corsa col kernel `-fix`, primo avvio nuovo
+
+Dati in `data/unbind-isys-streaming-…-gdaf12e1ba16d-20261008-124739/`,
+copia sul server con lo stesso nome (2978 righe). Tablet appena
+riavviato (su da un minuto, taint 516), stessa prova con `ATTESA=10`,
+nessun blocco.
+
+```
+134.678 unbind adesso
+135.018 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, attesa 5 s
+140.386 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, riparte
+140.578 esito 0, isys agganciato: no          (unbind 5,90 s)
+141.941 v4l2-ctl uscito da solo: DQBUF Invalid argument
+153.255 fine dell'attesa di 10 s
+```
+
+Stessi tre punti delle corse precedenti: unbind lungo quanto la
+suspend, suspend che riparte col nome `intel_ipu6_isys.isys`, nessun
+KASAN, Oops o BUG nel log sul server, taint 516 alla fine. Dopo
+l'unbind solo i WARN di `intel_tc.c` 933/315/332 (154,5-155,0 s) del
+ritorno a tty2. Il WARN di `ipu6-isys-queue.c:203` compare due volte
+nel log sul server (122,4 s e 130,3 s), una sola in
+`dmesg-1-streaming.txt`, come nella corsa delle 12:27.
+
+Finestra 1 col candidato: 0 su 4.
