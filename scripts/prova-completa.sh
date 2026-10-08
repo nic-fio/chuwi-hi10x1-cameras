@@ -146,6 +146,26 @@ for spec in "gc5035:2920:2008:grbg:2592:1944" "gc8034:4272:2496:rggb:3264:2448";
         ok "$s: immagine scritta in $s.png" || ko "$s: conversione fallita"
 done
 
+# Frame rate a VBLANK lontano dal default. Per il gc8034 controlla le 36 righe
+# di offset del registro di blanking: con un errore di d righe il rapporto
+# fra i due frame rate si sposta di circa d/2496 - d/4496 (0,07% per d = 4),
+# poco sopra la precisione della misura. Si salva il d ricavato.
+for spec in "gc5035:2920:1944:64" "gc8034:4272:2448:48"; do
+    IFS=: read -r s hts h vbdef <<<"$spec"
+    [ -n "${NODE[$s]:-}" ] || continue
+    pr=$(v4l2-ctl -d "${SUBDEV[$s]}" --list-ctrls 2>/dev/null |
+         sed -n 's/.*pixel_rate.*value=\([0-9]*\).*/\1/p')
+    v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=vertical_blanking=2000 2>/dev/null
+    f2=$(timeout 120 v4l2-ctl -d "${NODE[$s]}" --stream-mmap --stream-count=150 2>&1 |
+         grep -oE "[0-9]+\.[0-9]+ fps" | tail -1 | cut -d' ' -f1)
+    v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=vertical_blanking=$vbdef 2>/dev/null
+    [ -n "$f2" ] || { ko "$s: nessun frame a VBLANK 2000"; continue; }
+    att=$(python3 -c "print($pr/($hts*($h+2000)))")
+    d=$(python3 -c "print(round($pr/($hts*$f2) - ($h+2000), 1))")
+    echo "$s: VBLANK 2000 fps_atteso=$att fps_misurato=$f2 righe_in_piu=$d" >> "$OUT/02-tempi.txt"
+    check_close "$att" "$f2" 0.2 "$s: il frame rate segue VBLANK (righe in piu' ricavate: $d)"
+done
+
 # ------------------------------------------------------------------ guadagno
 # Il segnale e' la media meno il pedestal di 64. Se la tabella di guadagno e'
 # stata trascritta male, il rapporto non torna: e' il controllo che l'ha
