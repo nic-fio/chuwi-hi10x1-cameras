@@ -8,4 +8,4 @@ controls.
 The register tables come from the Alder Lake-M driver in
 intel/ipu6-drivers, which derives from the ChromeOS driver posted in 2020.
 
-Assisted-by: LLM coccinelle sparse smatch
+Assisted-by: claude-opus-5-5 coccinelle sparse smatch

@@ -315,6 +315,63 @@ L'unico KO: 57 righe contate, 19 WARNING tutti `ipu6-isys-queue.c:203`, come
 in ogni corsa dalle 17:47. Non misurabile: esposizione dispari gc5035 a 8
 righe, troppo buio.
 
+Rilettura da capo di bce5c5710 (8/10, 19-20), due revisori indipendenti
+«come Sakari» e «come Laurent», review vere da patchwork (lore blocca i
+bot). Nessun difetto bloccante, tutti e due «spedibile». Verificati da me
+sul codice di next prima di accettarli:
+
+Da correggere prima di spedire:
+- R1 togliere set_fmt (un solo modo): il core chiama get_fmt da solo
+  (v4l2-subdev.c, call_set_fmt). Sakari su IMX681 e HM1092.
+- R2 remove: pm_runtime_set_suspended() solo insieme a power_off, come
+  imx219 (1337-1340). Sakari su IMX681 e IMX908.
+- R3 dev_err dopo cci_read/cci_write: doppi, v4l2-cci.c li scrive già
+  (righe 44, 143). Laurent. disable_streams e lettura chip id.
+- R4 nomi ai registri noti: gc8034 0x0a «row start» (Rockchip), 0x17
+  mirror, 0xb1/0xb2 guadagno digitale in tutti e due; 0xfe = 0x10 scritto
+  come GCxxxx_REG_PAGE_SELECT ma non è una pagina.
+- R5 commento del passo 4 di VBLANK gc5035: «the vendor drivers declare»
+  non è vero (Intel: passo 1, solo il default arrotondato a 4). Il passo 4
+  è misurato (301 -> 2244, 302 -> 2248): scriverlo così.
+- R6 0xfe ha anche altri bit (0x10): una riga che spiega perché niente
+  regmap_range_cfg (Sakari su os02g10 lo chiede).
+
+Da decidere (Nic):
+- ordine di spegnimento gc5035: clock spento prima di reset/powerdown
+  (Figa: 2000 cicli dopo lo stop), Intel asserisce reset prima del clock,
+  gc8034 fa il contrario. Senza datasheet: seguire Intel o restare.
+- HFLIP/VFLIP gc8034 (0x17 noto): Sakari li chiede quando un sensore è
+  montato capovolto.
+- gusto: autosuspend dopo la registrazione, `i` dichiarata nel ciclo,
+  min() inutile sul default dell'esposizione, controllo ridondante su
+  v4l2_ctrl_handler_init, pagina 0 rimessa due volte nel test pattern,
+  0x8c = 0x90 della tabella sempre sovrascritto, commento su CROP_LEFT 9
+  (ordine Bayer), MAINTAINERS con o senza T: (i due revisori dicono il
+  contrario; GC2145 ce l'ha, GC08A3 no).
+
+Scartati:
+- esposizione dispari gc5035 «da rifare con luce»: il revisore ha letto la
+  corsa al buio, G5-1.3 è chiuso con la torcia (sopra, 4,9-5 sigma).
+- «manca la 0/3»: la cover esiste a parte, la scrive Nic.
+- crop gc8034 a 8 bit (0x92/0x94): è quello che scrive Rockchip.
+
+Fatti per la cover: patches/wip/driver-v1/fatti-per-la-cover.md.
+
+Applicato (8/10 sera, serie `35478bd01..7b3ed03b4`): R1-R6; spegnimento
+gc5035 come Intel (reset e powerdown, poi clock; i 2000 cicli dopo lo stop
+restano); niente HFLIP/VFLIP (rotazione 0 su tutti e due, letta dai
+sensori); gusto: min() tolto, controllo su v4l2_ctrl_handler_init tolto,
+`i` nel ciclo, minmax.h tolto, frase sui nomi dei registri, commento sul
+crop dispari e sui 268,8 MHz del gc8034. Lasciati, perché non sono inutili:
+la pagina 0 rimessa dal test pattern serve a enable_streams, che scrive lo
+stream subito dopo i controlli; 0x8c = 0x90 della tabella fa parte della
+sequenza del vendor. Niente T: in MAINTAINERS (le voci recenti non l'hanno).
+`Assisted-by: claude-opus-5-5`. W=1, sparse, smatch, checkpatch --strict,
+coccinelle puliti, a parte il Signed-off-by.
+Kernel di prova `7.3.0-rc1-intelcam-debug-g7b3ed03b4963` (con
+CONFIG_UDMABUF=y), 0 avvisi, installato come `vmlinuz-new-driver-v1`.
+Dopo il riavvio: prova completa con la scena illuminata.
+
 Da fare, non nel codice:
 - Cover letter e messaggi di commit: li riscrive Nic con parole sue
   (Laurent: bot contro i testi da LLM, 25/09). Fatti e numeri per la cover:

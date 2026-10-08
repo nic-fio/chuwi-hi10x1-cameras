@@ -6,4 +6,4 @@ mode, and the exposure, analogue gain and vertical blanking controls.
 
 The register tables come from the Rockchip BSP driver.
 
-Assisted-by: LLM coccinelle sparse smatch
+Assisted-by: claude-opus-5-5 coccinelle sparse smatch

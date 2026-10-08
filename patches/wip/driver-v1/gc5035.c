@@ -20,7 +20,6 @@
 #include <linux/gpio/consumer.h>
 #include <linux/i2c.h>
 #include <linux/math.h>
-#include <linux/minmax.h>
 #include <linux/mod_devicetable.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
@@ -40,7 +39,9 @@
 /*
  * The GC5035 uses 8 bit register addresses with banked pages: register
  * 0xfe selects the page. Every register below is on page 0 unless noted
- * otherwise.
+ * otherwise. The vendor sequence also writes 0x10 to register 0xfe, which is
+ * not a page number and is not documented, so the pages are not handled with
+ * regmap ranges.
  */
 #define GC5035_REG_PAGE_SELECT		CCI_REG8(0xfe)
 #define GC5035_PAGE_0			0x00
@@ -60,6 +61,8 @@
 #define GC5035_STREAM_ON		0x91
 #define GC5035_STREAM_OFF		0x01
 #define GC5035_REG_FRAME_LENGTH		CCI_REG16(0x41)
+#define GC5035_REG_DIGITAL_GAIN	CCI_REG16(0xb1)
+#define GC5035_DIGITAL_GAIN_1X	0x100
 #define GC5035_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
 #define GC5035_REG_PLL_MULT		CCI_REG8(0xf8)
 
@@ -95,7 +98,7 @@
 #define GC5035_EXP_MARGIN		16
 #define GC5035_EXP_DEF			984
 #define GC5035_VTS_MAX			0x3fff
-/* The vendor drivers declare frame lengths in steps of 4 lines. */
+/* The sensor rounds the frame length to a multiple of 4 lines. */
 #define GC5035_VBLANK_STEP		4
 
 /*
@@ -116,8 +119,9 @@
  * 2020: IOVDD at least 50 us before AVDD and DVDD, at least 1200 MCLK cycles
  * before the first I2C transaction, and 2000 MCLK cycles after streaming stops
  * before the clock is switched off. From the intel/ipu6-drivers driver: the
- * clock is enabled before reset is released, and 5 ms elapse before the first
- * I2C transaction, which also covers the 1200 cycles.
+ * clock is enabled before reset is released and disabled after reset is
+ * asserted, and 5 ms elapse before the first I2C transaction, which also
+ * covers the 1200 cycles.
  */
 #define GC5035_IOVDD_DELAY_US		50
 #define GC5035_RESET_DELAY_US		(5 * USEC_PER_MSEC)
@@ -186,7 +190,7 @@ struct gc5035 {
 /*
  * The register sequence is the vendor one for the 2592x1944 mode, without the
  * registers written by the controls. No register documentation is available:
- * the geometry registers are named after the values they are programmed with.
+ * the names of the geometry registers are inferred from their values.
  */
 static const struct cci_reg_sequence gc5035_regs[] = {
 	/* System */
@@ -286,21 +290,20 @@ static const struct cci_reg_sequence gc5035_regs[] = {
 	{ CCI_REG8(0x94), 0x00 },
 	{ GC5035_REG_PAGE_SELECT, 0x00 },
 	{ CCI_REG8(0xfc), 0x88 },
-	{ GC5035_REG_PAGE_SELECT, 0x10 },
+	{ GC5035_REG_PAGE_SELECT, 0x10 },	/* not a page */
 	{ GC5035_REG_PAGE_SELECT, 0x00 },
 	{ CCI_REG8(0xfc), 0x8e },
 	{ GC5035_REG_PAGE_SELECT, 0x00 },
 	{ GC5035_REG_PAGE_SELECT, 0x00 },
 	{ GC5035_REG_PAGE_SELECT, 0x00 },
 	{ CCI_REG8(0xfc), 0x88 },
-	{ GC5035_REG_PAGE_SELECT, 0x10 },
+	{ GC5035_REG_PAGE_SELECT, 0x10 },	/* not a page */
 	{ GC5035_REG_PAGE_SELECT, 0x00 },
 	{ CCI_REG8(0xfc), 0x8e },
 	/* GAIN */
 	{ GC5035_REG_PAGE_SELECT, 0x00 },
 	{ CCI_REG8(0xb0), 0x6e },
-	{ CCI_REG8(0xb1), 0x01 },
-	{ CCI_REG8(0xb2), 0x00 },
+	{ GC5035_REG_DIGITAL_GAIN, GC5035_DIGITAL_GAIN_1X },
 	{ CCI_REG8(0xb3), 0x00 },
 	{ CCI_REG8(0xb4), 0x00 },
 	/* ISP */
@@ -409,9 +412,9 @@ static int gc5035_power_off(struct device *dev)
 
 	fsleep(GC5035_STOP_DELAY_US);
 
-	clk_disable_unprepare(gc5035->xclk);
 	gpiod_set_value_cansleep(gc5035->powerdown_gpio, 1);
 	gpiod_set_value_cansleep(gc5035->reset_gpio, 1);
+	clk_disable_unprepare(gc5035->xclk);
 	regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name) - 1,
 			       &gc5035->supplies[1]);
 	regulator_disable(gc5035->supplies[0].consumer);
@@ -469,18 +472,6 @@ static void gc5035_fill_state(struct v4l2_subdev_state *state)
 	fmt->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(fmt->colorspace);
 	fmt->quantization = V4L2_QUANTIZATION_FULL_RANGE;
 	fmt->xfer_func = V4L2_XFER_FUNC_NONE;
-}
-
-/* There is a single mode: any format request gets it. */
-static int gc5035_set_format(struct v4l2_subdev *sd,
-			     const struct v4l2_subdev_client_info *ci,
-			     struct v4l2_subdev_state *state,
-			     struct v4l2_subdev_format *fmt)
-{
-	gc5035_fill_state(state);
-	fmt->format = *v4l2_subdev_state_get_format(state, 0);
-
-	return 0;
 }
 
 static int gc5035_get_selection(struct v4l2_subdev *sd,
@@ -555,7 +546,7 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 		container_of(ctrl->handler, struct gc5035, ctrls);
 	const struct v4l2_mbus_framefmt *format;
 	struct v4l2_subdev_state *state;
-	s64 exposure_max, exposure_def;
+	s64 exposure_max;
 	int ret;
 
 	state = v4l2_subdev_get_locked_active_state(&gc5035->sd);
@@ -564,10 +555,9 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 	if (ctrl->id == V4L2_CID_VBLANK) {
 		exposure_max = format->height + ctrl->val -
 			       GC5035_EXP_MARGIN;
-		exposure_def = min(GC5035_EXP_DEF, exposure_max);
 		ret = __v4l2_ctrl_modify_range(gc5035->exposure,
 					       GC5035_EXP_MIN, exposure_max,
-					       GC5035_EXP_STEP, exposure_def);
+					       GC5035_EXP_STEP, GC5035_EXP_DEF);
 		if (ret)
 			return ret;
 	}
@@ -618,8 +608,7 @@ static int gc5035_identify_module(struct gc5035 *gc5035)
 
 	ret = cci_read(gc5035->regmap, GC5035_REG_CHIP_ID, &val, NULL);
 	if (ret)
-		return dev_err_probe(gc5035->dev, ret,
-				     "failed to read chip id\n");
+		return ret;
 
 	if (val != GC5035_CHIP_ID)
 		return dev_err_probe(gc5035->dev, -ENXIO,
@@ -667,14 +656,11 @@ static int gc5035_disable_streams(struct v4l2_subdev *sd,
 				  u32 pad, u64 streams_mask)
 {
 	struct gc5035 *gc5035 = to_gc5035(sd);
-	int ret;
+	int ret = 0;
 
-	ret = gc5035_set_page(gc5035, GC5035_PAGE_0);
-	if (!ret)
-		ret = cci_write(gc5035->regmap, GC5035_REG_STREAM,
-				GC5035_STREAM_OFF, NULL);
-	if (ret)
-		dev_err(gc5035->dev, "failed to stop streaming: %d\n", ret);
+	/* cci_write() logs errors, nothing else can be done about them. */
+	cci_write(gc5035->regmap, GC5035_REG_PAGE_SELECT, GC5035_PAGE_0, &ret);
+	cci_write(gc5035->regmap, GC5035_REG_STREAM, GC5035_STREAM_OFF, &ret);
 
 	pm_runtime_put_autosuspend(gc5035->dev);
 
@@ -689,7 +675,6 @@ static const struct v4l2_subdev_pad_ops gc5035_pad_ops = {
 	.enum_mbus_code = gc5035_enum_mbus_code,
 	.enum_frame_size = gc5035_enum_frame_size,
 	.get_fmt = v4l2_subdev_get_fmt,
-	.set_fmt = gc5035_set_format,
 	.get_selection = gc5035_get_selection,
 	.get_frame_desc = gc5035_get_frame_desc,
 	.enable_streams = gc5035_enable_streams,
@@ -755,9 +740,7 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 		return ret;
 
 	ctrl_hdlr = &gc5035->ctrls;
-	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 9);
-	if (ret)
-		return ret;
+	v4l2_ctrl_handler_init(ctrl_hdlr, 9);
 
 	link_freq = v4l2_ctrl_new_int_menu(ctrl_hdlr, NULL, V4L2_CID_LINK_FREQ,
 					   ARRAY_SIZE(gc5035_link_freq_menu) -
@@ -783,7 +766,7 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 	gc5035->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops,
 					     V4L2_CID_EXPOSURE, GC5035_EXP_MIN,
 					     exposure_max, GC5035_EXP_STEP,
-					     min(GC5035_EXP_DEF, exposure_max));
+					     GC5035_EXP_DEF);
 
 	v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
 			  0, ARRAY_SIZE(gc5035_again_code) - 1, 1, 0);
@@ -811,7 +794,6 @@ static int gc5035_probe(struct i2c_client *client)
 	struct device *dev = &client->dev;
 	struct gc5035 *gc5035;
 	unsigned long freq;
-	unsigned int i;
 	int ret;
 
 	gc5035 = devm_kzalloc(dev, sizeof(*gc5035), GFP_KERNEL);
@@ -855,7 +837,7 @@ static int gc5035_probe(struct i2c_client *client)
 		return dev_err_probe(dev, PTR_ERR(gc5035->powerdown_gpio),
 				     "failed to get powerdown GPIO\n");
 
-	for (i = 0; i < ARRAY_SIZE(gc5035_supply_name); i++)
+	for (unsigned int i = 0; i < ARRAY_SIZE(gc5035_supply_name); i++)
 		gc5035->supplies[i].supply = gc5035_supply_name[i];
 
 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(gc5035_supply_name),
@@ -938,9 +920,10 @@ static void gc5035_remove(struct i2c_client *client)
 	v4l2_ctrl_handler_free(&gc5035->ctrls);
 
 	pm_runtime_disable(&client->dev);
-	if (!pm_runtime_status_suspended(&client->dev))
+	if (!pm_runtime_status_suspended(&client->dev)) {
 		gc5035_power_off(&client->dev);
-	pm_runtime_set_suspended(&client->dev);
+		pm_runtime_set_suspended(&client->dev);
+	}
 	pm_runtime_dont_use_autosuspend(&client->dev);
 }
 

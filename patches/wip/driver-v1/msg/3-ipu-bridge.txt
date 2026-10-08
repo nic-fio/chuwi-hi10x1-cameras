@@ -4,4 +4,4 @@ Add the GC5035 and GC8034 ACPI HIDs, with the link frequencies the two
 sensors use with a 19.2 MHz external clock. Both are found on the CHUWI
 Hi10 X1.
 
-Assisted-by: LLM
+Assisted-by: claude-opus-5-5
