@@ -1284,3 +1284,28 @@ Dati in `data/unbind-isys-streaming-…-g948eecd2bad9-20261008-112835/`
   prima del riavvio.
 - Prossima corsa: monitor esterno staccato (schermo del tablet), cosi'
   il cambio di console non passa dalla porta Type-C.
+
+### 8 ottobre, 11:41: seconda corsa col kernel `-pm`, ancora non valida
+
+Dati in `data/unbind-isys-streaming-…-g948eecd2bad9-20261008-114120/`;
+dmesg completo sul server (`intelcam-log/`, stesso nome).
+
+- Monitor esterno staccato, schermo del tablet: stesso blocco delle
+  11:28. L'ultima riga dello script e' «2 unbind-isys sta per partire»;
+  «unbind adesso» non c'e'. La previsione resta da verificare.
+- Lo streaming e' partito bene (3 fotogrammi in 3 s, isys `suspended`
+  prima, suspend col ritardo 165,55 → 170,70 s): la correzione delle
+  11:36 funziona.
+- Il blocco e' nel cambio di console, non nella porta esterna:
+  `systemd-logind` → `fb_set_var` → `intel_fbdev_set_par` →
+  `drm_fb_helper_hotplug_event` → `intel_dp_detect` →
+  `adlp_tc_phy_connect`, con i WARN `intel_tc.c` 933 e 315 (~85 righe
+  l'uno). Con `printk_delay` a 150 ms l'attesa sta dentro `printk`, nel
+  chiamante: ~13 s di CPU per WARN. Il dmesg sul server si ferma a 207 s.
+- Alle 11:17 (kernel p1+p2) lo stesso cambio non ha stampato nessun
+  `intel_tc`. Ipotesi non verificata: il rilevamento completo parte solo
+  se c'e' stato un hotplug durante la sessione grafica (delayed hotplug
+  di fbdev), e staccare il monitor l'ha provocato.
+- Script corretto: lo schermo passa a tty3 subito dopo la pipeline,
+  prima dello streaming e prima di livello 8 e `printk_delay`, con 60 s
+  di tempo massimo, altrimenti la prova si annulla (uscita 4).

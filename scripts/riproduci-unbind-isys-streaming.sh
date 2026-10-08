@@ -43,6 +43,10 @@
 # telefono. Se la prova finisce senza bloccarsi, lo schermo torna da solo
 # alla sessione grafica.
 #
+# Il passaggio di console avviene prima dello streaming, a printk normale:
+# alle 11:28 e alle 11:41 (kernel -pm), fatto subito prima dell'unbind con
+# printk_delay attivo, ha bloccato il tablet nei WARN intel_tc.c di i915.
+#
 # Il terzo tentativo (10:32) e' riuscito: oops in ipu6_put_fw_msg_buf() dentro
 # l'ISR, rapporto completo sul server (ssh ha retto ~13 s dopo l'oops) e sullo
 # schermo. Lettura in docs/12-recensione-serie-ipu6.md, 8 ottobre 10:40.
@@ -75,6 +79,7 @@ if len(sys.argv) > 1:
 else:
     print(struct.unpack("HHH", fcntl.ioctl(f, 0x5603, bytes(6)))[0])  # VT_GETSTATE' "$@"
 }
+vt_cambia() { timeout -s KILL 60 bash -c "$(declare -f vt); vt $1"; }
 remoto() { sudo -u "$UTENTE" ssh -o BatchMode=yes -o ConnectTimeout=5 "$REMOTO" "$@"; }
 remoto true || { echo "server $REMOTO non raggiungibile via SSH"; exit 1; }
 
@@ -137,6 +142,17 @@ for _ in $(seq 1 30); do
     sleep 0.5
 done
 log "runtime : isys $(cat "$PM") prima dello streaming"
+# Il passaggio alla console di testo fa ripartire il rilevamento della porta
+# Type-C di i915 (fb_set_var -> drm_fb_helper_hotplug_event), con i WARN di
+# intel_tc.c. Col printk_delay attivo ogni WARN tiene la CPU ~13 s: alle
+# 11:28 e alle 11:41 il tablet si e' fermato qui, prima dell'unbind. Quindi
+# lo schermo passa adesso, a printk normale, e se non passa la prova si ferma.
+VT_ORIG=$(vt)
+if ! vt_cambia "$VT"; then
+    log "schermo  : passaggio a tty$VT non riuscito in 60 s, prova annullata"
+    exit 4
+fi
+log "schermo  : su tty$VT (era tty$VT_ORIG)"
 dmesg -C
 log ""
 
@@ -159,9 +175,7 @@ PRINTK_ORIG=$(cat /proc/sys/kernel/printk)
 log "2 unbind-isys     sta per partire (console livello 8, ${RITARDO} ms per riga)"
 dmesg -n 8
 echo "$RITARDO" > /proc/sys/kernel/printk_delay
-VT_ORIG=$(vt)
-vt "$VT"
-log "2 unbind-isys     schermo su tty$VT, unbind adesso"
+log "2 unbind-isys     unbind adesso"
 echo "$DEV" > "$DRV/unbind"
 log "2 unbind-isys     esito $? , isys agganciato: $([ -e "$DRV/$DEV" ] && echo si || echo no)"
 passo 2 unbind-isys
@@ -187,7 +201,7 @@ if [ "${ATTESA:-0}" -gt 0 ]; then
 fi
 echo 0 > /proc/sys/kernel/printk_delay
 echo "$PRINTK_ORIG" > /proc/sys/kernel/printk
-vt "$VT_ORIG"
+vt_cambia "$VT_ORIG"
 
 log ""
 cat /proc/sys/kernel/tainted > "$OUT/tainted.txt"
