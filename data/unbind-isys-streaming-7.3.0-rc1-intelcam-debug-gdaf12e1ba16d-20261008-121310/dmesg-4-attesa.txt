@@ -1,0 +1,1 @@
+[  147.720357] intelcam-prova: 4 attesa          10s dopo la fine della cattura

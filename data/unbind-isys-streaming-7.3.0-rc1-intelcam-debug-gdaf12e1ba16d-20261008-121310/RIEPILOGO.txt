@@ -1,0 +1,23 @@
+unbind di ipu6-isys a streaming acceso — 2026-10-08T12:13:12+02:00
+kernel  : 7.3.0-rc1-intelcam-debug-gdaf12e1ba16d
+versione: Linux version 7.3.0-rc1-intelcam-debug-gdaf12e1ba16d (nicfio@NIC-OS) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #6 SMP PREEMPT_DYNAMIC Thu Oct  8 10:03:32 UTC 2026
+cmdline : vmlinuz-new-fix initrd=initrd-new-fix root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI kasan_multi_shot
+driver  : /sys/bus/auxiliary/drivers/intel_ipu6_isys.isys
+device  : intel_ipu6.isys.40
+sensore : gc5035
+pipeline: gc5035 2-003f -> Intel IPU6 CSI2 2 -> Intel IPU6 ISYS Capture 16 (/dev/video16)
+runtime : isys suspended prima dello streaming
+schermo  : su tty3 (era tty2)
+
+1 streaming       acceso su /dev/video16 (3 fotogrammi in 3 s)
+      WARNING: drivers/media/pci/intel/ipu6/ipu6-isys-queue.c:203 at ipu6_isys_buffer_list_get+0x390/0x4f0 [intel_ipu6_isys], CPU#3: v4l2-ctl/5896
+2 unbind-isys     sta per partire (console livello 8, 150 ms per riga)
+2 unbind-isys     unbind adesso
+2 unbind-isys     esito 0 , isys agganciato: no
+3 fine-cattura    uscita da sola: <<<<<<<<<<<<<<<<<<<<<<<<<<<<VIDIOC_DQBUF: failed: Invalid argument
+4 attesa          10s dopo la fine della cattura
+
+tainted: 516
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/unbind-isys-streaming-7.3.0-rc1-intelcam-debug-gdaf12e1ba16d-20261008-121310
+dmesg completo anche sul server: 192.168.0.2:intelcam-log/unbind-isys-streaming-7.3.0-rc1-intelcam-debug-gdaf12e1ba16d-20261008-121310.txt
+RIAVVIARE il tablet prima di qualsiasi altra prova.

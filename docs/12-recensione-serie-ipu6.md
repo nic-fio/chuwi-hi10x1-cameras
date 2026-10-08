@@ -1462,3 +1462,26 @@ Prossimi passi: altre corse per avere piu' di 1 su 1; togliere il
 (`power/control` = `on` scritto durante lo streaming, oppure
 `pm_qos_resume_latency_us` 0), dove `pm_runtime_suspend()` esce senza
 aspettare.
+
+### 8 ottobre, 12:13: seconda corsa col kernel `-fix`, stesso esito
+
+Dati in `data/unbind-isys-streaming-…-gdaf12e1ba16d-20261008-121310/`,
+copia sul server con lo stesso nome. Stesso avvio (taint 516), stessa
+prova con `ATTESA=10`, nessun blocco.
+
+```
+129.314 unbind adesso
+129.642 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, attesa 5 s
+134.912 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, riparte
+135.092 esito 0, isys agganciato: no          (unbind 5,78 s)
+136.418 v4l2-ctl uscito da solo: DQBUF Invalid argument
+147.720 fine dell'attesa di 10 s
+```
+
+Stessi tre punti della 12:08: unbind lungo quanto la suspend, suspend
+che riparte ancora col nome `intel_ipu6_isys.isys`, nessun KASAN ne'
+Oops, taint 516 alla fine. Dopo l'unbind solo i WARN di `intel_tc.c`
+933/315/332 del ritorno a tty2. Il WARN di `ipu6-isys-queue.c:203`
+all'avvio dello streaming c'e' anche qui.
+
+Finestra 1 col candidato: 0 su 2.
