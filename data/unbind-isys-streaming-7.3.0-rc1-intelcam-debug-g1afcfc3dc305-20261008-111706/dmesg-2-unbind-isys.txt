@@ -1,0 +1,3 @@
+[  414.764549] intelcam-prova: 2 unbind-isys     sta per partire (console livello 8, 150 ms per riga)
+[  415.073381] intelcam-prova: 2 unbind-isys     schermo su tty3, unbind adesso
+[  415.479729] intelcam-prova: 2 unbind-isys     esito 0 , isys agganciato: no
