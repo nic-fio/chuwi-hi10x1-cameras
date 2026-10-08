@@ -822,3 +822,29 @@ Il messaggio ammette tutti e due i punti, spiega i due buchi rimasti e
 ritira tutta la serie v3: la soluzione vera e' la gestione della vita
 di media device e sotto-dispositivi, non un altro controllo in `open()`.
 **Non ancora spedita.**
+
+### Dopo la bocciatura: com'e' fatto lo stato dell'arte (letto via NNTP)
+
+Intestazioni di linux-media da ottobre 2023 a oggi, piu' i messaggi
+chiave letti per intero:
+
+- **Hans Verkuil, em28xx (pull per v7.3, 10/07/2026).** Sei patch, la
+  centrale e' «use v4l2_device release callback»: la memoria del driver
+  si libera nel `release()` del `v4l2_device`, quando l'ultimo nodo e
+  l'ultimo file aperto se ne sono andati, non in `disconnect()`/`remove()`.
+  Nella lettera della pull: «Hopefully once this is merged people will
+  stop posting bad patches trying to fix the lifetime issues.» **E'
+  questa la strada che i manutentori accettano: correggere la vita degli
+  oggetti nel driver, non aggiungere controlli nel core.**
+- La patch di Hans porta `Assisted-by: Claude:claude-opus-4-7`: il
+  problema per loro non e' l'LLM, e' la correzione sbagliata.
+- **Nessuna serie aperta sulla vita del media device** in questi tre
+  anni (in `next` il `media_device` non ha refcount). Sakari ha in corso
+  altre serie grandi (metadata/pad interni v12, IPU6 multi-stream,
+  supporto ipu7 in ipu6 v4 da 45 patch): il driver IPU6 si muove molto.
+- **ipu6-isys**: nessuna patch pubblicata che sposti `isys` (con dentro
+  `media_dev` e `v4l2_dev`) dal `devm_kzalloc()` a un release callback.
+  Ultima correzione vicina: Antti Laakso, «Fix bus device
+  use-after-free» (24/09), su `ipu6_pci_remove()`, altra cosa.
+- Thread di Nguyen (19/09): Laurent ha scritto solo le due frasi gia'
+  note, nessuna indicazione tecnica.
