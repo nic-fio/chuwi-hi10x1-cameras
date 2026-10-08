@@ -61,7 +61,7 @@ done
 # ------------------------------------------------------------------ carica
 head_ "CARICAMENTO DEI MODULI"
 if [ ! -L /sys/bus/i2c/devices/i2c-GCTI5035:00/driver ]; then
-    "$PROJECT_DIR/build-6.12/carica.sh" >"$OUT/01-carica.txt" 2>&1
+    modprobe -a gc5035 gc8034 >"$OUT/01-carica.txt" 2>&1
 fi
 for d in GCTI5035 GCTI8034; do
     if [ -L "/sys/bus/i2c/devices/i2c-$d:00/driver" ]; then
@@ -220,15 +220,16 @@ rm -f "$OUT/.g1.raw" "$OUT/.g2.raw"
 head_ "V4L2-COMPLIANCE"
 for s in gc5035 gc8034; do
     [ -n "${SUBDEV[$s]:-}" ] || continue
-    n=$(timeout 300 v4l2-compliance -d "${SUBDEV[$s]}" 2>&1 | tee "$OUT/04-compliance-$s.txt" |
+    # -u: il nodo e' un subdev. L'output completo va nella cover letter.
+    # Fino al kernel 7.2 falliva il test degli eventi sui controlli; su next
+    # il core imposta da solo V4L2_SUBDEV_FL_HAS_EVENTS, quindi zero e basta.
+    n=$(timeout 300 v4l2-compliance -u "${SUBDEV[$s]}" 2>&1 | tee "$OUT/04-compliance-$s.txt" |
         sed -n 's/.*Succeeded: \([0-9]*\), Failed: \([0-9]*\).*/\1 \2/p')
     read -r good bad <<<"$n"
-    # 1 fallimento e' quello degli eventi sui controlli, condiviso con tutti i
-    # driver di sensore mainline recenti. Due sarebbero una regressione.
-    if [ "${bad:-9}" -le 1 ]; then
-        ok "$s: compliance $good ok, $bad fallito (atteso: al massimo 1)"
+    if [ "${bad:-9}" -eq 0 ]; then
+        ok "$s: compliance $good ok, 0 falliti"
     else
-        ko "$s: compliance $good ok, $bad falliti"
+        ko "$s: compliance $good ok, ${bad:-?} falliti"
     fi
 done
 

@@ -1,0 +1,85 @@
+Subject: [PATCH 0/3] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
+
+This series adds drivers for the GalaxyCore GC5035 and GC8034 raw Bayer
+sensors, and the ipu-bridge entries needed to use them on Intel IPU6. Both
+are found on the CHUWI Hi10 X1, an Intel N100 (Alder Lake-N) tablet:
+
+  GC5035, 5 Mpixel, front, 2 CSI-2 lanes, ACPI HID GCTI5035
+  GC8034, 8 Mpixel, rear,  4 CSI-2 lanes, ACPI HID GCTI8034
+
+The drivers are ACPI only. I have no device tree system with either sensor,
+so I have not added bindings I cannot test.
+
+Link frequencies
+----------------
+
+Both drivers accept only the 19.2 MHz external clock they have been tested
+with, and the link frequencies are measured rather than taken from the
+vendor code, which is wrong for this platform in both cases:
+
+  - GC5035: the vendor code declares 438 MHz. The measured frame rate of
+    28.81 fps (hts 2920, vts 2008) gives a link frequency of 422.4 MHz,
+    and the ratio does not change with VBLANK.
+  - GC8034: the vendor code declares 336 MHz for a 24 MHz clock. At
+    19.2 MHz the frame rate is 23.99 fps instead of 30, a ratio of 0.7997,
+    so 268.8 MHz.
+
+The same values are used in the ipu-bridge entries in patch 3.
+
+Provenance
+----------
+
+The GC5035 register tables come from the Alder Lake-M driver in
+intel/ipu6-drivers, which derives from the ChromeOS driver posted in 2020
+by Tomasz Figa [1]. That series got as far as v4 and was not merged. The
+GC8034 register tables come from the Rockchip BSP driver (rockchip-linux
+kernel, develop-5.10). The copyright lines of the original authors are
+kept in both files. The register sequences are reproduced unmodified;
+there is no public documentation for the PLL and CSI-2 settings.
+
+The driver code follows gc05a2.c and gc08a3.c: CCI helpers, subdev active
+state, enable_streams/disable_streams and runtime PM with autosuspend.
+
+Use of an LLM
+-------------
+
+[[DA CONFERMARE DA NICOLA: ruolo umano e strumenti]]
+The drivers were written with the help of an LLM coding assistant (Claude,
+in Claude Code), which produced most of the C code from the gc05a2/gc08a3
+structure and the vendor register tables, and the conversion of the tables
+to cci_reg_sequence. I directed the work, ran the tests on the hardware
+listed below and reviewed the result. The conversion of the tables was
+checked by a script that compares them register by register with the
+vendor sources. sparse, smatch, coccinelle and checkpatch were used on
+every patch, as noted in the Assisted-by tags.
+
+Not covered
+-----------
+
+  - One mode per sensor: 2592x1944 on the GC5035, 3264x2448 on the GC8034.
+    The binned modes in the vendor code have inconsistent timings and
+    were left out.
+  - The GC8034 frame length register holds an offset whose value is
+    inferred from the vendor defaults. An error of a few lines would
+    change the frame rate by about 0.1%, which I cannot measure.
+  - The sensor OTP is not read.
+  - The GC8034 module has a dw9714 VCM, instantiated by ipu-bridge; focus
+    has not been tested.
+  - Tested on one machine, with one sample of each sensor.
+
+Testing
+-------
+
+Based on media-committers next, commit 8e26d4c20ed2 ("media: hantro:
+disable runtime PM before hardware teardown"), and tested on the CHUWI
+Hi10 X1 with that kernel and these patches:
+
+  - both sensors stream at full resolution
+  - frame rate: [[DA PROVA]]
+  - analogue gain: [[DA PROVA]]
+  - GC5035 test pattern: [[DA PROVA]]
+  - v4l2-compliance -u on both sub-devices: [[DA PROVA]], output below
+
+[1] https://lore.kernel.org/linux-media/20200902224813.14283-1-tfiga@chromium.org/
+
+[[DA PROVA: output di v4l2-compliance -u per gc5035 e gc8034]]

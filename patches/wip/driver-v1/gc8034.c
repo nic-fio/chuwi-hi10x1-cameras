@@ -166,6 +166,9 @@ struct gc8034_reg_list {
 /*
  * The register sequences are reproduced unmodified from the vendor code. No
  * register documentation is available for the PLL and CSI-2 settings.
+ *
+ * The vendor code keeps all four lane settings in one list. It is split here
+ * at the point where its two lane lists separate global and mode settings.
  */
 static const struct cci_reg_sequence gc8034_global_regs[] = {
 	/* SYS */
