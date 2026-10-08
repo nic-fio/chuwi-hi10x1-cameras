@@ -1423,3 +1423,42 @@ candidato, attesa della runtime suspend in isys_remove()» (il
 config identica a `isys-pm`; release `…-gdaf12e1ba16d`, installato con
 suffisso `-fix`. Stessa riga di avvio della corsa delle 11:47
 (`quiet kasan_multi_shot`), stessa prova con `ATTESA=10`.
+
+### 8 ottobre, 12:08: corsa col kernel `-fix`, finestra 1 chiusa
+
+Dati in `data/unbind-isys-streaming-…-gdaf12e1ba16d-20261008-120851/`,
+copia completa sul server in `intelcam-log/`, stesso nome. Avvio
+pulito (taint 516), isys in suspend prima dello streaming, schermo
+passato a tty3 senza blocchi.
+
+```
+130.510 unbind adesso
+130.834 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, attesa 5 s
+136.189 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, riparte
+136.362 esito 0, isys agganciato: no          (unbind 5,85 s)
+137.677 v4l2-ctl uscito da solo: DQBUF Invalid argument
+148.975 fine dell'attesa di 10 s
+```
+
+Previsione delle 11:53 verificata punto per punto:
+
+- unbind ~5 s invece di 0,45 s: **5,85 s**, cioe' l'unbind ha
+  aspettato la suspend;
+- suspend con nome `intel_ipu6_isys.isys` sia all'inizio sia alla
+  ripartenza (alle 11:47 ripartiva come `auxiliary`): il callback
+  finisce col driver ancora agganciato;
+- nessun rapporto KASAN, nessun Oops, taint 516 anche alla fine (alle
+  11:47 era 548). Gli unici WARN dopo l'unbind (150,2 s e 150,7 s) sono
+  quelli di `intel_tc.c` 933/315/332, dovuti al ritorno a tty2, come
+  all'avvio.
+
+Prima/dopo per la finestra 1: 1 su 1 col kernel `-pm`, 0 su 1 col
+candidato, con la stessa prova e la stessa riga di avvio. Resta il
+WARN di `ipu6-isys-queue.c:203` all'avvio dello streaming, presente
+in tutte e due le corse e indipendente da questa correzione.
+
+Prossimi passi: altre corse per avere piu' di 1 su 1; togliere il
+`msleep(5000)` e provare senza ritardo; provare il ramo `barrier`
+(`power/control` = `on` scritto durante lo streaming, oppure
+`pm_qos_resume_latency_us` 0), dove `pm_runtime_suspend()` esce senza
+aspettare.

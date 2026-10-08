@@ -1,0 +1,5 @@
+[  130.318794] intelcam-prova: 2 unbind-isys     sta per partire (console livello 8, 150 ms per riga)
+[  130.509490] intelcam-prova: 2 unbind-isys     unbind adesso
+[  130.834354] intel_ipu6_isys.isys intel_ipu6.isys.40: SOLO PROVA: runtime suspend, attesa 5 s
+[  136.189422] intel_ipu6_isys.isys intel_ipu6.isys.40: SOLO PROVA: runtime suspend, riparte
+[  136.362045] intelcam-prova: 2 unbind-isys     esito 0 , isys agganciato: no

@@ -1,0 +1,1 @@
+[  137.676846] intelcam-prova: 3 fine-cattura    uscita da sola: <<<<<<<<<<<<<<<<<<<<<<<<<<<<VIDIOC_DQBUF: failed: Invalid argument
