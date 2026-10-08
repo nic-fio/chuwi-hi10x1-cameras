@@ -848,3 +848,30 @@ chiave letti per intero:
   use-after-free» (24/09), su `ipu6_pci_remove()`, altra cosa.
 - Thread di Nguyen (19/09): Laurent ha scritto solo le due frasi gia'
   note, nessuna indicazione tecnica.
+
+### 8 ottobre, mattina: revisione della risposta a Laurent prima dell'invio
+
+Regola: nella risposta solo affermazioni verificate su `next`
+(`8e26d4c20`) o riprodotte. Esito del controllo sul codice:
+
+- **Sbagliata la premessa del primo punto** («the cdev only holds
+  videodev», e qui sopra «il cdev trattiene solo videodev»). Il nodo di
+  un sotto-dispositivo e' registrato da
+  `v4l2_device_register_subdev_nodes()` con
+  `__video_register_device(..., sd->owner)` (`v4l2-device.c:224`), quindi
+  il cdev trattiene il modulo **del sotto-dispositivo**:
+  - CSI2 di isys: `asd->sd.owner = THIS_MODULE` (`ipu6-isys-subdev.c:348`)
+    -> durante `subdev_open()` isys e' bloccato in memoria: niente
+    `rmmod`, `drv` resta valido anche se l'unbind azzera `dev->driver`.
+  - sensori (gc5035, gc8034): `sd->owner` = modulo del sensore
+    (`v4l2-async.c:828`, `v4l2-i2c.c:52`) -> isys **non** e' trattenuto:
+    unbind + `rmmod` di isys nella finestra restano possibili.
+  La corsa su `drv->owner` vale quindi solo per i nodi dei sotto-
+  dispositivi di un altro modulo. Ancora da riprodurre.
+- Confermati sul codice: `vimc_v4l2_dev_release()` (`vimc-core.c:267`,
+  assegnata a riga 382); `isys` con `media_dev` e `v4l2_dev` dentro
+  (`ipu6-isys.h:111-112`) allocata con `devm_kzalloc()`
+  (`ipu6-isys.c:990`); la 2/2 usa `vdev->v4l2_dev->mdev`.
+- Il kernel di prova sul tablet e' su `9cfc1aca0`; tra questo e
+  `8e26d4c20` `ipu6-isys.c` cambia di 21 righe (supporto ipu7), nessuna
+  su allocazione, `isys_remove()` o `mutex_destroy()`.
