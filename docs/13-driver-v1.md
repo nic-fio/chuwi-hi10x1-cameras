@@ -116,3 +116,12 @@ Revisione avversariale gc8034:
 - G8-I ANALOGUE_GAIN contiene guadagno digitale (UAPI): codici analogici + DIGITAL_GAIN separato.
 - G8-J commento su PIXEL_RATE misurato; default esposizione fisso.
 - G8-K scrittura guadagno non atomica: al più un commento.
+
+Revisione avversariale gc5035:
+- G5-1.1 come G8-A: dopo S_FMT ACTIVE l'esposizione torna a [4, 1992] con VBLANK alto. Con un solo modo: togliere `update_mode_controls` e il ramo ACTIVE di set_format. Default esposizione fisso (0x3d8 = 984 della tabella), limitato al massimo.
+- G5-1.2 come G8-F: pagina 0 da ripristinare anche in errore nel test pattern, e prima di STREAM_OFF.
+- G5-1.3 esposizione dispari: il vendor arrotonda al pari e compensa col digitale. Da provare sull'hardware (luminosità N contro N+1).
+- G5-2.1 come G8-I: ANALOGUE_GAIN con compensazione digitale.
+- G5-2.2 DEFINE_RUNTIME_DEV_PM_OPS aggiunge i gestori di system PM (force_suspend/resume); camera-sensor.rst: «should in general not implement the system PM handlers». imx219/ov05c10 usano solo RUNTIME_PM_OPS, gc05a2/gc08a3 come noi. Da decidere.
+- G5-2.3 selezioni: finestra 2608x1960 da (4,3) e crop (8,8) in pagina 1; dichiariamo NATIVE_SIZE 2592x1944. Minimo: togliere NATIVE_SIZE come gc05a2; completo: matrice reale.
+- G5-3 tabella di modo che ripete quasi tutta quella init, PLL compresa (0xf8: 0x49 poi 0x58): spiegarlo o togliere il doppione; commento che cita gc05a2 da riscrivere.
