@@ -1544,3 +1544,13 @@ nel log sul server (122,4 s e 130,3 s), una sola in
 `dmesg-1-streaming.txt`, come nella corsa delle 12:27.
 
 Finestra 1 col candidato: 0 su 4.
+
+### 8 ottobre, 15:55: risposta a Sakari spedita
+
+Spedita da Nic alle 13:55 UTC con `patches/wip/invia-risposta-a-sakari-v3.sh`,
+in risposta a `<asdz93f28oRR-WPu@kekkonen.localdomain>` (Sakari sulla v3 2/2:
+«Unregistering a sub-device node isn't doable safely currently»). Testo in
+`patches/wip/risposta-a-sakari-v3.txt`: capito, serie già ritirata dopo
+Laurent, grazie a tutti e due per la review. Nessun annuncio dei driver, che
+partiranno come serie a sé (docs/13). In Gmail è nel thread giusto; su lore
+non ancora indicizzata alle 15:57.
