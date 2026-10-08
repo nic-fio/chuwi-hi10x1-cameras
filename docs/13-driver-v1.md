@@ -370,7 +370,11 @@ sequenza del vendor. Niente T: in MAINTAINERS (le voci recenti non l'hanno).
 coccinelle puliti, a parte il Signed-off-by.
 Kernel di prova `7.3.0-rc1-intelcam-debug-g7b3ed03b4963` (con
 CONFIG_UDMABUF=y), 0 avvisi, installato come `vmlinuz-new-driver-v1`.
-Dopo il riavvio: prova completa con la scena illuminata.
+Prova completa dopo il riavvio (data/prova-20261008-194731, uscita in
+00-uscita.txt): 32 OK, 1 KO, 1 non misurabile, come alle 18:50. Il KO è
+solo il WARN noto ipu6-isys-queue.c:203 (19 volte, 57 righe che
+contengono BUG/WARNING); il non misurabile è l'esposizione dispari del
+gc5035, al buio. Da rifare con la luce del giorno.
 
 Da fare, non nel codice:
 - Cover letter e messaggi di commit: li riscrive Nic con parole sue
@@ -390,10 +394,17 @@ Da fare, non nel codice:
   ~/src/libcamera, diff in patches/wip/libcamera/ (checkstyle pulito,
   compila senza warning). Verificato chiamando gli helper da libipa: black
   level 4096, gain(codice) entro 1,56% e 1,70% dai misurati su ogni codice.
-  Manca la prova dell'AE sul tablet: il soft ISP vuole un fornitore dma-buf
-  e i nostri kernel non ne hanno (`# CONFIG_UDMABUF is not set`,
-  `# CONFIG_DMABUF_HEAPS is not set`). Al prossimo kernel: CONFIG_UDMABUF=y,
-  poi `cam` con e senza helper. Messaggio di commit: di Nic.
+  Prova dell'AE sul tablet (kernel g7b3ed03b4963, CONFIG_UDMABUF=y, soft
+  ISP), 8/10 sera, luce artificiale, 90 fotogrammi per caso
+  (data/ae-libcamera-20261008, riassunto con scripts/riassunto-ae-cam.py):
+  con helper tutti e due al massimo dal fotogramma 2 e fermi (gc5035
+  15,85x e 34,4 ms, gc8034 7,67x e 41,6 ms), black level 4096. Senza
+  helper: gc5035 fermo all'indice 16 preso per 16x; gc8034 oscilla per
+  tutti i 90 fotogrammi (6→0→6→1→6→2…→6→5) con black level 3072.
+  Manca la prova a metà scala: con la luce di sera l'AE va a fondo scala
+  anche in cucina. Da rifare di giorno, una camera per volta davanti alla
+  finestra; libcamera senza helper già compilato in
+  ~/src/libcamera-senza-helper (worktree a HEAD). Messaggio di commit: di Nic.
 - In cover: PIXEL_RATE gc8034 > capacità del link è coerente (HTS comprende
   il blanking), PLL non documentata.
 - Facoltativi: HFLIP/VFLIP gc8034 (registro 0x17 noto dal BSP), pagine con i

@@ -1,0 +1,61 @@
+
+===== AMBIENTE
+Linux CHUWI 7.3.0-rc1-intelcam-debug-g7b3ed03b4963 #4 SMP PREEMPT_DYNAMIC Thu Oct  8 17:35:20 UTC 2026 x86_64 GNU/Linux
+  [OK] v4l2-ctl presente
+  [OK] media-ctl presente
+  [OK] v4l2-compliance presente
+  [OK] i2cget presente
+
+===== CARICAMENTO DEI MODULI
+  [OK] GCTI5035 agganciato a gc5035
+  [OK] GCTI8034 agganciato a gc8034
+  [OK] ipu-bridge ha collegato gc5035 a Intel IPU6 CSI2 2
+  [OK] ipu-bridge ha collegato gc8034 a Intel IPU6 CSI2 1
+
+===== CHIP ID SUL BUS
+  [OK] GCTI5035 risponde 0x50 0x35
+  [OK] GCTI8034 risponde 0x80 0x44
+
+===== CATTURA E TEMPI
+  [OK] gc5035 -> /dev/video16 (/dev/v4l-subdev4)
+  [OK] gc8034 -> /dev/video8 (/dev/v4l-subdev5)
+  [OK] gc5035: il frame rate previsto dal driver e' quello reale: atteso 28.8162, misurato 28.82, scarto 0.01% (tolleranza 1%)
+  [OK] gc5035: immagine scritta in gc5035.png
+  [OK] gc8034: il frame rate previsto dal driver e' quello reale: atteso 24, misurato 24.01, scarto 0.04% (tolleranza 1%)
+  [OK] gc8034: immagine scritta in gc8034.png
+  [OK] gc5035: il frame rate segue VBLANK (righe in piu' ricavate: 0.3): atteso 14.6711, misurato 14.67, scarto 0.01% (tolleranza 0.2%)
+  [OK] gc8034: il frame rate segue VBLANK (righe in piu' ricavate: -0.8): atteso 13.4676, misurato 13.47, scarto 0.02% (tolleranza 0.2%)
+
+===== GUADAGNO ANALOGICO
+  [OK] gc5035: il guadagno misurato segue quello chiesto: atteso 15.6, misurato 15.35, scarto 1.60% (tolleranza 25%)
+  [OK] gc8034: il guadagno misurato segue quello chiesto: atteso 7.66, misurato 7.74, scarto 1.04% (tolleranza 25%)
+
+===== SCRITTURE A 16 BIT
+  [OK] gc5035: esposizione a 16 bit riletta 1110
+  [OK] gc5035: VBLANK a 16 bit riletto 2244
+  [OK] gc8034: esposizione a 16 bit riletta 1110
+  [OK] gc8034: VBLANK a 16 bit riletto 264
+
+===== GEOMETRIA
+  [OK] gc5035: finestra, crop e lunghezza di riga come le costanti del driver
+  [OK] gc8034: finestra, crop e lunghezza di riga come le costanti del driver
+
+===== TEST PATTERN (gc5035)
+  [OK] gc5035: test pattern attivo (100.0% dei pixel identici fra due fotogrammi), immagine in gc5035-test-pattern.png
+
+===== ESPOSIZIONE DISPARI (gc5035)
+  [--] gc5035: segnale troppo basso a 8 righe per decidere — serve piu' luce
+
+===== V4L2-COMPLIANCE
+  [OK] gc5035: compliance 54 ok, 0 falliti, solo gli avvisi attesi sul CROP
+  [OK] gc8034: compliance 54 ok, 0 falliti, solo gli avvisi attesi sul CROP
+
+===== BIND E UNBIND, 10 CICLI
+  [OK] gc5035: 10 cicli, ancora agganciato
+  [OK] gc8034: 10 cicli, ancora agganciato
+  [KO] 57 messaggi di BUG/WARNING, vedi 05-dmesg.txt
+  [OK] lockdep e' ancora attivo: il verdetto sul locking vale
+
+===== VERDETTO
+  32 verifiche superate, 1 fallite, 1 non misurabili
+  output in /home/nicfio/Documenti/INTEL-CAMERA/data/prova-20261008-194731
