@@ -20,6 +20,7 @@
 #include <linux/gpio/consumer.h>
 #include <linux/i2c.h>
 #include <linux/math.h>
+#include <linux/minmax.h>
 #include <linux/mod_devicetable.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
@@ -50,8 +51,6 @@
 
 #define GC5035_REG_EXPOSURE		CCI_REG16(0x03)
 #define GC5035_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
-#define GC5035_REG_DIGITAL_GAIN_INT	CCI_REG8(0xb1)
-#define GC5035_REG_DIGITAL_GAIN_FRAC	CCI_REG8(0xb2)
 #define GC5035_REG_FRAME_LENGTH		CCI_REG16(0x41)
 #define GC5035_REG_STREAM		CCI_REG8(0x3e)
 #define GC5035_STREAM_ON		0x91
@@ -62,12 +61,22 @@
 #define GC5035_TEST_PATTERN_ON		0x11
 #define GC5035_TEST_PATTERN_OFF		0x10
 
-#define GC5035_NATIVE_WIDTH		2592
-#define GC5035_NATIVE_HEIGHT		1944
+/*
+ * The register tables read out a 2608x1960 window and crop 2592x1944 from it
+ * at (8, 8). The size of the full pixel array is not documented, so the
+ * readout window is reported as the native size.
+ */
+#define GC5035_NATIVE_WIDTH		2608
+#define GC5035_NATIVE_HEIGHT		1960
+#define GC5035_CROP_LEFT		8
+#define GC5035_CROP_TOP			8
+#define GC5035_WIDTH			2592
+#define GC5035_HEIGHT			1944
 
 #define GC5035_EXP_MIN			4
 #define GC5035_EXP_STEP			1
 #define GC5035_EXP_MARGIN		16
+#define GC5035_EXP_DEF			984
 #define GC5035_VTS_MAX			0x3fff
 
 /*
@@ -81,7 +90,17 @@
 #define GC5035_PIXEL_RATE		(GC5035_LINK_FREQ * 2 * \
 					 GC5035_DATA_LANES / GC5035_RGB_DEPTH)
 
-#define GC5035_SLEEP_US			(5 * USEC_PER_MSEC)
+/*
+ * Power sequencing from the GC5035 driver posted by Tomasz Figa in 2020: IOVDD
+ * at least 50 us before AVDD and DVDD, at least 1200 MCLK cycles before the
+ * first I2C transaction and 2000 MCLK cycles after streaming stops before the
+ * clock is switched off. The 5 ms after reset is released comes from the Intel
+ * Alder Lake-M driver and also covers the 1200 cycles.
+ */
+#define GC5035_IOVDD_DELAY_US		50
+#define GC5035_RESET_DELAY_US		(5 * USEC_PER_MSEC)
+#define GC5035_STOP_DELAY_US		DIV_ROUND_UP(2000 * USEC_PER_MSEC, \
+					     GC5035_XCLK_FREQ / MSEC_PER_SEC)
 
 #define GC5035_MBUS_CODE		MEDIA_BUS_FMT_SGRBG10_1X10
 
@@ -94,17 +113,17 @@ static const char * const gc5035_test_pattern_menu[] = {
 	"Color Bar",
 };
 
+/* DOVDD (IOVDD) comes first: it has to be enabled before the others. */
 static const char * const gc5035_supply_name[] = {
+	"dovdd",
 	"avdd",
 	"dvdd",
-	"dovdd",
 };
 
 /*
- * Register 0xb6 does not take a multiplier, it takes an INDEX into this
- * table. The first column is the gain the entry stands for, in Q8 fixed point
- * where 256 is 1.00x, the second is the code to write. The remainder of the
- * requested gain is compensated digitally in 0xb1/0xb2.
+ * V4L2_CID_ANALOGUE_GAIN is an index into this table. The first column is the
+ * gain of each step in Q8 fixed point (256 is 1.0x), the second the value of
+ * register 0xb6. The digital gain is left at the 1.0x the tables program.
  */
 static const u16 gc5035_again_level[][2] = {
 	{  256,  0 },	/*  1.000x */
@@ -125,10 +144,6 @@ static const u16 gc5035_again_level[][2] = {
 	{ 3318, 19 },	/* 12.961x */
 	{ 3994, 20 },	/* 15.602x */
 };
-
-#define GC5035_AGAIN_MIN		256	/* 1.00x in Q8 */
-#define GC5035_AGAIN_MAX		4096	/* 16.00x in Q8 */
-#define GC5035_DGAIN_UNITY		256	/* 1.00x in Q8 */
 
 struct gc5035 {
 	struct device *dev;
@@ -155,7 +170,9 @@ struct gc5035_reg_list {
 
 /*
  * The register sequences are reproduced unmodified from the vendor code. No
- * register documentation is available for the PLL and CSI-2 settings.
+ * register documentation is available for the PLL and CSI-2 settings. The mode
+ * list rewrites part of the global one, including the PLL setting in register
+ * 0xf8.
  */
 static const struct cci_reg_sequence gc5035_init_regs[] = {
 	/* init */
@@ -512,16 +529,11 @@ struct gc5035_mode {
 	u32 vts_min;
 };
 
-/*
- * Full resolution only. The binned modes of the Intel patch (1296x972 and
- * 1280x720) declare an hts of 1460 and 1896 but write the same line length of
- * 2920 into the registers, so the HBLANK they would expose is wrong. They can
- * only be added once the real register values have been checked on hardware.
- */
+/* The binned modes of the vendor driver have not been tested. */
 static const struct gc5035_mode gc5035_modes[] = {
 	{
-		.width = GC5035_NATIVE_WIDTH,
-		.height = GC5035_NATIVE_HEIGHT,
+		.width = GC5035_WIDTH,
+		.height = GC5035_HEIGHT,
 		.reg_list = {
 			.num_of_regs = ARRAY_SIZE(gc5035_mode_2592x1944),
 			.regs = gc5035_mode_2592x1944,
@@ -548,29 +560,41 @@ static int gc5035_power_on(struct device *dev)
 	struct gc5035 *gc5035 = to_gc5035(sd);
 	int ret;
 
-	ret = regulator_bulk_enable(ARRAY_SIZE(gc5035_supply_name),
-				    gc5035->supplies);
-	if (ret < 0) {
-		dev_err(dev, "failed to enable regulators: %d\n", ret);
+	ret = regulator_enable(gc5035->supplies[0].consumer);
+	if (ret) {
+		dev_err(dev, "failed to enable dovdd: %d\n", ret);
 		return ret;
+	}
+
+	fsleep(GC5035_IOVDD_DELAY_US);
+
+	ret = regulator_bulk_enable(ARRAY_SIZE(gc5035_supply_name) - 1,
+				    &gc5035->supplies[1]);
+	if (ret) {
+		dev_err(dev, "failed to enable regulators: %d\n", ret);
+		goto err_dovdd;
 	}
 
 	ret = clk_prepare_enable(gc5035->xclk);
-	if (ret < 0) {
-		regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name),
-				       gc5035->supplies);
+	if (ret) {
 		dev_err(dev, "failed to enable clock: %d\n", ret);
-		return ret;
+		goto err_regulators;
 	}
-
-	fsleep(GC5035_SLEEP_US);
 
 	gpiod_set_value_cansleep(gc5035->powerdown_gpio, 0);
 	gpiod_set_value_cansleep(gc5035->reset_gpio, 0);
 
-	fsleep(GC5035_SLEEP_US);
+	fsleep(GC5035_RESET_DELAY_US);
 
 	return 0;
+
+err_regulators:
+	regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name) - 1,
+			       &gc5035->supplies[1]);
+err_dovdd:
+	regulator_disable(gc5035->supplies[0].consumer);
+
+	return ret;
 }
 
 static int gc5035_power_off(struct device *dev)
@@ -578,16 +602,14 @@ static int gc5035_power_off(struct device *dev)
 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
 	struct gc5035 *gc5035 = to_gc5035(sd);
 
-	/*
-	 * Reverse order compared to gc05a2: on INT3472 the clock is often a
-	 * gpio gated clock which doubles as the module enable, so it has to be
-	 * switched off after reset and powerdown have been asserted.
-	 */
-	gpiod_set_value_cansleep(gc5035->reset_gpio, 1);
-	gpiod_set_value_cansleep(gc5035->powerdown_gpio, 1);
+	fsleep(GC5035_STOP_DELAY_US);
+
 	clk_disable_unprepare(gc5035->xclk);
-	regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name),
-			       gc5035->supplies);
+	gpiod_set_value_cansleep(gc5035->powerdown_gpio, 1);
+	gpiod_set_value_cansleep(gc5035->reset_gpio, 1);
+	regulator_bulk_disable(ARRAY_SIZE(gc5035_supply_name) - 1,
+			       &gc5035->supplies[1]);
+	regulator_disable(gc5035->supplies[0].consumer);
 
 	return 0;
 }
@@ -635,38 +657,11 @@ static void gc5035_update_pad_format(const struct gc5035_mode *mode,
 	fmt->xfer_func = V4L2_XFER_FUNC_NONE;
 }
 
-static int gc5035_update_mode_controls(struct gc5035 *gc5035,
-				       const struct gc5035_mode *mode)
-{
-	s64 exposure_max, h_blank;
-	int ret;
-
-	ret = __v4l2_ctrl_modify_range(gc5035->vblank,
-				       mode->vts_min - mode->height,
-				       GC5035_VTS_MAX - mode->height, 1,
-				       mode->vts_def - mode->height);
-	if (ret)
-		return ret;
-
-	h_blank = mode->hts - mode->width;
-	ret = __v4l2_ctrl_modify_range(gc5035->hblank, h_blank, h_blank, 1,
-				       h_blank);
-	if (ret)
-		return ret;
-
-	exposure_max = mode->vts_def - GC5035_EXP_MARGIN;
-
-	return __v4l2_ctrl_modify_range(gc5035->exposure, GC5035_EXP_MIN,
-					exposure_max, GC5035_EXP_STEP,
-					exposure_max);
-}
-
 static int gc5035_set_format(struct v4l2_subdev *sd,
 			     const struct v4l2_subdev_client_info *ci,
 			     struct v4l2_subdev_state *state,
 			     struct v4l2_subdev_format *fmt)
 {
-	struct gc5035 *gc5035 = to_gc5035(sd);
 	struct v4l2_mbus_framefmt *mbus_fmt;
 	const struct gc5035_mode *mode;
 	struct v4l2_rect *crop;
@@ -676,6 +671,8 @@ static int gc5035_set_format(struct v4l2_subdev *sd,
 				      fmt->format.height);
 
 	crop = v4l2_subdev_state_get_crop(state, 0);
+	crop->left = GC5035_CROP_LEFT;
+	crop->top = GC5035_CROP_TOP;
 	crop->width = mode->width;
 	crop->height = mode->height;
 
@@ -683,10 +680,7 @@ static int gc5035_set_format(struct v4l2_subdev *sd,
 	mbus_fmt = v4l2_subdev_state_get_format(state, 0);
 	*mbus_fmt = fmt->format;
 
-	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY)
-		return 0;
-
-	return gc5035_update_mode_controls(gc5035, mode);
+	return 0;
 }
 
 static int gc5035_get_selection(struct v4l2_subdev *sd,
@@ -740,47 +734,9 @@ static int gc5035_test_pattern(struct gc5035 *gc5035, u32 pattern)
 	ret = cci_write(gc5035->regmap, GC5035_REG_TEST_PATTERN,
 			pattern ? GC5035_TEST_PATTERN_ON :
 				  GC5035_TEST_PATTERN_OFF, NULL);
-	if (ret)
-		return ret;
 
-	return gc5035_set_page(gc5035, GC5035_PAGE_0);
-}
-
-/*
- * Pick the highest analogue gain entry that does not exceed the requested
- * value, and compensate the remainder digitally:
- *
- *     dgain = 256 * a_gain / again_level[idx][0]
- *
- * The vendor code scales this by a further ratio read from the sensor OTP.
- * This driver does not read the OTP, so that ratio is unity here.
- */
-static int gc5035_set_analogue_gain(struct gc5035 *gc5035, u32 a_gain)
-{
-	unsigned int idx;
-	u32 dgain;
-	int ret = 0;
-
-	for (idx = ARRAY_SIZE(gc5035_again_level) - 1; idx > 0; idx--) {
-		if (a_gain >= gc5035_again_level[idx][0])
-			break;
-	}
-
-	dgain = DIV_ROUND_CLOSEST(GC5035_DGAIN_UNITY * a_gain,
-				  gc5035_again_level[idx][0]);
-
-	cci_write(gc5035->regmap, GC5035_REG_ANALOGUE_GAIN,
-		  gc5035_again_level[idx][1], &ret);
-	cci_write(gc5035->regmap, GC5035_REG_DIGITAL_GAIN_INT,
-		  (dgain >> 8) & 0x0f, &ret);
-	/*
-	 * The low two bits of the fractional part are not implemented in the
-	 * sensor, the vendor code masks them off.
-	 */
-	cci_write(gc5035->regmap, GC5035_REG_DIGITAL_GAIN_FRAC,
-		  dgain & 0xfc, &ret);
-
-	return ret;
+	/* Back to page 0 even on error, the other controls expect it. */
+	return gc5035_set_page(gc5035, GC5035_PAGE_0) ?: ret;
 }
 
 static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
@@ -789,8 +745,8 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 		container_of(ctrl->handler, struct gc5035, ctrls);
 	const struct v4l2_mbus_framefmt *format;
 	struct v4l2_subdev_state *state;
-	s64 exposure_max;
-	int ret = 0;
+	s64 exposure_max, exposure_def;
+	int ret;
 
 	state = v4l2_subdev_get_locked_active_state(&gc5035->sd);
 	format = v4l2_subdev_state_get_format(state, 0);
@@ -798,9 +754,10 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 	if (ctrl->id == V4L2_CID_VBLANK) {
 		exposure_max = format->height + ctrl->val -
 			       GC5035_EXP_MARGIN;
+		exposure_def = min(GC5035_EXP_DEF, exposure_max);
 		ret = __v4l2_ctrl_modify_range(gc5035->exposure,
 					       GC5035_EXP_MIN, exposure_max,
-					       GC5035_EXP_STEP, exposure_max);
+					       GC5035_EXP_STEP, exposure_def);
 		if (ret)
 			return ret;
 	}
@@ -808,13 +765,18 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 	if (!pm_runtime_get_if_active(gc5035->dev))
 		return 0;
 
+	ret = gc5035_set_page(gc5035, GC5035_PAGE_0);
+	if (ret)
+		goto out;
+
 	switch (ctrl->id) {
 	case V4L2_CID_EXPOSURE:
 		ret = cci_write(gc5035->regmap, GC5035_REG_EXPOSURE,
 				ctrl->val, NULL);
 		break;
 	case V4L2_CID_ANALOGUE_GAIN:
-		ret = gc5035_set_analogue_gain(gc5035, ctrl->val);
+		ret = cci_write(gc5035->regmap, GC5035_REG_ANALOGUE_GAIN,
+				gc5035_again_level[ctrl->val][1], NULL);
 		break;
 	case V4L2_CID_VBLANK:
 		ret = cci_write(gc5035->regmap, GC5035_REG_FRAME_LENGTH,
@@ -828,6 +790,7 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 		break;
 	}
 
+out:
 	pm_runtime_put_autosuspend(gc5035->dev);
 
 	return ret;
@@ -908,8 +871,10 @@ static int gc5035_disable_streams(struct v4l2_subdev *sd,
 	struct gc5035 *gc5035 = to_gc5035(sd);
 	int ret;
 
-	ret = cci_write(gc5035->regmap, GC5035_REG_STREAM,
-			GC5035_STREAM_OFF, NULL);
+	ret = gc5035_set_page(gc5035, GC5035_PAGE_0);
+	if (!ret)
+		ret = cci_write(gc5035->regmap, GC5035_REG_STREAM,
+				GC5035_STREAM_OFF, NULL);
 	if (ret)
 		dev_err(gc5035->dev, "failed to stop streaming: %d\n", ret);
 
@@ -1018,11 +983,10 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 	gc5035->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops,
 					     V4L2_CID_EXPOSURE, GC5035_EXP_MIN,
 					     exposure_max, GC5035_EXP_STEP,
-					     exposure_max);
+					     min(GC5035_EXP_DEF, exposure_max));
 
 	v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
-			  GC5035_AGAIN_MIN, GC5035_AGAIN_MAX, 1,
-			  GC5035_AGAIN_MIN);
+			  0, ARRAY_SIZE(gc5035_again_level) - 1, 1, 0);
 
 	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &gc5035_ctrl_ops,
 				     V4L2_CID_TEST_PATTERN,
@@ -1189,8 +1153,9 @@ static void gc5035_remove(struct i2c_client *client)
 	pm_runtime_dont_use_autosuspend(&client->dev);
 }
 
-static DEFINE_RUNTIME_DEV_PM_OPS(gc5035_pm_ops, gc5035_power_off,
-				 gc5035_power_on, NULL);
+static const struct dev_pm_ops gc5035_pm_ops = {
+	RUNTIME_PM_OPS(gc5035_power_off, gc5035_power_on, NULL)
+};
 
 static const struct acpi_device_id gc5035_acpi_ids[] = {
 	{ "GCTI5035" },

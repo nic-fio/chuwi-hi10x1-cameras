@@ -18,6 +18,7 @@
 #include <linux/gpio/consumer.h>
 #include <linux/i2c.h>
 #include <linux/math.h>
+#include <linux/minmax.h>
 #include <linux/mod_devicetable.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
@@ -43,31 +44,41 @@
 
 #define GC8034_REG_EXPOSURE		CCI_REG16(0x03)
 #define GC8034_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
-#define GC8034_REG_DIGITAL_GAIN_INT	CCI_REG8(0xb1)
-#define GC8034_REG_DIGITAL_GAIN_FRAC	CCI_REG8(0xb2)
 #define GC8034_REG_BLANKING		CCI_REG16(0x07)
 #define GC8034_REG_STREAM		CCI_REG8(0x3f)
 #define GC8034_STREAM_ON		0xd0
 #define GC8034_STREAM_OFF		0x00
 
-#define GC8034_NATIVE_WIDTH		3264
-#define GC8034_NATIVE_HEIGHT		2448
+/*
+ * The register tables read out a 3284x2464 window and crop 3264x2448 from it
+ * at (9, 8). The size of the full pixel array is not documented, so the
+ * readout window is reported as the native size.
+ */
+#define GC8034_NATIVE_WIDTH		3284
+#define GC8034_NATIVE_HEIGHT		2464
+#define GC8034_CROP_LEFT		9
+#define GC8034_CROP_TOP			8
+#define GC8034_WIDTH			3264
+#define GC8034_HEIGHT			2448
 
 /*
- * The blanking register holds the frame length minus this offset. The value
- * is inferred from the defaults of the vendor code.
+ * The blanking register holds the frame length minus the active height and
+ * 36 lines, as computed by the vendor code.
  */
-#define GC8034_VTS_OFFSET		2484
+#define GC8034_VTS_OFFSET		(GC8034_HEIGHT + 36)
 #define GC8034_VTS_MAX			0x1fff
 
 /* The sensor only takes even exposure values. */
 #define GC8034_EXP_MIN			4
 #define GC8034_EXP_STEP			2
 #define GC8034_EXP_MARGIN		4
+#define GC8034_EXP_DEF			2246
 
 /*
  * The register tables have only been tested with a 19.2 MHz external clock,
- * at which the link frequency is 268.8 MHz and the frame rate 24 fps.
+ * at which the link frequency is 268.8 MHz and the frame rate 24 fps. The PLL
+ * settings are not documented, so the pixel rate is derived from the measured
+ * frame rate.
  */
 #define GC8034_XCLK_FREQ		(19200 * HZ_PER_KHZ)
 #define GC8034_LINK_FREQ		(268800 * HZ_PER_KHZ)
@@ -76,10 +87,19 @@
 #define GC8034_VTS_DEF			2496
 #define GC8034_PIXEL_RATE		(GC8034_HTS * GC8034_VTS_DEF * 24)
 
-/* 6 ms after reset, then 8192 external clock cycles before I2C access */
-#define GC8034_RESET_SETTLE_US		6000
-#define GC8034_I2C_SETTLE_US		DIV_ROUND_UP(8192 * USEC_PER_MSEC, \
-					     GC8034_XCLK_FREQ / MSEC_PER_SEC)
+/*
+ * No datasheet is available. The power sequence and delays follow the vendor
+ * driver: supplies in the order of gc8034_supply_name, 100 us, clock, 1 ms,
+ * powerdown released, 500 us, reset released, then 6 ms and 8192 clock cycles
+ * before the first I2C access.
+ */
+#define GC8034_SUPPLY_DELAY_US		100
+#define GC8034_CLK_DELAY_US		1000
+#define GC8034_PWDN_DELAY_US		500
+#define GC8034_RESET_DELAY_US		(6000 + \
+					 DIV_ROUND_UP(8192 * USEC_PER_MSEC, \
+						      GC8034_XCLK_FREQ / \
+						      MSEC_PER_SEC))
 
 #define GC8034_MBUS_CODE		MEDIA_BUS_FMT_SRGGB10_1X10
 
@@ -88,15 +108,16 @@ static const s64 gc8034_link_freq_menu[] = {
 };
 
 static const char * const gc8034_supply_name[] = {
-	"avdd",
-	"dvdd",
 	"dovdd",
+	"dvdd",
+	"avdd",
 };
 
 /*
- * Register 0xb6 takes an index into this table, in Q6 fixed point. The
- * remainder of the requested gain is applied digitally in 0xb1/0xb2. Only the
- * seven entries the vendor code uses are listed.
+ * V4L2_CID_ANALOGUE_GAIN is the value of register 0xb6, an index into this
+ * table of gains in Q6 fixed point (64 is 1.0x). Only the seven entries the
+ * vendor code uses are listed. The digital gain is left at the 1.0x the tables
+ * program.
  */
 static const u16 gc8034_again_level[] = {
 	0x0040,	/*  1.000x */
@@ -107,10 +128,6 @@ static const u16 gc8034_again_level[] = {
 	0x0159,	/*  5.400x */
 	0x01ea,	/*  7.660x */
 };
-
-#define GC8034_AGAIN_MIN		64	/* 1.00x in Q6 */
-#define GC8034_AGAIN_MAX		490	/* 7.66x in Q6 */
-#define GC8034_DGAIN_UNITY		256	/* 1.00x in Q8 */
 
 /*
  * Analogue bias registers rewritten for each gain index. The sequence selects
@@ -439,8 +456,8 @@ struct gc8034_mode {
 
 static const struct gc8034_mode gc8034_modes[] = {
 	{
-		.width = GC8034_NATIVE_WIDTH,
-		.height = GC8034_NATIVE_HEIGHT,
+		.width = GC8034_WIDTH,
+		.height = GC8034_HEIGHT,
 		.reg_list = {
 			.num_of_regs = ARRAY_SIZE(gc8034_mode_3264x2448),
 			.regs = gc8034_mode_3264x2448,
@@ -456,31 +473,44 @@ static inline struct gc8034 *to_gc8034(struct v4l2_subdev *sd)
 	return container_of(sd, struct gc8034, sd);
 }
 
+static void gc8034_disable_supplies(struct gc8034 *gc8034, unsigned int num)
+{
+	while (num--)
+		regulator_disable(gc8034->supplies[num].consumer);
+}
+
 static int gc8034_power_on(struct device *dev)
 {
 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
 	struct gc8034 *gc8034 = to_gc8034(sd);
+	unsigned int i;
 	int ret;
 
-	ret = regulator_bulk_enable(ARRAY_SIZE(gc8034_supply_name),
-				    gc8034->supplies);
-	if (ret < 0) {
-		dev_err(dev, "failed to enable regulators: %d\n", ret);
-		return ret;
+	/* One by one: regulator_bulk_enable() works in parallel. */
+	for (i = 0; i < ARRAY_SIZE(gc8034_supply_name); i++) {
+		ret = regulator_enable(gc8034->supplies[i].consumer);
+		if (ret) {
+			dev_err(dev, "failed to enable %s: %d\n",
+				gc8034_supply_name[i], ret);
+			gc8034_disable_supplies(gc8034, i);
+			return ret;
+		}
 	}
+
+	fsleep(GC8034_SUPPLY_DELAY_US);
 
 	ret = clk_prepare_enable(gc8034->xclk);
-	if (ret < 0) {
-		regulator_bulk_disable(ARRAY_SIZE(gc8034_supply_name),
-				       gc8034->supplies);
+	if (ret) {
 		dev_err(dev, "failed to enable clock: %d\n", ret);
+		gc8034_disable_supplies(gc8034, ARRAY_SIZE(gc8034_supply_name));
 		return ret;
 	}
 
+	fsleep(GC8034_CLK_DELAY_US);
 	gpiod_set_value_cansleep(gc8034->powerdown_gpio, 0);
+	fsleep(GC8034_PWDN_DELAY_US);
 	gpiod_set_value_cansleep(gc8034->reset_gpio, 0);
-
-	fsleep(GC8034_RESET_SETTLE_US + GC8034_I2C_SETTLE_US);
+	fsleep(GC8034_RESET_DELAY_US);
 
 	return 0;
 }
@@ -490,11 +520,10 @@ static int gc8034_power_off(struct device *dev)
 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
 	struct gc8034 *gc8034 = to_gc8034(sd);
 
-	gpiod_set_value_cansleep(gc8034->reset_gpio, 1);
 	gpiod_set_value_cansleep(gc8034->powerdown_gpio, 1);
+	gpiod_set_value_cansleep(gc8034->reset_gpio, 1);
 	clk_disable_unprepare(gc8034->xclk);
-	regulator_bulk_disable(ARRAY_SIZE(gc8034_supply_name),
-			       gc8034->supplies);
+	gc8034_disable_supplies(gc8034, ARRAY_SIZE(gc8034_supply_name));
 
 	return 0;
 }
@@ -542,38 +571,11 @@ static void gc8034_update_pad_format(const struct gc8034_mode *mode,
 	fmt->xfer_func = V4L2_XFER_FUNC_NONE;
 }
 
-static int gc8034_update_mode_controls(struct gc8034 *gc8034,
-				       const struct gc8034_mode *mode)
-{
-	s64 exposure_max, h_blank;
-	int ret;
-
-	ret = __v4l2_ctrl_modify_range(gc8034->vblank,
-				       mode->vts_min - mode->height,
-				       GC8034_VTS_MAX - mode->height, 1,
-				       mode->vts_def - mode->height);
-	if (ret)
-		return ret;
-
-	h_blank = mode->hts - mode->width;
-	ret = __v4l2_ctrl_modify_range(gc8034->hblank, h_blank, h_blank, 1,
-				       h_blank);
-	if (ret)
-		return ret;
-
-	exposure_max = mode->vts_def - GC8034_EXP_MARGIN;
-
-	return __v4l2_ctrl_modify_range(gc8034->exposure, GC8034_EXP_MIN,
-					exposure_max, GC8034_EXP_STEP,
-					exposure_max);
-}
-
 static int gc8034_set_format(struct v4l2_subdev *sd,
 			     const struct v4l2_subdev_client_info *ci,
 			     struct v4l2_subdev_state *state,
 			     struct v4l2_subdev_format *fmt)
 {
-	struct gc8034 *gc8034 = to_gc8034(sd);
 	struct v4l2_mbus_framefmt *mbus_fmt;
 	const struct gc8034_mode *mode;
 	struct v4l2_rect *crop;
@@ -583,6 +585,8 @@ static int gc8034_set_format(struct v4l2_subdev *sd,
 				      fmt->format.height);
 
 	crop = v4l2_subdev_state_get_crop(state, 0);
+	crop->left = GC8034_CROP_LEFT;
+	crop->top = GC8034_CROP_TOP;
 	crop->width = mode->width;
 	crop->height = mode->height;
 
@@ -590,10 +594,7 @@ static int gc8034_set_format(struct v4l2_subdev *sd,
 	mbus_fmt = v4l2_subdev_state_get_format(state, 0);
 	*mbus_fmt = fmt->format;
 
-	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY)
-		return 0;
-
-	return gc8034_update_mode_controls(gc8034, mode);
+	return 0;
 }
 
 static int gc8034_get_selection(struct v4l2_subdev *sd,
@@ -636,31 +637,12 @@ static int gc8034_init_state(struct v4l2_subdev *sd,
 	return gc8034_set_format(sd, NULL, state, &fmt);
 }
 
-/*
- * Pick the highest analogue gain index that does not exceed the requested
- * value, and compensate the remainder digitally:
- *
- *     dgain = 256 * a_gain / again_level[idx]
- */
-static int gc8034_set_analogue_gain(struct gc8034 *gc8034, u32 a_gain)
+static int gc8034_set_analogue_gain(struct gc8034 *gc8034, u32 idx)
 {
-	unsigned int i, idx;
-	u32 dgain;
+	unsigned int i;
 	int ret = 0;
 
-	for (idx = ARRAY_SIZE(gc8034_again_level) - 1; idx > 0; idx--) {
-		if (a_gain >= gc8034_again_level[idx])
-			break;
-	}
-
-	dgain = DIV_ROUND_CLOSEST(GC8034_DGAIN_UNITY * a_gain,
-				  gc8034_again_level[idx]);
-
 	cci_write(gc8034->regmap, GC8034_REG_ANALOGUE_GAIN, idx, &ret);
-	cci_write(gc8034->regmap, GC8034_REG_DIGITAL_GAIN_INT,
-		  (dgain >> 8) & 0x0f, &ret);
-	cci_write(gc8034->regmap, GC8034_REG_DIGITAL_GAIN_FRAC,
-		  dgain & 0xff, &ret);
 
 	for (i = 0; i < ARRAY_SIZE(gc8034_agc_bias_reg); i++)
 		cci_write(gc8034->regmap, CCI_REG8(gc8034_agc_bias_reg[i]),
@@ -675,24 +657,30 @@ static int gc8034_set_ctrl(struct v4l2_ctrl *ctrl)
 		container_of(ctrl->handler, struct gc8034, ctrls);
 	const struct v4l2_mbus_framefmt *format;
 	struct v4l2_subdev_state *state;
-	s64 exposure_max;
-	int ret = 0;
+	s64 exposure_max, exposure_def;
+	int ret;
 
 	state = v4l2_subdev_get_locked_active_state(&gc8034->sd);
 	format = v4l2_subdev_state_get_format(state, 0);
 
 	if (ctrl->id == V4L2_CID_VBLANK) {
-		exposure_max = format->height + ctrl->val -
-			       GC8034_EXP_MARGIN;
+		exposure_max = round_down(format->height + ctrl->val -
+					  GC8034_EXP_MARGIN, GC8034_EXP_STEP);
+		exposure_def = min(GC8034_EXP_DEF, exposure_max);
 		ret = __v4l2_ctrl_modify_range(gc8034->exposure,
 					       GC8034_EXP_MIN, exposure_max,
-					       GC8034_EXP_STEP, exposure_max);
+					       GC8034_EXP_STEP, exposure_def);
 		if (ret)
 			return ret;
 	}
 
 	if (!pm_runtime_get_if_active(gc8034->dev))
 		return 0;
+
+	ret = cci_write(gc8034->regmap, GC8034_REG_PAGE_SELECT, GC8034_PAGE_0,
+			NULL);
+	if (ret)
+		goto out;
 
 	switch (ctrl->id) {
 	case V4L2_CID_EXPOSURE:
@@ -713,6 +701,7 @@ static int gc8034_set_ctrl(struct v4l2_ctrl *ctrl)
 		break;
 	}
 
+out:
 	pm_runtime_put_autosuspend(gc8034->dev);
 
 	return ret;
@@ -793,8 +782,11 @@ static int gc8034_disable_streams(struct v4l2_subdev *sd,
 	struct gc8034 *gc8034 = to_gc8034(sd);
 	int ret;
 
-	ret = cci_write(gc8034->regmap, GC8034_REG_STREAM,
-			GC8034_STREAM_OFF, NULL);
+	ret = cci_write(gc8034->regmap, GC8034_REG_PAGE_SELECT, GC8034_PAGE_0,
+			NULL);
+	if (!ret)
+		ret = cci_write(gc8034->regmap, GC8034_REG_STREAM,
+				GC8034_STREAM_OFF, NULL);
 	if (ret)
 		dev_err(gc8034->dev, "failed to stop streaming: %d\n", ret);
 
@@ -903,11 +895,10 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 	gc8034->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops,
 					     V4L2_CID_EXPOSURE, GC8034_EXP_MIN,
 					     exposure_max, GC8034_EXP_STEP,
-					     exposure_max);
+					     min(GC8034_EXP_DEF, exposure_max));
 
 	v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
-			  GC8034_AGAIN_MIN, GC8034_AGAIN_MAX, 1,
-			  GC8034_AGAIN_MIN);
+			  0, ARRAY_SIZE(gc8034_again_level) - 1, 1, 0);
 
 	v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &gc8034_ctrl_ops, &props);
 
@@ -1069,8 +1060,9 @@ static void gc8034_remove(struct i2c_client *client)
 	pm_runtime_dont_use_autosuspend(&client->dev);
 }
 
-static DEFINE_RUNTIME_DEV_PM_OPS(gc8034_pm_ops, gc8034_power_off,
-				 gc8034_power_on, NULL);
+static const struct dev_pm_ops gc8034_pm_ops = {
+	RUNTIME_PM_OPS(gc8034_power_off, gc8034_power_on, NULL)
+};
 
 static const struct acpi_device_id gc8034_acpi_ids[] = {
 	{ "GCTI8034" },
