@@ -1512,8 +1512,9 @@ di `ipu6-isys-queue.c:203` all'avvio dello streaming c'e' anche qui.
 A 702,9 s kmemleak segnala 6 oggetti da 32 byte (salvati in
 `kmemleak.txt`): tutti buffer di `acpi_evaluate_dsm()` chiamata da
 `skl_int3472_clk_prepare()`/`_unprepare()` durante probe e runtime
-suspend di gc8034. Nessuno passa per ipu6. Nelle corse precedenti la
-scansione non era ancora arrivata perche' il tablet e' stato riavviato
-prima.
+suspend di gc8034. Nessuno passa per ipu6. Un avviso simile (5
+oggetti, 707,5 s) c'e' gia' nel log sul server della corsa delle 10:32
+col kernel `g1b4a83d60ea1`, senza dettaglio salvato; nelle altre corse
+il tablet e' stato riavviato prima della scansione dei 700 s circa.
 
 Finestra 1 col candidato: 0 su 3.
