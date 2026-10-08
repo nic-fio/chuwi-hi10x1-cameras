@@ -63,3 +63,16 @@ OTP ignorato, rettangolo di crop della tabella gc8034.
 2. Kernel `next` + serie sul tablet: streaming, `v4l2-compliance -u` completo
    in testo, frame rate, guadagno, test pattern gc5035.
 3. Verifica completa ripetuta sulla versione finale, rilettura da capo.
+
+## Kernel di prova sul tablet (8 ottobre, 14:03)
+
+`7.3.0-rc1-intelcam-debug-gbf2e1eb29b92` = `next` 8e26d4c20 + serie
+driver-v1 (commit `bf2e1eb29`), config del kernel di debug `isys-pm-fix`
+(KASAN, kmemleak, lockdep), 0 avvisi di compilazione. Niente int3472 né
+patch ipu6. Sulla ESP come `vmlinuz-new-driver-v1`; `startup.nsh` lo avvia
+in automatico, la versione precedente è in `startup-fix.nsh.bak`.
+La serie ricostruita dopo (`fbf67ecf5`) differisce solo per tre righe di
+commento in gc8034.c.
+
+Prova: `sudo ./scripts/prova-completa.sh`, con una scena illuminata (non
+abbagliante) davanti alle due camere.
