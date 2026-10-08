@@ -1053,3 +1053,56 @@ A parte, gia' presente dal 4 ottobre e non legato all'unbind: a ogni
 STREAMON `WARNING ipu6-isys-queue.c:203`, cioe'
 `lockdep_assert_held(&stream->mutex)` in `ipu6_isys_buffer_list_get()`
 chiamata da `ipu6_isys_csi2_enable_streams()`.
+
+### 8 ottobre, 11:10: percorso dell'unbind letto sul sorgente
+
+Sorgente `1b4a83d60`; `drivers/media/pci/intel/ipu6` identico a `next`
+`9cfc1aca0` (la serie tocca solo `ipu-bridge.c`).
+
+Sequenza dell'unbind (`__device_release_driver()`, `dd.c`):
+`pm_runtime_get_sync` → `pm_runtime_put_sync` → `isys_remove()` →
+`devres_release_all()` (qui sparisce `struct ipu6_isys`, che e' devm) →
+`dev_set_drvdata(NULL)`.
+
+Dentro `isys_remove()`, nell'ordine attuale:
+1. `ida_destroy()`, `free_fw_msg_bufs()`: liberati anche i messaggi in
+   `framebuflist_fw`, ancora del firmware.
+2. `isys_unregister_devices()` → `ipu6_isys_video_cleanup()` →
+   `vb2_video_unregister_device()` → stop dello stream: in
+   `ipu6_isys_csi2_disable_streams()` `stop_stream_firmware()` (attesa
+   2 s), sensore spento, `close_stream_firmware()` (attesa 2 s),
+   `free_stream_firmware()` (`ida_free()` su ida distrutta),
+   `pm_runtime_put()` **asincrono**.
+3. L'ISR di isys resta attiva finche' l'auxdev e' runtime-active
+   (`pm_runtime_get_if_active()` in `ipu6_isys_isr()`); il firmware si
+   chiude solo in `isys_runtime_pm_suspend()` (`fw_ops->close`).
+
+I tempi del rapporto tornano con questa sequenza: unbind 936.73,
+oops nell'ISR 936.92 (passo 1 gia' fatto, firmware ancora attivo),
+`stream stop time out` 938.94 (= +2 s, la risposta non arriva perche'
+l'ISR e' morta), errori i2c del sensore (passo 2), `stream close time
+out` 942.46 (altri 2 s piu' l'i2c).
+Stop e close non usano i messaggi: solo l'apertura
+(`ipu6_get_fw_msg_buf()`) e la coda dei buffer.
+
+Cosa deve fare la correzione:
+- **Certo:** `free_fw_msg_bufs()` e `ida_destroy()` dopo
+  `isys_unregister_devices()`. Chiude l'oops visto, se stop e close
+  ricevono risposta.
+- **Da verificare 1:** con i timeout (firmware che non risponde) i
+  messaggi in `framebuflist_fw` restano del firmware fino a
+  `fw_ops->close`. Liberarli prima della runtime suspend non e' sicuro.
+- **Da verificare 2:** `pm_runtime_put()` in `disable_streams` e'
+  asincrono: `isys_runtime_pm_suspend()` puo' girare dopo
+  `devres_release_all()` e usare `isys` liberata. Serve una suspend
+  sincrona (o una barriera) dentro `isys_remove()`, prima di uscire.
+- **Da verificare 3, preesistente:** `ipu6_buttress_isr()` chiama
+  `ipu6_buttress_call_isr()` per isys e psys **prima** di guardare il
+  bit di stato (`ipu6-buttress.c:367-370`), e `adev->auxdrv`/
+  `auxdrv_data` non vengono mai azzerati all'unbind. Dopo l'unbind,
+  qualunque interrupt della buttress col PCI attivo chiama
+  `ipu6_isys_isr()` con drvdata NULL, e `isys->pdata->base` viene letto
+  prima del controllo runtime PM. Possibile NULL deref; non provato.
+- Stato dell'arte su questo ordine in `isys_remove()`: da cercare su
+  lore/patchwork prima di scrivere la patch (il clone e' shallow, il
+  log non basta).
