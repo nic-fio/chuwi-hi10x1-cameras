@@ -875,3 +875,33 @@ Regola: nella risposta solo affermazioni verificate su `next`
 - Il kernel di prova sul tablet e' su `9cfc1aca0`; tra questo e
   `8e26d4c20` `ipu6-isys.c` cambia di 21 righe (supporto ipu7), nessuna
   su allocazione, `isys_remove()` o `mutex_destroy()`.
+
+### 8 ottobre, 08:51: unbind di isys con nodi aperti, riprodotto
+
+`scripts/riproduci-uaf-isys.sh` sul kernel base (`g1b4a83d60ea1`,
+next `9cfc1aca0`), un processo con `/dev/media0`, `/dev/video0`
+(capture isys) e `/dev/v4l-subdev0` (CSI2 di isys) aperti. Esiti in
+`data/uaf-isys-7.3.0-rc1-intelcam-debug-g1b4a83d60ea1-20261008-085146/`:
+
+| passo          | esito            | KASAN |
+|----------------|------------------|-------|
+| unbind isys    | ok               | -     |
+| ioctl media    | EIO              | -     |
+| ioctl video    | ENODEV           | 3 use-after-free in `v4l2_ioctl` |
+| ioctl subdev   | ENODEV           | -     |
+| close subdev   | ok               | 9: `v4l2_release`, `subdev_close`, `v4l2_prio_close`, `v4l2_device_release` |
+| close video    | ok               | 76: `__vb2_queue_free`, `vb2_core_queue_release`, ... |
+| close media    | ok               | -     |
+
+L'oggetto liberato nei rapporti slab (`kmalloc-2k`) e' allocato da
+`isys_probe+0x9c` -> `devm_kmalloc` e liberato da
+`unbind_store` -> `devres_release_all`. Disassemblato sul server:
+`isys_probe` parte a `0x1220`, la chiamata a `devm_kmalloc` con
+dimensione `0x7b0` (1968) e `GFP_KERNEL|__GFP_ZERO` ritorna a `0x12bc`
+= `+0x9c`: e' `devm_kzalloc(sizeof(*isys))` (`ipu6-isys.c:990`).
+`v4l2_device_release()` e `v4l2_prio_close()` leggono dentro quella
+struttura: e' il `v4l2_dev` incorporato in `isys`.
+
+**Il secondo punto della risposta a Laurent e' provato** per un file
+aperto (non per una `open()` in corso, che non abbiamo riprodotto: va
+tolta o provata). Il media device da solo regge: EIO e chiusura pulita.
