@@ -594,9 +594,14 @@ static int gc8034_get_selection(struct v4l2_subdev *sd,
 				struct v4l2_subdev_selection *sel)
 {
 	switch (sel->target) {
-	case V4L2_SEL_TGT_CROP_DEFAULT:
 	case V4L2_SEL_TGT_CROP:
 		sel->r = *v4l2_subdev_state_get_crop(state, 0);
+		break;
+	case V4L2_SEL_TGT_CROP_DEFAULT:
+		sel->r.top = GC8034_CROP_TOP;
+		sel->r.left = GC8034_CROP_LEFT;
+		sel->r.width = GC8034_WIDTH;
+		sel->r.height = GC8034_HEIGHT;
 		break;
 	case V4L2_SEL_TGT_CROP_BOUNDS:
 	case V4L2_SEL_TGT_NATIVE_SIZE:

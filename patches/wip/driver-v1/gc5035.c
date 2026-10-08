@@ -78,6 +78,8 @@
 #define GC5035_EXP_MARGIN		16
 #define GC5035_EXP_DEF			984
 #define GC5035_VTS_MAX			0x3fff
+/* The vendor drivers declare frame lengths in steps of 4 lines. */
+#define GC5035_VBLANK_STEP		4
 
 /*
  * The register tables have only been tested with a 19.2 MHz external clock,
@@ -91,11 +93,12 @@
 					 GC5035_DATA_LANES / GC5035_RGB_DEPTH)
 
 /*
- * Power sequencing from the GC5035 driver posted by Tomasz Figa in 2020: IOVDD
- * at least 50 us before AVDD and DVDD, at least 1200 MCLK cycles before the
- * first I2C transaction and 2000 MCLK cycles after streaming stops before the
- * clock is switched off. The 5 ms after reset is released comes from the Intel
- * Alder Lake-M driver and also covers the 1200 cycles.
+ * No datasheet is available. From the GC5035 driver posted by Tomasz Figa in
+ * 2020: IOVDD at least 50 us before AVDD and DVDD, at least 1200 MCLK cycles
+ * before the first I2C transaction, and 2000 MCLK cycles after streaming stops
+ * before the clock is switched off. From the Intel Alder Lake-M driver: the
+ * clock is enabled before reset is released, and 5 ms elapse before the first
+ * I2C transaction, which also covers the 1200 cycles.
  */
 #define GC5035_IOVDD_DELAY_US		50
 #define GC5035_RESET_DELAY_US		(5 * USEC_PER_MSEC)
@@ -121,28 +124,28 @@ static const char * const gc5035_supply_name[] = {
 };
 
 /*
- * V4L2_CID_ANALOGUE_GAIN is an index into this table. The first column is the
- * gain of each step in Q8 fixed point (256 is 1.0x), the second the value of
- * register 0xb6. The digital gain is left at the 1.0x the tables program.
+ * V4L2_CID_ANALOGUE_GAIN is an index into this table of register 0xb6 values,
+ * one per analogue gain step. The digital gain is left at the 1.0x the tables
+ * program.
  */
-static const u16 gc5035_again_level[][2] = {
-	{  256,  0 },	/*  1.000x */
-	{  302,  1 },	/*  1.180x */
-	{  358,  2 },	/*  1.398x */
-	{  425,  3 },	/*  1.660x */
-	{  502,  8 },	/*  1.961x */
-	{  599,  9 },	/*  2.340x */
-	{  717, 10 },	/*  2.801x */
-	{  845, 11 },	/*  3.301x */
-	{  998, 12 },	/*  3.898x */
-	{ 1203, 13 },	/*  4.699x */
-	{ 1434, 14 },	/*  5.602x */
-	{ 1710, 15 },	/*  6.680x */
-	{ 1997, 16 },	/*  7.801x */
-	{ 2355, 17 },	/*  9.199x */
-	{ 2816, 18 },	/* 11.000x */
-	{ 3318, 19 },	/* 12.961x */
-	{ 3994, 20 },	/* 15.602x */
+static const u8 gc5035_again_code[] = {
+	0,	/*  1.000x */
+	1,	/*  1.180x */
+	2,	/*  1.398x */
+	3,	/*  1.660x */
+	8,	/*  1.961x */
+	9,	/*  2.340x */
+	10,	/*  2.801x */
+	11,	/*  3.301x */
+	12,	/*  3.898x */
+	13,	/*  4.699x */
+	14,	/*  5.602x */
+	15,	/*  6.680x */
+	16,	/*  7.801x */
+	17,	/*  9.199x */
+	18,	/* 11.000x */
+	19,	/* 12.961x */
+	20,	/* 15.602x */
 };
 
 struct gc5035 {
@@ -689,9 +692,14 @@ static int gc5035_get_selection(struct v4l2_subdev *sd,
 				struct v4l2_subdev_selection *sel)
 {
 	switch (sel->target) {
-	case V4L2_SEL_TGT_CROP_DEFAULT:
 	case V4L2_SEL_TGT_CROP:
 		sel->r = *v4l2_subdev_state_get_crop(state, 0);
+		break;
+	case V4L2_SEL_TGT_CROP_DEFAULT:
+		sel->r.top = GC5035_CROP_TOP;
+		sel->r.left = GC5035_CROP_LEFT;
+		sel->r.width = GC5035_WIDTH;
+		sel->r.height = GC5035_HEIGHT;
 		break;
 	case V4L2_SEL_TGT_CROP_BOUNDS:
 	case V4L2_SEL_TGT_NATIVE_SIZE:
@@ -776,7 +784,7 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 		break;
 	case V4L2_CID_ANALOGUE_GAIN:
 		ret = cci_write(gc5035->regmap, GC5035_REG_ANALOGUE_GAIN,
-				gc5035_again_level[ctrl->val][1], NULL);
+				gc5035_again_code[ctrl->val], NULL);
 		break;
 	case V4L2_CID_VBLANK:
 		ret = cci_write(gc5035->regmap, GC5035_REG_FRAME_LENGTH,
@@ -972,7 +980,10 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 	gc5035->vblank =
 		v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_VBLANK,
 				  mode->vts_min - mode->height,
-				  GC5035_VTS_MAX - mode->height, 1,
+				  mode->vts_min - mode->height +
+				  round_down(GC5035_VTS_MAX - mode->vts_min,
+					     GC5035_VBLANK_STEP),
+				  GC5035_VBLANK_STEP,
 				  mode->vts_def - mode->height);
 
 	h_blank = mode->hts - mode->width;
@@ -986,7 +997,7 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 					     min(GC5035_EXP_DEF, exposure_max));
 
 	v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
-			  0, ARRAY_SIZE(gc5035_again_level) - 1, 1, 0);
+			  0, ARRAY_SIZE(gc5035_again_code) - 1, 1, 0);
 
 	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &gc5035_ctrl_ops,
 				     V4L2_CID_TEST_PATTERN,
