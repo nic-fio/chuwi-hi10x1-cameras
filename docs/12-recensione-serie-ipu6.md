@@ -930,3 +930,24 @@ trattiene `sd->owner`, che puo' non essere il modulo di
 `mdev->dev->driver`) ma non e' riprodotto e su ipu6 richiede uno
 scenario artificiale. Il secondo punto, riprodotto, basta da solo a
 dire che la v3 non risolve.
+
+### 8 ottobre, 09:05: verifica finale della risposta, frase per frase
+
+- 6.12.86 / prove su media next: lettera v3 (QEMU su `2dcdfb625c3b`,
+  tablet su `9cfc1aca0781` + driver dei sensori).
+- `vdev->v4l2_dev->mdev` nella 1/2 e nella 2/2: dalle patch.
+- vimc: `struct vimc_device` contiene `mdev` e `v4l2_dev`
+  (`vimc-common.h:136`), liberata in `vimc_v4l2_dev_release()`; ogni
+  `video_device` registrato prende un riferimento al `v4l2_device`
+  (`v4l2-dev.c:1105`).
+- ipu6-isys, devm, liberazione all'unbind: codice `next` + prova KASAN
+  (descrizione corretta: anche media aperto, una ioctl per nodo prima
+  della close, UAF anche in `v4l2_ioctl`).
+- em28xx: serie «fix lifecycle issues» di Hans (v2 16/06, v3 29/06,
+  pull per v7.3 il 10/07, `<e94a6342-3731-470e-8c9b-370338daa7c1@kernel.org>`);
+  la 2/6 «use v4l2_device release callback» e' in `next` `8e26d4c20`
+  (3 righe caratteristiche su 3; il clone del server e' shallow, quindi
+  verificato sul contenuto e non sul log).
+- Intestazioni: To/Cc identici al messaggio di Laurent (+ noi),
+  In-Reply-To e References giusti. Nessun messaggio nuovo nel thread.
+Prova a vuoto riuscita.
