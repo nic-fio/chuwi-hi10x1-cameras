@@ -905,3 +905,28 @@ struttura: e' il `v4l2_dev` incorporato in `isys`.
 **Il secondo punto della risposta a Laurent e' provato** per un file
 aperto (non per una `open()` in corso, che non abbiamo riprodotto: va
 tolta o provata). Il media device da solo regge: EIO e chiusura pulita.
+
+### 8 ottobre: la finestra su `drv->owner`, vista su ipu6
+
+Prima di costruire il kernel con `msleep()` nella finestra:
+
+- In ipu6-isys `mdev->dev` **non** e' l'auxdev di isys:
+  `isys_register_devices()` lo assegna e subito dopo
+  `media_device_pci_init()` lo sovrascrive con `&pci_dev->dev`
+  (`mc-device.c:869`). Quindi `drv` e' il driver PCI `intel_ipu6`, non
+  isys. L'unbind di isys non azzera `mdev->dev->driver`: il controllo
+  `!drv` della v3 su ipu6 scatta solo se si scollega il driver PCI.
+- Nodi CSI2: il cdev trattiene isys, isys usa simboli di `intel_ipu6`
+  (lsmod: `intel_ipu6 ... 1 intel_ipu6_isys`), quindi `drv` resta valido.
+- Nodi dei sensori: il cdev trattiene solo gc5035/gc8034. Per liberare
+  `drv` nella finestra servono `rmmod intel_ipu6_isys` **e**
+  `rmmod intel_ipu6`. In piu' `CONFIG_KASAN_VMALLOC` non e' attivo nei
+  kernel di prova: la lettura dalla memoria del modulo liberato non
+  darebbe un rapporto KASAN, solo un page fault. Servirebbe una
+  ricompilazione completa con KASAN_VMALLOC.
+
+Conclusione: il primo punto della risposta e' vero in generale (il cdev
+trattiene `sd->owner`, che puo' non essere il modulo di
+`mdev->dev->driver`) ma non e' riprodotto e su ipu6 richiede uno
+scenario artificiale. Il secondo punto, riprodotto, basta da solo a
+dire che la v3 non risolve.
