@@ -1,0 +1,143 @@
+[  422.970720] ==================================================================
+[  422.970745] BUG: KASAN: use-after-free in v4l2_ioctl+0x1c5/0x220
+[  422.970764] Read of size 8 at addr ffff88811e720758 by task python3/10130
+
+[  422.970783] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  422.970794] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[  422.970797] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  422.970802] Call Trace:
+[  422.970806]  <TASK>
+[  422.970809]  dump_stack_lvl+0x5d/0x80
+[  422.970820]  print_report+0x157/0x4c9
+[  422.970829]  ? v4l2_ioctl+0x1c5/0x220
+[  422.970835]  ? __virt_addr_valid+0x22d/0x440
+[  422.970844]  ? v4l2_ioctl+0x1c5/0x220
+[  422.970850]  kasan_report+0xdf/0x1a0
+[  422.970858]  ? v4l2_ioctl+0x1c5/0x220
+[  422.970867]  v4l2_ioctl+0x1c5/0x220
+[  422.970875]  __x64_sys_ioctl+0x134/0x1c0
+[  422.970881]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[  422.970889]  do_syscall_64+0x109/0x5d0
+[  422.970898]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  422.970904] RIP: 0033:0x7fa23dd8165b
+[  422.970911] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[  422.970917] RSP: 002b:00007ffc03569960 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  422.970926] RAX: ffffffffffffffda RBX: 0000000080685600 RCX: 00007fa23dd8165b
+[  422.970930] RDX: 00007ffc03569a2f RSI: 0000000080685600 RDI: 0000000000000004
+[  422.970934] RBP: 0000000000000068 R08: 0000000000000000 R09: 0000000000000000
+[  422.970937] R10: 00007ffc03569690 R11: 0000000000000246 R12: 00007ffc035699d8
+[  422.970941] R13: 0000000000000004 R14: 00007fa23d7f7de0 R15: 0000000000000001
+[  422.970949]  </TASK>
+
+[  422.971011] The buggy address belongs to the physical page:
+[  422.971018] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e720
+[  422.971027] flags: 0x200000000000000(node=0|zone=2)
+[  422.971035] page_type: f0(buddy)
+[  422.971043] raw: 0200000000000000 ffffea0005196008 ffffea0005214808 0000000000000000
+[  422.971050] raw: 0000000000000000 0000000000000005 00000000f0000000 0000000000000000
+[  422.971055] page dumped because: kasan: bad access detected
+
+[  422.971064] Memory state around the buggy address:
+[  422.971071]  ffff88811e720600: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971078]  ffff88811e720680: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971085] >ffff88811e720700: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971090]                                                     ^
+[  422.971098]  ffff88811e720780: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971104]  ffff88811e720800: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971110] ==================================================================
+[  422.971294] Disabling lock debugging due to kernel taint
+[  422.971306] ==================================================================
+[  422.971314] BUG: KASAN: use-after-free in v4l2_ioctl+0x117/0x220
+[  422.971327] Read of size 8 at addr ffff88811e720ca8 by task python3/10130
+
+[  422.971342] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  422.971351] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  422.971354] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  422.971358] Call Trace:
+[  422.971361]  <TASK>
+[  422.971363]  dump_stack_lvl+0x5d/0x80
+[  422.971371]  print_report+0x157/0x4c9
+[  422.971378]  ? v4l2_ioctl+0x117/0x220
+[  422.971384]  ? __virt_addr_valid+0x22d/0x440
+[  422.971392]  ? v4l2_ioctl+0x117/0x220
+[  422.971398]  kasan_report+0xdf/0x1a0
+[  422.971406]  ? v4l2_ioctl+0x117/0x220
+[  422.971414]  kasan_check_range+0x10f/0x1e0
+[  422.971421]  v4l2_ioctl+0x117/0x220
+[  422.971428]  __x64_sys_ioctl+0x134/0x1c0
+[  422.971434]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[  422.971441]  do_syscall_64+0x109/0x5d0
+[  422.971449]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  422.971455] RIP: 0033:0x7fa23dd8165b
+[  422.971460] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[  422.971465] RSP: 002b:00007ffc03569960 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  422.971472] RAX: ffffffffffffffda RBX: 0000000080685600 RCX: 00007fa23dd8165b
+[  422.971475] RDX: 00007ffc03569a2f RSI: 0000000080685600 RDI: 0000000000000004
+[  422.971479] RBP: 0000000000000068 R08: 0000000000000000 R09: 0000000000000000
+[  422.971482] R10: 00007ffc03569690 R11: 0000000000000246 R12: 00007ffc035699d8
+[  422.971485] R13: 0000000000000004 R14: 00007fa23d7f7de0 R15: 0000000000000001
+[  422.971493]  </TASK>
+
+[  422.971553] The buggy address belongs to the physical page:
+[  422.971560] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e720
+[  422.971569] flags: 0x200000000000000(node=0|zone=2)
+[  422.971576] page_type: f0(buddy)
+[  422.971585] raw: 0200000000000000 ffffea0005196008 ffffea0005214808 0000000000000000
+[  422.971591] raw: 0000000000000000 0000000000000005 00000000f0000000 0000000000000000
+[  422.971596] page dumped because: kasan: bad access detected
+
+[  422.971604] Memory state around the buggy address:
+[  422.971611]  ffff88811e720b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971618]  ffff88811e720c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971625] >ffff88811e720c80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971630]                                   ^
+[  422.971636]  ffff88811e720d00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971644]  ffff88811e720d80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971649] ==================================================================
+[  422.971654] ==================================================================
+[  422.971660] BUG: KASAN: use-after-free in v4l2_ioctl+0x1fa/0x220
+[  422.971670] Read of size 8 at addr ffff88811e720ca8 by task python3/10130
+
+[  422.971684] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  422.971692] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  422.971695] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  422.971698] Call Trace:
+[  422.971701]  <TASK>
+[  422.971703]  dump_stack_lvl+0x5d/0x80
+[  422.971711]  print_report+0x157/0x4c9
+[  422.971717]  ? v4l2_ioctl+0x1fa/0x220
+[  422.971723]  ? __virt_addr_valid+0x22d/0x440
+[  422.971731]  ? v4l2_ioctl+0x1fa/0x220
+[  422.971737]  kasan_report+0xdf/0x1a0
+[  422.971745]  ? v4l2_ioctl+0x1fa/0x220
+[  422.971754]  v4l2_ioctl+0x1fa/0x220
+[  422.971761]  __x64_sys_ioctl+0x134/0x1c0
+[  422.971766]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[  422.971772]  do_syscall_64+0x109/0x5d0
+[  422.971780]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  422.971786] RIP: 0033:0x7fa23dd8165b
+[  422.971790] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[  422.971794] RSP: 002b:00007ffc03569960 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  422.971800] RAX: ffffffffffffffda RBX: 0000000080685600 RCX: 00007fa23dd8165b
+[  422.971804] RDX: 00007ffc03569a2f RSI: 0000000080685600 RDI: 0000000000000004
+[  422.971807] RBP: 0000000000000068 R08: 0000000000000000 R09: 0000000000000000
+[  422.971810] R10: 00007ffc03569690 R11: 0000000000000246 R12: 00007ffc035699d8
+[  422.971814] R13: 0000000000000004 R14: 00007fa23d7f7de0 R15: 0000000000000001
+[  422.971821]  </TASK>
+
+[  422.971876] The buggy address belongs to the physical page:
+[  422.971881] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e720
+[  422.971887] flags: 0x200000000000000(node=0|zone=2)
+[  422.971893] page_type: f0(buddy)
+[  422.971899] raw: 0200000000000000 ffffea0005196008 ffffea0005214808 0000000000000000
+[  422.971904] raw: 0000000000000000 0000000000000005 00000000f0000000 0000000000000000
+[  422.971908] page dumped because: kasan: bad access detected
+
+[  422.971916] Memory state around the buggy address:
+[  422.971921]  ffff88811e720b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971927]  ffff88811e720c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971933] >ffff88811e720c80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971938]                                   ^
+[  422.971944]  ffff88811e720d00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971950]  ffff88811e720d80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  422.971956] ==================================================================

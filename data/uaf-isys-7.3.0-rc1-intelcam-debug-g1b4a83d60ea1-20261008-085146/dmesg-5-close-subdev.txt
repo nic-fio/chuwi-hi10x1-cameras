@@ -1,0 +1,719 @@
+[  424.999093] ==================================================================
+[  424.999119] BUG: KASAN: slab-use-after-free in v4l2_release+0x2cf/0x360
+[  424.999141] Read of size 8 at addr ffff8881094383f8 by task python3/10130
+
+[  424.999162] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  424.999175] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  424.999178] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  424.999184] Call Trace:
+[  424.999188]  <TASK>
+[  424.999191]  dump_stack_lvl+0x5d/0x80
+[  424.999203]  print_report+0x157/0x4c9
+[  424.999213]  ? v4l2_release+0x2cf/0x360
+[  424.999219]  ? __virt_addr_valid+0x22d/0x440
+[  424.999230]  ? v4l2_release+0x2cf/0x360
+[  424.999236]  kasan_report+0xdf/0x1a0
+[  424.999245]  ? v4l2_release+0x2cf/0x360
+[  424.999254]  v4l2_release+0x2cf/0x360
+[  424.999262]  __fput+0x36d/0xaa0
+[  424.999272]  fput_close_sync+0xe0/0x190
+[  424.999278]  ? __pfx_fput_close_sync+0x10/0x10
+[  424.999286]  __x64_sys_close+0x78/0xd0
+[  424.999292]  do_syscall_64+0x109/0x5d0
+[  424.999302]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  424.999309] RIP: 0033:0x7fa23dd043a7
+[  424.999316] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  424.999323] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  424.999332] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  424.999338] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  424.999342] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  424.999345] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  424.999349] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  424.999357]  </TASK>
+
+[  424.999430] Allocated by task 244:
+[  424.999439]  kasan_save_stack+0x30/0x50
+[  424.999451]  kasan_save_track+0x14/0x30
+[  424.999458]  __kasan_kmalloc+0x8f/0xa0
+[  424.999465]  __kmalloc_node_track_caller_noprof+0x29d/0x730
+[  424.999476]  devm_kmalloc+0x70/0x240
+[  424.999486]  isys_probe+0x9c/0x17c0 [intel_ipu6_isys]
+[  424.999510]  really_probe+0x1eb/0x630
+[  424.999519]  __driver_probe_device+0x1ad/0x300
+[  424.999527]  driver_probe_device+0x45/0xf0
+[  424.999534]  __driver_attach+0x157/0x400
+[  424.999542]  bus_for_each_dev+0x103/0x180
+[  424.999549]  bus_add_driver+0x20b/0x420
+[  424.999556]  driver_register+0x1a0/0x350
+[  424.999564]  __auxiliary_driver_register+0x14d/0x240
+[  424.999574]  do_one_initcall+0xc9/0x440
+[  424.999581]  do_init_module+0x27c/0x7b0
+[  424.999589]  load_module+0x56f8/0x62b0
+[  424.999597]  init_module_from_file+0x152/0x170
+[  424.999605]  idempotent_init_module+0x228/0x760
+[  424.999614]  __x64_sys_finit_module+0xbf/0x120
+[  424.999622]  do_syscall_64+0x109/0x5d0
+[  424.999631]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  424.999644] Freed by task 10130:
+[  424.999651]  kasan_save_stack+0x30/0x50
+[  424.999658]  kasan_save_track+0x14/0x30
+[  424.999665]  kasan_save_free_info+0x3b/0x70
+[  424.999674]  __kasan_slab_free+0x43/0x70
+[  424.999681]  kfree+0x1b0/0x500
+[  424.999689]  release_nodes+0xb9/0x110
+[  424.999698]  devres_release_all+0xfe/0x170
+[  424.999704]  device_unbind_cleanup+0x71/0x250
+[  424.999713]  device_release_driver_internal+0x41b/0x570
+[  424.999723]  unbind_store+0xd1/0xf0
+[  424.999730]  kernfs_fop_write_iter+0x335/0x510
+[  424.999739]  vfs_write+0x51c/0x1080
+[  424.999748]  ksys_write+0xf4/0x1c0
+[  424.999756]  do_syscall_64+0x109/0x5d0
+[  424.999764]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  424.999777] The buggy address belongs to the object at ffff888109438000
+                which belongs to the cache kmalloc-2k of size 2048
+[  424.999787] The buggy address is located 1016 bytes inside of
+                freed 2048-byte region [ffff888109438000, ffff888109438800)
+
+[  424.999802] The buggy address belongs to the physical page:
+[  424.999810] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x109438
+[  424.999820] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  424.999826] flags: 0x200000000000040(head|node=0|zone=2)
+[  424.999834] page_type: f5(slab)
+[  424.999843] raw: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  424.999851] raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  424.999857] head: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  424.999863] head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  424.999869] head: 0200000000000003 fffffffffffffe01 00000000ffffffff 00000000ffffffff
+[  424.999875] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  424.999879] page dumped because: kasan: bad access detected
+
+[  424.999888] Memory state around the buggy address:
+[  424.999894]  ffff888109438280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  424.999901]  ffff888109438300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  424.999908] >ffff888109438380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  424.999913]                                                                 ^
+[  424.999920]  ffff888109438400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  424.999927]  ffff888109438480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  424.999932] ==================================================================
+[  425.000088] ==================================================================
+[  425.000099] BUG: KASAN: slab-use-after-free in v4l2_release+0x322/0x360
+[  425.000112] Read of size 8 at addr ffff888109438348 by task python3/10130
+
+[  425.000128] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.000138] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.000140] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.000145] Call Trace:
+[  425.000148]  <TASK>
+[  425.000151]  dump_stack_lvl+0x5d/0x80
+[  425.000159]  print_report+0x157/0x4c9
+[  425.000166]  ? v4l2_release+0x322/0x360
+[  425.000173]  ? __virt_addr_valid+0x22d/0x440
+[  425.000181]  ? v4l2_release+0x322/0x360
+[  425.000187]  kasan_report+0xdf/0x1a0
+[  425.000194]  ? v4l2_release+0x322/0x360
+[  425.000203]  v4l2_release+0x322/0x360
+[  425.000210]  __fput+0x36d/0xaa0
+[  425.000220]  fput_close_sync+0xe0/0x190
+[  425.000225]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.000233]  __x64_sys_close+0x78/0xd0
+[  425.000238]  do_syscall_64+0x109/0x5d0
+[  425.000246]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.000252] RIP: 0033:0x7fa23dd043a7
+[  425.000257] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.000263] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.000270] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.000274] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.000278] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.000281] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.000285] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.000293]  </TASK>
+
+[  425.000354] Allocated by task 244:
+[  425.000361]  kasan_save_stack+0x30/0x50
+[  425.000368]  kasan_save_track+0x14/0x30
+[  425.000375]  __kasan_kmalloc+0x8f/0xa0
+[  425.000381]  __kmalloc_node_track_caller_noprof+0x29d/0x730
+[  425.000390]  devm_kmalloc+0x70/0x240
+[  425.000399]  isys_probe+0x9c/0x17c0 [intel_ipu6_isys]
+[  425.000418]  really_probe+0x1eb/0x630
+[  425.000426]  __driver_probe_device+0x1ad/0x300
+[  425.000433]  driver_probe_device+0x45/0xf0
+[  425.000440]  __driver_attach+0x157/0x400
+[  425.000448]  bus_for_each_dev+0x103/0x180
+[  425.000454]  bus_add_driver+0x20b/0x420
+[  425.000460]  driver_register+0x1a0/0x350
+[  425.000468]  __auxiliary_driver_register+0x14d/0x240
+[  425.000476]  do_one_initcall+0xc9/0x440
+[  425.000482]  do_init_module+0x27c/0x7b0
+[  425.000489]  load_module+0x56f8/0x62b0
+[  425.000497]  init_module_from_file+0x152/0x170
+[  425.000504]  idempotent_init_module+0x228/0x760
+[  425.000512]  __x64_sys_finit_module+0xbf/0x120
+[  425.000520]  do_syscall_64+0x109/0x5d0
+[  425.000528]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.000539] Freed by task 10130:
+[  425.000545]  kasan_save_stack+0x30/0x50
+[  425.000551]  kasan_save_track+0x14/0x30
+[  425.000558]  kasan_save_free_info+0x3b/0x70
+[  425.000566]  __kasan_slab_free+0x43/0x70
+[  425.000573]  kfree+0x1b0/0x500
+[  425.000581]  release_nodes+0xb9/0x110
+[  425.000589]  devres_release_all+0xfe/0x170
+[  425.000595]  device_unbind_cleanup+0x71/0x250
+[  425.000602]  device_release_driver_internal+0x41b/0x570
+[  425.000610]  unbind_store+0xd1/0xf0
+[  425.000616]  kernfs_fop_write_iter+0x335/0x510
+[  425.000624]  vfs_write+0x51c/0x1080
+[  425.000631]  ksys_write+0xf4/0x1c0
+[  425.000638]  do_syscall_64+0x109/0x5d0
+[  425.000646]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.000657] The buggy address belongs to the object at ffff888109438000
+                which belongs to the cache kmalloc-2k of size 2048
+[  425.000665] The buggy address is located 840 bytes inside of
+                freed 2048-byte region [ffff888109438000, ffff888109438800)
+
+[  425.000679] The buggy address belongs to the physical page:
+[  425.000685] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x109438
+[  425.000692] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  425.000698] flags: 0x200000000000040(head|node=0|zone=2)
+[  425.000704] page_type: f5(slab)
+[  425.000712] raw: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.000719] raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.000725] head: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.000731] head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.000737] head: 0200000000000003 fffffffffffffe01 00000000ffffffff 00000000ffffffff
+[  425.000743] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  425.000747] page dumped because: kasan: bad access detected
+
+[  425.000756] Memory state around the buggy address:
+[  425.000761]  ffff888109438200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.000768]  ffff888109438280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.000775] >ffff888109438300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.000781]                                               ^
+[  425.000787]  ffff888109438380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.000794]  ffff888109438400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.000799] ==================================================================
+[  425.000920] ==================================================================
+[  425.000933] BUG: KASAN: use-after-free in subdev_close+0x212/0x280
+[  425.000948] Read of size 8 at addr ffff88811e7200e0 by task python3/10130
+
+[  425.000966] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.000977] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.000980] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.000984] Call Trace:
+[  425.000988]  <TASK>
+[  425.000991]  dump_stack_lvl+0x5d/0x80
+[  425.001000]  print_report+0x157/0x4c9
+[  425.001008]  ? subdev_close+0x212/0x280
+[  425.001014]  ? __virt_addr_valid+0x22d/0x440
+[  425.001022]  ? subdev_close+0x212/0x280
+[  425.001027]  kasan_report+0xdf/0x1a0
+[  425.001035]  ? subdev_close+0x212/0x280
+[  425.001043]  subdev_close+0x212/0x280
+[  425.001050]  v4l2_release+0x268/0x360
+[  425.001058]  __fput+0x36d/0xaa0
+[  425.001068]  fput_close_sync+0xe0/0x190
+[  425.001074]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.001082]  __x64_sys_close+0x78/0xd0
+[  425.001088]  do_syscall_64+0x109/0x5d0
+[  425.001097]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.001102] RIP: 0033:0x7fa23dd043a7
+[  425.001108] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.001113] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.001121] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.001125] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.001128] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.001131] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.001135] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.001143]  </TASK>
+
+[  425.001211] The buggy address belongs to the physical page:
+[  425.001218] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e720
+[  425.001225] flags: 0x200000000000000(node=0|zone=2)
+[  425.001232] page_type: f0(buddy)
+[  425.001239] raw: 0200000000000000 ffffea0005196008 ffffea0005214808 0000000000000000
+[  425.001246] raw: 0000000000000000 0000000000000005 00000000f0000000 0000000000000000
+[  425.001251] page dumped because: kasan: bad access detected
+
+[  425.001260] Memory state around the buggy address:
+[  425.001266]  ffff88811e71ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  425.001274]  ffff88811e720000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.001281] >ffff88811e720080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.001287]                                                        ^
+[  425.001294]  ffff88811e720100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.001301]  ffff88811e720180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.001308] ==================================================================
+[  425.001316] ==================================================================
+[  425.001322] BUG: KASAN: slab-use-after-free in v4l2_prio_close+0x2e/0x50
+[  425.001336] Write of size 4 at addr ffff888109438490 by task python3/10130
+
+[  425.001352] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.001362] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.001364] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.001369] Call Trace:
+[  425.001371]  <TASK>
+[  425.001374]  dump_stack_lvl+0x5d/0x80
+[  425.001383]  print_report+0x157/0x4c9
+[  425.001391]  ? v4l2_prio_close+0x2e/0x50
+[  425.001399]  ? __virt_addr_valid+0x22d/0x440
+[  425.001408]  ? v4l2_prio_close+0x2e/0x50
+[  425.001414]  kasan_report+0xdf/0x1a0
+[  425.001423]  ? v4l2_prio_close+0x2e/0x50
+[  425.001433]  kasan_check_range+0x10f/0x1e0
+[  425.001441]  v4l2_prio_close+0x2e/0x50
+[  425.001448]  v4l2_fh_del+0x1c0/0x2b0
+[  425.001461]  subdev_close+0x105/0x280
+[  425.001467]  v4l2_release+0x268/0x360
+[  425.001475]  __fput+0x36d/0xaa0
+[  425.001486]  fput_close_sync+0xe0/0x190
+[  425.001491]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.001498]  __x64_sys_close+0x78/0xd0
+[  425.001504]  do_syscall_64+0x109/0x5d0
+[  425.001512]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.001517] RIP: 0033:0x7fa23dd043a7
+[  425.001522] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.001527] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.001532] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.001536] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.001539] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.001542] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.001545] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.001553]  </TASK>
+
+[  425.001622] Allocated by task 244:
+[  425.001628]  kasan_save_stack+0x30/0x50
+[  425.001636]  kasan_save_track+0x14/0x30
+[  425.001643]  __kasan_kmalloc+0x8f/0xa0
+[  425.001649]  __kmalloc_node_track_caller_noprof+0x29d/0x730
+[  425.001658]  devm_kmalloc+0x70/0x240
+[  425.001667]  isys_probe+0x9c/0x17c0 [intel_ipu6_isys]
+[  425.001685]  really_probe+0x1eb/0x630
+[  425.001692]  __driver_probe_device+0x1ad/0x300
+[  425.001700]  driver_probe_device+0x45/0xf0
+[  425.001707]  __driver_attach+0x157/0x400
+[  425.001714]  bus_for_each_dev+0x103/0x180
+[  425.001721]  bus_add_driver+0x20b/0x420
+[  425.001728]  driver_register+0x1a0/0x350
+[  425.001736]  __auxiliary_driver_register+0x14d/0x240
+[  425.001745]  do_one_initcall+0xc9/0x440
+[  425.001752]  do_init_module+0x27c/0x7b0
+[  425.001760]  load_module+0x56f8/0x62b0
+[  425.001768]  init_module_from_file+0x152/0x170
+[  425.001775]  idempotent_init_module+0x228/0x760
+[  425.001783]  __x64_sys_finit_module+0xbf/0x120
+[  425.001791]  do_syscall_64+0x109/0x5d0
+[  425.001799]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.001810] Freed by task 10130:
+[  425.001816]  kasan_save_stack+0x30/0x50
+[  425.001823]  kasan_save_track+0x14/0x30
+[  425.001829]  kasan_save_free_info+0x3b/0x70
+[  425.001837]  __kasan_slab_free+0x43/0x70
+[  425.001844]  kfree+0x1b0/0x500
+[  425.001852]  release_nodes+0xb9/0x110
+[  425.001860]  devres_release_all+0xfe/0x170
+[  425.001866]  device_unbind_cleanup+0x71/0x250
+[  425.001873]  device_release_driver_internal+0x41b/0x570
+[  425.001881]  unbind_store+0xd1/0xf0
+[  425.001887]  kernfs_fop_write_iter+0x335/0x510
+[  425.001895]  vfs_write+0x51c/0x1080
+[  425.001902]  ksys_write+0xf4/0x1c0
+[  425.001909]  do_syscall_64+0x109/0x5d0
+[  425.001917]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.001927] The buggy address belongs to the object at ffff888109438000
+                which belongs to the cache kmalloc-2k of size 2048
+[  425.001935] The buggy address is located 1168 bytes inside of
+                freed 2048-byte region [ffff888109438000, ffff888109438800)
+
+[  425.001949] The buggy address belongs to the physical page:
+[  425.001955] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x109438
+[  425.001961] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  425.001966] flags: 0x200000000000040(head|node=0|zone=2)
+[  425.001972] page_type: f5(slab)
+[  425.001978] raw: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.001984] raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.001990] head: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.001996] head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.002002] head: 0200000000000003 fffffffffffffe01 00000000ffffffff 00000000ffffffff
+[  425.002008] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  425.002012] page dumped because: kasan: bad access detected
+
+[  425.002020] Memory state around the buggy address:
+[  425.002026]  ffff888109438380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002032]  ffff888109438400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002039] >ffff888109438480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002045]                          ^
+[  425.002050]  ffff888109438500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002057]  ffff888109438580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002062] ==================================================================
+[  425.002177] ==================================================================
+[  425.002187] BUG: KASAN: slab-use-after-free in v4l2_device_release+0x3a9/0x410
+[  425.002199] Read of size 8 at addr ffff8881094383f8 by task python3/10130
+
+[  425.002213] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.002222] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.002224] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.002228] Call Trace:
+[  425.002231]  <TASK>
+[  425.002233]  dump_stack_lvl+0x5d/0x80
+[  425.002240]  print_report+0x157/0x4c9
+[  425.002247]  ? v4l2_device_release+0x3a9/0x410
+[  425.002254]  ? __virt_addr_valid+0x22d/0x440
+[  425.002262]  ? v4l2_device_release+0x3a9/0x410
+[  425.002268]  kasan_report+0xdf/0x1a0
+[  425.002276]  ? v4l2_device_release+0x3a9/0x410
+[  425.002285]  v4l2_device_release+0x3a9/0x410
+[  425.002292]  device_release+0xc8/0x240
+[  425.002298]  kobject_put+0x14d/0x280
+[  425.002306]  v4l2_release+0x2aa/0x360
+[  425.002313]  __fput+0x36d/0xaa0
+[  425.002323]  fput_close_sync+0xe0/0x190
+[  425.002328]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.002335]  __x64_sys_close+0x78/0xd0
+[  425.002340]  do_syscall_64+0x109/0x5d0
+[  425.002348]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.002353] RIP: 0033:0x7fa23dd043a7
+[  425.002357] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.002362] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.002367] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.002371] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.002374] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.002377] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.002380] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.002387]  </TASK>
+
+[  425.002454] Allocated by task 244:
+[  425.002460]  kasan_save_stack+0x30/0x50
+[  425.002466]  kasan_save_track+0x14/0x30
+[  425.002473]  __kasan_kmalloc+0x8f/0xa0
+[  425.002479]  __kmalloc_node_track_caller_noprof+0x29d/0x730
+[  425.002488]  devm_kmalloc+0x70/0x240
+[  425.002496]  isys_probe+0x9c/0x17c0 [intel_ipu6_isys]
+[  425.002513]  really_probe+0x1eb/0x630
+[  425.002520]  __driver_probe_device+0x1ad/0x300
+[  425.002527]  driver_probe_device+0x45/0xf0
+[  425.002535]  __driver_attach+0x157/0x400
+[  425.002542]  bus_for_each_dev+0x103/0x180
+[  425.002548]  bus_add_driver+0x20b/0x420
+[  425.002554]  driver_register+0x1a0/0x350
+[  425.002562]  __auxiliary_driver_register+0x14d/0x240
+[  425.002570]  do_one_initcall+0xc9/0x440
+[  425.002576]  do_init_module+0x27c/0x7b0
+[  425.002583]  load_module+0x56f8/0x62b0
+[  425.002590]  init_module_from_file+0x152/0x170
+[  425.002598]  idempotent_init_module+0x228/0x760
+[  425.002606]  __x64_sys_finit_module+0xbf/0x120
+[  425.002613]  do_syscall_64+0x109/0x5d0
+[  425.002621]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.002631] Freed by task 10130:
+[  425.002637]  kasan_save_stack+0x30/0x50
+[  425.002643]  kasan_save_track+0x14/0x30
+[  425.002650]  kasan_save_free_info+0x3b/0x70
+[  425.002658]  __kasan_slab_free+0x43/0x70
+[  425.002665]  kfree+0x1b0/0x500
+[  425.002672]  release_nodes+0xb9/0x110
+[  425.002680]  devres_release_all+0xfe/0x170
+[  425.002686]  device_unbind_cleanup+0x71/0x250
+[  425.002693]  device_release_driver_internal+0x41b/0x570
+[  425.002701]  unbind_store+0xd1/0xf0
+[  425.002707]  kernfs_fop_write_iter+0x335/0x510
+[  425.002714]  vfs_write+0x51c/0x1080
+[  425.002722]  ksys_write+0xf4/0x1c0
+[  425.002728]  do_syscall_64+0x109/0x5d0
+[  425.002736]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.002747] The buggy address belongs to the object at ffff888109438000
+                which belongs to the cache kmalloc-2k of size 2048
+[  425.002754] The buggy address is located 1016 bytes inside of
+                freed 2048-byte region [ffff888109438000, ffff888109438800)
+
+[  425.002768] The buggy address belongs to the physical page:
+[  425.002774] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x109438
+[  425.002780] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  425.002786] flags: 0x200000000000040(head|node=0|zone=2)
+[  425.002791] page_type: f5(slab)
+[  425.002797] raw: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.002803] raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.002809] head: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.002815] head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.002821] head: 0200000000000003 fffffffffffffe01 00000000ffffffff 00000000ffffffff
+[  425.002827] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  425.002831] page dumped because: kasan: bad access detected
+
+[  425.002839] Memory state around the buggy address:
+[  425.002845]  ffff888109438280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002852]  ffff888109438300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002858] >ffff888109438380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002864]                                                                 ^
+[  425.002870]  ffff888109438400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002876]  ffff888109438480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.002882] ==================================================================
+[  425.002915] ==================================================================
+[  425.002922] BUG: KASAN: slab-use-after-free in v4l2_device_release+0x3d4/0x410
+[  425.002933] Read of size 8 at addr ffff8881094384a0 by task python3/10130
+
+[  425.002947] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.002956] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.002958] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.002962] Call Trace:
+[  425.002964]  <TASK>
+[  425.002966]  dump_stack_lvl+0x5d/0x80
+[  425.002974]  print_report+0x157/0x4c9
+[  425.002981]  ? v4l2_device_release+0x3d4/0x410
+[  425.002987]  ? __virt_addr_valid+0x22d/0x440
+[  425.002995]  ? v4l2_device_release+0x3d4/0x410
+[  425.003002]  kasan_report+0xdf/0x1a0
+[  425.003009]  ? v4l2_device_release+0x3d4/0x410
+[  425.003018]  v4l2_device_release+0x3d4/0x410
+[  425.003025]  device_release+0xc8/0x240
+[  425.003031]  kobject_put+0x14d/0x280
+[  425.003038]  v4l2_release+0x2aa/0x360
+[  425.003045]  __fput+0x36d/0xaa0
+[  425.003055]  fput_close_sync+0xe0/0x190
+[  425.003060]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.003067]  __x64_sys_close+0x78/0xd0
+[  425.003072]  do_syscall_64+0x109/0x5d0
+[  425.003080]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.003086] RIP: 0033:0x7fa23dd043a7
+[  425.003090] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.003094] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.003099] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.003103] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.003105] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.003108] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.003111] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.003119]  </TASK>
+
+[  425.003185] Allocated by task 244:
+[  425.003190]  kasan_save_stack+0x30/0x50
+[  425.003197]  kasan_save_track+0x14/0x30
+[  425.003204]  __kasan_kmalloc+0x8f/0xa0
+[  425.003210]  __kmalloc_node_track_caller_noprof+0x29d/0x730
+[  425.003219]  devm_kmalloc+0x70/0x240
+[  425.003227]  isys_probe+0x9c/0x17c0 [intel_ipu6_isys]
+[  425.003243]  really_probe+0x1eb/0x630
+[  425.003250]  __driver_probe_device+0x1ad/0x300
+[  425.003258]  driver_probe_device+0x45/0xf0
+[  425.003265]  __driver_attach+0x157/0x400
+[  425.003272]  bus_for_each_dev+0x103/0x180
+[  425.003278]  bus_add_driver+0x20b/0x420
+[  425.003285]  driver_register+0x1a0/0x350
+[  425.003292]  __auxiliary_driver_register+0x14d/0x240
+[  425.003300]  do_one_initcall+0xc9/0x440
+[  425.003306]  do_init_module+0x27c/0x7b0
+[  425.003313]  load_module+0x56f8/0x62b0
+[  425.003320]  init_module_from_file+0x152/0x170
+[  425.003328]  idempotent_init_module+0x228/0x760
+[  425.003335]  __x64_sys_finit_module+0xbf/0x120
+[  425.003343]  do_syscall_64+0x109/0x5d0
+[  425.003351]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.003361] Freed by task 10130:
+[  425.003366]  kasan_save_stack+0x30/0x50
+[  425.003373]  kasan_save_track+0x14/0x30
+[  425.003379]  kasan_save_free_info+0x3b/0x70
+[  425.003387]  __kasan_slab_free+0x43/0x70
+[  425.003394]  kfree+0x1b0/0x500
+[  425.003402]  release_nodes+0xb9/0x110
+[  425.003410]  devres_release_all+0xfe/0x170
+[  425.003415]  device_unbind_cleanup+0x71/0x250
+[  425.003422]  device_release_driver_internal+0x41b/0x570
+[  425.003430]  unbind_store+0xd1/0xf0
+[  425.003436]  kernfs_fop_write_iter+0x335/0x510
+[  425.003444]  vfs_write+0x51c/0x1080
+[  425.003450]  ksys_write+0xf4/0x1c0
+[  425.003457]  do_syscall_64+0x109/0x5d0
+[  425.003465]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  425.003475] The buggy address belongs to the object at ffff888109438000
+                which belongs to the cache kmalloc-2k of size 2048
+[  425.003483] The buggy address is located 1184 bytes inside of
+                freed 2048-byte region [ffff888109438000, ffff888109438800)
+
+[  425.003495] The buggy address belongs to the physical page:
+[  425.003501] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x109438
+[  425.003507] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  425.003512] flags: 0x200000000000040(head|node=0|zone=2)
+[  425.003518] page_type: f5(slab)
+[  425.003523] raw: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.003529] raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.003535] head: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  425.003541] head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  425.003547] head: 0200000000000003 fffffffffffffe01 00000000ffffffff 00000000ffffffff
+[  425.003552] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  425.003556] page dumped because: kasan: bad access detected
+
+[  425.003564] Memory state around the buggy address:
+[  425.003570]  ffff888109438380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.003577]  ffff888109438400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.003584] >ffff888109438480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.003589]                                ^
+[  425.003595]  ffff888109438500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.003602]  ffff888109438580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  425.003607] ==================================================================
+[  425.003621] ==================================================================
+[  425.003627] BUG: KASAN: use-after-free in v4l2_subdev_release+0x10b/0x140
+[  425.003638] Read of size 1 at addr ffff88811e7200c8 by task python3/10130
+
+[  425.003651] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.003659] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.003662] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.003665] Call Trace:
+[  425.003668]  <TASK>
+[  425.003670]  dump_stack_lvl+0x5d/0x80
+[  425.003677]  print_report+0x157/0x4c9
+[  425.003684]  ? v4l2_subdev_release+0x10b/0x140
+[  425.003691]  ? __virt_addr_valid+0x22d/0x440
+[  425.003699]  ? v4l2_subdev_release+0x10b/0x140
+[  425.003705]  kasan_report+0xdf/0x1a0
+[  425.003712]  ? v4l2_subdev_release+0x10b/0x140
+[  425.003722]  v4l2_subdev_release+0x10b/0x140
+[  425.003729]  v4l2_device_release_subdev_node+0x32/0x50
+[  425.003737]  device_release+0xc8/0x240
+[  425.003742]  kobject_put+0x14d/0x280
+[  425.003749]  v4l2_release+0x2aa/0x360
+[  425.003756]  __fput+0x36d/0xaa0
+[  425.003766]  fput_close_sync+0xe0/0x190
+[  425.003771]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.003778]  __x64_sys_close+0x78/0xd0
+[  425.003783]  do_syscall_64+0x109/0x5d0
+[  425.003791]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.003796] RIP: 0033:0x7fa23dd043a7
+[  425.003800] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.003805] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.003810] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.003813] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.003816] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.003819] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.003822] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.003830]  </TASK>
+
+[  425.003899] The buggy address belongs to the physical page:
+[  425.003904] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e720
+[  425.003910] flags: 0x200000000000000(node=0|zone=2)
+[  425.003915] page_type: f0(buddy)
+[  425.003921] raw: 0200000000000000 ffffea0005196008 ffffea0005214808 0000000000000000
+[  425.003927] raw: 0000000000000000 0000000000000005 00000000f0000000 0000000000000000
+[  425.003931] page dumped because: kasan: bad access detected
+
+[  425.003939] Memory state around the buggy address:
+[  425.003945]  ffff88811e71ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  425.003951]  ffff88811e720000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.003958] >ffff88811e720080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.003963]                                               ^
+[  425.003969]  ffff88811e720100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.003976]  ffff88811e720180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.003981] ==================================================================
+[  425.004001] ==================================================================
+[  425.004008] BUG: KASAN: use-after-free in v4l2_subdev_release+0x126/0x140
+[  425.004018] Read of size 8 at addr ffff88811e7200e0 by task python3/10130
+
+[  425.004032] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.004040] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.004043] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.004046] Call Trace:
+[  425.004048]  <TASK>
+[  425.004051]  dump_stack_lvl+0x5d/0x80
+[  425.004058]  print_report+0x157/0x4c9
+[  425.004066]  ? v4l2_subdev_release+0x126/0x140
+[  425.004072]  ? __virt_addr_valid+0x22d/0x440
+[  425.004080]  ? v4l2_subdev_release+0x126/0x140
+[  425.004086]  kasan_report+0xdf/0x1a0
+[  425.004093]  ? v4l2_subdev_release+0x126/0x140
+[  425.004102]  v4l2_subdev_release+0x126/0x140
+[  425.004109]  v4l2_device_release_subdev_node+0x32/0x50
+[  425.004116]  device_release+0xc8/0x240
+[  425.004121]  kobject_put+0x14d/0x280
+[  425.004128]  v4l2_release+0x2aa/0x360
+[  425.004135]  __fput+0x36d/0xaa0
+[  425.004145]  fput_close_sync+0xe0/0x190
+[  425.004150]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.004157]  __x64_sys_close+0x78/0xd0
+[  425.004162]  do_syscall_64+0x109/0x5d0
+[  425.004170]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.004175] RIP: 0033:0x7fa23dd043a7
+[  425.004179] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.004183] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.004188] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.004191] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.004194] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.004197] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.004200] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.004208]  </TASK>
+
+[  425.004278] The buggy address belongs to the physical page:
+[  425.004284] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e720
+[  425.004289] flags: 0x200000000000000(node=0|zone=2)
+[  425.004295] page_type: f0(buddy)
+[  425.004301] raw: 0200000000000000 ffffea0005196008 ffffea0005214808 0000000000000000
+[  425.004307] raw: 0000000000000000 0000000000000005 00000000f0000000 0000000000000000
+[  425.004311] page dumped because: kasan: bad access detected
+
+[  425.004319] Memory state around the buggy address:
+[  425.004325]  ffff88811e71ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  425.004332]  ffff88811e720000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004338] >ffff88811e720080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004344]                                                        ^
+[  425.004350]  ffff88811e720100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004357]  ffff88811e720180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004363] ==================================================================
+[  425.004369] ==================================================================
+[  425.004374] BUG: KASAN: use-after-free in v4l2_subdev_release+0x11f/0x140
+[  425.004384] Write of size 8 at addr ffff88811e720138 by task python3/10130
+
+[  425.004397] CPU: 3 UID: 0 PID: 10130 Comm: python3 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 #1 PREEMPT(lazy) 
+[  425.004405] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  425.004407] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  425.004411] Call Trace:
+[  425.004413]  <TASK>
+[  425.004415]  dump_stack_lvl+0x5d/0x80
+[  425.004423]  print_report+0x157/0x4c9
+[  425.004430]  ? v4l2_subdev_release+0x11f/0x140
+[  425.004436]  ? __virt_addr_valid+0x22d/0x440
+[  425.004444]  ? v4l2_subdev_release+0x11f/0x140
+[  425.004450]  kasan_report+0xdf/0x1a0
+[  425.004457]  ? v4l2_subdev_release+0x11f/0x140
+[  425.004466]  v4l2_subdev_release+0x11f/0x140
+[  425.004473]  v4l2_device_release_subdev_node+0x32/0x50
+[  425.004480]  device_release+0xc8/0x240
+[  425.004486]  kobject_put+0x14d/0x280
+[  425.004492]  v4l2_release+0x2aa/0x360
+[  425.004500]  __fput+0x36d/0xaa0
+[  425.004509]  fput_close_sync+0xe0/0x190
+[  425.004514]  ? __pfx_fput_close_sync+0x10/0x10
+[  425.004522]  __x64_sys_close+0x78/0xd0
+[  425.004527]  do_syscall_64+0x109/0x5d0
+[  425.004535]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  425.004540] RIP: 0033:0x7fa23dd043a7
+[  425.004544] Code: 48 89 fa 4c 89 df e8 78 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[  425.004549] RSP: 002b:00007ffc03569df0 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+[  425.004553] RAX: ffffffffffffffda RBX: 00007fa23dc70780 RCX: 00007fa23dd043a7
+[  425.004557] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+[  425.004560] RBP: 0000000000a84590 R08: 0000000000000000 R09: 0000000000000000
+[  425.004562] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa23dfad1f0
+[  425.004566] R13: 0000000000000135 R14: 0000000000a84590 R15: 00007fa23dfad1f8
+[  425.004574]  </TASK>
+
+[  425.004645] The buggy address belongs to the physical page:
+[  425.004651] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11e720
+[  425.004657] flags: 0x200000000000000(node=0|zone=2)
+[  425.004663] page_type: f0(buddy)
+[  425.004668] raw: 0200000000000000 ffffea0005196008 ffffea0005214808 0000000000000000
+[  425.004674] raw: 0000000000000000 0000000000000005 00000000f0000000 0000000000000000
+[  425.004678] page dumped because: kasan: bad access detected
+
+[  425.004686] Memory state around the buggy address:
+[  425.004692]  ffff88811e720000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004699]  ffff88811e720080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004705] >ffff88811e720100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004711]                                         ^
+[  425.004718]  ffff88811e720180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004725]  ffff88811e720200: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[  425.004731] ==================================================================

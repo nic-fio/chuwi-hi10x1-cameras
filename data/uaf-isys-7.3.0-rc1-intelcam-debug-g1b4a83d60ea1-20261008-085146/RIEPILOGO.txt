@@ -1,0 +1,41 @@
+riproduzione UAF ipu6-isys — 2026-10-08T08:51:46+02:00
+kernel  : 7.3.0-rc1-intelcam-debug-g1b4a83d60ea1
+versione: Linux version 7.3.0-rc1-intelcam-debug-g1b4a83d60ea1 (nicfio@NIC-OS) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #1 SMP PREEMPT_DYNAMIC Sun Oct  4 19:30:22 UTC 2026
+cmdline : vmlinuz-new initrd=initrd-new root=UUID=bbf08cd1-b31b-4a2f-8f42-9659c613ae4a rw quiet hostname=CHUWI kasan_multi_shot
+driver  : /sys/bus/auxiliary/drivers/intel_ipu6_isys.isys
+device  : intel_ipu6.isys.40
+
+nodi    : media /dev/media0, video /dev/video0, subdev /dev/v4l-subdev0
+aperti tutti e tre; controllo che rispondano prima dell'unbind:
+  ok
+
+1 unbind-isys     ok
+2 ioctl-media     errore 5 (Input/output error)
+3 ioctl-video     errore 19 (No such device)
+      BUG: KASAN: use-after-free in v4l2_ioctl+0x1c5/0x220
+      BUG: KASAN: use-after-free in v4l2_ioctl+0x117/0x220
+      BUG: KASAN: use-after-free in v4l2_ioctl+0x1fa/0x220
+4 ioctl-subdev    errore 19 (No such device)
+5 close-subdev    ok
+      BUG: KASAN: slab-use-after-free in v4l2_release+0x2cf/0x360
+      BUG: KASAN: slab-use-after-free in v4l2_release+0x322/0x360
+      BUG: KASAN: use-after-free in subdev_close+0x212/0x280
+      BUG: KASAN: slab-use-after-free in v4l2_prio_close+0x2e/0x50
+      BUG: KASAN: slab-use-after-free in v4l2_device_release+0x3a9/0x410
+      BUG: KASAN: slab-use-after-free in v4l2_device_release+0x3d4/0x410
+      ... altre 3 righe, vedi dmesg-5-close-subdev.txt
+6 close-video     ok
+      BUG: KASAN: use-after-free in __vb2_queue_free+0x8c8/0x8f0 [videobuf2_common]
+      BUG: KASAN: use-after-free in __vb2_queue_free+0x8df/0x8f0 [videobuf2_common]
+      BUG: KASAN: use-after-free in __vb2_queue_free+0x8d2/0x8f0 [videobuf2_common]
+      BUG: KASAN: use-after-free in vb2_core_queue_release+0x155/0x190 [videobuf2_common]
+      BUG: KASAN: use-after-free in vb2_core_queue_release+0x162/0x190 [videobuf2_common]
+      BUG: KASAN: use-after-free in vb2_core_queue_release+0x16f/0x190 [videobuf2_common]
+      ... altre 70 righe, vedi dmesg-6-close-video.txt
+7 close-media     ok
+
+isys ancora agganciato: no
+tainted: 548
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/uaf-isys-7.3.0-rc1-intelcam-debug-g1b4a83d60ea1-20261008-085146
+RIAVVIARE il tablet prima di qualsiasi altra prova.
