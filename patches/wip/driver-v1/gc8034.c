@@ -79,7 +79,7 @@
 /* 6 ms after reset, then 8192 external clock cycles before I2C access */
 #define GC8034_RESET_SETTLE_US		6000
 #define GC8034_I2C_SETTLE_US		DIV_ROUND_UP(8192 * USEC_PER_MSEC, \
-						     GC8034_XCLK_FREQ / MSEC_PER_SEC)
+					     GC8034_XCLK_FREQ / MSEC_PER_SEC)
 
 #define GC8034_MBUS_CODE		MEDIA_BUS_FMT_SRGGB10_1X10
 
@@ -840,7 +840,7 @@ static int gc8034_parse_fwnode(struct gc8034 *gc8034)
 	if (ret)
 		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
 
-	/* The register tables configure the CSI-2 transmitter for four lanes. */
+	/* The register tables configure the CSI-2 transmitter for 4 lanes. */
 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != GC8034_DATA_LANES) {
 		ret = dev_err_probe(dev, -EINVAL,
 				    "unsupported number of data lanes %u\n",
@@ -879,8 +879,8 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 		return ret;
 
 	link_freq = v4l2_ctrl_new_int_menu(ctrl_hdlr, NULL, V4L2_CID_LINK_FREQ,
-					   ARRAY_SIZE(gc8034_link_freq_menu) - 1,
-					   0, gc8034_link_freq_menu);
+					   ARRAY_SIZE(gc8034_link_freq_menu) -
+					   1, 0, gc8034_link_freq_menu);
 
 	v4l2_ctrl_new_std(ctrl_hdlr, NULL, V4L2_CID_PIXEL_RATE,
 			  GC8034_PIXEL_RATE, GC8034_PIXEL_RATE, 1,
@@ -1075,17 +1075,10 @@ static const struct acpi_device_id gc8034_acpi_ids[] = {
 };
 MODULE_DEVICE_TABLE(acpi, gc8034_acpi_ids);
 
-static const struct of_device_id gc8034_of_match[] = {
-	{ .compatible = "galaxycore,gc8034" },
-	{ }
-};
-MODULE_DEVICE_TABLE(of, gc8034_of_match);
-
 static struct i2c_driver gc8034_i2c_driver = {
 	.driver = {
 		.name = "gc8034",
 		.acpi_match_table = gc8034_acpi_ids,
-		.of_match_table = gc8034_of_match,
 		.pm = pm_ptr(&gc8034_pm_ops),
 	},
 	.probe = gc8034_probe,

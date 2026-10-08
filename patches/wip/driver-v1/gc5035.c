@@ -958,7 +958,7 @@ static int gc5035_parse_fwnode(struct gc5035 *gc5035)
 	if (ret)
 		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
 
-	/* The register tables configure the CSI-2 transmitter for two lanes. */
+	/* The register tables configure the CSI-2 transmitter for 2 lanes. */
 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != GC5035_DATA_LANES) {
 		ret = dev_err_probe(dev, -EINVAL,
 				    "unsupported number of data lanes %u\n",
@@ -997,8 +997,8 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 		return ret;
 
 	link_freq = v4l2_ctrl_new_int_menu(ctrl_hdlr, NULL, V4L2_CID_LINK_FREQ,
-					   ARRAY_SIZE(gc5035_link_freq_menu) - 1,
-					   0, gc5035_link_freq_menu);
+					   ARRAY_SIZE(gc5035_link_freq_menu) -
+					   1, 0, gc5035_link_freq_menu);
 
 	v4l2_ctrl_new_std(ctrl_hdlr, NULL, V4L2_CID_PIXEL_RATE,
 			  GC5035_PIXEL_RATE, GC5035_PIXEL_RATE, 1,
@@ -1198,17 +1198,10 @@ static const struct acpi_device_id gc5035_acpi_ids[] = {
 };
 MODULE_DEVICE_TABLE(acpi, gc5035_acpi_ids);
 
-static const struct of_device_id gc5035_of_match[] = {
-	{ .compatible = "galaxycore,gc5035" },
-	{ }
-};
-MODULE_DEVICE_TABLE(of, gc5035_of_match);
-
 static struct i2c_driver gc5035_i2c_driver = {
 	.driver = {
 		.name = "gc5035",
 		.acpi_match_table = gc5035_acpi_ids,
-		.of_match_table = gc5035_of_match,
 		.pm = pm_ptr(&gc5035_pm_ops),
 	},
 	.probe = gc5035_probe,

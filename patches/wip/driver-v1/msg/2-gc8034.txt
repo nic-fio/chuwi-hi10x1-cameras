@@ -1,0 +1,9 @@
+media: i2c: Add GC8034 image sensor driver
+
+Add a driver for the GalaxyCore GC8034, an 8 Mpixel raw Bayer sensor with
+a four lane MIPI CSI-2 interface. The driver supports a single 3264x2448
+mode, and the exposure, analogue gain and vertical blanking controls.
+
+The register tables come from the Rockchip BSP driver.
+
+Assisted-by: LLM coccinelle sparse smatch

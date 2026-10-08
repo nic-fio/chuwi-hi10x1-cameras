@@ -1,0 +1,11 @@
+media: i2c: Add GC5035 image sensor driver
+
+Add a driver for the GalaxyCore GC5035, a 5 Mpixel raw Bayer sensor with
+a two lane MIPI CSI-2 interface. The driver supports a single 2592x1944
+mode, and the exposure, analogue gain, vertical blanking and test pattern
+controls.
+
+The register tables come from the Alder Lake-M driver in
+intel/ipu6-drivers, which derives from the ChromeOS driver posted in 2020.
+
+Assisted-by: LLM coccinelle sparse smatch
