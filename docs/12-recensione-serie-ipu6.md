@@ -1227,3 +1227,40 @@ Un solo tentativo non basta (memoria «rigore patch kernel»):
   (runtime suspend asincrona, ISR gia' entrata): il firmware ha
   risposto, quindi non e' passata dal ramo dei timeout. Restano da
   provare col kernel col ritardo in `isys_runtime_pm_suspend()`.
+
+### 8 ottobre, 11:30: kernel per la finestra 1 (runtime suspend asincrona)
+
+Branch `tablet-isys-pm` di `media-tablet` = `tablet-isys` (p1+p2) +
+`948eecd2b` «SOLO PROVA: msleep(5000) in isys_runtime_pm_suspend()»,
+con due `dev_info` prima e dopo l'attesa. Build sul server con
+`tablet/scripts/build-isys-pm.sh` → `tablet/out/isys-pm/`, log in
+`tablet/out/build-isys-pm.log`. Da installare con suffisso `-pm`, cosi'
+`vmlinuz-new-isys` resta com'e'.
+
+Percorso letto sul sorgente:
+- Callback runtime PM dal dominio del bus (`ipu6_bus_pm_domain`):
+  `bus_pm_runtime_suspend()` → `pm_generic_runtime_suspend()`, che usa
+  `dev->driver->pm`. Se la suspend parte dopo
+  `device_unbind_cleanup()` (driver NULL) il callback di isys non viene
+  chiamato: la finestra e' solo tra il `pm_runtime_put()` di
+  `ipu6_isys_csi2_disable_streams()` e la fine dell'unbind.
+- `__device_release_driver()` fa `pm_runtime_put_sync()` **prima** di
+  `device_remove()` e non aspetta una suspend in corso: dentro
+  `isys_remove()` il riferimento rimasto e' solo quello dello stream.
+- Una suspend gia' entrata nel callback ha `isys` in mano (letto
+  all'inizio con `dev_get_drvdata()`).
+
+Previsione con il ritardo (scritta prima della prova):
+1. `isys_remove()` va avanti mentre la suspend dorme:
+   `free_fw_msg_bufs()` a firmware ancora aperto (innocuo se il firmware
+   ha gia' chiuso gli stream), poi `cpu_latency_qos_remove_request()`.
+2. `v4l2-ctl` esce ~1,3 s dopo l'unbind, quindi `v4l2_device_put()` o
+   la sua close liberano `isys` (p2: `kfree` in `isys_free()`).
+3. Dopo 5 s la suspend riparte su `isys` liberata: KASAN
+   `slab-use-after-free` in `isys_runtime_pm_suspend()`, nella lettura
+   di `isys->adev`. Se invece `isys` e' ancora viva:
+   WARN di `cpu_latency_qos_update_request()` su una richiesta gia'
+   rimossa.
+Se succede, la p2 ha bisogno di una suspend sincrona (o di
+`pm_runtime_barrier()`) dentro `isys_remove()` prima di
+`v4l2_device_put()`.
