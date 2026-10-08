@@ -1365,3 +1365,52 @@ codice (memoria «rigore patch kernel»): `pm_runtime_barrier()` subito
 dopo `isys_unregister_devices()`, oppure `pm_runtime_disable()` (che
 contiene la barriera) nello stesso punto, e cosa fanno gli altri driver
 ausiliari/IPU (ipu6-psys fuori albero, ipu7, intel-vsc) in `remove`.
+
+### 8 ottobre, dopo il riavvio delle 11:53: stato dell'arte per la finestra 1
+
+Riavvio pulito: kernel `-pm`, taint 516, cioe' solo i WARN di
+`intel_tc` all'avvio, come nelle corse precedenti.
+
+Codice (media `next` sul server, ramo `tablet-isys-pm`):
+
+- Il ref di runtime PM lo prende e lo rilascia il sottodispositivo
+  CSI-2 (`ipu6_isys_csi2_enable_streams()` / `_disable_streams()`), con
+  un `pm_runtime_put()` **asincrono**. Allo unbind ci si arriva da
+  `isys_unregister_devices()` → `vb2_video_unregister_device()` →
+  stop dello stream, nel task dell'unbind: e' cosi' che la suspend
+  parte con il driver ancora agganciato.
+- `__device_release_driver()` fa `pm_runtime_get_sync()` +
+  `pm_runtime_put_sync()` *prima* di `device_remove()`: senza stream la
+  suspend finisce prima di `isys_remove()`; con lo stream acceso il
+  `put_sync` porta solo l'uso da 2 a 1. Il bus ausiliario, a
+  differenza di PCI, non tiene un ref attorno a `remove`.
+- Il runtime PM lo abilita il bus (`ipu6_bus_initialize_device()`), non
+  il driver: il modello «`pm_runtime_disable()` in `remove`» degli altri
+  driver ausiliari (mei-gsc, client SOF) qui non si puo' applicare cosi'
+  com'e', perche' il driver non lo abilita nel probe e al riaggancio
+  resterebbe disabilitato.
+- La chiusura del firmware nella suspend arriva con `70e3fac3e`
+  («media: ipu6: Move firmware init/cleanup to RPM callbacks», Sakari,
+  dic. 2025). Pero' gia' prima il callback usava `isys` (`power_lock`,
+  `mutex`, `pm_qos`), e `isys` era `devm`: la finestra c'e' dalla
+  nascita del driver; 70e3fac3e la rende un GPF invece di un WARN.
+- `ipu7` (staging) ha la stessa struttura e nessuna attesa in `remove`.
+- In `drivers/media` nessuno usa `pm_runtime_barrier()`.
+- lore: ricerca bloccata (Anubis dal tablet, 403 dal server); fatta
+  solo su `git log` di `next`, nessuna correzione esistente.
+
+Semantica verificata in `drivers/base/power/runtime.c`:
+
+- `pm_runtime_barrier()` **annulla** una suspend in coda e aspetta
+  quella in corso: da sola lascerebbe isys acceso e il firmware aperto.
+- `pm_runtime_suspend()` (sincrona) esegue subito quella in coda e
+  aspetta quella in corso, **ma** `rpm_check_suspend_allowed()` esce
+  prima dell'attesa con -EAGAIN se l'uso e' > 0 (es. `power/control` =
+  `on` scritto nel frattempo) o -EPERM con `pm_qos_resume_latency_us` 0.
+
+Candidato: in `isys_remove()`, subito dopo `isys_unregister_devices()`,
+`pm_runtime_suspend(dev)` e poi `pm_runtime_barrier(dev)` per i casi in
+cui la prima esce senza aspettare. Previsione con il `msleep(5000)` di
+prova ancora dentro: unbind ~5 s invece di 0,45 s, nessun rapporto
+KASAN, suspend con nome `intel_ipu6_isys.isys` sia all'inizio sia alla
+ripartenza.
