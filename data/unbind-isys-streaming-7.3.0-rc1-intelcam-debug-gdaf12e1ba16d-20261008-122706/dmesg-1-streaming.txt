@@ -1,0 +1,71 @@
+[  475.792701] ------------[ cut here ]------------
+[  475.792712] WARNING: drivers/media/pci/intel/ipu6/ipu6-isys-queue.c:203 at ipu6_isys_buffer_list_get+0x390/0x4f0 [intel_ipu6_isys], CPU#1: v4l2-ctl/10602
+[  475.792729] Modules linked in: uhid iwlmvm mac80211 libarc4 btusb btrtl btintel btbcm intel_ipu6_isys iwlwifi bluetooth videobuf2_dma_sg videobuf2_memops intel_skl_int3472_tps68470 videobuf2_v4l2 ecdh_generic videobuf2_common x86_pkg_temp_thermal kpp cfg80211 ecc intel_skl_int3472_discrete i915 gc5035 gc8034 intel_skl_int3472_common v4l2_cci regmap_i2c drm_buddy i2c_algo_bit ttm drm_display_helper intel_ipu6 ipu_bridge
+[  475.792808] CPU: 1 UID: 0 PID: 10602 Comm: v4l2-ctl Tainted: G S      W           7.3.0-rc1-intelcam-debug-gdaf12e1ba16d #6 PREEMPT(lazy) 
+[  475.792816] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[  475.792820] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  475.792824] RIP: 0010:ipu6_isys_buffer_list_get+0x390/0x4f0 [intel_ipu6_isys]
+[  475.792835] Code: c4 30 31 c0 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 48 8d 7d 60 be ff ff ff ff e8 99 10 fd f7 85 c0 0f 85 c5 fc ff ff 90 <0f> 0b 90 e9 bc fc ff ff 48 c7 c7 44 4f d1 b9 e8 fc 2f c3 f5 e9 9d
+[  475.792839] RSP: 0018:ffff8881090d75f8 EFLAGS: 00010246
+[  475.792845] RAX: 0000000000000000 RBX: ffff8881090d77f0 RCX: 0000000000000001
+[  475.792849] RDX: 0000000000000001 RSI: ffff888143da7860 RDI: ffff88812eda8b68
+[  475.792852] RBP: ffff888143da7800 R08: ffff88811e64b6a8 R09: 0000000000000007
+[  475.792855] R10: ffffed102046f390 R11: ffff888102379c84 R12: ffff88811e64b6a8
+[  475.792858] R13: ffff88811e64b070 R14: ffff8881090d77f0 R15: dffffc0000000000
+[  475.792862] FS:  00007f95ae8655c0(0000) GS:ffff88827dbbb000(0000) knlGS:0000000000000000
+[  475.792865] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  475.792869] CR2: 00007ffd70a43ff0 CR3: 000000012c9f6000 CR4: 0000000000f50ef0
+[  475.792872] PKRU: 55555554
+[  475.792875] Call Trace:
+[  475.792878]  <TASK>
+[  475.792885]  ipu6_isys_csi2_enable_streams+0x980/0x2190 [intel_ipu6_isys]
+[  475.792906]  ? __pfx_ipu6_isys_csi2_enable_streams+0x10/0x10 [intel_ipu6_isys]
+[  475.792917]  ? __pfx___might_resched+0x10/0x10
+[  475.792929]  ? __mutex_lock+0x1713/0x24f0
+[  475.792945]  ? lock_is_held_type+0x85/0xf0
+[  475.792952]  ? v4l2_subdev_is_streaming+0x2f4/0x410
+[  475.792961]  v4l2_subdev_enable_streams+0x43f/0x710
+[  475.792966]  ? __pfx_v4l2_subdev_enable_streams+0x10/0x10
+[  475.792974]  ? __kmalloc_cache_noprof+0x241/0x5d0
+[  475.792983]  ipu6_isys_video_set_streaming+0x11a/0x160 [intel_ipu6_isys]
+[  475.792995]  start_streaming+0x49f/0x11b0 [intel_ipu6_isys]
+[  475.793005]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[  475.793011]  ? trace_hardirqs_on+0x18/0x160
+[  475.793018]  ? buf_queue+0x293/0x6d0 [intel_ipu6_isys]
+[  475.793035]  ? __pfx_start_streaming+0x10/0x10 [intel_ipu6_isys]
+[  475.793047]  ? __pfx___mutex_lock+0x10/0x10
+[  475.793055]  ? __pfx_start_streaming+0x10/0x10 [intel_ipu6_isys]
+[  475.793067]  vb2_start_streaming+0x14f/0x4c0 [videobuf2_common]
+[  475.793084]  vb2_core_streamon+0x1c7/0x2f0 [videobuf2_common]
+[  475.793097]  __video_do_ioctl+0x894/0xb30
+[  475.793107]  ? __pfx___video_do_ioctl+0x10/0x10
+[  475.793114]  ? lock_release+0xc4/0x2a0
+[  475.793123]  video_usercopy+0x479/0xde0
+[  475.793130]  ? __pfx___video_do_ioctl+0x10/0x10
+[  475.793135]  ? ioctl_has_perm.constprop.0.isra.0+0x314/0x500
+[  475.793142]  ? __pfx_video_usercopy+0x10/0x10
+[  475.793154]  ? fput+0x25/0x80
+[  475.793160]  ? ksys_mmap_pgoff+0x2c1/0x550
+[  475.793166]  ? lock_release+0xc4/0x2a0
+[  475.793173]  v4l2_ioctl+0x198/0x220
+[  475.793181]  __x64_sys_ioctl+0x134/0x1c0
+[  475.793187]  ? lockdep_hardirqs_on_prepare+0xeb/0x1a0
+[  475.793194]  do_syscall_64+0x109/0x5d0
+[  475.793202]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  475.793207] RIP: 0033:0x7f95aea8565b
+[  475.793213] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[  475.793217] RSP: 002b:00007ffd70a43ff0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  475.793224] RAX: ffffffffffffffda RBX: 00007ffd70a483c0 RCX: 00007f95aea8565b
+[  475.793227] RDX: 00007ffd70a4413c RSI: 0000000040045612 RDI: 0000000000000003
+[  475.793231] RBP: 00007ffd70a48010 R08: 0000000000000003 R09: 0000000000018000
+[  475.793235] R10: 0000000000000001 R11: 0000000000000246 R12: 00007ffd70a48640
+[  475.793238] R13: 00007ffd70a44260 R14: 0000000000000000 R15: 0000000000000001
+[  475.793249]  </TASK>
+[  475.793252] irq event stamp: 11933
+[  475.793255] hardirqs last  enabled at (11939): [<ffffffffb5a9ab0d>] __up_console_sem+0x4d/0x60
+[  475.793263] hardirqs last disabled at (11944): [<ffffffffb5a9aaf2>] __up_console_sem+0x32/0x60
+[  475.793268] softirqs last  enabled at (11282): [<ffffffffb5915541>] __irq_exit_rcu+0xd1/0x1e0
+[  475.793274] softirqs last disabled at (11275): [<ffffffffb5915541>] __irq_exit_rcu+0xd1/0x1e0
+[  475.793279] ---[ end trace 0000000000000000 ]---
+[  475.800101] rfkill: input handler enabled
+[  478.823074] intelcam-prova: 1 streaming       acceso su /dev/video16 (3 fotogrammi in 3 s)

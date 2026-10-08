@@ -1485,3 +1485,35 @@ Oops, taint 516 alla fine. Dopo l'unbind solo i WARN di `intel_tc.c`
 all'avvio dello streaming c'e' anche qui.
 
 Finestra 1 col candidato: 0 su 2.
+
+### 8 ottobre, 12:27: terza corsa col kernel `-fix`, stesso esito
+
+Dati in `data/unbind-isys-streaming-…-gdaf12e1ba16d-20261008-122706/`,
+copia sul server con lo stesso nome (2958 righe). Prima della corsa il
+server si era bloccato ed e' stato riavviato; il tablet e' rimasto
+sullo stesso avvio pulito (taint 516), stessa prova con `ATTESA=10`,
+nessun blocco.
+
+```
+480.166 unbind adesso
+480.483 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, attesa 5 s
+485.982 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, riparte
+486.154 esito 0, isys agganciato: no          (unbind 5,99 s)
+487.486 v4l2-ctl uscito da solo: DQBUF Invalid argument
+498.786 fine dell'attesa di 10 s
+```
+
+Stessi tre punti delle due corse precedenti: unbind lungo quanto la
+suspend, suspend che riparte col nome `intel_ipu6_isys.isys`, nessun
+KASAN ne' Oops, taint 516 alla fine. Dopo l'unbind solo i WARN di
+`intel_tc.c` 933/315/332 (500,0-500,5 s) del ritorno a tty2. Il WARN
+di `ipu6-isys-queue.c:203` all'avvio dello streaming c'e' anche qui.
+
+A 702,9 s kmemleak segnala 6 oggetti da 32 byte (salvati in
+`kmemleak.txt`): tutti buffer di `acpi_evaluate_dsm()` chiamata da
+`skl_int3472_clk_prepare()`/`_unprepare()` durante probe e runtime
+suspend di gc8034. Nessuno passa per ipu6. Nelle corse precedenti la
+scansione non era ancora arrivata perche' il tablet e' stato riavviato
+prima.
+
+Finestra 1 col candidato: 0 su 3.

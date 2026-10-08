@@ -1,0 +1,132 @@
+unreferenced object 0xffff888116ccb140 (size 32):
+  comm "kworker/u16:2", pid 56, jiffies 4294693520
+  hex dump (first 32 bytes):
+    03 00 00 00 01 00 00 00 58 b1 cc 16 81 88 ff ff  ........X.......
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 19188086):
+    __kmalloc_noprof+0x522/0x6f0
+    acpi_ut_initialize_buffer+0xc7/0x190
+    acpi_evaluate_object+0x7c9/0xbe0
+    acpi_evaluate_dsm+0x17a/0x240
+    skl_int3472_clk_prepare+0x1e2/0x270 [intel_skl_int3472_discrete]
+    clk_core_prepare+0x203/0x590
+    clk_prepare+0x37/0x60
+    gc8034_power_on+0x81/0x1d0 [gc8034]
+    gc8034_probe+0x388/0xcf0 [gc8034]
+    i2c_device_probe+0x54b/0x930
+    really_probe+0x1eb/0x630
+    __driver_probe_device+0x1ad/0x300
+    driver_probe_device+0x45/0xf0
+    __device_attach_driver+0x187/0x210
+    bus_for_each_drv+0x112/0x1a0
+    __device_attach+0x191/0x380
+unreferenced object 0xffff8881023a7900 (size 32):
+  comm "kworker/u16:2", pid 56, jiffies 4294693715
+  hex dump (first 32 bytes):
+    03 00 00 00 01 00 00 00 18 79 3a 02 81 88 ff ff  .........y:.....
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc be04e418):
+    __kmalloc_noprof+0x522/0x6f0
+    acpi_ut_initialize_buffer+0xc7/0x190
+    acpi_evaluate_object+0x7c9/0xbe0
+    acpi_evaluate_dsm+0x17a/0x240
+    skl_int3472_clk_unprepare+0x1e2/0x270 [intel_skl_int3472_discrete]
+    clk_core_unprepare+0x1c6/0x610
+    clk_unprepare+0x3e/0x60
+    gc8034_power_off+0xc3/0x100 [gc8034]
+    acpi_subsys_runtime_suspend+0xd/0x30
+    __rpm_callback+0xa7/0x4e0
+    rpm_callback+0xe7/0x130
+    rpm_suspend+0x21d/0xfb0
+    pm_runtime_set_autosuspend_delay+0x89/0xb0
+    gc8034_probe+0x9de/0xcf0 [gc8034]
+    i2c_device_probe+0x54b/0x930
+    really_probe+0x1eb/0x630
+unreferenced object 0xffff88810534b400 (size 32):
+  comm "kworker/u16:4", pid 67, jiffies 4294693945
+  hex dump (first 32 bytes):
+    03 00 00 00 01 00 00 00 18 b4 34 05 81 88 ff ff  ..........4.....
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 89993df1):
+    __kmalloc_noprof+0x522/0x6f0
+    acpi_ut_initialize_buffer+0xc7/0x190
+    acpi_evaluate_object+0x7c9/0xbe0
+    acpi_evaluate_dsm+0x17a/0x240
+    skl_int3472_clk_prepare+0x1e2/0x270 [intel_skl_int3472_discrete]
+    clk_core_prepare+0x203/0x590
+    clk_prepare+0x37/0x60
+    gc5035_power_on+0x82/0x180 [gc5035]
+    gc5035_probe+0x35e/0xcd0 [gc5035]
+    i2c_device_probe+0x54b/0x930
+    really_probe+0x1eb/0x630
+    __driver_probe_device+0x1ad/0x300
+    driver_probe_device+0x45/0xf0
+    __device_attach_driver+0x187/0x210
+    bus_for_each_drv+0x112/0x1a0
+    __device_attach+0x191/0x380
+unreferenced object 0xffff888111073d40 (size 32):
+  comm "kworker/u16:4", pid 67, jiffies 4294694012
+  hex dump (first 32 bytes):
+    03 00 00 00 01 00 00 00 58 3d 07 11 81 88 ff ff  ........X=......
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 7e163f43):
+    __kmalloc_noprof+0x522/0x6f0
+    acpi_ut_initialize_buffer+0xc7/0x190
+    acpi_evaluate_object+0x7c9/0xbe0
+    acpi_evaluate_dsm+0x17a/0x240
+    skl_int3472_clk_unprepare+0x1e2/0x270 [intel_skl_int3472_discrete]
+    clk_core_unprepare+0x1c6/0x610
+    clk_unprepare+0x3e/0x60
+    gc5035_power_off+0xc3/0x100 [gc5035]
+    acpi_subsys_runtime_suspend+0xd/0x30
+    __rpm_callback+0xa7/0x4e0
+    rpm_callback+0xe7/0x130
+    rpm_suspend+0x21d/0xfb0
+    pm_runtime_set_autosuspend_delay+0x89/0xb0
+    gc5035_probe+0x9fb/0xcd0 [gc5035]
+    i2c_device_probe+0x54b/0x930
+    really_probe+0x1eb/0x630
+unreferenced object 0xffff88811dcdee80 (size 32):
+  comm "kworker/3:1", pid 49, jiffies 4294694687
+  hex dump (first 32 bytes):
+    03 00 00 00 01 00 00 00 98 ee cd 1d 81 88 ff ff  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 490124f8):
+    __kmalloc_noprof+0x522/0x6f0
+    acpi_ut_initialize_buffer+0xc7/0x190
+    acpi_evaluate_object+0x7c9/0xbe0
+    acpi_evaluate_dsm+0x17a/0x240
+    skl_int3472_clk_prepare+0x1e2/0x270 [intel_skl_int3472_discrete]
+    clk_core_prepare+0x203/0x590
+    clk_prepare+0x37/0x60
+    gc8034_power_on+0x81/0x1d0 [gc8034]
+    __rpm_callback+0xa7/0x4e0
+    rpm_callback+0xe7/0x130
+    rpm_resume+0xadc/0x1190
+    __pm_runtime_resume+0x6b/0x110
+    ipu_bridge_instantiate_vcm_work+0x9d/0x1e0 [ipu_bridge]
+    process_one_work+0x8fc/0x1670
+    worker_thread+0x4ea/0xd60
+    kthread+0x300/0x3e0
+unreferenced object 0xffff888106173b80 (size 32):
+  comm "kworker/u16:0", pid 12, jiffies 4294696367
+  hex dump (first 32 bytes):
+    03 00 00 00 01 00 00 00 98 3b 17 06 81 88 ff ff  .........;......
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 734d9c13):
+    __kmalloc_noprof+0x522/0x6f0
+    acpi_ut_initialize_buffer+0xc7/0x190
+    acpi_evaluate_object+0x7c9/0xbe0
+    acpi_evaluate_dsm+0x17a/0x240
+    skl_int3472_clk_unprepare+0x1e2/0x270 [intel_skl_int3472_discrete]
+    clk_core_unprepare+0x1c6/0x610
+    clk_unprepare+0x3e/0x60
+    gc8034_power_off+0xc3/0x100 [gc8034]
+    acpi_subsys_runtime_suspend+0xd/0x30
+    __rpm_callback+0xa7/0x4e0
+    rpm_callback+0xe7/0x130
+    rpm_suspend+0x21d/0xfb0
+    pm_runtime_work+0xff/0x120
+    process_one_work+0x8fc/0x1670
+    worker_thread+0x4ea/0xd60
+    kthread+0x300/0x3e0
