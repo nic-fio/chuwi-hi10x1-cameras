@@ -1106,3 +1106,43 @@ Cosa deve fare la correzione:
 - Stato dell'arte su questo ordine in `isys_remove()`: da cercare su
   lore/patchwork prima di scrivere la patch (il clone e' shallow, il
   log non basta).
+
+### 8 ottobre, 11:40: stato dell'arte su `isys_remove()` e ISR all'unbind
+
+Fonti: patchwork linuxtv (API, `q=ipu6`, 705 patch dal 11/2022),
+lore linux-media via NNTP (ultimi 4000 articoli, dal 23/09 al 07/10),
+`next` di oggi su git.linuxtv.org (cgit).
+
+- **`next` di oggi**: `isys_remove()` e `ipu6_buttress_isr()` identici
+  a `1b4a83d60`. Nessuno ha toccato l'ordine.
+- **Ordine `free_fw_msg_bufs()`/`ida_destroy()` prima dello stop**:
+  nessuna patch, nessuna segnalazione. L'ordine c'e' dall'inizio
+  (Jaillet 05/2024 ha solo spostato la funzione vicino a `isys_probe()`).
+- **Punto 3 (ISR all'unbind) gia' preso da altri**: Felipe Calliari,
+  23/09, «media: ipu6: Stop calling ISR hooks of unloaded drivers»
+  (`<20260923234224.325504-1-calliarifelipe@gmail.com>`, patchwork
+  161707 e 161704), entrambe *changes requested*:
+  - 1/2 azzera `adev->auxdrv`/`auxdrv_data` alla fine di
+    `isys_remove()` e fa `synchronize_irq()`. Sakari: sembra generata da
+    un LLM (tag di `coding-assistants.rst`?) e «you need something more
+    elaborate to guard against unbinding the driver. Do note that we
+    currently can't safely remove the ISYS driver if the userspace isn't
+    guaranteed to have no file handles open to the device nodes».
+  - 2/2 controlla il bit di stato prima di chiamare l'ISR. Sakari:
+    va bene a parte una riga vuota e un paragrafo; chiede una patch
+    in piu' che metta a NULL il puntatore rimasto.
+  - Nessuna v2 in due settimane (patchwork e NNTP).
+- **Non c'entrano**: Hans, «drop calls to vb2_video_unregister_device»
+  (solo il percorso d'errore di `video_init`); Laakso «Fix bus device
+  use-after-free» (`ipu6_pci_remove()`, accettata); Carlier, Bajpai
+  (perdite e controlli in fw-isys/fw-com).
+
+Conseguenze per il nostro lavoro:
+- Sakari considera l'unbind con file aperti **un limite noto**, non
+  un difetto da correggere a pezzi. Una patch che sposta solo
+  `free_fw_msg_bufs()` rischia la stessa risposta data a Calliari.
+  L'oops di oggi va quindi nella serie sulla vita degli oggetti, come
+  prova del problema che la serie risolve, insieme al riordino.
+- Il punto 3 non lo scriviamo noi: e' di Calliari. Se la serie ne ha
+  bisogno, ci si appoggia sulla sua patch (citandola), e se non arriva
+  una v2 gli si chiede nel thread prima di riprenderla.
