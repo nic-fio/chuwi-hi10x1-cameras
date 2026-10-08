@@ -1186,3 +1186,13 @@ Cosa l'oops di oggi aggiunge alla p1 (non coperto dalla bozza):
 Regola (memoria «rigore patch kernel»): ogni finestra va riprodotta
 prima di essere scritta come certa. Per la 1 serve un kernel di prova
 con un ritardo in `isys_runtime_pm_suspend()`; oggi non e' provata.
+
+### 8 ottobre, 12:15: kernel «dopo» (p1+p2) gia' pronto
+
+Il kernel con la bozza esiste da stamattina: branch `tablet-isys` di
+`media-tablet` = `tablet-base` + p1 + p2 (patch-id identici a quelli di
+`isys-lifetime`), `7.3.0-rc1-intelcam-debug-g1afcfc3dc305`, config
+identica a base. Gia' installato: `/mnt/vmlinuz-new-isys` +
+`initrd-new-isys` (08/10 10:01, bzImage = `out/isys`), moduli in
+`/lib/modules`. Sulla stessa ESP anche `vmlinuz-new-fin` (msleep in
+`__media_ioctl()`, branch `tablet-isys-finestra`).
