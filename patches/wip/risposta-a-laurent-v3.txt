@@ -15,9 +15,10 @@ the driver is unbound.
 
 I checked this on the IPU6 tablet (media next 9cfc1aca0781 plus the
 sensor drivers mentioned in the cover letter, without this series):
-with a video node and a CSI-2 sub-device node of isys held open,
-unbinding isys and then closing the two nodes gives KASAN
-use-after-free reports in v4l2_release(), v4l2_prio_close() and
+with the media device, a video node and a CSI-2 sub-device node of
+isys held open, I unbound isys, then issued one ioctl on each node and
+closed them. KASAN reports use-after-free in v4l2_ioctl() on the video
+node, then on close in v4l2_release(), v4l2_prio_close() and
 v4l2_device_release() on the struct ipu6_isys allocated in
 isys_probe() and freed by devres at unbind, and more in subdev_close()
 and __vb2_queue_free().
