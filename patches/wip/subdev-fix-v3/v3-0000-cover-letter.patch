@@ -39,7 +39,7 @@ Changes since v2:
 
 Testing:
 - Built with W=1 (allmodconfig) at each patch of the series on media
-  next 9cfc1aca0781.
+  next 8e26d4c20ed2.
 - Run in QEMU/KVM (x86_64, 4 vCPUs, KASAN generic inline, vimc built
   in) on media next 2dcdfb625c3b, which has the same v4l2-subdev.c,
   one boot per 60 s run. 16 threads either open and close vimc's
@@ -106,7 +106,7 @@ Nicola Fiorillo (2):
  1 file changed, 13 insertions(+), 5 deletions(-)
 
 
-base-commit: 9cfc1aca0781ce08e307b6c9dd617d37021544a8
+base-commit: 8e26d4c20ed218db6c3123480a4a4e2545680566
 -- 
 2.47.3
 

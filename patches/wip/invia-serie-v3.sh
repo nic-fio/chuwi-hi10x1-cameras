@@ -6,7 +6,7 @@
 #   ./invia-serie-v3.sh --prova    mostra cosa spedirebbe, NON spedisce
 #   ./invia-serie-v3.sh            chiede conferma e spedisce
 #
-# Regola decisa con Nic il 04/10: si spedisce solo se Sakari non ha dato
+# Regola decisa con Nic il 04/10 (invio poi anticipato all'08/10): si spedisce solo se Sakari non ha dato
 # segni di vita entro venerdi' 09/10. Prima di lanciarlo: Gmail, lore e
 # patchwork senza risposte nuove (vedi docs/12-recensione-serie-ipu6.md).
 #

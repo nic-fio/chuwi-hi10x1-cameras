@@ -744,3 +744,27 @@ nuovo, `--suppress-cc=all`. Prova a vuoto (`--prova`) riuscita.
 **Venerdi', prima dell'invio**: Gmail (Cestino compreso), lore,
 patchwork; `git fetch` di `next` e, se si e' mosso, ripetere `git am`,
 W=1 e aggiornare sha e `base-commit`. Poi `./patches/wip/invia-serie-v3.sh`.
+
+### 8 ottobre, mattina: invio anticipato di un giorno
+
+Deciso con Nic: si spedisce oggi invece di venerdi' (un giorno non cambia
+niente). Controlli della lista "venerdi', prima dell'invio", fatti oggi:
+
+- **Gmail** (Cestino compreso): nel thread della v2 l'ultimo messaggio e'
+  il nostro sollecito del 01/10. Niente da Sakari, Laurent, Hans, Mauro.
+- **lore**: il web e' dietro Anubis; letto via NNTP
+  (`nntp.lore.kernel.org`, ultimi 3000 articoli di linux-media fino al
+  08/10 04:16 UTC): nessun messaggio con i nostri Message-ID nei
+  References oltre ai nostri.
+- **patchwork**: v2 ancora `new`, zero commenti.
+- **`next` si e' mosso**: `9cfc1aca0781` -> `8e26d4c20ed2` (133 commit;
+  in `drivers/media/v4l2-core/` solo `8761a87af`, `v4l2-common.c`).
+  `v4l2-subdev.c` e header coinvolti identici a `9cfc1aca0781` e
+  `2dcdfb625c3b`: le prove QEMU e tablet valgono.
+- **`git am`** su `8e26d4c20ed2`: pulito, `patch-id --stable` identico
+  (`77a0cdda`, `13022d3e`) a quello delle patch provate.
+- **W=1** (`w1.sh`): 0 avvisi, 0 errori su `next`, con la 1/2, con la
+  serie; `v4l2-subdev.o` ricompilato ogni volta.
+
+Lettera: sha della compilazione e `base-commit` portati a
+`8e26d4c20ed2`. Prova a vuoto di `invia-serie-v3.sh --prova` riuscita.
