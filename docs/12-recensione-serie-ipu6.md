@@ -961,3 +961,32 @@ Prossimo lavoro: la vita degli oggetti in ipu6-isys sul modello della
 serie em28xx di Hans (memoria del driver liberata nel release callback
 del `v4l2_device`, non con devm), con prova KASAN prima/dopo con
 `scripts/riproduci-uaf-isys.sh`. Il tablet va riavviato prima.
+
+### 8 ottobre, 09:30: stato dell'arte prima di toccare ipu6-isys
+
+Tablet riavviato (`g1b4a83d60ea1`): boot pulito, nessun rapporto KASAN,
+solo i soliti WARNING di i915.
+
+- Nota: `8e26d4c20` e' la **punta** di `next` (hantro, 04/10), non il
+  commit di Hans; il clone shallow non ha quel commit nel log. Il
+  contenuto em28xx c'e': `em28xx_free_v4l2()` come `v4l2_dev.release`,
+  `v4l2_device_put()` in `em28xx_v4l2_fini()` (`em28xx-video.c:2328,2465`).
+- Serie di Sakari «Media device lifetime management» v4 (10/06/2024,
+  patchwork serie 13011, 26 patch): refcount del media device, release
+  callback, la 18/26 converte **ipu3-cio2** (driver fratello). Stato
+  *changes requested*; ultima discussione: Hans chiede di convertire
+  anche vicodec/vim2m, Sakari risponde il 18/06/2024 che lo fara'.
+  Nessuna v5 su patchwork in oltre due anni.
+- Wentao Liang 17/08/2026 «mc: Fix potential media_device lifetime race»:
+  riguarda `mc-dev-allocator.c` (snd-usb-audio/au0828), non c'entra.
+- **Limite del modello em28xx per un driver con media device**: in
+  `next` `__media_ioctl()` controlla `media_devnode_is_registered()` e
+  poi `media_device_ioctl()` usa `devnode->media_dev` senza lock ne'
+  riferimento (controllo seguito da uso, `mc-devnode.c`). Il driver non
+  ha un gancio per prendere un riferimento al `v4l2_device` all'apertura
+  di `/dev/mediaX` (`media_device_open()` e' vuota, le fops sono del
+  core). Quindi liberare `struct ipu6_isys` nel release del
+  `v4l2_device` chiude i nodi video e subdev (UAF provato), ma per
+  `/dev/media0` resta una finestra: una ioctl gia' oltre il controllo
+  quando l'ultimo nodo video si chiude. Si chiude solo nel core MC
+  (serie di Sakari). em28xx ha lo stesso limite ed e' stato accettato.
