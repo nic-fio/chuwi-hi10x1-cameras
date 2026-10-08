@@ -1414,3 +1414,12 @@ cui la prima esce senza aspettare. Previsione con il `msleep(5000)` di
 prova ancora dentro: unbind ~5 s invece di 0,45 s, nessun rapporto
 KASAN, suspend con nome `intel_ipu6_isys.isys` sia all'inizio sia alla
 ripartenza.
+
+### 8 ottobre, 12:04: kernel col candidato
+
+Ramo `tablet-isys-pm-fix` = `tablet-isys-pm` + `daf12e1ba` «SOLO PROVA:
+candidato, attesa della runtime suspend in isys_remove()» (il
+`msleep(5000)` resta). Build con `tablet/scripts/build-isys-pm-fix.sh`,
+config identica a `isys-pm`; release `…-gdaf12e1ba16d`, installato con
+suffisso `-fix`. Stessa riga di avvio della corsa delle 11:47
+(`quiet kasan_multi_shot`), stessa prova con `ATTESA=10`.
