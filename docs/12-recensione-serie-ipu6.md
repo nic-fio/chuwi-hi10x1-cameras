@@ -1309,3 +1309,59 @@ dmesg completo sul server (`intelcam-log/`, stesso nome).
 - Script corretto: lo schermo passa a tty3 subito dopo la pipeline,
   prima dello streaming e prima di livello 8 e `printk_delay`, con 60 s
   di tempo massimo, altrimenti la prova si annulla (uscita 4).
+
+### 8 ottobre, 11:47: terza corsa col kernel `-pm`, finestra 1 confermata
+
+Dati in `data/unbind-isys-streaming-…-g948eecd2bad9-20261008-114734/`;
+il rapporto completo (con l'Oops finale) solo sul server, in
+`intelcam-log/`, stesso nome: il `dmesg` locale del passo 4 e' stato
+letto prima della fine della stampa.
+
+Lo schermo e' passato a tty3 prima dello streaming, senza WARN di i915:
+la correzione dello script funziona. Sequenza:
+
+```
+301.290 unbind adesso
+301.606 intel_ipu6_isys.isys …: SOLO PROVA: runtime suspend, attesa 5 s
+301.742 esito 0, isys agganciato: no          (unbind 0,45 s)
+303.077 v4l2-ctl uscito da solo: DQBUF Invalid argument
+306.938 auxiliary intel_ipu6.isys.40: SOLO PROVA: runtime suspend, riparte
+307.088 KASAN slab-use-after-free in isys_runtime_pm_suspend+0xa8
+323.964 KASAN slab-use-after-free in ipu6_fw_isys_close+0xea
+324.871 KASAN slab-use-after-free in ipu6_fw_isys_close+0x109, +0xfb
+324.872 Oops: GPF (null-ptr-deref 0x668) in query_sp+0x44
+        <- ipu6_fw_com_release <- ipu6_fw_isys_close <- isys_runtime_pm_suspend
+```
+
+- La suspend entra nel callback col driver ancora agganciato (nome
+  `intel_ipu6_isys.isys`) e riparte a driver staccato (nome
+  `auxiliary`): e' la finestra 1, aperta durante `isys_remove()`.
+- Oggetto: kmalloc-2k allocato in `isys_probe+0xbd`, cioe' `isys`.
+  Offset 1136 = 0x470, offset 1344 = 0x540. Dal disassemblato del
+  modulo (la build non ha DWARF): `isys_runtime_pm_suspend+0xa8` e'
+  `mov 0x470(%rbp)` = `isys->adev`, e in `ipu6_fw_isys_close` le
+  letture a 0x540 sono `isys->fwctx`. **Punto 3 della previsione
+  confermato**, nel campo previsto.
+- Liberata da `v4l2_device_put()` chiamata dentro l'unbind (task 9578,
+  `unbind_store` → `device_release_driver_internal`), non alla close di
+  `v4l2-ctl`: quando `isys_remove()` arriva in fondo, la close di
+  `v4l2-ctl` e' gia' finita. Il punto 2 era scritto con «o»: l'ultimo
+  `put` e' quello di `isys_remove()`.
+- Punto 1 (`free_fw_msg_bufs()` e `cpu_latency_qos_remove_request()`
+  mentre la suspend dorme): avvenuto, ma senza segni propri, perche' il
+  primo accesso dopo il risveglio e' gia' su memoria liberata.
+- Dopo i rapporti KASAN la suspend prosegue su `isys` liberata e chiude
+  il firmware con un `fwctx` vecchio: GPF in `query_sp()`, il kworker
+  `pm` muore. Il tablet resta su (la rete torna dopo il riavvio di
+  iwlwifi).
+
+Prima/dopo per la finestra 1: col kernel p1+p2 e il ritardo, 1 su 1.
+Conclusione: p1+p2 non bastano, `isys_remove()` deve aspettare (o
+fare in modo sincrono) la runtime suspend partita dallo stop dello
+stream, prima di liberare qualsiasi cosa che il callback usa, cioe'
+prima di `free_fw_msg_bufs()` e comunque prima di `v4l2_device_put()`.
+Candidati da confrontare con lo stato dell'arte prima di scrivere
+codice (memoria «rigore patch kernel»): `pm_runtime_barrier()` subito
+dopo `isys_unregister_devices()`, oppure `pm_runtime_disable()` (che
+contiene la barriera) nello stesso punto, e cosa fanno gli altri driver
+ausiliari/IPU (ipu6-psys fuori albero, ipu7, intel-vsc) in `remove`.

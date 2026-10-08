@@ -1,0 +1,129 @@
+[  306.938288] auxiliary intel_ipu6.isys.40: SOLO PROVA: runtime suspend, riparte
+[  307.088388] ==================================================================
+[  307.238426] BUG: KASAN: slab-use-after-free in isys_runtime_pm_suspend+0xa8/0x272 [intel_ipu6_isys]
+[  307.388478] Read of size 8 at addr ffff888109762470 by task kworker/u16:5/320
+
+[  307.688538] CPU: 2 UID: 0 PID: 320 Comm: kworker/u16:5 Tainted: G S      W           7.3.0-rc1-intelcam-debug-g948eecd2bad9 #5 PREEMPT(lazy) 
+[  307.838556] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[  307.988568] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
+[  308.138583] Workqueue: pm pm_runtime_work
+[  308.438614] Call Trace:
+[  308.588627]  <TASK>
+[  308.738641]  dump_stack_lvl+0x5d/0x80
+[  308.888660]  print_report+0x157/0x4c9
+[  309.038676]  ? isys_runtime_pm_suspend+0xa8/0x272 [intel_ipu6_isys]
+[  309.188697]  ? __virt_addr_valid+0x22d/0x440
+[  309.338712]  ? isys_runtime_pm_suspend+0xa8/0x272 [intel_ipu6_isys]
+[  309.488730]  kasan_report+0xdf/0x1a0
+[  309.638753]  ? isys_runtime_pm_suspend+0xa8/0x272 [intel_ipu6_isys]
+[  309.788781]  ? __pfx_bus_pm_runtime_suspend+0x10/0x10 [intel_ipu6]
+[  309.938804]  isys_runtime_pm_suspend+0xa8/0x272 [intel_ipu6_isys]
+[  310.088826]  bus_pm_runtime_suspend+0xd/0x60 [intel_ipu6]
+[  310.238851]  __rpm_callback+0xa7/0x4e0
+[  310.388868]  ? __pfx_bus_pm_runtime_suspend+0x10/0x10 [intel_ipu6]
+[  310.538888]  ? __pfx_bus_pm_runtime_suspend+0x10/0x10 [intel_ipu6]
+[  310.688907]  rpm_callback+0xe7/0x130
+[  310.838925]  rpm_suspend+0x21d/0xfb0
+[  310.988939]  ? __pfx_rpm_suspend+0x10/0x10
+[  311.138956]  ? lock_acquire+0x192/0x300
+[  311.288972]  ? do_raw_spin_lock+0x128/0x260
+[  311.438987]  ? __pfx_do_raw_spin_lock+0x10/0x10
+[  311.589003]  pm_runtime_work+0xff/0x120
+[  311.739022]  process_one_work+0x8fc/0x1670
+[  311.889040]  ? __pfx_process_one_work+0x10/0x10
+[  312.039054]  ? lock_acquire+0x192/0x300
+[  312.189071]  ? lock_is_held_type+0x85/0xf0
+[  312.339085]  ? __pfx_pm_runtime_work+0x10/0x10
+[  312.489105]  worker_thread+0x4ea/0xd60
+[  312.639126]  ? __kthread_parkme+0xac/0x1f0
+[  312.789149]  ? __pfx_worker_thread+0x10/0x10
+[  312.939165]  kthread+0x300/0x3e0
+[  313.089183]  ? __pfx_kthread+0x10/0x10
+[  313.239204]  ret_from_fork+0x559/0x7e0
+[  313.389221]  ? __pfx_ret_from_fork+0x10/0x10
+[  313.539239]  ? __switch_to+0x58b/0xe10
+[  313.689259]  ? __pfx_kthread+0x10/0x10
+[  313.839276]  ret_from_fork_asm+0x1a/0x30
+[  313.989295]  </TASK>
+
+[  314.289449] Allocated by task 252:
+[  314.439480]  kasan_save_stack+0x30/0x50
+[  314.589520]  kasan_save_track+0x14/0x30
+[  314.739557]  __kasan_kmalloc+0x8f/0xa0
+[  314.889583]  __kmalloc_cache_noprof+0x241/0x5d0
+[  315.039616]  isys_probe+0xbd/0x1810 [intel_ipu6_isys]
+[  315.189658]  really_probe+0x1eb/0x630
+[  315.339692]  __driver_probe_device+0x1ad/0x300
+[  315.489722]  driver_probe_device+0x45/0xf0
+[  315.639755]  __driver_attach+0x157/0x400
+[  315.789787]  bus_for_each_dev+0x103/0x180
+[  315.939812]  bus_add_driver+0x20b/0x420
+[  316.089837]  driver_register+0x1a0/0x350
+[  316.239871]  __auxiliary_driver_register+0x14d/0x240
+[  316.389901]  do_one_initcall+0xc9/0x440
+[  316.539925]  do_init_module+0x27c/0x7b0
+[  316.689961]  load_module+0x56f8/0x62b0
+[  316.839991]  init_module_from_file+0x152/0x170
+[  316.990018]  idempotent_init_module+0x228/0x760
+[  317.140044]  __x64_sys_finit_module+0xbf/0x120
+[  317.290074]  do_syscall_64+0x109/0x5d0
+[  317.440100]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  317.741863] Freed by task 9578:
+[  317.892777]  kasan_save_stack+0x30/0x50
+[  318.043676]  kasan_save_track+0x14/0x30
+[  318.194561]  kasan_save_free_info+0x3b/0x70
+[  318.345469]  __kasan_slab_free+0x43/0x70
+[  318.496351]  kfree+0x1b0/0x500
+[  318.647223]  v4l2_device_put+0x76/0xa0
+[  318.798102]  device_release_driver_internal+0x3b5/0x570
+[  318.948909]  unbind_store+0xd1/0xf0
+[  319.099751]  kernfs_fop_write_iter+0x335/0x510
+[  319.250601]  vfs_write+0x51c/0x1080
+[  319.401446]  ksys_write+0xf4/0x1c0
+[  319.552278]  do_syscall_64+0x109/0x5d0
+[  319.703101]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+[  320.004710] The buggy address belongs to the object at ffff888109762000
+                which belongs to the cache kmalloc-2k of size 2048
+[  320.156249] The buggy address is located 1136 bytes inside of
+                freed 2048-byte region [ffff888109762000, ffff888109762800)
+
+[  320.458673] The buggy address belongs to the physical page:
+[  320.609517] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x109760
+[  320.760368] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  320.911216] flags: 0x200000000000040(head|node=0|zone=2)
+[  321.062067] page_type: f5(slab)
+[  321.212923] raw: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  321.363784] raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  321.514657] head: 0200000000000040 ffff888100042f00 dead000000000100 dead000000000122
+[  321.665519] head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+[  321.816386] head: 0200000000000003 fffffffffffffe01 00000000ffffffff 00000000ffffffff
+[  321.967242] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  322.118098] page dumped because: kasan: bad access detected
+
+[  322.419801] Memory state around the buggy address:
+[  322.570657]  ffff888109762300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  322.721535]  ffff888109762380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  322.872409] >ffff888109762400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  323.023281]                                                              ^
+[  323.174164]  ffff888109762480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  323.325051]  ffff888109762500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  323.475924] ==================================================================
+[  323.629773] iwlwifi 0000:00:14.3: Error sending SCAN_CFG_CMD: time out after 2000ms.
+[  323.662714] Disabling lock debugging due to kernel taint
+[  323.700606] intelcam-prova: 4 attesa          10s dopo la fine della cattura
+[  323.780649] iwlwifi 0000:00:14.3: Current CMD queue read_ptr 632 write_ptr 632
+[  323.813562] ==================================================================
+[  323.932797] iwlwifi 0000:00:14.3: Start IWL Error Log Dump:
+[  323.964470] BUG: KASAN: slab-use-after-free in ipu6_fw_isys_close+0xea/0x110 [intel_ipu6_isys]
+[  324.083663] iwlwifi 0000:00:14.3: Transport status: 0x0000004A, valid: 6
+[  324.115388] Read of size 8 at addr ffff888109762470 by task kworker/u16:5/320
+[  324.234568] iwlwifi 0000:00:14.3: Loaded firmware version: 89.4d42c933.0 so-a0-hr-b0-89.ucode
+
+[  324.385486] iwlwifi 0000:00:14.3: 0x00000084 | NMI_INTERRUPT_UNKNOWN       
+[  324.417216] CPU: 2 UID: 0 PID: 320 Comm: kworker/u16:5 Tainted: G S  B   W           7.3.0-rc1-intelcam-debug-g948eecd2bad9 #5 PREEMPT(lazy) 
+[  324.536410] iwlwifi 0000:00:14.3: 0x004CD3B2 | interruptlink2
+[  324.567236] Tainted: [S]=CPU_OUT_OF_SPEC, [B]=BAD_PAGE, [W]=WARN
+[  324.687178] iwlwifi 0000:00:14.3: 0x000151E8 | data1
+[  324.717249] Hardware name: CHUWI Innovation And Technology(ShenZhen)co.,Ltd Hi10 X1/Default string, BIOS SA10C.N1195.24071902.014 09/20/2024
