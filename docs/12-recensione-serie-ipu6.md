@@ -990,3 +990,66 @@ solo i soliti WARNING di i915.
   `/dev/media0` resta una finestra: una ioctl gia' oltre il controllo
   quando l'ultimo nodo video si chiude. Si chiude solo nel core MC
   (serie di Sakari). em28xx ha lo stesso limite ed e' stato accettato.
+
+### 8 ottobre, 10:40: unbind di isys a streaming acceso, oops riprodotto
+
+`scripts/riproduci-unbind-isys-streaming.sh gc5035`, kernel `1b4a83d60`
+(sorgente di `isys_remove()` identico a `next`), terzo tentativo.
+Cartella `data/unbind-isys-streaming-…-20261008-103250/`: il rapporto
+completo e' in `dmesg-server.txt` (arrivato via ssh, la rete ha retto
+~13 s dopo l'oops), la foto della console in `schermo-tty3.jpg`.
+I due tentativi precedenti (10:02, 10:12) si erano bloccati senza
+lasciare il rapporto.
+
+```
+936.73 intelcam-prova: 2 unbind-isys     schermo su tty3, unbind adesso
+936.92 BUG: unable to handle page fault for address: ffffc900012ca180
+       #PF: supervisor read access in kernel mode, not-present page, PTE 0
+       Oops: 0000 [#1] SMP KASAN NOPTI   CPU: 1  Comm: swapper/1
+       RIP: __list_del_entry_valid_or_report+0x2d   RBX: ffffc900012ca178
+938.94 intel_ipu6_isys ...: stream stop time out
+       <IRQ> ipu6_put_fw_msg_buf+0x4a <- ipu6_isys_isr_one+0x2e4
+             <- ipu6_isys_isr <- ipu6_buttress_isr
+940.16 i2c_designware.3: controller timed out
+940.31 gc5035: Error writing reg 0x003e: -110
+942.46 intel_ipu6_isys ...: stream close time out
+949.63 iwlwifi: Error sending SYSTEM_STATISTICS_CMD: time out after 2000ms
+```
+
+Lettura, riga per riga sul sorgente:
+
+- `isys_remove()` fa `ida_destroy()` e `free_fw_msg_bufs()` **prima** di
+  `isys_unregister_devices()`. `free_fw_msg_bufs()` libera con
+  `ipu6_dma_free()` anche i messaggi in `framebuflist_fw`, cioe' quelli
+  ancora in mano al firmware per i fotogrammi in volo.
+- Lo streaming e' ancora acceso, quindi il firmware continua a mandare
+  `PIN_DATA_READY`. In `ipu6_isys_isr_one()` (`ipu6-fw-isys.c:604`)
+  `resp->buf_id` porta all'`isys_fw_msgs` gia' liberato e
+  `ipu6_put_fw_msg_buf()` fa `list_move(&msg->head, ...)`: la lettura di
+  `msg->head.next` (RBX = `&msg->head`, +8 = CR2) cade su una pagina gia'
+  tolta dalla mappa. L'indirizzo e' nello spazio vmalloc
+  (`ffffc900…`) perche' `ipu6_dma_alloc()` mappa i buffer con `vmap`:
+  per questo non e' un rapporto KASAN «use-after-free» ma un page fault,
+  e succede in interrupt, quindi l'oops e' fatale per tutta la macchina.
+- `ipu6_put_fw_msg_buf()` muore con `isys->listlock` preso e le
+  interruzioni spente: da qui le attese a vuoto sull'altra CPU
+  (`stream stop/close time out` dello stop avviato da
+  `vb2_video_unregister_device()`), l'i2c del sensore e il wifi che
+  smettono di rispondere. E' il blocco visto nei primi due tentativi.
+
+Rispetto alla previsione (in testa allo script): la causa e' quella
+attesa, l'ordine di `isys_remove()`, ma il primo a toccare la memoria
+liberata non e' lo stop (`ipu6_get_fw_msg_buf()`, `ida_free()`) bensi'
+l'ISR, prima ancora che lo stop arrivi a quei punti. Lo stop resta un
+secondo accesso possibile, coperto dall'oops.
+
+Conseguenza per la patch: non basta spostare `free_fw_msg_bufs()` e
+`ida_destroy()` dopo `isys_unregister_devices()`; devono anche venire
+dopo che il firmware ha smesso di rispondere (stream chiusi, ISR
+spenta), altrimenti l'ISR puo' ancora consegnare un `buf_id` liberato.
+Da verificare sul codice prima di scriverla.
+
+A parte, gia' presente dal 4 ottobre e non legato all'unbind: a ogni
+STREAMON `WARNING ipu6-isys-queue.c:203`, cioe'
+`lockdep_assert_held(&stream->mutex)` in `ipu6_isys_buffer_list_get()`
+chiamata da `ipu6_isys_csi2_enable_streams()`.
