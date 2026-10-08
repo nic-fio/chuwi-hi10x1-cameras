@@ -14,12 +14,13 @@ struct ipu6_isys, allocated with devm_kzalloc(), so they are freed when
 the driver is unbound.
 
 I checked this on the IPU6 tablet (media next 9cfc1aca0781 plus the
-sensor drivers mentioned in the cover letter): with a video node and a
-CSI-2 sub-device node of isys held open, unbinding isys and then
-closing the two nodes gives KASAN use-after-free reports in
-v4l2_release(), v4l2_prio_close() and v4l2_device_release() on the
-struct ipu6_isys allocated in isys_probe() and freed by devres at
-unbind, and more in subdev_close() and __vb2_queue_free().
+sensor drivers mentioned in the cover letter, without this series):
+with a video node and a CSI-2 sub-device node of isys held open,
+unbinding isys and then closing the two nodes gives KASAN
+use-after-free reports in v4l2_release(), v4l2_prio_close() and
+v4l2_device_release() on the struct ipu6_isys allocated in
+isys_probe() and freed by devres at unbind, and more in subdev_close()
+and __vb2_queue_free().
 
 Patch 2/2 rests on the same vdev->v4l2_dev assumption, so I am
 withdrawing the whole series rather than keeping half of it. The
