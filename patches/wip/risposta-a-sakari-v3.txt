@@ -1,0 +1,16 @@
+Hi Sakari,
+
+On Thu, Oct 08, 2026 at 01:44:07PM +0300, Sakari Ailus wrote:
+> Unregistering a sub-device node isn't doable safely currently. Addressing
+> this properly requires much more than this patch does, and also I'm afraid
+> this patch isn't part of properly addressing this either.
+
+Understood. As I wrote to Laurent earlier today, I have withdrawn the
+whole series: both patches only narrow the window, and the real issue is
+the lifetime of the objects, not something more checks in the file
+operations can fix.
+
+Thank you and Laurent for taking the time to review it.
+
+Thanks,
+Nicola
