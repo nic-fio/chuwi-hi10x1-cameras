@@ -168,8 +168,10 @@ else:
     print(f"{sum(sub)/len(sub)} {100*clip/len(sub)}")
 PY
 }
-for spec in "gc5035:256:4096" "gc8034:64:490"; do
-    IFS=: read -r s gmin gmax <<<"$spec"
+# Da driver-v1 ANALOGUE_GAIN e' l'indice del gradino analogico: il rapporto
+# atteso e' quello fra l'ultimo e il primo gradino delle tabelle dei driver.
+for spec in "gc5035:0:16:15.60" "gc8034:0:6:7.66"; do
+    IFS=: read -r s gmin gmax gratio <<<"$spec"
     [ -n "${NODE[$s]:-}" ] || continue
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmin 2>/dev/null
     read -r m1 c1 <<<"$(misura_media "${NODE[$s]}" "$OUT/.g1.raw")"
@@ -178,7 +180,7 @@ for spec in "gc5035:256:4096" "gc8034:64:490"; do
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmin 2>/dev/null
     r=$(python3 -c "
 s1=max($m1-64, 0.1); s2=max($m2-64, 0.1)
-print(f'{s2/s1:.2f} {$gmax/$gmin:.2f}')")
+print(f'{s2/s1:.2f} {$gratio:.2f}')")
     read -r got want <<<"$r"
     echo "$s: media ${m1} (clip ${c1}%) -> ${m2} (clip ${c2}%), rapporto $got, atteso $want" \
         >> "$OUT/03-guadagno.txt"
@@ -215,6 +217,56 @@ print(f'{s2/s1:.2f} {$gmax/$gmin:.2f}')")
     check_close "$want" "$got" 25 "$s: il guadagno misurato segue quello chiesto"
 done
 rm -f "$OUT/.g1.raw" "$OUT/.g2.raw"
+
+# ------------------------------------------------------- registri a 16 bit
+# Esposizione e frame length si scrivono a 16 bit con autoincremento: in
+# lettura e' provato (chip ID), in scrittura no. Si impostano i controlli col
+# sensore acceso e si rileggono i due byte via I2C.
+head_ "SCRITTURE A 16 BIT"
+for spec in "gc5035:GCTI5035:0x3f:0x03:0x41:0:1944" "gc8034:GCTI8034:0x37:0x03:0x07:36:2448"; do
+    IFS=: read -r s name addr rexp rvb vboff h <<<"$spec"
+    [ -n "${SUBDEV[$s]:-}" ] || continue
+    dev=$(readlink -f "/sys/bus/i2c/devices/i2c-$name:00"); bus=$(basename "$(dirname "$dev")"); bus=${bus#i2c-}
+    echo on > "/sys/bus/i2c/devices/i2c-$name:00/power/control"; sleep 1
+    # prima VBLANK, che allarga il range dell'esposizione, poi l'esposizione
+    v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=vertical_blanking=300 2>/dev/null
+    v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=exposure=1110 2>/dev/null
+    e=$(( $(i2cget -f -y "$bus" "$addr" "$rexp") << 8 | $(i2cget -f -y "$bus" "$addr" $(printf 0x%02x $((rexp+1)))) ))
+    b=$(( $(i2cget -f -y "$bus" "$addr" "$rvb") << 8 | $(i2cget -f -y "$bus" "$addr" $(printf 0x%02x $((rvb+1)))) ))
+    if [ "$s" = gc5035 ]; then vb_att=$(( h + 300 )); else vb_att=$(( 300 - vboff )); fi  # gc5035: frame length; gc8034: VTS - altezza - 36
+    echo "$s: esposizione letta $e (attesa 1110), frame/blanking letto $b (atteso $vb_att), altezza $h" >> "$OUT/06-registri.txt"
+    [ "$e" -eq 1110 ] && ok "$s: esposizione a 16 bit riletta 1110" || ko "$s: esposizione riletta $e invece di 1110"
+    [ "$b" -eq "$vb_att" ] && ok "$s: VBLANK a 16 bit riletto $b" || ko "$s: VBLANK riletto $b invece di $vb_att"
+    v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=vertical_blanking=$([ $s = gc5035 ] && echo 64 || echo 48) 2>/dev/null
+    echo auto > "/sys/bus/i2c/devices/i2c-$name:00/power/control"
+done
+
+# ------------------------------------------------- esposizione dispari gc5035
+# Il driver vendor arrotonda l'esposizione al pari. A valori piccoli una riga
+# pesa: fra 8 e 9 righe il segnale deve crescere del 12,5% se il sensore
+# accetta i dispari, restare uguale se li arrotonda.
+head_ "ESPOSIZIONE DISPARI (gc5035)"
+if [ -n "${NODE[gc5035]:-}" ]; then
+    sd=${SUBDEV[gc5035]}
+    v4l2-ctl -d "$sd" --set-ctrl=analogue_gain=16 2>/dev/null
+    v4l2-ctl -d "$sd" --set-ctrl=exposure=8 2>/dev/null
+    read -r m8 c8 <<<"$(misura_media "${NODE[gc5035]}" "$OUT/.e8.raw")"
+    v4l2-ctl -d "$sd" --set-ctrl=exposure=9 2>/dev/null
+    read -r m9 c9 <<<"$(misura_media "${NODE[gc5035]}" "$OUT/.e9.raw")"
+    v4l2-ctl -d "$sd" --set-ctrl=analogue_gain=0 --set-ctrl=exposure=984 2>/dev/null
+    r=$(python3 -c "s8=max($m8-64,0.1); s9=max($m9-64,0.1); print(f'{s9/s8:.3f}')")
+    echo "gc5035: esposizione 8 -> segnale $m8, 9 -> $m9, rapporto $r (1.125 se accetta i dispari, 1.000 se arrotonda)" >> "$OUT/07-esposizione-dispari.txt"
+    if [ "$(python3 -c "print(int($m8 - 64 < 8))")" = 1 ]; then
+        nd "gc5035: segnale troppo basso a 8 righe per decidere — serve piu' luce"
+    elif [ "$(python3 -c "print(int(abs($r-1.125) < 0.05))")" = 1 ]; then
+        ok "gc5035: accetta l'esposizione dispari (rapporto $r)"
+    elif [ "$(python3 -c "print(int(abs($r-1.0) < 0.03))")" = 1 ]; then
+        ko "gc5035: arrotonda l'esposizione al pari (rapporto $r): serve GC5035_EXP_STEP 2"
+    else
+        nd "gc5035: rapporto $r non decide, ripetere"
+    fi
+    rm -f "$OUT/.e8.raw" "$OUT/.e9.raw"
+fi
 
 # -------------------------------------------------------------- compliance
 head_ "V4L2-COMPLIANCE"
