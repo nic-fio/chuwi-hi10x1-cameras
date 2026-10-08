@@ -954,7 +954,9 @@ Prova a vuoto riuscita.
 
 ### 8 ottobre, 09:06: risposta a Laurent spedita, serie v3 ritirata
 
-Spedita da Nic alle 07:06 UTC (Gmail: nel thread della v3, Cc completi).
+Spedita da Nic alle 07:06 UTC, su lore (articolo 332711) nel thread della v3:
+`<179144316198.13032.1846729931094664641@gmail.com>`,
+https://lore.kernel.org/linux-media/179144316198.13032.1846729931094664641@gmail.com/
 Prossimo lavoro: la vita degli oggetti in ipu6-isys sul modello della
 serie em28xx di Hans (memoria del driver liberata nel release callback
 del `v4l2_device`, non con devm), con prova KASAN prima/dopo con
