@@ -1,0 +1,46 @@
+# base: libcamera 8103c3f29fba, ramo gc5035-gc8034, non committata
+diff --git a/src/ipa/libipa/camera_sensor_helper.cpp b/src/ipa/libipa/camera_sensor_helper.cpp
+index 359040ec7..aa392cae3 100644
+--- a/src/ipa/libipa/camera_sensor_helper.cpp
++++ b/src/ipa/libipa/camera_sensor_helper.cpp
+@@ -519,6 +519,40 @@ public:
+ };
+ REGISTER_CAMERA_SENSOR_HELPER("gc08a3", CameraSensorHelperGc08a3)
+ 
++class CameraSensorHelperGc5035 : public CameraSensorHelper
++{
++public:
++	CameraSensorHelperGc5035()
++	{
++		/* Measured: 64 at 10bits. */
++		blackLevel_ = 4096;
++		/*
++		 * The gain code indexes 17 analogue gain steps from 1.0x to
++		 * 15.6x. They are close to 1.5 dB apart (within 1.6% of the
++		 * measured gains).
++		 */
++		gain_ = AnalogueGainExp{ 1.0, expGainDb(1.5) };
++	}
++};
++REGISTER_CAMERA_SENSOR_HELPER("gc5035", CameraSensorHelperGc5035)
++
++class CameraSensorHelperGc8034 : public CameraSensorHelper
++{
++public:
++	CameraSensorHelperGc8034()
++	{
++		/* Measured: 64 at 10bits. */
++		blackLevel_ = 4096;
++		/*
++		 * The gain code indexes 7 analogue gain steps from 1.0x to
++		 * 7.66x. They are close to 2.95 dB apart (within 1.7% of the
++		 * measured gains).
++		 */
++		gain_ = AnalogueGainExp{ 1.0, expGainDb(2.95) };
++	}
++};
++REGISTER_CAMERA_SENSOR_HELPER("gc8034", CameraSensorHelperGc8034)
++
+ class CameraSensorHelperHm1246 : public CameraSensorHelper
+ {
+ public:

@@ -127,6 +127,15 @@ for s in gc5035 gc8034; do
     SUBDEV[$s]=$(media-ctl -p 2>/dev/null | awk -v e="$ent" '
         $0 ~ "entity [0-9]+: "e" " {f=1} f && /device node name/ {print $NF; exit}')
     [ -n "${NODE[$s]}" ] && ok "$s -> ${NODE[$s]} (${SUBDEV[$s]})" || ko "$s: pipeline non configurabile"
+    # Controlli ai default. v4l2-compliance li lascia sull'ultimo valore
+    # provato, test pattern acceso compreso: lanciata a mano prima della prova
+    # il 2026-10-08, il gc5035 ha dato lo stesso fotogramma a 1x e a 15,6x.
+    # Dentro la prova non si vedeva perche' i cicli di bind la seguono.
+    [ -n "${SUBDEV[$s]}" ] || continue
+    def=$(v4l2-ctl -d "${SUBDEV[$s]}" --list-ctrls 2>/dev/null | awk '
+        /flags=.*(read-only|inactive)/ { next }
+        / default=/ { for (i = 1; i <= NF; i++) if ($i ~ /^default=/) { sub(/default=/, "", $i); printf "%s%s=%s", sep, $1, $i; sep = "," } }')
+    [ -n "$def" ] && v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl="$def" 2>/dev/null
 done
 
 for spec in "gc5035:2920:2008:grbg:2592:1944" "gc8034:4272:2496:rggb:3264:2448"; do
@@ -373,18 +382,29 @@ fi
 
 # -------------------------------------------------------------- compliance
 head_ "V4L2-COMPLIANCE"
+# -z: il nodo del subdev sta sotto il dispositivo I2C, non sotto l'IPU6, e da
+# solo v4l2-compliance non trova /dev/media0: senza, salta «Media Driver Info»
+# e i test sul pad (formati, selezioni) e conta 46 test invece di 54.
+mbus=$(media-ctl -d /dev/media0 -p 2>/dev/null | awk '/^bus info/ {print $3; exit}')
 for s in gc5035 gc8034; do
     [ -n "${SUBDEV[$s]:-}" ] || continue
     # -u: il nodo e' un subdev. L'output completo va nella cover letter.
     # Fino al kernel 7.2 falliva il test degli eventi sui controlli; su next
     # il core imposta da solo V4L2_SUBDEV_FL_HAS_EVENTS, quindi zero e basta.
-    n=$(timeout 300 v4l2-compliance -u "${SUBDEV[$s]}" 2>&1 | tee "$OUT/04-compliance-$s.txt" |
-        sed -n 's/.*Succeeded: \([0-9]*\), Failed: \([0-9]*\).*/\1 \2/p')
-    read -r good bad <<<"$n"
-    if [ "${bad:-9}" -eq 0 ]; then
-        ok "$s: compliance $good ok, 0 falliti"
+    # V4L2_COMPLIANCE= un v4l2-compliance compilato da git: Hans vuole la
+    # versione con lo SHA in testa all'output, non quella del pacchetto.
+    f="$OUT/04-compliance-$s.txt"
+    timeout 300 "${V4L2_COMPLIANCE:-v4l2-compliance}" -z "$mbus" -u "${SUBDEV[$s]}" > "$f" 2>&1
+    read -r good bad <<<"$(sed -n 's/.*Succeeded: \([0-9]*\), Failed: \([0-9]*\).*/\1 \2/p' "$f")"
+    # Atteso: due avvisi sul CROP leggibile ma non scrivibile (Try e Active),
+    # come imx219, imx258, gc05a2, gc08a3: un solo modo, crop fisso.
+    altri=$(grep 'warn:' "$f" | grep -vc 'target 0 but not VIDIOC_SUBDEV_S_SELECTION')
+    if ! grep -q 'Sub-Device ioctls (Source Pad 0)' "$f"; then
+        ko "$s: compliance senza i test sul pad (dispositivo media non trovato)"
+    elif [ "${bad:-9}" -eq 0 ] && [ "$altri" -eq 0 ]; then
+        ok "$s: compliance $good ok, 0 falliti, solo gli avvisi attesi sul CROP"
     else
-        ko "$s: compliance $good ok, ${bad:-?} falliti"
+        ko "$s: compliance $good ok, ${bad:-?} falliti, $altri avvisi inattesi"
     fi
 done
 

@@ -1,0 +1,1 @@
+gc5035: esposizione 8 -> segnale 64.56577362577302, 9 -> 64.54405319784213, rapporto 0.962 (1.125 se accetta i dispari, 1.000 se arrotonda)

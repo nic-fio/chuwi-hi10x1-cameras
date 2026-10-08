@@ -278,16 +278,65 @@ collegato le camere» cercava il «Connected 2 cameras» del boot, che il
 dalla seconda corsa in poi. Ora legge il grafo media (sensore -> CSI2
 abilitato), una verifica per sensore.
 
+Compliance col dispositivo media (8/10, 18:20). Con il solo `-u` il nodo del
+subdev sta sotto il dispositivo I2C e v4l2-compliance non trova /dev/media0:
+salta «Media Driver Info» e i test sul pad (formati, selezioni), 46 test.
+Con `-z PCI:0000:00:05.0 -u ...`: 54/54, 0 falliti, 2 warning su tutti e
+due, «VIDIOC_SUBDEV_G_SELECTION is supported for target 0 but not
+VIDIOC_SUBDEV_S_SELECTION» (CROP, Try e Active). Atteso: un solo modo, crop
+fisso; stessa cosa in imx219, imx258, ov5675, gc05a2, gc08a3, imx283, hi846
+(get_selection senza set_selection, mainline di oggi); ov01a10 invece
+implementa set_selection. Da dire in cover. La prova ora usa `-z` e dà KO
+se mancano i test sul pad o se compare un warning diverso.
+
+Corsa delle 18:27 (data/prova-20261008-182741): compliance 54/54 ma tre KO,
+nessuno dei driver:
+- guadagno gc5035 «1,00»: fotogrammi identici a 1x e 15,6x (media 433,0487
+  tutte e due). Test pattern acceso, lasciato da una compliance lanciata a
+  mano prima della prova: v4l2-compliance lascia i controlli sull'ultimo
+  valore provato (verificato: test_pattern 0 -> 1, con `-u` e con `-z`).
+  Nella prova non si vedeva perché i cicli di bind la seguono. Ora la prova
+  riporta ai default tutti i controlli scrivibili prima di catturare.
+- Oops in subdev_open (Comm v4l_id, KASAN null-ptr-deref) durante i cicli di
+  bind: reperto A2 (docs/08, docs/09), la finestra di
+  v4l2_device_unregister_subdev() che Sakari ha detto non risolvibile ora.
+  Prima volta preso dalla prova completa. Taint 516 -> 644 (D), minor perso:
+  il gc5035 è passato da v4l-subdev5 a v4l-subdev6.
+- quindi lockdep spento e 59 BUG/WARNING. Serve un riavvio prima della
+  prossima corsa che conta.
+
+Corsa delle 18:50 dopo il riavvio (data/prova-20261008-185040, v4l2-compliance
+`1616bf9e3c81` con `-z`): 32 OK, 1 KO, 1 non misurabile. Taint 516 prima e
+dopo, lockdep acceso, nessun Oops né KASAN: l'A2 non si è ripresentato in 10
+cicli. Guadagno gc5035 atteso 15,6, misurato 15,3 (1,92%); gc8034 7,66 contro
+7,37 (3,79%): il KO delle 18:27 era il test pattern lasciato acceso.
+Compliance 54/54, 0 falliti, solo i due avvisi sul CROP, su tutti e due.
+L'unico KO: 57 righe contate, 19 WARNING tutti `ipu6-isys-queue.c:203`, come
+in ogni corsa dalle 17:47. Non misurabile: esposizione dispari gc5035 a 8
+righe, troppo buio.
+
 Da fare, non nel codice:
 - Cover letter e messaggi di commit: li riscrive Nic con parole sue
   (Laurent: bot contro i testi da LLM, 25/09). Fatti e numeri per la cover:
   questa pagina e le misure dell'8/10.
 - `Assisted-by:` con il modello (Sakari: «Which one?»), attaccato al
   Signed-off-by.
-- v4l2-compliance da git (Hans chiede l'hash), output in cover.
+- v4l2-compliance da git (Hans chiede l'hash), output in cover. FATTO:
+  v4l-utils `1616bf9e3c81` (1.33.0-5515, 06/10) compilato in ~/src/v4l-utils,
+  46/46, 0 falliti, 0 warning su tutti e due (data/prova-20261008-180442,
+  04-compliance-*.txt). La prova lo usa con `V4L2_COMPLIANCE=`.
 - Patch libcamera: helper `AnalogueGainExp` gc5035 1,50 dB/passo, gc8034
-  2,95 dB/passo (fit sulle curve misurate, scarto massimo 1,5%), black
-  level 4096; senza, l'AE di libcamera prende l'indice per un guadagno.
+  2,95 dB/passo, black level 4096; senza, l'AE di libcamera prende l'indice
+  per un guadagno. Scarto massimo del modello sulle curve misurate: 1,56%
+  (gc5035), 1,70% (gc8034); sulle tabelle nominali 2,9% e 2,6% (il fit
+  libero sulle tabelle dà 1,49 e 2,92 dB). Ramo `gc5035-gc8034` in
+  ~/src/libcamera, diff in patches/wip/libcamera/ (checkstyle pulito,
+  compila senza warning). Verificato chiamando gli helper da libipa: black
+  level 4096, gain(codice) entro 1,56% e 1,70% dai misurati su ogni codice.
+  Manca la prova dell'AE sul tablet: il soft ISP vuole un fornitore dma-buf
+  e i nostri kernel non ne hanno (`# CONFIG_UDMABUF is not set`,
+  `# CONFIG_DMABUF_HEAPS is not set`). Al prossimo kernel: CONFIG_UDMABUF=y,
+  poi `cam` con e senza helper. Messaggio di commit: di Nic.
 - In cover: PIXEL_RATE gc8034 > capacità del link è coerente (HTS comprende
   il blanking), PLL non documentata.
 - Facoltativi: HFLIP/VFLIP gc8034 (registro 0x17 noto dal BSP), pagine con i
