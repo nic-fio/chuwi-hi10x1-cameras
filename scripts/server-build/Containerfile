@@ -1,0 +1,10 @@
+# Ambiente di build per le patch del kernel: il rootfs del server e in RAM
+# e perde i pacchetti a ogni riavvio. Ricostruire con:
+#   podman build --network=host -t intelcam-build /media/INTEL-CAMERA/build/podman
+FROM docker.io/library/debian:trixie
+RUN apt-get update && apt-get install -y --no-install-recommends     build-essential bc bison flex libssl-dev libelf-dev libdw-dev dwarves     cpio kmod git ca-certificates python3 python3-pip python3-yaml     python3-ruamel.yaml sparse libpython3.13 ocaml-nox ocaml-findlib python3-ply python3-git codespell coccinelle yamllint perl     python3-libfdt python3-jsonschema python3-rfc3987 device-tree-compiler libsqlite3-dev libdbd-sqlite3-perl libtry-tiny-perl pkg-config     && rm -rf /var/lib/apt/lists/*
+RUN pip3 install --break-system-packages --no-deps dtschema
+RUN git clone --depth=1 https://github.com/error27/smatch /opt/smatch     && make -C /opt/smatch -j8 && ln -s /opt/smatch/smatch /usr/local/bin/smatch
+# sparse di Debian (0.6.4) e troppo vecchio per il kernel attuale
+RUN git clone --depth=1 https://git.kernel.org/pub/scm/devel/sparse/sparse.git /opt/sparse \
+    && make -C /opt/sparse -j8 PREFIX=/usr/local install
