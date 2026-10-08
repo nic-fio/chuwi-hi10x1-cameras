@@ -9,7 +9,6 @@
  * rockchip-linux/kernel, branch develop-5.10.
  */
 #include <linux/array_size.h>
-#include <linux/build_bug.h>
 #include <linux/clk.h>
 #include <linux/container_of.h>
 #include <linux/delay.h>
@@ -114,24 +113,11 @@ static const char * const gc8034_supply_name[] = {
 };
 
 /*
- * V4L2_CID_ANALOGUE_GAIN is the value of register 0xb6, an index into this
- * table of gains in Q6 fixed point (64 is 1.0x). Only the seven entries the
- * vendor code uses are listed. The digital gain is left at the 1.0x the tables
- * program.
- */
-static const u16 gc8034_again_level[] = {
-	0x0040,	/*  1.000x */
-	0x0058,	/*  1.375x */
-	0x007d,	/*  1.950x */
-	0x00ad,	/*  2.700x */
-	0x00f3,	/*  3.800x */
-	0x0159,	/*  5.400x */
-	0x01ea,	/*  7.660x */
-};
-
-/*
- * Analogue bias registers rewritten for each gain index. The sequence selects
- * its own pages through register 0xfe.
+ * V4L2_CID_ANALOGUE_GAIN is the value of register 0xb6, the index of the
+ * analogue gain step. Only the seven steps the vendor code uses are exposed.
+ * Each step also needs a set of analogue bias registers to be rewritten; the
+ * sequence selects its own pages through register 0xfe. The digital gain is
+ * left at the 1.0x the tables program.
  */
 static const u8 gc8034_agc_bias_reg[] = {
 	0xfe, 0x20, 0x33, 0xfe, 0xdf, 0xe7, 0xe8,
@@ -139,23 +125,28 @@ static const u8 gc8034_agc_bias_reg[] = {
 };
 
 static const u8 gc8034_agc_bias[][ARRAY_SIZE(gc8034_agc_bias_reg)] = {
+	/* 1.000x */
 	{ 0x00, 0x55, 0x83, 0x01, 0x06, 0x18, 0x20,
 	  0x16, 0x17, 0x50, 0x6c, 0x9b, 0xd8, 0x00 },
+	/* 1.375x */
 	{ 0x00, 0x55, 0x83, 0x01, 0x06, 0x18, 0x20,
 	  0x16, 0x17, 0x50, 0x6c, 0x9b, 0xd8, 0x00 },
+	/* 1.950x */
 	{ 0x00, 0x4e, 0x84, 0x01, 0x0c, 0x2e, 0x2d,
 	  0x15, 0x19, 0x47, 0x70, 0x9f, 0xd8, 0x00 },
+	/* 2.700x */
 	{ 0x00, 0x51, 0x80, 0x01, 0x07, 0x28, 0x32,
 	  0x22, 0x20, 0x49, 0x70, 0x91, 0xd9, 0x00 },
+	/* 3.800x */
 	{ 0x00, 0x4d, 0x83, 0x01, 0x0f, 0x3b, 0x3b,
 	  0x1c, 0x1f, 0x47, 0x6f, 0x9b, 0xd3, 0x00 },
+	/* 5.400x */
 	{ 0x00, 0x50, 0x83, 0x01, 0x08, 0x35, 0x46,
 	  0x1e, 0x22, 0x4c, 0x70, 0x9a, 0xd2, 0x00 },
+	/* 7.660x */
 	{ 0x00, 0x52, 0x80, 0x01, 0x0c, 0x35, 0x3a,
 	  0x2b, 0x2d, 0x4c, 0x67, 0x8d, 0xc0, 0x00 },
 };
-
-static_assert(ARRAY_SIZE(gc8034_agc_bias) == ARRAY_SIZE(gc8034_again_level));
 
 struct gc8034 {
 	struct device *dev;
@@ -898,7 +889,7 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 					     min(GC8034_EXP_DEF, exposure_max));
 
 	v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
-			  0, ARRAY_SIZE(gc8034_again_level) - 1, 1, 0);
+			  0, ARRAY_SIZE(gc8034_agc_bias) - 1, 1, 0);
 
 	v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &gc8034_ctrl_ops, &props);
 
