@@ -1,0 +1,2 @@
+gc5035: media 68.31053329419743 (clip 0.0%) -> 130.35775278927676 (clip 0.0%), rapporto sui pixel non saturi (100.0%) 15.39, atteso 15.60
+gc8034: media 85.40813504221133 (clip 0.0%) -> 221.42859817538127 (clip 0.0%), rapporto sui pixel non saturi (100.0%) 7.35, atteso 7.66

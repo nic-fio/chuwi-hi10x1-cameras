@@ -1,0 +1,2 @@
+[--] gc5035: scena ancora troppo scura (segnale 64.2 sul piedistallo 64)
+[KO] gc8034: segnale 181.6 -> 181.7, rapporto 1.00, atteso 7.66, scarto 86.9% (tolleranza 25%)

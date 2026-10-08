@@ -1,0 +1,2 @@
+[OK] gc5035: segnale 68.1 -> 127.5, rapporto 15.36, atteso 15.60, scarto 1.6% (tolleranza 25%)
+[OK] gc8034: segnale 82.3 -> 197.7, rapporto 7.31, atteso 7.66, scarto 4.6% (tolleranza 25%)

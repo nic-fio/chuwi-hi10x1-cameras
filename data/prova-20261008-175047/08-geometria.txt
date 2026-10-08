@@ -1,0 +1,15 @@
+gc5035: pagina 0 0x09 letto 4 atteso 4
+gc5035: pagina 0 0x0b letto 3 atteso 3
+gc5035: pagina 0 0x0d letto 1960 atteso 1960
+gc5035: pagina 0 0x0f letto 2608 atteso 2608
+gc5035: pagina 1 0x91 letto 8 atteso 8
+gc5035: pagina 1 0x93 letto 8 atteso 8
+gc5035: pagina 1 0x95 letto 1944 atteso 1944
+gc5035: pagina 1 0x97 letto 2592 atteso 2592
+gc5035: pagina 0 0x05 letto 730 atteso 730
+gc8034: pagina 0 0x0b letto 4 atteso 4
+gc8034: pagina 0 0x0d letto 2464 atteso 2464
+gc8034: pagina 0 0x0f letto 3284 atteso 3284
+gc8034: pagina 0 0x95 letto 2448 atteso 2448
+gc8034: pagina 0 0x97 letto 3264 atteso 3264
+gc8034: pagina 0 0x05 letto 534 atteso 534

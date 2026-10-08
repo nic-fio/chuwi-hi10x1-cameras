@@ -1,0 +1,2 @@
+gc5035: esposizione letta 0 (attesa 1110), frame/blanking letto 0 (atteso 2244), altezza 1944
+gc8034: esposizione letta 0 (attesa 1110), frame/blanking letto 0 (atteso 264), altezza 2448

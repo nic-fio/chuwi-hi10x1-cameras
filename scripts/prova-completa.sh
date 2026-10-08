@@ -70,7 +70,14 @@ for d in GCTI5035 GCTI8034; do
         ko "$d senza driver"
     fi
 done
-dmesg | grep -c "Connected 2 cameras" >/dev/null && ok "ipu-bridge ha collegato le camere"
+# Dal grafo media e non dal «Connected 2 cameras» del boot: il dmesg -C qui
+# sotto lo cancella, e dalla seconda corsa la verifica spariva senza KO.
+for s in gc5035 gc8034; do
+    csi=$(media-ctl -p 2>/dev/null | awk -v s="$s" '
+        /^- entity/ { on = ($4 == s) }
+        on && /-> "Intel IPU6 CSI2 [0-9]+":0 \[ENABLED/ { sub(/.*-> "/, ""); sub(/".*/, ""); print; exit }')
+    [ -n "$csi" ] && ok "ipu-bridge ha collegato $s a $csi" || ko "$s non collegato a nessun CSI2 dell'IPU6"
+done
 
 # Da qui in poi il buffer del kernel copre TUTTA la prova. Azzerarlo piu'
 # avanti — com'era prima del 2026-08-12 — cancellava cattura, guadagno e
@@ -198,11 +205,28 @@ for spec in "gc5035:0:16:15.60" "gc8034:0:6:7.66"; do
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmax 2>/dev/null
     read -r m2 c2 <<<"$(misura_media "${NODE[$s]}" "$OUT/.g2.raw")"
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmin 2>/dev/null
-    r=$(python3 -c "
-s1=max($m1-64, 0.1); s2=max($m2-64, 0.1)
-print(f'{s2/s1:.2f} {$gratio:.2f}')")
-    read -r got want <<<"$r"
-    echo "$s: media ${m1} (clip ${c1}%) -> ${m2} (clip ${c2}%), rapporto $got, atteso $want" \
+    # Il rapporto si fa solo sui pixel non saturi nel fotogramma a guadagno
+    # massimo, gli stessi nei due fotogrammi. Il 2026-10-08 una luce
+    # nell'inquadratura, gia' satura a 1x, portava col suo 0,5% di pixel il 37%
+    # del segnale medio (9 LSB): a 16x tagliata a 1023, rapporto 9.76 invece
+    # di 15.6, e il fotogramma a 1x con 15.6x ideale e taglio ne prevede 9.87.
+    # La soglia sui pixel saturi (2%) non l'aveva vista: conta il segnale che
+    # portano, non quanti sono. Con la maschera conta solo quanti ne restano.
+    r=$(python3 - "$OUT/.g1.raw" "$OUT/.g2.raw" "$gratio" <<'PY'
+import array, sys
+def fot(f):
+    d = open(f, 'rb').read()
+    a = array.array('H'); a.frombytes(d[len(d)//2:len(d)//2*2])
+    return a[::17]
+a1, a2 = fot(sys.argv[1]), fot(sys.argv[2])
+m = [(x, y) for x, y in zip(a1, a2) if y < 1020]
+s1 = max(sum(x for x, _ in m)/len(m) - 64, 0.1)
+s2 = max(sum(y for _, y in m)/len(m) - 64, 0.1)
+print(f"{s2/s1:.2f} {float(sys.argv[3]):.2f} {100*len(m)/len(a2):.1f}")
+PY
+)
+    read -r got want usati <<<"$r"
+    echo "$s: media ${m1} (clip ${c1}%) -> ${m2} (clip ${c2}%), rapporto sui pixel non saturi ($usati%) $got, atteso $want" \
         >> "$OUT/03-guadagno.txt"
     # Al buio il segnale resta sul piedistallo di black level (64) e il
     # rapporto e' fra due rumori: 4 LSB al guadagno massimo vogliono dire
@@ -214,23 +238,12 @@ print(f'{s2/s1:.2f} {$gratio:.2f}')")
         nd "$s: scena troppo scura per misurare il guadagno (segnale ${m2%%.*} sul piedistallo 64) — rifare con una luce"
         continue
     fi
-    # E il caso opposto, che il 2026-08-12 ha prodotto due falsi allarmi di
-    # fila. Con troppa luce il fotogramma a guadagno massimo taglia sul fondo
-    # scala (1023 a 10 bit): il segnale che manca in cima schiaccia la media e
-    # il rapporto crolla, senza che i driver c'entrino niente.
-    #
-    # La soglia NON puo' essere sulla media, ed e' l'errore che avevo fatto la
-    # prima volta. Una scena con zone luminose taglia il 15% dei pixel avendo
-    # ancora una media di 421 su 1023: nessuna soglia sulla media la vede.
-    # Misurato quel giorno sul gc5035, a 16x: media 421, massimo 1023,
-    # 15.56% dei pixel al fondo scala, rapporto 10.7 invece di 16. A 1x lo
-    # stesso fotogramma aveva massimo 366 e zero pixel tagliati.
-    #
-    # Si guarda quindi quanti pixel sono al fondo scala. Oltre il 2% il
-    # rapporto non e' piu' una misura del guadagno, ed e' onesto dirlo invece
-    # di stampare un [KO] che fa cercare un difetto che non c'e'.
-    if [ "$(python3 -c "print(int($c2 > 2))")" = 1 ]; then
-        nd "$s: scena troppo luminosa, a guadagno massimo ${c2%%.*}% dei pixel e' tagliato sul fondo scala — rifare con meno luce"
+    # E il caso opposto. Con troppa luce il fotogramma a guadagno massimo
+    # taglia sul fondo scala (1023 a 10 bit): quei pixel sono esclusi dal
+    # rapporto, ma se ne restano pochi la misura vale per un angolo della
+    # scena e non per il sensore. Il 2026-08-12, a 16x, il 15.56% era tagliato.
+    if [ "$(python3 -c "print(int($usati < 50))")" = 1 ]; then
+        nd "$s: scena troppo luminosa, a guadagno massimo resta non saturo solo il ${usati%%.*}% dei pixel — rifare con meno luce"
         continue
     fi
     # Tolleranza larga: la scena non e' controllata.
@@ -240,26 +253,96 @@ rm -f "$OUT/.g1.raw" "$OUT/.g2.raw"
 
 # ------------------------------------------------------- registri a 16 bit
 # Esposizione e frame length si scrivono a 16 bit con autoincremento: in
-# lettura e' provato (chip ID), in scrittura no. Si impostano i controlli col
-# sensore acceso e si rileggono i due byte via I2C.
+# lettura e' provato (chip ID), in scrittura no. Si impostano i controlli
+# durante uno stream e si rileggono i due byte via I2C.
+#
+# Durante, non col sensore solo acceso: i registri sono a doppio buffer. Il
+# 2026-10-08, a sensore acceso senza stream, la rilettura dava 0 prima di
+# qualsiasi stream e dopo uno stream il valore della scrittura PRECEDENTE
+# (1112 -> 1111, 1109 -> 1112), mentre la traccia regmap mostrava il driver
+# scrivere i due byte giusti. In streaming il valore e' esatto.
 head_ "SCRITTURE A 16 BIT"
 for spec in "gc5035:GCTI5035:0x3f:0x03:0x41:0:1944" "gc8034:GCTI8034:0x37:0x03:0x07:36:2448"; do
     IFS=: read -r s name addr rexp rvb vboff h <<<"$spec"
     [ -n "${SUBDEV[$s]:-}" ] || continue
     dev=$(readlink -f "/sys/bus/i2c/devices/i2c-$name:00"); bus=$(basename "$(dirname "$dev")"); bus=${bus#i2c-}
-    echo on > "/sys/bus/i2c/devices/i2c-$name:00/power/control"; sleep 1
+    # 250 fotogrammi: 9-10 s, abbastanza per finire le letture a stream vivo
+    timeout 60 v4l2-ctl -d "${NODE[$s]}" --stream-mmap --stream-count=250 >/dev/null 2>&1 &
+    sleep 3
     # prima VBLANK, che allarga il range dell'esposizione, poi l'esposizione
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=vertical_blanking=300 2>/dev/null
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=exposure=1110 2>/dev/null
+    sleep 0.5    # qualche fotogramma, perche' i valori si aggancino
     e=$(( $(i2cget -f -y "$bus" "$addr" "$rexp") << 8 | $(i2cget -f -y "$bus" "$addr" $(printf 0x%02x $((rexp+1)))) ))
     b=$(( $(i2cget -f -y "$bus" "$addr" "$rvb") << 8 | $(i2cget -f -y "$bus" "$addr" $(printf 0x%02x $((rvb+1)))) ))
     if [ "$s" = gc5035 ]; then vb_att=$(( h + 300 )); else vb_att=$(( 300 - vboff )); fi  # gc5035: frame length; gc8034: VTS - altezza - 36
     echo "$s: esposizione letta $e (attesa 1110), frame/blanking letto $b (atteso $vb_att), altezza $h" >> "$OUT/06-registri.txt"
     [ "$e" -eq 1110 ] && ok "$s: esposizione a 16 bit riletta 1110" || ko "$s: esposizione riletta $e invece di 1110"
     [ "$b" -eq "$vb_att" ] && ok "$s: VBLANK a 16 bit riletto $b" || ko "$s: VBLANK riletto $b invece di $vb_att"
+    wait
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=vertical_blanking=$([ $s = gc5035 ] && echo 64 || echo 48) 2>/dev/null
-    echo auto > "/sys/bus/i2c/devices/i2c-$name:00/power/control"
 done
+
+# ------------------------------------------------------------- geometria
+# Finestra letta e crop sono scritti dal driver con nomi e costanti (le stesse
+# delle selezioni), a 16 bit anche in pagina 1. Si rileggono a stream vivo,
+# come le scritture a 16 bit qui sopra: i registri sono a doppio buffer.
+head_ "GEOMETRIA"
+r16p() { # bus indirizzo pagina registro
+    i2cset -f -y "$1" "$2" 0xfe "$3"
+    echo $(( $(i2cget -f -y "$1" "$2" "$4") << 8 | $(i2cget -f -y "$1" "$2" $(printf 0x%02x $(($4+1)))) ))
+}
+# sensore:HID:indirizzo:attesi "pagina/registro=valore" separati da virgole
+for spec in "gc5035:GCTI5035:0x3f:0/0x09=4,0/0x0b=3,0/0x0d=1960,0/0x0f=2608,1/0x91=8,1/0x93=8,1/0x95=1944,1/0x97=2592,0/0x05=730" \
+            "gc8034:GCTI8034:0x37:0/0x0b=4,0/0x0d=2464,0/0x0f=3284,0/0x95=2448,0/0x97=3264,0/0x05=534"; do
+    IFS=: read -r s name addr regs <<<"$spec"
+    [ -n "${NODE[$s]:-}" ] || continue
+    dev=$(readlink -f "/sys/bus/i2c/devices/i2c-$name:00"); bus=$(basename "$(dirname "$dev")"); bus=${bus#i2c-}
+    timeout 60 v4l2-ctl -d "${NODE[$s]}" --stream-mmap --stream-count=150 >/dev/null 2>&1 &
+    sleep 3
+    bad=""
+    for r in ${regs//,/ }; do
+        pg=${r%%/*}; rest=${r#*/}; reg=${rest%%=*}; want=${rest#*=}
+        got=$(r16p "$bus" "$addr" "$pg" "$reg")
+        echo "$s: pagina $pg $reg letto $got atteso $want" >> "$OUT/08-geometria.txt"
+        [ "$got" -eq "$want" ] || bad="$bad $pg/$reg=$got"
+    done
+    i2cset -f -y "$bus" "$addr" 0xfe 0
+    wait
+    [ -z "$bad" ] && ok "$s: finestra, crop e lunghezza di riga come le costanti del driver" ||
+        ko "$s: registri di geometria diversi dall'atteso:$bad"
+done
+
+# ---------------------------------------------------------- test pattern
+# Il gc5035 genera una mira a mosaico (barre, sfumature, griglie). La mira e'
+# deterministica: due fotogrammi consecutivi sono uguali pixel per pixel,
+# mentre una scena vera ha sempre rumore. Non dipende dalla luce.
+head_ "TEST PATTERN (gc5035)"
+if [ -n "${NODE[gc5035]:-}" ]; then
+    v4l2-ctl -d "${SUBDEV[gc5035]}" --set-ctrl=test_pattern=1 2>/dev/null
+    timeout 60 v4l2-ctl -d "${NODE[gc5035]}" --stream-mmap --stream-count=3 --stream-to="$OUT/.tp.raw" >/dev/null 2>&1
+    v4l2-ctl -d "${SUBDEV[gc5035]}" --set-ctrl=test_pattern=0 2>/dev/null
+    r=$(python3 - "$OUT/.tp.raw" <<'PY'
+import array, sys
+W, H = 2592, 1944
+d = open(sys.argv[1], 'rb').read(); n = W * H * 2
+f1 = array.array('H'); f1.frombytes(d[n:2*n])
+f2 = array.array('H'); f2.frombytes(d[2*n:3*n])
+s1, s2 = f1[::7], f2[::7]
+same = sum(x == y for x, y in zip(s1, s2)) / len(s1)
+print(f"{100*same:.1f} {min(s2)} {max(s2)}")
+PY
+)
+    read -r same lo hi <<<"$r"
+    echo "gc5035 test pattern: pixel uguali fra due fotogrammi $same%, livelli da $lo a $hi" >> "$OUT/09-test-pattern.txt"
+    "$PROJECT_DIR/scripts/raw-to-png.py" "$OUT/.tp.raw" 2592 1944 grbg "$OUT/gc5035-test-pattern.png" --frame 2 >/dev/null 2>&1
+    rm -f "$OUT/.tp.raw"
+    if [ "$(python3 -c "print(int(${same:-0} > 99 and ${hi:-0} > 900))")" = 1 ]; then
+        ok "gc5035: test pattern attivo ($same% dei pixel identici fra due fotogrammi), immagine in gc5035-test-pattern.png"
+    else
+        ko "gc5035: il test pattern non si vede ($same% dei pixel identici, livelli $lo-$hi)"
+    fi
+fi
 
 # ------------------------------------------------- esposizione dispari gc5035
 # Il driver vendor arrotonda l'esposizione al pari. A valori piccoli una riga

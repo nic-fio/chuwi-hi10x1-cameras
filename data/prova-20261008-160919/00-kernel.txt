@@ -1,0 +1,1 @@
+Linux CHUWI 7.3.0-rc1-intelcam-debug-g5ed52a522476 #2 SMP PREEMPT_DYNAMIC Thu Oct  8 13:50:18 UTC 2026 x86_64 GNU/Linux

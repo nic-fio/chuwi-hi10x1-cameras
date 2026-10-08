@@ -7,8 +7,8 @@
  * Copyright (c) 2022 Intel Corporation.
  * Copyright (C) 2026 Nicola Fiorillo <nicfio@gmail.com>
  *
- * The register table comes from the GC5035 driver in intel/ipu6-drivers by
- * Liang Wang <liang1.wang@intel.com>, derived from the ChromeOS series by
+ * The register tables come from the Alder Lake-M patch in intel/ipu6-drivers
+ * by liang.wang <liang1.wang@intel.com>, derived from the ChromeOS series by
  * Tomasz Figa <tfiga@chromium.org>.
  */
 #include <linux/array_size.h>
@@ -30,7 +30,6 @@
 #include <linux/types.h>
 #include <linux/units.h>
 
-#include <media/mipi-csi2.h>
 #include <media/v4l2-cci.h>
 #include <media/v4l2-common.h>
 #include <media/v4l2-ctrls.h>
@@ -51,44 +50,28 @@
 #define GC5035_CHIP_ID			0x5035
 
 #define GC5035_REG_EXPOSURE		CCI_REG16(0x03)
-#define GC5035_REG_LINE_LENGTH		CCI_REG16(0x05)
-#define GC5035_REG_WIN_TOP		CCI_REG16(0x09)
-#define GC5035_REG_WIN_LEFT		CCI_REG16(0x0b)
-#define GC5035_REG_WIN_HEIGHT		CCI_REG16(0x0d)
-#define GC5035_REG_WIN_WIDTH		CCI_REG16(0x0f)
+#define GC5035_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
+#define GC5035_REG_FRAME_LENGTH		CCI_REG16(0x41)
 #define GC5035_REG_STREAM		CCI_REG8(0x3e)
 #define GC5035_STREAM_ON		0x91
 #define GC5035_STREAM_OFF		0x01
-#define GC5035_REG_FRAME_LENGTH		CCI_REG16(0x41)
-#define GC5035_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
-#define GC5035_REG_PLL_MULT		CCI_REG8(0xf8)
 
 /* page 1 */
 #define GC5035_REG_TEST_PATTERN		CCI_REG8(0x8c)
 #define GC5035_TEST_PATTERN_ON		0x11
 #define GC5035_TEST_PATTERN_OFF		0x10
-#define GC5035_REG_CROP_TOP		CCI_REG16(0x91)
-#define GC5035_REG_CROP_LEFT		CCI_REG16(0x93)
-#define GC5035_REG_OUT_HEIGHT		CCI_REG16(0x95)
-#define GC5035_REG_OUT_WIDTH		CCI_REG16(0x97)
 
 /*
- * The sensor reads out a 2608x1960 window starting at (3, 4) and crops
- * 2592x1944 from it at (8, 8). The size of the full pixel array is not
- * documented, so the readout window is reported as the native size.
+ * The register tables read out a 2608x1960 window and crop 2592x1944 from it
+ * at (8, 8). The size of the full pixel array is not documented, so the
+ * readout window is reported as the native size.
  */
-#define GC5035_WIN_LEFT			3
-#define GC5035_WIN_TOP			4
 #define GC5035_NATIVE_WIDTH		2608
 #define GC5035_NATIVE_HEIGHT		1960
 #define GC5035_CROP_LEFT		8
 #define GC5035_CROP_TOP			8
 #define GC5035_WIDTH			2592
 #define GC5035_HEIGHT			1944
-
-/* The line length register counts units of 4 pixels. */
-#define GC5035_HTS			2920
-#define GC5035_VTS_DEF			2008
 
 #define GC5035_EXP_MIN			4
 #define GC5035_EXP_STEP			1
@@ -99,13 +82,11 @@
 #define GC5035_VBLANK_STEP		4
 
 /*
- * The register table has only been tested with a 19.2 MHz external clock. The
- * link frequency is the external clock multiplied by the PLL setting and
- * divided by 4: 422.4 MHz.
+ * The register tables have only been tested with a 19.2 MHz external clock,
+ * at which the link frequency is 422.4 MHz.
  */
 #define GC5035_XCLK_FREQ		(19200 * HZ_PER_KHZ)
-#define GC5035_PLL_MULT			0x58
-#define GC5035_LINK_FREQ		(GC5035_XCLK_FREQ * GC5035_PLL_MULT / 4)
+#define GC5035_LINK_FREQ		(422400 * HZ_PER_KHZ)
 #define GC5035_DATA_LANES		2
 #define GC5035_RGB_DEPTH		10
 #define GC5035_PIXEL_RATE		(GC5035_LINK_FREQ * 2 * \
@@ -115,7 +96,7 @@
  * No datasheet is available. From the GC5035 driver posted by Tomasz Figa in
  * 2020: IOVDD at least 50 us before AVDD and DVDD, at least 1200 MCLK cycles
  * before the first I2C transaction, and 2000 MCLK cycles after streaming stops
- * before the clock is switched off. From the intel/ipu6-drivers driver: the
+ * before the clock is switched off. From the Intel Alder Lake-M driver: the
  * clock is enabled before reset is released, and 5 ms elapse before the first
  * I2C transaction, which also covers the 1200 cycles.
  */
@@ -132,7 +113,7 @@ static const s64 gc5035_link_freq_menu[] = {
 
 static const char * const gc5035_test_pattern_menu[] = {
 	"No Pattern",
-	"Test Chart",
+	"Color Bar",
 };
 
 /* DOVDD (IOVDD) comes first: it has to be enabled before the others. */
@@ -144,8 +125,8 @@ static const char * const gc5035_supply_name[] = {
 
 /*
  * V4L2_CID_ANALOGUE_GAIN is an index into this table of register 0xb6 values,
- * one per analogue gain step. The digital gain is left at the 1.0x the register
- * table programs.
+ * one per analogue gain step. The digital gain is left at the 1.0x the tables
+ * program.
  */
 static const u8 gc5035_again_code[] = {
 	0,	/*  1.000x */
@@ -179,63 +160,75 @@ struct gc5035 {
 
 	struct v4l2_ctrl_handler ctrls;
 	struct v4l2_ctrl *exposure;
+	struct v4l2_ctrl *vblank;
+	struct v4l2_ctrl *hblank;
 
 	struct regmap *regmap;
 };
 
+struct gc5035_reg_list {
+	u32 num_of_regs;
+	const struct cci_reg_sequence *regs;
+};
+
 /*
- * The register sequence is the vendor one for the 2592x1944 mode, without the
- * registers written by the controls. No register documentation is available:
- * the geometry registers are named after the values they are programmed with.
+ * The register sequences are reproduced unmodified from the vendor code. No
+ * register documentation is available for the PLL and CSI-2 settings. The mode
+ * list rewrites part of the global one, including the PLL setting in register
+ * 0xf8.
  */
-static const struct cci_reg_sequence gc5035_regs[] = {
-	/* System */
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
-	{ GC5035_REG_STREAM, GC5035_STREAM_OFF },
+static const struct cci_reg_sequence gc5035_init_regs[] = {
+	/* init */
 	{ CCI_REG8(0xfc), 0x01 },
 	{ CCI_REG8(0xf4), 0x40 },
 	{ CCI_REG8(0xf5), 0xe9 },
 	{ CCI_REG8(0xf6), 0x14 },
-	{ GC5035_REG_PLL_MULT, GC5035_PLL_MULT },
+	{ CCI_REG8(0xf8), 0x49 },
 	{ CCI_REG8(0xf9), 0x82 },
 	{ CCI_REG8(0xfa), 0x00 },
 	{ CCI_REG8(0xfc), 0x81 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0x36), 0x01 },
 	{ CCI_REG8(0xd3), 0x87 },
 	{ CCI_REG8(0x36), 0x00 },
 	{ CCI_REG8(0x33), 0x00 },
-	{ GC5035_REG_PAGE_SELECT, 0x03 },
+	{ CCI_REG8(0xfe), 0x03 },
 	{ CCI_REG8(0x01), 0xe7 },
 	{ CCI_REG8(0xf7), 0x01 },
 	{ CCI_REG8(0xfc), 0x8f },
 	{ CCI_REG8(0xfc), 0x8f },
 	{ CCI_REG8(0xfc), 0x8e },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0xee), 0x30 },
 	{ CCI_REG8(0x87), 0x18 },
-	{ GC5035_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x8c), 0x90 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	/* Analog & CISCTL */
-	{ GC5035_REG_LINE_LENGTH, GC5035_HTS / 4 },
-	{ CCI_REG8(0x9d), 0x18 },
-	{ GC5035_REG_WIN_TOP, GC5035_WIN_TOP },
-	{ GC5035_REG_WIN_LEFT, GC5035_WIN_LEFT },
-	{ GC5035_REG_WIN_HEIGHT, GC5035_NATIVE_HEIGHT },
-	{ GC5035_REG_WIN_WIDTH, GC5035_NATIVE_WIDTH },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x05), 0x02 },
+	{ CCI_REG8(0x06), 0xda },
+	{ CCI_REG8(0x9d), 0x0c },
+	{ CCI_REG8(0x09), 0x00 },
+	{ CCI_REG8(0x0a), 0x04 },
+	{ CCI_REG8(0x0b), 0x00 },
+	{ CCI_REG8(0x0c), 0x03 },
+	{ CCI_REG8(0x0d), 0x07 },
+	{ CCI_REG8(0x0e), 0xa8 },
+	{ CCI_REG8(0x0f), 0x0a },
+	{ CCI_REG8(0x10), 0x30 },
 	{ CCI_REG8(0x11), 0x02 },
 	{ CCI_REG8(0x17), 0x80 },
 	{ CCI_REG8(0x19), 0x05 },
-	{ GC5035_REG_PAGE_SELECT, 0x02 },
+	{ CCI_REG8(0xfe), 0x02 },
 	{ CCI_REG8(0x30), 0x03 },
 	{ CCI_REG8(0x31), 0x03 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0xd9), 0xc0 },
 	{ CCI_REG8(0x1b), 0x20 },
-	{ CCI_REG8(0x21), 0x40 },
+	{ CCI_REG8(0x21), 0x48 },
 	{ CCI_REG8(0x28), 0x22 },
-	{ CCI_REG8(0x29), 0x56 },
+	{ CCI_REG8(0x29), 0x58 },
 	{ CCI_REG8(0x44), 0x20 },
 	{ CCI_REG8(0x4b), 0x10 },
 	{ CCI_REG8(0x4e), 0x1a },
@@ -246,10 +239,10 @@ static const struct cci_reg_sequence gc5035_regs[] = {
 	{ CCI_REG8(0x5b), 0x11 },
 	{ CCI_REG8(0xc5), 0x02 },
 	{ CCI_REG8(0x8c), 0x1a },
-	{ GC5035_REG_PAGE_SELECT, 0x02 },
+	{ CCI_REG8(0xfe), 0x02 },
 	{ CCI_REG8(0x33), 0x05 },
 	{ CCI_REG8(0x32), 0x38 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0x91), 0x80 },
 	{ CCI_REG8(0x92), 0x28 },
 	{ CCI_REG8(0x93), 0x20 },
@@ -274,7 +267,7 @@ static const struct cci_reg_sequence gc5035_regs[] = {
 	{ CCI_REG8(0xd0), 0xb2 },
 	{ CCI_REG8(0xd2), 0x40 },
 	{ CCI_REG8(0xe6), 0xe0 },
-	{ GC5035_REG_PAGE_SELECT, 0x02 },
+	{ CCI_REG8(0xfe), 0x02 },
 	{ CCI_REG8(0x12), 0x01 },
 	{ CCI_REG8(0x13), 0x01 },
 	{ CCI_REG8(0x14), 0x01 },
@@ -284,54 +277,59 @@ static const struct cci_reg_sequence gc5035_regs[] = {
 	{ CCI_REG8(0x92), 0x00 },
 	{ CCI_REG8(0x93), 0x00 },
 	{ CCI_REG8(0x94), 0x00 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0xfc), 0x88 },
-	{ GC5035_REG_PAGE_SELECT, 0x10 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0xfc), 0x8e },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0xfc), 0x88 },
-	{ GC5035_REG_PAGE_SELECT, 0x10 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0xfc), 0x8e },
-	/* GAIN */
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
+	/* Gain */
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0xb0), 0x6e },
 	{ CCI_REG8(0xb1), 0x01 },
 	{ CCI_REG8(0xb2), 0x00 },
 	{ CCI_REG8(0xb3), 0x00 },
 	{ CCI_REG8(0xb4), 0x00 },
+	{ CCI_REG8(0xb6), 0x00 },
 	/* ISP */
-	{ GC5035_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x53), 0x00 },
 	{ CCI_REG8(0x89), 0x03 },
 	{ CCI_REG8(0x60), 0x40 },
 	/* BLK */
-	{ GC5035_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x42), 0x21 },
 	{ CCI_REG8(0x49), 0x03 },
 	{ CCI_REG8(0x4a), 0xff },
 	{ CCI_REG8(0x4b), 0xc0 },
 	{ CCI_REG8(0x55), 0x00 },
-	/* anti_blooming */
-	{ GC5035_REG_PAGE_SELECT, 0x01 },
+	/* Anti_blooming */
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x41), 0x28 },
 	{ CCI_REG8(0x4c), 0x00 },
 	{ CCI_REG8(0x4d), 0x00 },
 	{ CCI_REG8(0x4e), 0x3c },
 	{ CCI_REG8(0x44), 0x08 },
 	{ CCI_REG8(0x48), 0x02 },
-	/* CROP */
-	{ GC5035_REG_PAGE_SELECT, 0x01 },
-	{ GC5035_REG_CROP_TOP, GC5035_CROP_TOP },
-	{ GC5035_REG_CROP_LEFT, GC5035_CROP_LEFT },
-	{ GC5035_REG_OUT_HEIGHT, GC5035_HEIGHT },
-	{ GC5035_REG_OUT_WIDTH, GC5035_WIDTH },
+	/* Crop */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x91), 0x00 },
+	{ CCI_REG8(0x92), 0x08 },
+	{ CCI_REG8(0x93), 0x00 },
+	{ CCI_REG8(0x94), 0x07 },
+	{ CCI_REG8(0x95), 0x07 },
+	{ CCI_REG8(0x96), 0x98 },
+	{ CCI_REG8(0x97), 0x0a },
+	{ CCI_REG8(0x98), 0x20 },
 	{ CCI_REG8(0x99), 0x00 },
 	/* MIPI */
-	{ GC5035_REG_PAGE_SELECT, 0x03 },
+	{ CCI_REG8(0xfe), 0x03 },
 	{ CCI_REG8(0x02), 0x57 },
 	{ CCI_REG8(0x03), 0xb7 },
 	{ CCI_REG8(0x15), 0x14 },
@@ -345,8 +343,208 @@ static const struct cci_reg_sequence gc5035_regs[] = {
 	{ CCI_REG8(0x29), 0x06 },
 	{ CCI_REG8(0x2a), 0x58 },
 	{ CCI_REG8(0x2b), 0x08 },
-	{ GC5035_REG_PAGE_SELECT, 0x00 },
-	{ GC5035_REG_STREAM, GC5035_STREAM_OFF },
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x8c), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x3e), 0x01 },
+};
+
+static const struct cci_reg_sequence gc5035_mode_2592x1944[] = {
+	/* System */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x3e), 0x01 },
+	{ CCI_REG8(0xfc), 0x01 },
+	{ CCI_REG8(0xf4), 0x40 },
+	{ CCI_REG8(0xf5), 0xe9 },
+	{ CCI_REG8(0xf6), 0x14 },
+	{ CCI_REG8(0xf8), 0x58 },
+	{ CCI_REG8(0xf9), 0x82 },
+	{ CCI_REG8(0xfa), 0x00 },
+	{ CCI_REG8(0xfc), 0x81 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x36), 0x01 },
+	{ CCI_REG8(0xd3), 0x87 },
+	{ CCI_REG8(0x36), 0x00 },
+	{ CCI_REG8(0x33), 0x00 },
+	{ CCI_REG8(0xfe), 0x03 },
+	{ CCI_REG8(0x01), 0xe7 },
+	{ CCI_REG8(0xf7), 0x01 },
+	{ CCI_REG8(0xfc), 0x8f },
+	{ CCI_REG8(0xfc), 0x8f },
+	{ CCI_REG8(0xfc), 0x8e },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xee), 0x30 },
+	{ CCI_REG8(0x87), 0x18 },
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x8c), 0x90 },
+	{ CCI_REG8(0xfe), 0x00 },
+	/* Analog & CISCTL */
+	{ CCI_REG8(0x03), 0x03 },
+	{ CCI_REG8(0x04), 0xd8 },
+	{ CCI_REG8(0x41), 0x07 },
+	{ CCI_REG8(0x42), 0xd8 },
+	{ CCI_REG8(0x05), 0x02 },
+	{ CCI_REG8(0x06), 0xda },
+	{ CCI_REG8(0x9d), 0x18 },
+	{ CCI_REG8(0x09), 0x00 },
+	{ CCI_REG8(0x0a), 0x04 },
+	{ CCI_REG8(0x0b), 0x00 },
+	{ CCI_REG8(0x0c), 0x03 },
+	{ CCI_REG8(0x0d), 0x07 },
+	{ CCI_REG8(0x0e), 0xa8 },
+	{ CCI_REG8(0x0f), 0x0a },
+	{ CCI_REG8(0x10), 0x30 },
+	{ CCI_REG8(0x11), 0x02 },
+	{ CCI_REG8(0x17), 0x80 },
+	{ CCI_REG8(0x19), 0x05 },
+	{ CCI_REG8(0xfe), 0x02 },
+	{ CCI_REG8(0x30), 0x03 },
+	{ CCI_REG8(0x31), 0x03 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xd9), 0xc0 },
+	{ CCI_REG8(0x1b), 0x20 },
+	{ CCI_REG8(0x21), 0x40 },
+	{ CCI_REG8(0x28), 0x22 },
+	{ CCI_REG8(0x29), 0x56 },
+	{ CCI_REG8(0x44), 0x20 },
+	{ CCI_REG8(0x4b), 0x10 },
+	{ CCI_REG8(0x4e), 0x1a },
+	{ CCI_REG8(0x50), 0x11 },
+	{ CCI_REG8(0x52), 0x33 },
+	{ CCI_REG8(0x53), 0x44 },
+	{ CCI_REG8(0x55), 0x10 },
+	{ CCI_REG8(0x5b), 0x11 },
+	{ CCI_REG8(0xc5), 0x02 },
+	{ CCI_REG8(0x8c), 0x1a },
+	{ CCI_REG8(0xfe), 0x02 },
+	{ CCI_REG8(0x33), 0x05 },
+	{ CCI_REG8(0x32), 0x38 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x91), 0x80 },
+	{ CCI_REG8(0x92), 0x28 },
+	{ CCI_REG8(0x93), 0x20 },
+	{ CCI_REG8(0x95), 0xa0 },
+	{ CCI_REG8(0x96), 0xe0 },
+	{ CCI_REG8(0xd5), 0xfc },
+	{ CCI_REG8(0x97), 0x28 },
+	{ CCI_REG8(0x16), 0x0c },
+	{ CCI_REG8(0x1a), 0x1a },
+	{ CCI_REG8(0x1f), 0x11 },
+	{ CCI_REG8(0x20), 0x10 },
+	{ CCI_REG8(0x46), 0x83 },
+	{ CCI_REG8(0x4a), 0x04 },
+	{ CCI_REG8(0x54), 0x02 },
+	{ CCI_REG8(0x62), 0x00 },
+	{ CCI_REG8(0x72), 0x8f },
+	{ CCI_REG8(0x73), 0x89 },
+	{ CCI_REG8(0x7a), 0x05 },
+	{ CCI_REG8(0x7d), 0xcc },
+	{ CCI_REG8(0x90), 0x00 },
+	{ CCI_REG8(0xce), 0x18 },
+	{ CCI_REG8(0xd0), 0xb2 },
+	{ CCI_REG8(0xd2), 0x40 },
+	{ CCI_REG8(0xe6), 0xe0 },
+	{ CCI_REG8(0xfe), 0x02 },
+	{ CCI_REG8(0x12), 0x01 },
+	{ CCI_REG8(0x13), 0x01 },
+	{ CCI_REG8(0x14), 0x01 },
+	{ CCI_REG8(0x15), 0x02 },
+	{ CCI_REG8(0x22), 0x7c },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfc), 0x88 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfc), 0x8e },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfc), 0x88 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfc), 0x8e },
+	/* GAIN */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xb0), 0x6e },
+	{ CCI_REG8(0xb1), 0x01 },
+	{ CCI_REG8(0xb2), 0x00 },
+	{ CCI_REG8(0xb3), 0x00 },
+	{ CCI_REG8(0xb4), 0x00 },
+	{ CCI_REG8(0xb6), 0x00 },
+	/* ISP */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x53), 0x00 },
+	{ CCI_REG8(0x89), 0x03 },
+	{ CCI_REG8(0x60), 0x40 },
+	/* BLK */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x42), 0x21 },
+	{ CCI_REG8(0x49), 0x03 },
+	{ CCI_REG8(0x4a), 0xff },
+	{ CCI_REG8(0x4b), 0xc0 },
+	{ CCI_REG8(0x55), 0x00 },
+	/* anti_blooming */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x41), 0x28 },
+	{ CCI_REG8(0x4c), 0x00 },
+	{ CCI_REG8(0x4d), 0x00 },
+	{ CCI_REG8(0x4e), 0x3c },
+	{ CCI_REG8(0x44), 0x08 },
+	{ CCI_REG8(0x48), 0x02 },
+	/* CROP */
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x91), 0x00 },
+	{ CCI_REG8(0x92), 0x08 },
+	{ CCI_REG8(0x93), 0x00 },
+	{ CCI_REG8(0x94), 0x08 },
+	{ CCI_REG8(0x95), 0x07 },
+	{ CCI_REG8(0x96), 0x98 },
+	{ CCI_REG8(0x97), 0x0a },
+	{ CCI_REG8(0x98), 0x20 },
+	{ CCI_REG8(0x99), 0x00 },
+	/* MIPI */
+	{ CCI_REG8(0xfe), 0x03 },
+	{ CCI_REG8(0x02), 0x57 },
+	{ CCI_REG8(0x03), 0xb7 },
+	{ CCI_REG8(0x15), 0x14 },
+	{ CCI_REG8(0x18), 0x0f },
+	{ CCI_REG8(0x21), 0x22 },
+	{ CCI_REG8(0x22), 0x06 },
+	{ CCI_REG8(0x23), 0x48 },
+	{ CCI_REG8(0x24), 0x12 },
+	{ CCI_REG8(0x25), 0x28 },
+	{ CCI_REG8(0x26), 0x08 },
+	{ CCI_REG8(0x29), 0x06 },
+	{ CCI_REG8(0x2a), 0x58 },
+	{ CCI_REG8(0x2b), 0x08 },
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0x8c), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x3e), 0x01 },
+};
+
+struct gc5035_mode {
+	u32 width;
+	u32 height;
+	const struct gc5035_reg_list reg_list;
+
+	u32 hts;
+	u32 vts_def;
+	u32 vts_min;
+};
+
+/* The binned modes of the vendor driver have not been tested. */
+static const struct gc5035_mode gc5035_modes[] = {
+	{
+		.width = GC5035_WIDTH,
+		.height = GC5035_HEIGHT,
+		.reg_list = {
+			.num_of_regs = ARRAY_SIZE(gc5035_mode_2592x1944),
+			.regs = gc5035_mode_2592x1944,
+		},
+		.hts = 2920,
+		.vts_def = 2008,
+		.vts_min = 2008,
+	},
 };
 
 static inline struct gc5035 *to_gc5035(struct v4l2_subdev *sd)
@@ -438,31 +636,22 @@ static int gc5035_enum_frame_size(struct v4l2_subdev *sd,
 	if (fse->code != GC5035_MBUS_CODE)
 		return -EINVAL;
 
-	if (fse->index > 0)
+	if (fse->index >= ARRAY_SIZE(gc5035_modes))
 		return -EINVAL;
 
-	fse->min_width = GC5035_WIDTH;
-	fse->max_width = GC5035_WIDTH;
-	fse->min_height = GC5035_HEIGHT;
-	fse->max_height = GC5035_HEIGHT;
+	fse->min_width = gc5035_modes[fse->index].width;
+	fse->max_width = gc5035_modes[fse->index].width;
+	fse->min_height = gc5035_modes[fse->index].height;
+	fse->max_height = gc5035_modes[fse->index].height;
 
 	return 0;
 }
 
-static void gc5035_fill_state(struct v4l2_subdev_state *state)
+static void gc5035_update_pad_format(const struct gc5035_mode *mode,
+				     struct v4l2_mbus_framefmt *fmt)
 {
-	struct v4l2_mbus_framefmt *fmt;
-	struct v4l2_rect *crop;
-
-	crop = v4l2_subdev_state_get_crop(state, 0);
-	crop->left = GC5035_CROP_LEFT;
-	crop->top = GC5035_CROP_TOP;
-	crop->width = GC5035_WIDTH;
-	crop->height = GC5035_HEIGHT;
-
-	fmt = v4l2_subdev_state_get_format(state, 0);
-	fmt->width = GC5035_WIDTH;
-	fmt->height = GC5035_HEIGHT;
+	fmt->width = mode->width;
+	fmt->height = mode->height;
 	fmt->code = GC5035_MBUS_CODE;
 	fmt->field = V4L2_FIELD_NONE;
 	fmt->colorspace = V4L2_COLORSPACE_RAW;
@@ -471,14 +660,28 @@ static void gc5035_fill_state(struct v4l2_subdev_state *state)
 	fmt->xfer_func = V4L2_XFER_FUNC_NONE;
 }
 
-/* There is a single mode: any format request gets it. */
 static int gc5035_set_format(struct v4l2_subdev *sd,
 			     const struct v4l2_subdev_client_info *ci,
 			     struct v4l2_subdev_state *state,
 			     struct v4l2_subdev_format *fmt)
 {
-	gc5035_fill_state(state);
-	fmt->format = *v4l2_subdev_state_get_format(state, 0);
+	struct v4l2_mbus_framefmt *mbus_fmt;
+	const struct gc5035_mode *mode;
+	struct v4l2_rect *crop;
+
+	mode = v4l2_find_nearest_size(gc5035_modes, ARRAY_SIZE(gc5035_modes),
+				      width, height, fmt->format.width,
+				      fmt->format.height);
+
+	crop = v4l2_subdev_state_get_crop(state, 0);
+	crop->left = GC5035_CROP_LEFT;
+	crop->top = GC5035_CROP_TOP;
+	crop->width = mode->width;
+	crop->height = mode->height;
+
+	gc5035_update_pad_format(mode, &fmt->format);
+	mbus_fmt = v4l2_subdev_state_get_format(state, 0);
+	*mbus_fmt = fmt->format;
 
 	return 0;
 }
@@ -515,22 +718,17 @@ static int gc5035_get_selection(struct v4l2_subdev *sd,
 static int gc5035_init_state(struct v4l2_subdev *sd,
 			     struct v4l2_subdev_state *state)
 {
-	gc5035_fill_state(state);
+	struct v4l2_subdev_format fmt = {
+		.which = V4L2_SUBDEV_FORMAT_TRY,
+		.pad = 0,
+		.format = {
+			.code = GC5035_MBUS_CODE,
+			.width = gc5035_modes[0].width,
+			.height = gc5035_modes[0].height,
+		},
+	};
 
-	return 0;
-}
-
-static int gc5035_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-				 struct v4l2_mbus_frame_desc *fd)
-{
-	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-	fd->num_entries = 1;
-	fd->entry[0].pixelcode = GC5035_MBUS_CODE;
-	fd->entry[0].stream = 0;
-	fd->entry[0].bus.csi2.vc = 0;
-	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_RAW10;
-
-	return 0;
+	return gc5035_set_format(sd, NULL, state, &fmt);
 }
 
 static int gc5035_test_pattern(struct gc5035 *gc5035, u32 pattern)
@@ -634,14 +832,26 @@ static int gc5035_enable_streams(struct v4l2_subdev *sd,
 				 u32 pad, u64 streams_mask)
 {
 	struct gc5035 *gc5035 = to_gc5035(sd);
+	const struct v4l2_mbus_framefmt *format;
+	const struct gc5035_reg_list *reg_list;
+	const struct gc5035_mode *mode;
 	int ret;
 
 	ret = pm_runtime_resume_and_get(gc5035->dev);
 	if (ret < 0)
 		return ret;
 
-	ret = cci_multi_reg_write(gc5035->regmap, gc5035_regs,
-				  ARRAY_SIZE(gc5035_regs), NULL);
+	format = v4l2_subdev_state_get_format(state, 0);
+	mode = v4l2_find_nearest_size(gc5035_modes, ARRAY_SIZE(gc5035_modes),
+				      width, height, format->width,
+				      format->height);
+	reg_list = &mode->reg_list;
+
+	cci_write(gc5035->regmap, GC5035_REG_PAGE_SELECT, GC5035_PAGE_0, &ret);
+	cci_multi_reg_write(gc5035->regmap, gc5035_init_regs,
+			    ARRAY_SIZE(gc5035_init_regs), &ret);
+	cci_multi_reg_write(gc5035->regmap, reg_list->regs,
+			    reg_list->num_of_regs, &ret);
 	if (ret)
 		goto err_rpm_put;
 
@@ -691,7 +901,6 @@ static const struct v4l2_subdev_pad_ops gc5035_pad_ops = {
 	.get_fmt = v4l2_subdev_get_fmt,
 	.set_fmt = gc5035_set_format,
 	.get_selection = gc5035_get_selection,
-	.get_frame_desc = gc5035_get_frame_desc,
 	.enable_streams = gc5035_enable_streams,
 	.disable_streams = gc5035_disable_streams,
 };
@@ -722,7 +931,7 @@ static int gc5035_parse_fwnode(struct gc5035 *gc5035)
 	if (ret)
 		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
 
-	/* The register table configures the CSI-2 transmitter for 2 lanes. */
+	/* The register tables configure the CSI-2 transmitter for 2 lanes. */
 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != GC5035_DATA_LANES) {
 		ret = dev_err_probe(dev, -EINVAL,
 				    "unsupported number of data lanes %u\n",
@@ -744,10 +953,11 @@ done:
 
 static int gc5035_init_controls(struct gc5035 *gc5035)
 {
+	const struct gc5035_mode *mode = &gc5035_modes[0];
 	struct v4l2_fwnode_device_properties props;
 	struct v4l2_ctrl_handler *ctrl_hdlr;
-	struct v4l2_ctrl *link_freq, *hblank;
-	s64 exposure_max;
+	struct v4l2_ctrl *link_freq;
+	s64 exposure_max, h_blank;
 	int ret;
 
 	ret = v4l2_fwnode_device_parse(gc5035->dev, &props);
@@ -767,19 +977,20 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 			  GC5035_PIXEL_RATE, GC5035_PIXEL_RATE, 1,
 			  GC5035_PIXEL_RATE);
 
-	v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_VBLANK,
-			  GC5035_VTS_DEF - GC5035_HEIGHT,
-			  GC5035_VTS_DEF - GC5035_HEIGHT +
-			  round_down(GC5035_VTS_MAX - GC5035_VTS_DEF,
-				     GC5035_VBLANK_STEP),
-			  GC5035_VBLANK_STEP, GC5035_VTS_DEF - GC5035_HEIGHT);
+	gc5035->vblank =
+		v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_VBLANK,
+				  mode->vts_min - mode->height,
+				  mode->vts_min - mode->height +
+				  round_down(GC5035_VTS_MAX - mode->vts_min,
+					     GC5035_VBLANK_STEP),
+				  GC5035_VBLANK_STEP,
+				  mode->vts_def - mode->height);
 
-	hblank = v4l2_ctrl_new_std(ctrl_hdlr, NULL, V4L2_CID_HBLANK,
-				   GC5035_HTS - GC5035_WIDTH,
-				   GC5035_HTS - GC5035_WIDTH, 1,
-				   GC5035_HTS - GC5035_WIDTH);
+	h_blank = mode->hts - mode->width;
+	gc5035->hblank = v4l2_ctrl_new_std(ctrl_hdlr, NULL, V4L2_CID_HBLANK,
+					   h_blank, h_blank, 1, h_blank);
 
-	exposure_max = GC5035_VTS_DEF - GC5035_EXP_MARGIN;
+	exposure_max = mode->vts_def - GC5035_EXP_MARGIN;
 	gc5035->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops,
 					     V4L2_CID_EXPOSURE, GC5035_EXP_MIN,
 					     exposure_max, GC5035_EXP_STEP,
@@ -795,15 +1006,22 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 
 	v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &gc5035_ctrl_ops, &props);
 
-	if (ctrl_hdlr->error)
-		return v4l2_ctrl_handler_free(ctrl_hdlr);
+	if (ctrl_hdlr->error) {
+		ret = ctrl_hdlr->error;
+		goto error_ctrls;
+	}
 
 	link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-	hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+	gc5035->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
 	gc5035->sd.ctrl_handler = ctrl_hdlr;
 
 	return 0;
+
+error_ctrls:
+	v4l2_ctrl_handler_free(ctrl_hdlr);
+
+	return ret;
 }
 
 static int gc5035_probe(struct i2c_client *client)
@@ -894,6 +1112,7 @@ static int gc5035_probe(struct i2c_client *client)
 		goto err_media_entity_cleanup;
 	}
 
+	/* The sensor is on: say so, or runtime PM would power it up again. */
 	pm_runtime_set_active(dev);
 	pm_runtime_enable(dev);
 	pm_runtime_set_autosuspend_delay(dev, 1000);
@@ -905,6 +1124,7 @@ static int gc5035_probe(struct i2c_client *client)
 		goto err_rpm;
 	}
 
+	/* Hands the sensor over to autosuspend, which powers it back down. */
 	pm_runtime_idle(dev);
 
 	return 0;

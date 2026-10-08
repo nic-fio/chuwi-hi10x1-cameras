@@ -27,7 +27,6 @@
 #include <linux/types.h>
 #include <linux/units.h>
 
-#include <media/mipi-csi2.h>
 #include <media/v4l2-cci.h>
 #include <media/v4l2-common.h>
 #include <media/v4l2-ctrls.h>
@@ -43,26 +42,17 @@
 #define GC8034_CHIP_ID			0x8044	/* not 0x8034 */
 
 #define GC8034_REG_EXPOSURE		CCI_REG16(0x03)
-#define GC8034_REG_LINE_LENGTH		CCI_REG16(0x05)
+#define GC8034_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
 #define GC8034_REG_BLANKING		CCI_REG16(0x07)
-#define GC8034_REG_WIN_LEFT		CCI_REG16(0x0b)
-#define GC8034_REG_WIN_HEIGHT		CCI_REG16(0x0d)
-#define GC8034_REG_WIN_WIDTH		CCI_REG16(0x0f)
 #define GC8034_REG_STREAM		CCI_REG8(0x3f)
 #define GC8034_STREAM_ON		0xd0
 #define GC8034_STREAM_OFF		0x00
-#define GC8034_REG_CROP_TOP		CCI_REG8(0x92)
-#define GC8034_REG_CROP_LEFT		CCI_REG8(0x94)
-#define GC8034_REG_OUT_HEIGHT		CCI_REG16(0x95)
-#define GC8034_REG_OUT_WIDTH		CCI_REG16(0x97)
-#define GC8034_REG_ANALOGUE_GAIN	CCI_REG8(0xb6)
 
 /*
- * The sensor reads out a 3284x2464 window and crops 3264x2448 from it at
- * (9, 8). The size of the full pixel array is not documented, so the readout
- * window is reported as the native size.
+ * The register tables read out a 3284x2464 window and crop 3264x2448 from it
+ * at (9, 8). The size of the full pixel array is not documented, so the
+ * readout window is reported as the native size.
  */
-#define GC8034_WIN_LEFT			4
 #define GC8034_NATIVE_WIDTH		3284
 #define GC8034_NATIVE_HEIGHT		2464
 #define GC8034_CROP_LEFT		9
@@ -84,10 +74,10 @@
 #define GC8034_EXP_DEF			2246
 
 /*
- * The register table has only been tested with a 19.2 MHz external clock, at
- * which the link frequency is 268.8 MHz and the frame rate 24 fps. The PLL
- * settings are not documented: the pixel rate is the one that gives 24 fps.
- * The line length register counts units of 8 pixels.
+ * The register tables have only been tested with a 19.2 MHz external clock,
+ * at which the link frequency is 268.8 MHz and the frame rate 24 fps. The PLL
+ * settings are not documented, so the pixel rate is derived from the measured
+ * frame rate.
  */
 #define GC8034_XCLK_FREQ		(19200 * HZ_PER_KHZ)
 #define GC8034_LINK_FREQ		(268800 * HZ_PER_KHZ)
@@ -127,7 +117,7 @@ static const char * const gc8034_supply_name[] = {
  * analogue gain step. Only the seven steps the vendor code uses are exposed.
  * Each step also needs a set of analogue bias registers to be rewritten; the
  * sequence selects its own pages through register 0xfe. The digital gain is
- * left at the 1.0x the register table programs.
+ * left at the 1.0x the tables program.
  */
 static const u8 gc8034_agc_bias_reg[] = {
 	0xfe, 0x20, 0x33, 0xfe, 0xdf, 0xe7, 0xe8,
@@ -170,18 +160,25 @@ struct gc8034 {
 
 	struct v4l2_ctrl_handler ctrls;
 	struct v4l2_ctrl *exposure;
+	struct v4l2_ctrl *vblank;
+	struct v4l2_ctrl *hblank;
 
 	struct regmap *regmap;
 };
 
+struct gc8034_reg_list {
+	u32 num_of_regs;
+	const struct cci_reg_sequence *regs;
+};
+
 /*
- * The register sequence is the vendor one for the 3264x2448 mode, without the
- * registers written by the controls and without the settings of a binned mode
- * that it programs first and then overwrites. No register documentation is
- * available: the geometry registers are named after the values they are
- * programmed with.
+ * The register sequences are reproduced unmodified from the vendor code. No
+ * register documentation is available for the PLL and CSI-2 settings.
+ *
+ * The vendor code keeps all four lane settings in one list. It is split here
+ * at the point where its two lane lists separate global and mode settings.
  */
-static const struct cci_reg_sequence gc8034_regs[] = {
+static const struct cci_reg_sequence gc8034_global_regs[] = {
 	/* SYS */
 	{ CCI_REG8(0xf2), 0x00 },
 	{ CCI_REG8(0xf4), 0x80 },
@@ -194,18 +191,26 @@ static const struct cci_reg_sequence gc8034_regs[] = {
 	{ CCI_REG8(0xfc), 0x00 },
 	{ CCI_REG8(0xfc), 0x00 },
 	{ CCI_REG8(0xfc), 0xea },
-	{ GC8034_REG_PAGE_SELECT, 0x03 },
+	{ CCI_REG8(0xfe), 0x03 },
 	{ CCI_REG8(0x03), 0x9a },
 	{ CCI_REG8(0x18), 0x07 },
 	{ CCI_REG8(0x01), 0x07 },
 	{ CCI_REG8(0xfc), 0xee },
 	/* Cisctl&Analog */
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
-	{ GC8034_REG_LINE_LENGTH, GC8034_HTS / 8 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x03), 0x08 },
+	{ CCI_REG8(0x04), 0xc6 },
+	{ CCI_REG8(0x05), 0x02 },
+	{ CCI_REG8(0x06), 0x16 },
+	{ CCI_REG8(0x07), 0x00 },
+	{ CCI_REG8(0x08), 0x10 },
 	{ CCI_REG8(0x0a), 0x3a },
-	{ GC8034_REG_WIN_LEFT, GC8034_WIN_LEFT },
-	{ GC8034_REG_WIN_HEIGHT, GC8034_NATIVE_HEIGHT },
-	{ GC8034_REG_WIN_WIDTH, GC8034_NATIVE_WIDTH },
+	{ CCI_REG8(0x0b), 0x00 },
+	{ CCI_REG8(0x0c), 0x04 },
+	{ CCI_REG8(0x0d), 0x09 },
+	{ CCI_REG8(0x0e), 0xa0 },
+	{ CCI_REG8(0x0f), 0x0c },
+	{ CCI_REG8(0x10), 0xd4 },
 	{ CCI_REG8(0x17), 0xc0 },
 	{ CCI_REG8(0x18), 0x02 },
 	{ CCI_REG8(0x19), 0x17 },
@@ -233,34 +238,60 @@ static const struct cci_reg_sequence gc8034_regs[] = {
 	{ CCI_REG8(0xe5), 0x08 },
 	{ CCI_REG8(0xe6), 0x10 },
 	{ CCI_REG8(0xed), 0x2a },
-	{ GC8034_REG_PAGE_SELECT, 0x02 },
+	{ CCI_REG8(0xfe), 0x02 },
 	{ CCI_REG8(0x59), 0x02 },
 	{ CCI_REG8(0x5a), 0x04 },
 	{ CCI_REG8(0x5b), 0x08 },
 	{ CCI_REG8(0x5c), 0x20 },
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0x1a), 0x09 },
 	{ CCI_REG8(0x1d), 0x13 },
-	{ GC8034_REG_PAGE_SELECT, 0x10 },
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
-	{ GC8034_REG_PAGE_SELECT, 0x10 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0xfe), 0x10 },
+	{ CCI_REG8(0xfe), 0x00 },
+	/* Gamma */
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x20), 0x55 },
+	{ CCI_REG8(0x33), 0x83 },
+	{ CCI_REG8(0xfe), 0x01 },
+	{ CCI_REG8(0xdf), 0x06 },
+	{ CCI_REG8(0xe7), 0x18 },
+	{ CCI_REG8(0xe8), 0x20 },
+	{ CCI_REG8(0xe9), 0x16 },
+	{ CCI_REG8(0xea), 0x17 },
+	{ CCI_REG8(0xeb), 0x50 },
+	{ CCI_REG8(0xec), 0x6c },
+	{ CCI_REG8(0xed), 0x9b },
+	{ CCI_REG8(0xee), 0xd8 },
 	/* ISP */
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x80), 0x10 },
 	{ CCI_REG8(0x84), 0x01 },
 	{ CCI_REG8(0x88), 0x03 },
 	{ CCI_REG8(0x89), 0x03 },
 	{ CCI_REG8(0x8d), 0x03 },
 	{ CCI_REG8(0x8f), 0x14 },
+	{ CCI_REG8(0xad), 0x30 },
 	{ CCI_REG8(0x66), 0x2c },
 	{ CCI_REG8(0xbc), 0x49 },
 	{ CCI_REG8(0xc2), 0x7f },
 	{ CCI_REG8(0xc3), 0xff },
+	/* Crop window */
+	{ CCI_REG8(0x90), 0x01 },
+	{ CCI_REG8(0x92), 0x08 },
+	{ CCI_REG8(0x94), 0x09 },
+	{ CCI_REG8(0x95), 0x04 },
+	{ CCI_REG8(0x96), 0xc8 },
+	{ CCI_REG8(0x97), 0x06 },
+	{ CCI_REG8(0x98), 0x60 },
 	/* Gain */
 	{ CCI_REG8(0xb0), 0x90 },
 	{ CCI_REG8(0xb1), 0x01 },
 	{ CCI_REG8(0xb2), 0x00 },
+	{ CCI_REG8(0xb6), 0x00 },
 	/* BLK */
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0x40), 0x22 },
 	{ CCI_REG8(0x41), 0x20 },
 	{ CCI_REG8(0x42), 0x02 },
@@ -279,18 +310,20 @@ static const struct cci_reg_sequence gc8034_regs[] = {
 	{ CCI_REG8(0x6c), 0x00 },
 	{ CCI_REG8(0x6d), 0x0c },
 	/* WB offset */
-	{ GC8034_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0xbf), 0x40 },
 	/* Dark Sun */
-	{ GC8034_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x68), 0x77 },
 	/* DPC */
-	{ GC8034_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x60), 0x00 },
 	{ CCI_REG8(0x61), 0x10 },
+	{ CCI_REG8(0x62), 0x28 },
+	{ CCI_REG8(0x63), 0x10 },
 	{ CCI_REG8(0x64), 0x02 },
 	/* LSC */
-	{ GC8034_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0xa8), 0x60 },
 	{ CCI_REG8(0xa2), 0xd1 },
 	{ CCI_REG8(0xc8), 0x57 },
@@ -314,11 +347,36 @@ static const struct cci_reg_sequence gc8034_regs[] = {
 	{ CCI_REG8(0xab), 0x18 },
 	{ CCI_REG8(0xc7), 0xc0 },
 	/* ABB */
-	{ GC8034_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x20), 0x02 },
 	{ CCI_REG8(0x21), 0x02 },
 	{ CCI_REG8(0x23), 0x42 },
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
+	/* MIPI */
+	{ CCI_REG8(0xfe), 0x03 },
+	{ CCI_REG8(0x02), 0x03 },
+	{ CCI_REG8(0x04), 0x80 },
+	{ CCI_REG8(0x11), 0x2b },
+	{ CCI_REG8(0x12), 0xf8 },
+	{ CCI_REG8(0x13), 0x07 },
+	{ CCI_REG8(0x15), 0x10 },
+	{ CCI_REG8(0x16), 0x29 },
+	{ CCI_REG8(0x17), 0xff },
+	{ CCI_REG8(0x19), 0xaa },
+	{ CCI_REG8(0x1a), 0x02 },
+	{ CCI_REG8(0x21), 0x02 },
+	{ CCI_REG8(0x22), 0x03 },
+	{ CCI_REG8(0x23), 0x0a },
+	{ CCI_REG8(0x24), 0x00 },
+	{ CCI_REG8(0x25), 0x12 },
+	{ CCI_REG8(0x26), 0x04 },
+	{ CCI_REG8(0x29), 0x04 },
+	{ CCI_REG8(0x2a), 0x02 },
+	{ CCI_REG8(0x2b), 0x04 },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x3f), 0x00 },
+};
+
+static const struct cci_reg_sequence gc8034_mode_3264x2448[] = {
 	/* SYS */
 	{ CCI_REG8(0xf2), 0x00 },
 	{ CCI_REG8(0xf4), 0x80 },
@@ -331,27 +389,29 @@ static const struct cci_reg_sequence gc8034_regs[] = {
 	{ CCI_REG8(0xfc), 0x00 },
 	{ CCI_REG8(0xfc), 0x00 },
 	{ CCI_REG8(0xfc), 0xea },
-	{ GC8034_REG_PAGE_SELECT, 0x03 },
+	{ CCI_REG8(0xfe), 0x03 },
 	{ CCI_REG8(0x03), 0x9a },
 	{ CCI_REG8(0x18), 0x07 },
 	{ CCI_REG8(0x01), 0x07 },
 	{ CCI_REG8(0xfc), 0xee },
 	/* ISP */
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
+	{ CCI_REG8(0xfe), 0x00 },
 	{ CCI_REG8(0x80), 0x13 },
 	{ CCI_REG8(0xad), 0x00 },
 	/* Crop window */
 	{ CCI_REG8(0x90), 0x01 },
-	{ GC8034_REG_CROP_TOP, GC8034_CROP_TOP },
-	{ GC8034_REG_CROP_LEFT, GC8034_CROP_LEFT },
-	{ GC8034_REG_OUT_HEIGHT, GC8034_HEIGHT },
-	{ GC8034_REG_OUT_WIDTH, GC8034_WIDTH },
+	{ CCI_REG8(0x92), 0x08 },
+	{ CCI_REG8(0x94), 0x09 },
+	{ CCI_REG8(0x95), 0x09 },
+	{ CCI_REG8(0x96), 0x90 },
+	{ CCI_REG8(0x97), 0x0c },
+	{ CCI_REG8(0x98), 0xc0 },
 	/* DPC */
-	{ GC8034_REG_PAGE_SELECT, 0x01 },
+	{ CCI_REG8(0xfe), 0x01 },
 	{ CCI_REG8(0x62), 0x60 },
 	{ CCI_REG8(0x63), 0x48 },
 	/* MIPI */
-	{ GC8034_REG_PAGE_SELECT, 0x03 },
+	{ CCI_REG8(0xfe), 0x03 },
 	{ CCI_REG8(0x02), 0x03 },
 	{ CCI_REG8(0x04), 0x80 },
 	{ CCI_REG8(0x11), 0x2b },
@@ -371,8 +431,32 @@ static const struct cci_reg_sequence gc8034_regs[] = {
 	{ CCI_REG8(0x29), 0x07 },
 	{ CCI_REG8(0x2a), 0x12 },
 	{ CCI_REG8(0x2b), 0x07 },
-	{ GC8034_REG_PAGE_SELECT, 0x00 },
-	{ GC8034_REG_STREAM, GC8034_STREAM_OFF },
+	{ CCI_REG8(0xfe), 0x00 },
+	{ CCI_REG8(0x3f), 0x00 },
+};
+
+struct gc8034_mode {
+	u32 width;
+	u32 height;
+	const struct gc8034_reg_list reg_list;
+
+	u32 hts;
+	u32 vts_def;
+	u32 vts_min;
+};
+
+static const struct gc8034_mode gc8034_modes[] = {
+	{
+		.width = GC8034_WIDTH,
+		.height = GC8034_HEIGHT,
+		.reg_list = {
+			.num_of_regs = ARRAY_SIZE(gc8034_mode_3264x2448),
+			.regs = gc8034_mode_3264x2448,
+		},
+		.hts = GC8034_HTS,
+		.vts_def = GC8034_VTS_DEF,
+		.vts_min = GC8034_VTS_DEF,
+	},
 };
 
 static inline struct gc8034 *to_gc8034(struct v4l2_subdev *sd)
@@ -454,31 +538,22 @@ static int gc8034_enum_frame_size(struct v4l2_subdev *sd,
 	if (fse->code != GC8034_MBUS_CODE)
 		return -EINVAL;
 
-	if (fse->index > 0)
+	if (fse->index >= ARRAY_SIZE(gc8034_modes))
 		return -EINVAL;
 
-	fse->min_width = GC8034_WIDTH;
-	fse->max_width = GC8034_WIDTH;
-	fse->min_height = GC8034_HEIGHT;
-	fse->max_height = GC8034_HEIGHT;
+	fse->min_width = gc8034_modes[fse->index].width;
+	fse->max_width = gc8034_modes[fse->index].width;
+	fse->min_height = gc8034_modes[fse->index].height;
+	fse->max_height = gc8034_modes[fse->index].height;
 
 	return 0;
 }
 
-static void gc8034_fill_state(struct v4l2_subdev_state *state)
+static void gc8034_update_pad_format(const struct gc8034_mode *mode,
+				     struct v4l2_mbus_framefmt *fmt)
 {
-	struct v4l2_mbus_framefmt *fmt;
-	struct v4l2_rect *crop;
-
-	crop = v4l2_subdev_state_get_crop(state, 0);
-	crop->left = GC8034_CROP_LEFT;
-	crop->top = GC8034_CROP_TOP;
-	crop->width = GC8034_WIDTH;
-	crop->height = GC8034_HEIGHT;
-
-	fmt = v4l2_subdev_state_get_format(state, 0);
-	fmt->width = GC8034_WIDTH;
-	fmt->height = GC8034_HEIGHT;
+	fmt->width = mode->width;
+	fmt->height = mode->height;
 	fmt->code = GC8034_MBUS_CODE;
 	fmt->field = V4L2_FIELD_NONE;
 	fmt->colorspace = V4L2_COLORSPACE_RAW;
@@ -487,14 +562,28 @@ static void gc8034_fill_state(struct v4l2_subdev_state *state)
 	fmt->xfer_func = V4L2_XFER_FUNC_NONE;
 }
 
-/* There is a single mode: any format request gets it. */
 static int gc8034_set_format(struct v4l2_subdev *sd,
 			     const struct v4l2_subdev_client_info *ci,
 			     struct v4l2_subdev_state *state,
 			     struct v4l2_subdev_format *fmt)
 {
-	gc8034_fill_state(state);
-	fmt->format = *v4l2_subdev_state_get_format(state, 0);
+	struct v4l2_mbus_framefmt *mbus_fmt;
+	const struct gc8034_mode *mode;
+	struct v4l2_rect *crop;
+
+	mode = v4l2_find_nearest_size(gc8034_modes, ARRAY_SIZE(gc8034_modes),
+				      width, height, fmt->format.width,
+				      fmt->format.height);
+
+	crop = v4l2_subdev_state_get_crop(state, 0);
+	crop->left = GC8034_CROP_LEFT;
+	crop->top = GC8034_CROP_TOP;
+	crop->width = mode->width;
+	crop->height = mode->height;
+
+	gc8034_update_pad_format(mode, &fmt->format);
+	mbus_fmt = v4l2_subdev_state_get_format(state, 0);
+	*mbus_fmt = fmt->format;
 
 	return 0;
 }
@@ -531,22 +620,17 @@ static int gc8034_get_selection(struct v4l2_subdev *sd,
 static int gc8034_init_state(struct v4l2_subdev *sd,
 			     struct v4l2_subdev_state *state)
 {
-	gc8034_fill_state(state);
+	struct v4l2_subdev_format fmt = {
+		.which = V4L2_SUBDEV_FORMAT_TRY,
+		.pad = 0,
+		.format = {
+			.code = GC8034_MBUS_CODE,
+			.width = gc8034_modes[0].width,
+			.height = gc8034_modes[0].height,
+		},
+	};
 
-	return 0;
-}
-
-static int gc8034_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-				 struct v4l2_mbus_frame_desc *fd)
-{
-	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-	fd->num_entries = 1;
-	fd->entry[0].pixelcode = GC8034_MBUS_CODE;
-	fd->entry[0].stream = 0;
-	fd->entry[0].bus.csi2.vc = 0;
-	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_RAW10;
-
-	return 0;
+	return gc8034_set_format(sd, NULL, state, &fmt);
 }
 
 static int gc8034_set_analogue_gain(struct gc8034 *gc8034, u32 idx)
@@ -647,14 +731,26 @@ static int gc8034_enable_streams(struct v4l2_subdev *sd,
 				 u32 pad, u64 streams_mask)
 {
 	struct gc8034 *gc8034 = to_gc8034(sd);
+	const struct v4l2_mbus_framefmt *format;
+	const struct gc8034_reg_list *reg_list;
+	const struct gc8034_mode *mode;
 	int ret;
 
 	ret = pm_runtime_resume_and_get(gc8034->dev);
 	if (ret < 0)
 		return ret;
 
-	ret = cci_multi_reg_write(gc8034->regmap, gc8034_regs,
-				  ARRAY_SIZE(gc8034_regs), NULL);
+	format = v4l2_subdev_state_get_format(state, 0);
+	mode = v4l2_find_nearest_size(gc8034_modes, ARRAY_SIZE(gc8034_modes),
+				      width, height, format->width,
+				      format->height);
+	reg_list = &mode->reg_list;
+
+	cci_write(gc8034->regmap, GC8034_REG_PAGE_SELECT, GC8034_PAGE_0, &ret);
+	cci_multi_reg_write(gc8034->regmap, gc8034_global_regs,
+			    ARRAY_SIZE(gc8034_global_regs), &ret);
+	cci_multi_reg_write(gc8034->regmap, reg_list->regs,
+			    reg_list->num_of_regs, &ret);
 	if (ret)
 		goto err_rpm_put;
 
@@ -705,7 +801,6 @@ static const struct v4l2_subdev_pad_ops gc8034_pad_ops = {
 	.get_fmt = v4l2_subdev_get_fmt,
 	.set_fmt = gc8034_set_format,
 	.get_selection = gc8034_get_selection,
-	.get_frame_desc = gc8034_get_frame_desc,
 	.enable_streams = gc8034_enable_streams,
 	.disable_streams = gc8034_disable_streams,
 };
@@ -736,7 +831,7 @@ static int gc8034_parse_fwnode(struct gc8034 *gc8034)
 	if (ret)
 		return dev_err_probe(dev, ret, "failed to parse endpoint\n");
 
-	/* The register table configures the CSI-2 transmitter for 4 lanes. */
+	/* The register tables configure the CSI-2 transmitter for 4 lanes. */
 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != GC8034_DATA_LANES) {
 		ret = dev_err_probe(dev, -EINVAL,
 				    "unsupported number of data lanes %u\n",
@@ -758,10 +853,11 @@ done:
 
 static int gc8034_init_controls(struct gc8034 *gc8034)
 {
+	const struct gc8034_mode *mode = &gc8034_modes[0];
 	struct v4l2_fwnode_device_properties props;
 	struct v4l2_ctrl_handler *ctrl_hdlr;
-	struct v4l2_ctrl *link_freq, *hblank;
-	s64 exposure_max;
+	struct v4l2_ctrl *link_freq;
+	s64 exposure_max, h_blank;
 	int ret;
 
 	ret = v4l2_fwnode_device_parse(gc8034->dev, &props);
@@ -781,17 +877,17 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 			  GC8034_PIXEL_RATE, GC8034_PIXEL_RATE, 1,
 			  GC8034_PIXEL_RATE);
 
-	v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops, V4L2_CID_VBLANK,
-			  GC8034_VTS_DEF - GC8034_HEIGHT,
-			  GC8034_VTS_MAX - GC8034_HEIGHT, 1,
-			  GC8034_VTS_DEF - GC8034_HEIGHT);
+	gc8034->vblank =
+		v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops, V4L2_CID_VBLANK,
+				  mode->vts_min - mode->height,
+				  GC8034_VTS_MAX - mode->height, 1,
+				  mode->vts_def - mode->height);
 
-	hblank = v4l2_ctrl_new_std(ctrl_hdlr, NULL, V4L2_CID_HBLANK,
-				   GC8034_HTS - GC8034_WIDTH,
-				   GC8034_HTS - GC8034_WIDTH, 1,
-				   GC8034_HTS - GC8034_WIDTH);
+	h_blank = mode->hts - mode->width;
+	gc8034->hblank = v4l2_ctrl_new_std(ctrl_hdlr, NULL, V4L2_CID_HBLANK,
+					   h_blank, h_blank, 1, h_blank);
 
-	exposure_max = GC8034_VTS_DEF - GC8034_EXP_MARGIN;
+	exposure_max = mode->vts_def - GC8034_EXP_MARGIN;
 	gc8034->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops,
 					     V4L2_CID_EXPOSURE, GC8034_EXP_MIN,
 					     exposure_max, GC8034_EXP_STEP,
@@ -802,15 +898,22 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 
 	v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &gc8034_ctrl_ops, &props);
 
-	if (ctrl_hdlr->error)
-		return v4l2_ctrl_handler_free(ctrl_hdlr);
+	if (ctrl_hdlr->error) {
+		ret = ctrl_hdlr->error;
+		goto error_ctrls;
+	}
 
 	link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-	hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+	gc8034->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
 
 	gc8034->sd.ctrl_handler = ctrl_hdlr;
 
 	return 0;
+
+error_ctrls:
+	v4l2_ctrl_handler_free(ctrl_hdlr);
+
+	return ret;
 }
 
 static int gc8034_probe(struct i2c_client *client)
@@ -901,6 +1004,7 @@ static int gc8034_probe(struct i2c_client *client)
 		goto err_media_entity_cleanup;
 	}
 
+	/* The sensor is on: say so, or runtime PM would power it up again. */
 	pm_runtime_set_active(dev);
 	pm_runtime_enable(dev);
 	pm_runtime_set_autosuspend_delay(dev, 1000);
@@ -912,6 +1016,7 @@ static int gc8034_probe(struct i2c_client *client)
 		goto err_rpm;
 	}
 
+	/* Hands the sensor over to autosuspend, which powers it back down. */
 	pm_runtime_idle(dev);
 
 	return 0;

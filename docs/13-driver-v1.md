@@ -163,3 +163,132 @@ Kernel di prova aggiornato (8/10 sera): `7.3.0-rc1-intelcam-debug-g5ed52a522476`
 Sostituisce `gbf2e1eb29b92` sulla ESP (`vmlinuz-new-driver-v1`, avviato da
 `startup.nsh`); moduli del vecchio tolti. Dopo il riavvio, nell'ordine:
 `sudo ./scripts/prova-csi2.sh`, poi `sudo ./scripts/prova-completa.sh`.
+
+### Prova sul kernel g5ed52a522476 (8/10, dopo il riavvio)
+
+`prova-csi2.sh` (data/prova-csi2-20261008-160605): A, B, C, D tutte a 0
+righe di errore CSI-2, catture vere (fotogramma 2592x1944 controllato a
+parte). L5 non riprodotto, coerente con «non è del driver».
+
+`prova-completa.sh`, prima corsa (data/prova-20261008-160919): 22 OK, 6 KO.
+Nessuno dei KO era del driver; quattro erano della prova, corretta:
+- scritture a 16 bit rilette 0: i registri sono a doppio buffer. A sensore
+  acceso senza stream si legge 0, dopo uno stream il valore della scrittura
+  precedente (1112 -> 1111, 1109 -> 1112). La traccia regmap mostra il driver
+  scrivere 2 byte su 0x03 (`04 57`, `04 58`). Riletti in streaming:
+  gc5035 esposizione esatta (anche 2049), frame length 1944+VBLANK a passo 4
+  (301 -> 2244, 302 -> 2248); gc8034 esposizione a passo 2 (1111 -> 1112),
+  VB = VTS - 2448 - 36 (264, 265, 266). G8-G chiuso. La prova ora rilegge
+  durante uno stream.
+- guadagno gc5035 9,76 invece di 15,6: una luce già satura a 1x, lo 0,5% dei
+  pixel col 37% di un segnale medio di 9 LSB. Il fotogramma a 1x di quella
+  corsa con 15,6x ideale e taglio a 1023 prevede 9,87. La soglia «più del 2%
+  di pixel saturi» non lo vede; la prova ora fa il rapporto sui soli pixel
+  non saturi nel fotogramma a guadagno massimo.
+- curve complete col nero misurato a ogni gradino (64,0-65,2), esposizione
+  lunga, nessun pixel saturo: gc5035 1,184 1,428 1,693 2,013 2,382 2,863
+  3,379 3,985 4,712 5,650 6,680 7,864 9,316 11,207 13,300 16,086 contro la
+  tabella 1,180 ... 15,602 (scarti entro il 3%); gc8034 1,424 1,989 2,818
+  3,856 5,539 7,564 contro 7,66 finale. Sul gc8034 il primo fotogramma dopo
+  l'avvio ha ancora il guadagno vecchio, il secondo no: la prova usa il secondo.
+- `misura-guadagno.sh` usava ancora i valori assoluti (256/4096, 64/490),
+  saturati dal controllo a indice: aggiornato agli indici, 3 corse OK.
+- 42 BUG/WARNING: tutti `ipu6-isys-queue.c:203` (lockdep_assert in
+  ipu6_isys_buffer_list_get, docs/12), uno per stream; righe «lockdep» delle
+  tracce contate in più. Nessun messaggio dei sensori.
+
+Seconda corsa (data/prova-20261008-161830): 27 OK, 1 KO (lo stesso WARN
+noto, 16 volte), 1 non misurabile.
+
+G5-1.3 chiuso: il gc5035 accetta l'esposizione dispari, il passo 1 resta
+(data/esposizione-dispari-20261008, script ultimo.py). Torcia davanti al
+sensore frontale, 15,6x, media sui pixel sotto 900 nel fotogramma a 250
+righe (97,2%), 16 cicli di 150, 200..208, 250 righe in andata e ritorno.
+Quattro cicli avevano un salto di luce a gradino (150 righe a 75,9-76,0
+invece di 76,5) e sono esclusi con quel criterio. Sui 12 puliti:
+- pendenza 200->208 0,0832 ± 0,0024 LSB/riga, 150->250 0,0837: lineare. Il
+  dimezzamento visto nelle corse precedenti era la deriva della torcia.
+- passi pari->dispari 200->201 +0,025, 202->203 +0,121 (4,9 sigma),
+  204->205 +0,020, 206->207 +0,098 (5 sigma): con l'arrotondamento al pari
+  sarebbero tutti 0. Confronto fra-coppie meno dentro-coppia +0,034 ± 0,021
+  contro 0 se accetta (1,6 sigma) e 0,167 se arrotonda (6,4 sigma).
+- da spiegare, non del driver: i passi hanno periodo 4 righe. 200->202
+  0,075, 202->204 0,254, 204->206 0,074, 206->208 0,263 contro 0,167
+  uniformi (circa 3,5 sigma). Ogni riga in più aumenta comunque il segnale.
+
+## Revisione «come Sakari» e «come Laurent» (8/10 sera)
+
+Obiettivo di Nic: niente che Laurent o Sakari possano contestare. Due
+revisori indipendenti, ciascuno sulle review vere 2025-2026 della persona
+(Message-ID nei rapporti), sulla serie 5ed52a522. Nessun difetto bloccante
+nel codice. Applicato (serie `70f2a0b04..bce5c5710`, kernel di prova
+`gbce5c5710226`; W=1, sparse, smatch, checkpatch --strict, coccinelle
+puliti, a parte il Signed-off-by voluto):
+
+- Tabelle senza i registri scritti dai controlli (Sakari su IMX681, S5K3T2,
+  t4ka3; ov01a10 nel suo ramo). Stato finale simulato pagina per pagina:
+  identico salvo quei registri.
+- gc5035: una sola tabella (la init era quasi tutta riscritta dalla modo, PLL
+  compresa: Laurent su ov2735). Restano 4 scritture della init (pagina 2,
+  0x91-0x94 = 0). 323 -> 160 scritture.
+- gc8034: una sola tabella; tolte le impostazioni del modo binned che il BSP
+  scrive e poi sovrascrive (ISP, crop, DPC, MIPI). I blocchi SYS restano
+  entrambi: fra le commutazioni del clock, e a sensore senza clock i
+  registri non tengono le scritture (visto oggi). Gli impulsi 0xfe = 0x10
+  restano (non sono pagine). 233 -> 182.
+- Registri con nome (Sakari su S5KJN5/IMX471, Laurent su ox05b1s): pagina,
+  stream, finestra letta, crop di uscita, lunghezza di riga, PLL del
+  gc5035, scritti dalle stesse costanti delle selezioni. Nomi dedotti dai
+  valori (1960/2608, 1944/2592, 2464/3284, 2448/3264): detto nel commento.
+- Link frequency gc5035 = XCLK x 0xf8 / 4 (24 x 0x49 / 4 = 438, il valore
+  vendor; 19,2 x 0x58 / 4 = 422,4): non era «sbagliato», Intel ha cambiato
+  la PLL e lasciato la costante. Ora LINK_FREQ è calcolata dalla PLL.
+- init_state senza set_fmt con client info NULL (Laurent e Sakari, v7 14/14
+  del 02/09: da far notare nelle review); gc*_fill_state.
+- .get_frame_desc (Laurent su AR0234). Identico al ripiego dell'IPU6.
+- Un solo modo: tolti struct mode, reg_list, v4l2_find_nearest_size.
+- Tolti vblank/hblank dalla struct; `return v4l2_ctrl_handler_free()`;
+  commenti colloquiali e «Alder Lake-M» tolti.
+- Test pattern gc5035: «Color Bar» -> «Test Chart» (è una mira a mosaico,
+  data/prova-20261008-161830/gc5035-test-pattern.png).
+- Prova completa: nuove sezioni GEOMETRIA (rilettura a stream vivo) e TEST
+  PATTERN (mira deterministica: 100% di pixel uguali fra due fotogrammi
+  contro 27,8% della scena).
+
+Esperimento del pomeriggio: 0x8c pagina 1 = 0x90 scritto a stream vivo
+ferma l'uscita; l'arresto ha poi bloccato l'ISYS fino al riavvio («isys
+power cycle required»). La tabella scrive 0x90 all'inizio e 0x10 alla fine:
+0x10 è lo stato voluto, il driver è giusto.
+
+Corsa sul kernel `gbce5c5710226` dopo il riavvio (data/prova-20261008-174719):
+30 OK, 1 KO, 2 non misurabili. Il KO è il WARN noto `ipu6-isys-queue.c:203`
+(19 volte, una per stream; le altre righe contate sono le sue tracce). Nessun
+messaggio dei sensori. Non misurabili per la luce: guadagno gc8034 (segnale
+64 sul piedistallo 64) ed esposizione dispari gc5035. Frame rate, VBLANK,
+16 bit, geometria, test pattern, compliance 46/46 e bind/unbind come prima:
+la revisione non ha rotto niente.
+
+Tablet in verticale (data/prova-20261008-175533, output in verdetto.txt):
+32 OK, 1 KO (lo stesso WARN, 19 volte), 1 non misurabile. Guadagno gc8034
+7,37 contro 7,66 (3,8%), gc5035 15,42 contro 15,60. Esposizione dispari
+ancora al buio (64,5 sul piedistallo a 8 righe), ma G5-1.3 è già chiuso con
+la torcia. Difetto della prova trovato contando le verifiche: «ipu-bridge ha
+collegato le camere» cercava il «Connected 2 cameras» del boot, che il
+`dmesg -C` della prova stessa cancella, e senza ramo KO spariva in silenzio
+dalla seconda corsa in poi. Ora legge il grafo media (sensore -> CSI2
+abilitato), una verifica per sensore.
+
+Da fare, non nel codice:
+- Cover letter e messaggi di commit: li riscrive Nic con parole sue
+  (Laurent: bot contro i testi da LLM, 25/09). Fatti e numeri per la cover:
+  questa pagina e le misure dell'8/10.
+- `Assisted-by:` con il modello (Sakari: «Which one?»), attaccato al
+  Signed-off-by.
+- v4l2-compliance da git (Hans chiede l'hash), output in cover.
+- Patch libcamera: helper `AnalogueGainExp` gc5035 1,50 dB/passo, gc8034
+  2,95 dB/passo (fit sulle curve misurate, scarto massimo 1,5%), black
+  level 4096; senza, l'AE di libcamera prende l'indice per un guadagno.
+- In cover: PIXEL_RATE gc8034 > capacità del link è coerente (HTS comprende
+  il blanking), PLL non documentata.
+- Facoltativi: HFLIP/VFLIP gc8034 (registro 0x17 noto dal BSP), pagine con i
+  bit privati CCI.

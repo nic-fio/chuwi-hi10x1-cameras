@@ -40,18 +40,20 @@ print(sum(sub)/len(sub) if sub else 0)
 PY
 }
 
-for spec in "gc5035:256:4096" "gc8034:64:490"; do
-    IFS=: read -r s gmin gmax <<<"$spec"
+# Da driver-v1 ANALOGUE_GAIN e' l'indice del gradino analogico: il rapporto
+# atteso e' quello fra l'ultimo e il primo gradino, come in prova-completa.sh.
+for spec in "gc5035:0:16:15.60" "gc8034:0:6:7.66"; do
+    IFS=: read -r s gmin gmax gratio <<<"$spec"
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmin 2>/dev/null
     m1=$(misura "${NODE[$s]}" "$OUT/.g1.raw")
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmax 2>/dev/null
     m2=$(misura "${NODE[$s]}" "$OUT/.g2.raw")
     v4l2-ctl -d "${SUBDEV[$s]}" --set-ctrl=analogue_gain=$gmin 2>/dev/null
-    python3 - "$s" "$m1" "$m2" "$gmin" "$gmax" <<'PY' | tee -a "$OUT/guadagno.txt"
+    python3 - "$s" "$m1" "$m2" "$gratio" <<'PY' | tee -a "$OUT/guadagno.txt"
 import sys
-s, m1, m2, gmin, gmax = sys.argv[1], float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5])
+s, m1, m2, want = sys.argv[1], float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4])
 s1, s2 = max(m1-64, 0.1), max(m2-64, 0.1)
-got, want = s2/s1, gmax/gmin
+got = s2/s1
 d = abs(got-want)/want*100
 if m2 - 64 < 4:
     print(f"[--] {s}: scena ancora troppo scura (segnale {m2:.1f} sul piedistallo 64)")
