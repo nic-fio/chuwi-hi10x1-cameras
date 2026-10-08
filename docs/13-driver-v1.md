@@ -157,3 +157,9 @@ Da chiudere sulla prova (scripts/prova-completa.sh, scripts/prova-csi2.sh):
 - guadagno minimo/massimo col controllo a indice (15,60 e 7,66)
 - v4l2-compliance -u: 0 fallimenti
 - L5 prove A-D
+
+Kernel di prova aggiornato (8/10 sera): `7.3.0-rc1-intelcam-debug-g5ed52a522476`
+= next 8e26d4c20 + serie 56b05476c..5ed52a522, 0 avvisi di compilazione.
+Sostituisce `gbf2e1eb29b92` sulla ESP (`vmlinuz-new-driver-v1`, avviato da
+`startup.nsh`); moduli del vecchio tolti. Dopo il riavvio, nell'ordine:
+`sudo ./scripts/prova-csi2.sh`, poi `sudo ./scripts/prova-completa.sh`.
