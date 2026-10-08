@@ -76,3 +76,22 @@ commento in gc8034.c.
 
 Prova: `sudo ./scripts/prova-completa.sh`, con una scena illuminata (non
 abbagliante) davanti alle due camere.
+
+## Registro completo dei rilievi (richiesto da Nic l'8/10 prima del riavvio)
+
+Regola: prima si raccolgono TUTTI i rilievi ricevuti o prevedibili, poi si
+correggono, poi una sola prova sul tablet.
+
+Fonti:
+
+| Fonte | Esito per i driver |
+|---|---|
+| Sakari 12/09 (invio 1 v2): unbind a streaming acceso non supportato in MC | non riguarda i driver; nessun test di unbind in streaming nella prova |
+| Laurent 08/10 (v3 1/2): «non sviluppiamo né proviamo su 6.12.86»; «hack» con controllo seguito da uso | lezioni generali: base e prove solo su `next` (fatto: kernel di prova = next + serie); cercare controlli seguiti da uso nella revisione |
+| Sakari 08/10 (v3 2/2): unregister dei nodi subdev non sicuro | non riguarda i driver |
+| Sashiko 12/08, O2-O9 (`docs/11`) | tutti su ipu6-isys/v4l2-subdev, patch abbandonate: non applicabili |
+| Revisione pre-invio 11/08 (`docs/09`) M1-M8, L1-L5 | M1, M3-M7, L1-L3 risolti nel codice; M2 risolto oggi; M8 era sbagliato, invertito oggi (riga 2 sopra); L4 (`T:`) non va messo; L5 (errori CSI-2 intermittenti gc5035) da ricontrollare nella prova |
+| Ricerca sulle review 2024-2026 (agente, 08/10) | righe 1-16 della tabella sopra; aperti: guadagno, accensione, OTP, crop |
+| Review 2020 del GC5035 (Sakari, Rob Herring) | agente in corso |
+| Revisione avversariale indipendente di gc5035.c e gc8034.c | agenti in corso |
+| Modello del guadagno; sequenza di accensione | agenti in corso |
