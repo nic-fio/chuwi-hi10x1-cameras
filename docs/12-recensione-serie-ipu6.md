@@ -1146,3 +1146,43 @@ Conseguenze per il nostro lavoro:
 - Il punto 3 non lo scriviamo noi: e' di Calliari. Se la serie ne ha
   bisogno, ci si appoggia sulla sua patch (citandola), e se non arriva
   una v2 gli si chiede nel thread prima di riprenderla.
+
+### 8 ottobre, 12:00: la bozza p1/p2 in `isys-lifetime`, riletta dopo l'oops
+
+Sul server, `/media/INTEL-CAMERA/sorgenti/isys-lifetime`: sopra `next`
+`8e26d4c20` due commit di stamattina non annotati qui, «p1» (09:55) e
+«p2» (09:57), autore `x <x@x>`, poi la serie dei sensori. Il kernel delle
+prove di oggi (`1b4a83d60`) **non** li contiene: l'oops delle 10:32 e la
+prova UAF delle 08:51 sono le prove «prima».
+
+- **p1**: `isys_remove()` diventa `isys_unregister_devices()`,
+  `isys_notifier_cleanup()`, `free_fw_msg_bufs()`, `ida_destroy()`.
+- **p2** (modello em28xx): `struct ipu6_isys` e `isys->csi2` con
+  `kzalloc`/`kcalloc` invece di devm, `asd->pad` con `kcalloc`;
+  `v4l2_device_register()` e `media_device_pci_init()` spostati in
+  `isys_probe()`; `v4l2_dev.release = isys_v4l2_release` che fa
+  `isys_free()` (cleanup di video e CSI-2, `media_device_cleanup()`,
+  `mutex_destroy()`, `kfree`); unregister e cleanup separati per video e
+  CSI-2; `isys_remove()` finisce con `v4l2_device_put()`.
+
+Cosa l'oops di oggi aggiunge alla p1 (non coperto dalla bozza):
+1. **Runtime suspend asincrona.** Lo stop dentro
+   `isys_unregister_devices()` fa `pm_runtime_put()` asincrono. Il
+   firmware si chiude solo in `isys_runtime_pm_suspend()`. Con la p1
+   `free_fw_msg_bufs()` puo' arrivare prima di quella chiusura: se lo
+   stop o la close sono andati in timeout, il firmware ha ancora i
+   messaggi. Con la p2, se nessun file e' aperto, `v4l2_device_put()`
+   libera `isys` mentre la suspend in coda la usera'. Idea: suspend
+   sincrona in `isys_remove()` dopo l'unregister, prima di liberare.
+   Da decidere: `pm_runtime_suspend()` fallisce (`-EAGAIN`) se l'ISR
+   ha preso il riferimento in quel momento
+   (`pm_runtime_get_if_active()`).
+2. **ISR in corso.** Anche a firmware chiuso, un'ISR gia' entrata
+   puo' ancora toccare i messaggi: serve `synchronize_irq()` prima di
+   `free_fw_msg_bufs()`.
+3. **ISR dopo l'unbind** (ganci di `adev`): serie di Calliari, non
+   nostra.
+
+Regola (memoria «rigore patch kernel»): ogni finestra va riprodotta
+prima di essere scritta come certa. Per la 1 serve un kernel di prova
+con un ritardo in `isys_runtime_pm_suspend()`; oggi non e' provata.
