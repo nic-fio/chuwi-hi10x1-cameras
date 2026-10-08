@@ -125,3 +125,35 @@ Revisione avversariale gc5035:
 - G5-2.2 DEFINE_RUNTIME_DEV_PM_OPS aggiunge i gestori di system PM (force_suspend/resume); camera-sensor.rst: «should in general not implement the system PM handlers». imx219/ov05c10 usano solo RUNTIME_PM_OPS, gc05a2/gc08a3 come noi. Da decidere.
 - G5-2.3 selezioni: finestra 2608x1960 da (4,3) e crop (8,8) in pagina 1; dichiariamo NATIVE_SIZE 2592x1944. Minimo: togliere NATIVE_SIZE come gc05a2; completo: matrice reale.
 - G5-3 tabella di modo che ripete quasi tutta quella init, PLL compresa (0xf8: 0x49 poi 0x58): spiegarlo o togliere il doppione; commento che cita gc05a2 da riscrivere.
+
+### Stato dopo le correzioni dell'8/10 sera (serie 56b05476c..5ed52a522)
+
+Chiusi nel codice, confermati da un secondo giro di revisione indipendente
+(un revisore per driver, nessun difetto bloccante):
+- guadagno (G5-2.1, G8-I): ANALOGUE_GAIN = indice del gradino analogico
+  (gc5035 0..16 mappato su 0xb6, gc8034 0..6 = 0xb6 più bias); digitale a
+  1x come da tabelle. Niente DIGITAL_GAIN: per gc8034 la larghezza di 0xb1
+  non è nota e il BSP non supera ~2,2x, un range sarebbe inventato.
+- set_format senza ramo ACTIVE, default esposizione fisso 984 / 2246 (G5-1.1, G8-A)
+- esposizione massima pari su gc8034 (G8-B)
+- regolatori e ritardi con fonte (R20-1, R20-2, G8-E): gc5035 Figa 2020 +
+  Intel, gc8034 BSP develop-5.10; commento falso sul clock gated tolto
+- pagina 0 in s_ctrl, nel test pattern anche in errore, prima dello stop (G5-1.2, G8-F)
+- selezioni dalla geometria delle tabelle, CROP_DEFAULT costante (G5-2.3, G8-C)
+- solo RUNTIME_PM_OPS (G5-2.2)
+- offset VTS come formula del BSP (G8-D, commento); pixel rate dichiarato misurato (G8-J)
+- PLL ripetuta nella tabella di modo spiegata (R20-4, G5-3); commento binned (R20-5)
+- tabelle dei guadagni ridotte ai dati usati (secondo giro)
+- VBLANK gc5035 a passo 4 come dichiarano i vendor: valido in entrambe le
+  ipotesi, nessuna prova necessaria (secondo giro)
+- `ret = 0` superfluo (R20-3)
+- L5: non è del driver (stessa firma su gc8034 e su altri sensori IPU6, non
+  riprodotto dal 12/08); docs/08 diceva il falso su «mai sul GC8034»
+
+Da chiudere sulla prova (scripts/prova-completa.sh, scripts/prova-csi2.sh):
+- G5-1.3 esposizione dispari gc5035 (8 contro 9 righe): se arrotonda, passo 2
+- G8-G scritture a 16 bit: rilettura I2C di esposizione e VBLANK
+- G8-D offset di gc8034: frame rate a VBLANK 2000, righe in più ricavate
+- guadagno minimo/massimo col controllo a indice (15,60 e 7,66)
+- v4l2-compliance -u: 0 fallimenti
+- L5 prove A-D
