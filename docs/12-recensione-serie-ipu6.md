@@ -951,3 +951,11 @@ dire che la v3 non risolve.
 - Intestazioni: To/Cc identici al messaggio di Laurent (+ noi),
   In-Reply-To e References giusti. Nessun messaggio nuovo nel thread.
 Prova a vuoto riuscita.
+
+### 8 ottobre, 09:06: risposta a Laurent spedita, serie v3 ritirata
+
+Spedita da Nic alle 07:06 UTC (Gmail: nel thread della v3, Cc completi).
+Prossimo lavoro: la vita degli oggetti in ipu6-isys sul modello della
+serie em28xx di Hans (memoria del driver liberata nel release callback
+del `v4l2_device`, non con devm), con prova KASAN prima/dopo con
+`scripts/riproduci-uaf-isys.sh`. Il tablet va riavviato prima.
