@@ -781,3 +781,44 @@ linux-media (verificato via NNTP), patch in risposta alla lettera:
 
 Prossimo passo: aspettare. Su patchwork la v2 andra' segnata come
 superseded (lo fa il manutentore o, con un account, noi).
+
+---
+
+## 8 ottobre 2026: Laurent boccia la v3 1/2, la serie si ritira
+
+Alle 05:48 UTC, 80 minuti dopo l'invio, Laurent Pinchart risponde alla
+1/2 (`<20261008054842.GB683793@killaraus.ideasonboard.com>`, letto via
+NNTP). Due frasi soltanto:
+
+- sotto "Reproduced on ... 6.12.86": «We don't develop or test patches
+  on 6.12.86.»
+- sotto il controllo `READ_ONCE(mdev->dev->driver)`: «All of this is a
+  hack that may reduce a race window but it doesn't fix the problem.»
+
+Verificate tutte e due sui sorgenti `next` del server (`v3-invio`):
+
+- **6.12.86: fondata.** La prova su `next` c'e' (tablet: oops al 4o
+  unbind), ma e' scritta solo nella lettera. Il messaggio della patch
+  cita il 6.12.86.
+- **"Non risolve": fondata.** La nota del 27/09 ("3 righe, nessun
+  controllo, nessuna finestra") valeva per la bozza. La versione spedita
+  ha di nuovo un controllo seguito dall'uso:
+  - `drv` e' controllato e poi usato. Il cdev del nodo trattiene solo
+    videodev (`v4l2_subdev_fops.owner = THIS_MODULE`, `v4l2-dev.c:1061`):
+    unbind e `rmmod` del driver tra il `READ_ONCE()` e
+    `try_module_get()` fanno leggere `drv->owner` da memoria liberata.
+    Ricavato leggendo il codice, non riprodotto.
+  - `vdev->v4l2_dev` e' sicuro solo finche' il driver tiene vivi il
+    `v4l2_device` e il `media_device`. vimc lo fa (release callback,
+    `vimc-core.c:267`). ipu6-isys no: `media_dev` e `v4l2_dev` sono
+    dentro `isys`, allocata con `devm_kzalloc()`
+    (`ipu6-isys.c:990`), senza release.
+  - La 2/2 si basa sullo stesso presupposto (`vdev->v4l2_dev`).
+
+Deciso con Nic: **adeguarsi**. Risposta in
+`patches/wip/risposta-a-laurent-v3.txt`, invio con
+`patches/wip/invia-risposta-a-laurent-v3.sh` (prova a vuoto riuscita).
+Il messaggio ammette tutti e due i punti, spiega i due buchi rimasti e
+ritira tutta la serie v3: la soluzione vera e' la gestione della vita
+di media device e sotto-dispositivi, non un altro controllo in `open()`.
+**Non ancora spedita.**

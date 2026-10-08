@@ -1,0 +1,31 @@
+Hi Laurent,
+
+Thank you for looking at it.
+
+On 6.12.86: agreed, that line does not belong in the commit message.
+The runs that matter are the ones on media next described in the cover
+letter, and those are what the commit message should have referred to.
+
+On the fix: I went back over it, and it does not fix the problem. Two
+things remain open:
+
+- mdev->dev->driver is checked and then used. Nothing pins the media
+  driver's module during subdev_open(), as the cdev only holds
+  videodev, so the driver can be unbound and its module unloaded
+  between the READ_ONCE() and try_module_get(), and drv->owner is then
+  read from freed memory.
+
+- vdev->v4l2_dev->mdev is only valid as long as the driver keeps the
+  v4l2_device and the media_device alive. vimc does, through its
+  v4l2_device release callback, but ipu6-isys embeds both in a
+  devm-allocated structure, so unbinding it frees them while an open()
+  in progress or an open file handle can still reach them.
+
+Patch 2/2 rests on the same vdev->v4l2_dev assumption, so I am
+withdrawing the whole series rather than keeping half of it. The
+underlying issue is the lifetime of the media device and of the
+sub-devices when a driver is unbound with file handles open, and that
+needs a proper fix, not another check in the file operations.
+
+Thanks,
+Nicola
