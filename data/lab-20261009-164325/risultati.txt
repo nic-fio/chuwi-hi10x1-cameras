@@ -1,0 +1,131 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g5-R11-vb64: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10 1 0x94 0x04)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb64.raw: 15303168 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb64: 1296x972 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.64  sd   22.43
+  fase (0,1): media    91.42  sd   21.67
+  fase (1,0): media    74.77  sd    9.62
+  fase (1,1): media    90.44  sd   22.54
+  media 86.82, max 759, saturi(>=1023) 0.000%
+  periodo 34.497 ms (sd 0.002), 28.988 fps
+  rumore temporale 1.296 LSB (centro)
+[10535.357478] hardirqs last  enabled at (8041): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10535.357485] hardirqs last disabled at (8046): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10535.357491] softirqs last  enabled at (7868): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10535.357498] softirqs last disabled at (7675): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10535.357504] ---[ end trace 0000000000000000 ]---
+
+=== g5-R11-pieno-vb64: gc5035 2592x1944 GRBG ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb64.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb64: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.59  sd   22.12
+  fase (0,1): media    91.39  sd   21.39
+  fase (1,0): media    74.95  sd    9.57
+  fase (1,1): media    90.35  sd   22.24
+  media 86.82, max 781, saturi(>=1023) 0.000%
+  periodo 34.704 ms (sd 0.001), 28.815 fps
+  rumore temporale 2.475 LSB (centro)
+[10537.402883] hardirqs last  enabled at (16953): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10537.402888] hardirqs last disabled at (16958): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10537.402892] softirqs last  enabled at (16732): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10537.402897] softirqs last disabled at (16725): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10537.402902] ---[ end trace 0000000000000000 ]---
+
+=== g5-R11-vb500: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10 1 0x94 0x04)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb500.raw: 15303168 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb500: 1296x972 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.73  sd   22.48
+  fase (0,1): media    91.57  sd   21.73
+  fase (1,0): media    74.77  sd    9.61
+  fase (1,1): media    90.49  sd   22.60
+  media 86.89, max 767, saturi(>=1023) 0.000%
+  periodo 34.497 ms (sd 0.001), 28.988 fps
+  rumore temporale 1.299 LSB (centro)
+[10539.493418] hardirqs last  enabled at (8457): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10539.493424] hardirqs last disabled at (8462): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10539.493429] softirqs last  enabled at (7770): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10539.493435] softirqs last disabled at (7755): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10539.493440] ---[ end trace 0000000000000000 ]---
+
+=== g5-R11-pieno-vb500: gc5035 2592x1944 GRBG ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb500.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb500: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.68  sd   22.18
+  fase (0,1): media    91.49  sd   21.43
+  fase (1,0): media    74.95  sd    9.58
+  fase (1,1): media    90.39  sd   22.28
+  media 86.88, max 772, saturi(>=1023) 0.000%
+  periodo 42.240 ms (sd 0.002), 23.674 fps
+  rumore temporale 2.478 LSB (centro)
+[10541.581350] hardirqs last  enabled at (53141): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10541.581355] hardirqs last disabled at (53146): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10541.581359] softirqs last  enabled at (52514): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10541.581364] softirqs last disabled at (52507): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10541.581369] ---[ end trace 0000000000000000 ]---
+
+=== g5-R11-vb1000: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10 1 0x94 0x04)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb1000.raw: 15303168 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb1000: 1296x972 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.77  sd   22.51
+  fase (0,1): media    91.58  sd   21.78
+  fase (1,0): media    74.78  sd    9.62
+  fase (1,1): media    90.49  sd   22.63
+  media 86.91, max 762, saturi(>=1023) 0.000%
+  periodo 34.496 ms (sd 0.001), 28.989 fps
+  rumore temporale 1.301 LSB (centro)
+[10543.754335] hardirqs last  enabled at (10127): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10543.754340] hardirqs last disabled at (10132): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10543.754344] softirqs last  enabled at (9408): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10543.754366] softirqs last disabled at (10143): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10543.754371] ---[ end trace 0000000000000000 ]---
+
+=== g5-R11-pieno-vb1000: gc5035 2592x1944 GRBG ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb1000.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb1000: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.67  sd   22.20
+  fase (0,1): media    91.50  sd   21.48
+  fase (1,0): media    74.92  sd    9.58
+  fase (1,1): media    90.42  sd   22.32
+  media 86.88, max 786, saturi(>=1023) 0.000%
+  periodo 50.881 ms (sd 0.001), 19.654 fps
+  rumore temporale 2.485 LSB (centro)
+[10545.864195] hardirqs last  enabled at (47577): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10545.864202] hardirqs last disabled at (47582): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10545.864207] softirqs last  enabled at (46892): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10545.864213] softirqs last disabled at (46867): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10545.864218] ---[ end trace 0000000000000000 ]---
+
+=== g5-R11-vb2000: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10 1 0x94 0x04)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb2000.raw: 15303168 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-vb2000: 1296x972 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.80  sd   22.54
+  fase (0,1): media    91.67  sd   21.81
+  fase (1,0): media    74.77  sd    9.62
+  fase (1,1): media    90.52  sd   22.65
+  media 86.94, max 772, saturi(>=1023) 0.000%
+  periodo 51.365 ms (sd 0.001), 19.468 fps
+  rumore temporale 1.302 LSB (centro)
+[10548.187626] hardirqs last  enabled at (9621): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10548.187634] hardirqs last disabled at (9626): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10548.187639] softirqs last  enabled at (8920): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10548.187646] softirqs last disabled at (8911): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10548.187651] ---[ end trace 0000000000000000 ]---
+
+=== g5-R11-pieno-vb2000: gc5035 2592x1944 GRBG ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb2000.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325/g5-R11-pieno-vb2000: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    90.73  sd   22.23
+  fase (0,1): media    91.56  sd   21.50
+  fase (1,0): media    74.94  sd    9.57
+  fase (1,1): media    90.48  sd   22.33
+  media 86.92, max 796, saturi(>=1023) 0.000%
+  periodo 68.164 ms (sd 0.001), 14.671 fps
+  rumore temporale 2.480 LSB (centro)
+[10550.520363] hardirqs last  enabled at (20219): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10550.520376] hardirqs last disabled at (20224): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10550.520385] softirqs last  enabled at (20104): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10550.520398] softirqs last disabled at (20095): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10550.520408] ---[ end trace 0000000000000000 ]---
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164325

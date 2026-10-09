@@ -1,0 +1,23 @@
+sensore gc8034 gc8034 1-0037 /dev/v4l-subdev5 Intel IPU6 CSI2 1 /dev/video8
+formato 3264x2448 RGGB bpl 6528 n 6
+regs:
+controlli:
+exposure: 108
+analogue_gain: 0
+vertical_blanking: 48
+horizontal_blanking: 1008
+pixel_rate: 255909888
+rilettura:
+# p reg scritto allo-stream-on(ret 0) ora(ret 0)
+timestamp:
+11307.477955
+11307.520940
+11307.562594
+11307.604248
+11307.645901
+11307.687556
+[11306.844464] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Single packet header error corrected
+[11306.844502] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[11306.844519] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Transfer FIFO overflow
+[11306.844534] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[11306.844549] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Frame sync error

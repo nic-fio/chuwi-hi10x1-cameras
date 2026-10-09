@@ -1,0 +1,317 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g8-R12-base: gc8034 3264x2448 RGGB ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-base.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-base: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   136.00  sd   71.68
+  fase (0,1): media   147.00  sd   84.02
+  fase (1,0): media   146.48  sd   83.77
+  fase (1,1): media   100.22  sd   45.89
+  media 132.42, max 1023, saturi(>=1023) 0.120%
+  periodo 41.653 ms (sd 0.002), 24.008 fps
+  rumore temporale 6.817 LSB (centro)
+[10668.766574] hardirqs last  enabled at (315613): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10668.766579] hardirqs last disabled at (315618): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10668.766583] softirqs last  enabled at (315030): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10668.766588] softirqs last disabled at (315025): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10668.766593] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-t1: gc8034 3280x2460 RGGB (0 0x92 0 0 0x94 0 0 0x95 0x09 0 0x96 0x9c 0 0x97 0x0c 0 0x98 0xd0 3 0x12 0x04 3 0x13 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-t1.raw: 97297920 byte (attesi 97297920)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-t1: 3280x2460 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   146.42  sd   83.65
+  fase (0,1): media   135.57  sd   71.39
+  fase (1,0): media    99.93  sd   45.63
+  fase (1,1): media   145.93  sd   83.38
+  media 131.96, max 1023, saturi(>=1023) 0.119%
+  periodo 41.854 ms (sd 0.002), 23.892 fps
+  rumore temporale 6.805 LSB (centro)
+[10671.786800] hardirqs last  enabled at (272909): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10671.786805] hardirqs last disabled at (272914): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10671.786809] softirqs last  enabled at (272222): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10671.786814] softirqs last disabled at (272213): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10671.786819] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-t2: gc8034 3296x2560 RGGB (0 0x0a 0 0 0x0b 0 0 0x0c 0 0 0x0d 0x0a 0 0x0e 0x00 0 0x0f 0x0c 0 0x10 0xe4 0 0x92 0 0 0x94 0 0 0x95 0x0a 0 0x96 0x00 0 0x97 0x0c 0 0x98 0xe0 3 0x12 0x18 3 0x13 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-t2.raw: 101253120 byte (attesi 101253120)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-t2: 3296x2560 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   146.40  sd   94.79
+  fase (0,1): media   136.07  sd   85.09
+  fase (1,0): media   101.51  sd   66.76
+  fase (1,1): media   145.92  sd   94.54
+  media 132.48, max 1023, saturi(>=1023) 0.371%
+  periodo 47.662 ms (sd 0.001), 20.981 fps
+  rumore temporale 6.779 LSB (centro)
+[10674.593548] hardirqs last  enabled at (242201): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10674.593561] hardirqs last disabled at (242206): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10674.593570] softirqs last  enabled at (241484): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10674.593580] softirqs last disabled at (241151): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10674.593590] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-col2: gc8034 3264x2448 RGGB (0 0x0c 2)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col2.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col2: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   135.65  sd   71.41
+  fase (0,1): media   146.54  sd   83.57
+  fase (1,0): media   146.01  sd   83.34
+  fase (1,1): media    99.85  sd   45.64
+  media 132.01, max 1023, saturi(>=1023) 0.120%
+  periodo 41.654 ms (sd 0.002), 24.007 fps
+  rumore temporale 6.528 LSB (centro)
+  rispetto a /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-base: dx -6 px (r 1.000), dy +0 px (r 1.000)
+  (passo 2 px: la correlazione e' sulle celle 2x2; il pixel singolo si legge dalle fasi)
+[10677.457706] hardirqs last  enabled at (250229): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10677.457712] hardirqs last disabled at (250234): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10677.457716] softirqs last  enabled at (249228): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10677.457746] softirqs last disabled at (250249): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10677.457752] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-col3: gc8034 3264x2448 RGGB (0 0x0c 3)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col3.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col3: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   135.48  sd   71.28
+  fase (0,1): media   146.29  sd   83.35
+  fase (1,0): media   145.76  sd   83.09
+  fase (1,1): media    99.73  sd   45.54
+  media 131.81, max 1023, saturi(>=1023) 0.120%
+  periodo 41.654 ms (sd 0.001), 24.007 fps
+  rumore temporale 6.506 LSB (centro)
+  rispetto a /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-base: dx -6 px (r 1.000), dy +0 px (r 1.000)
+  (passo 2 px: la correlazione e' sulle celle 2x2; il pixel singolo si legge dalle fasi)
+[10681.629410] hardirqs last  enabled at (129159): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10681.629415] hardirqs last disabled at (129164): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10681.629419] softirqs last  enabled at (128450): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10681.629425] softirqs last disabled at (128443): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10681.629429] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-col5: gc8034 3264x2448 RGGB (0 0x0c 5)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col5.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col5: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   135.47  sd   71.16
+  fase (0,1): media   146.21  sd   83.19
+  fase (1,0): media   145.69  sd   82.96
+  fase (1,1): media    99.72  sd   45.46
+  media 131.77, max 1023, saturi(>=1023) 0.120%
+  periodo 41.654 ms (sd 0.002), 24.007 fps
+  rumore temporale 6.666 LSB (centro)
+  rispetto a /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-base: dx -2 px (r 1.000), dy +0 px (r 1.000)
+  (passo 2 px: la correlazione e' sulle celle 2x2; il pixel singolo si legge dalle fasi)
+[10684.784348] hardirqs last  enabled at (15075): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10684.784353] hardirqs last disabled at (15080): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10684.784357] softirqs last  enabled at (14360): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10684.784362] softirqs last disabled at (14353): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10684.784366] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-col6: gc8034 3264x2448 RGGB (0 0x0c 6)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col6.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col6: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   135.32  sd   71.07
+  fase (0,1): media   146.08  sd   83.11
+  fase (1,0): media   145.56  sd   82.82
+  fase (1,1): media    99.59  sd   45.39
+  media 131.64, max 1023, saturi(>=1023) 0.121%
+  periodo 41.654 ms (sd 0.002), 24.007 fps
+  rumore temporale 6.463 LSB (centro)
+  rispetto a /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-base: dx -2 px (r 1.000), dy +0 px (r 1.000)
+  (passo 2 px: la correlazione e' sulle celle 2x2; il pixel singolo si legge dalle fasi)
+[10687.929303] hardirqs last  enabled at (106655): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10687.929309] hardirqs last disabled at (106660): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10687.929313] softirqs last  enabled at (105932): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10687.929319] softirqs last disabled at (105927): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10687.929324] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-col8: gc8034 3264x2448 RGGB (0 0x0c 8)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col8.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-col8: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   135.30  sd   70.99
+  fase (0,1): media   145.98  sd   82.94
+  fase (1,0): media   145.46  sd   82.67
+  fase (1,1): media    99.57  sd   45.32
+  media 131.58, max 1023, saturi(>=1023) 0.121%
+  periodo 41.654 ms (sd 0.001), 24.007 fps
+  rumore temporale 6.623 LSB (centro)
+  rispetto a /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-base: dx +4 px (r 1.000), dy +0 px (r 0.999)
+  (passo 2 px: la correlazione e' sulle celle 2x2; il pixel singolo si legge dalle fasi)
+[10691.209282] hardirqs last  enabled at (18031): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10691.209287] hardirqs last disabled at (18036): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10691.209291] softirqs last  enabled at (17300): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10691.209296] softirqs last disabled at (17293): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10691.209300] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-destra4: gc8034 3264x2448 RGGB (0 0x0f 0x0c 0 0x10 0xc4 0 0x94 0)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra4.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra4: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   145.62  sd   82.95
+  fase (0,1): media   135.03  sd   70.98
+  fase (1,0): media    99.40  sd   45.27
+  fase (1,1): media   145.12  sd   82.65
+  media 131.29, max 1023, saturi(>=1023) 0.121%
+  periodo 41.653 ms (sd 0.002), 24.008 fps
+  rumore temporale 6.637 LSB (centro)
+[10694.435785] hardirqs last  enabled at (132633): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10694.435790] hardirqs last disabled at (132638): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10694.435794] softirqs last  enabled at (131938): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10694.435799] softirqs last disabled at (131929): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10694.435804] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-destra2: gc8034 3264x2448 RGGB (0 0x0f 0x0c 0 0x10 0xc4 0 0x94 2)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra2.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra2: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   145.36  sd   82.86
+  fase (0,1): media   135.05  sd   70.94
+  fase (1,0): media    99.39  sd   45.24
+  fase (1,1): media   144.87  sd   82.60
+  media 131.17, max 1023, saturi(>=1023) 0.120%
+  periodo 41.653 ms (sd 0.001), 24.008 fps
+  rumore temporale 6.470 LSB (centro)
+[10696.972091] hardirqs last  enabled at (20381): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10696.972096] hardirqs last disabled at (20386): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10696.972100] softirqs last  enabled at (20208): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10696.972105] softirqs last disabled at (20203): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10696.972109] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-destra1: gc8034 3264x2448 RGGB (0 0x0f 0x0c 0 0x10 0xc4 0 0x94 3)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra1.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra1: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   134.92  sd   70.90
+  fase (0,1): media   145.50  sd   82.83
+  fase (1,0): media   145.00  sd   82.59
+  fase (1,1): media    99.29  sd   45.25
+  media 131.18, max 1023, saturi(>=1023) 0.121%
+  periodo 41.653 ms (sd 0.001), 24.008 fps
+  rumore temporale 6.669 LSB (centro)
+[10699.587752] hardirqs last  enabled at (28551): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10699.587757] hardirqs last disabled at (28556): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10699.587761] softirqs last  enabled at (27830): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10699.587766] softirqs last disabled at (27817): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10699.587770] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-destra0: gc8034 3264x2448 RGGB (0 0x0f 0x0c 0 0x10 0xc4 0 0x94 4)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra0.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-destra0: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   145.44  sd   82.75
+  fase (0,1): media   134.92  sd   70.87
+  fase (1,0): media    99.26  sd   45.21
+  fase (1,1): media   144.94  sd   82.49
+  media 131.14, max 1023, saturi(>=1023) 0.120%
+  periodo 41.653 ms (sd 0.002), 24.008 fps
+  rumore temporale 6.643 LSB (centro)
+[10702.108007] hardirqs last  enabled at (33361): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10702.108013] hardirqs last disabled at (33366): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10702.108018] softirqs last  enabled at (32350): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10702.108024] softirqs last disabled at (32345): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10702.108029] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-stretta: gc8034 1632x2448 RGGB (0 0x0b 0x03 0 0x0c 0x21 0 0x0f 0x06 0 0x10 0x74 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-stretta.raw: 47941632 byte (attesi 47941632)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-stretta: 1632x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   164.18  sd   86.76
+  fase (0,1): media   178.83  sd  101.63
+  fase (1,0): media   178.43  sd  101.13
+  fase (1,1): media   115.59  sd   58.13
+  media 159.26, max 1023, saturi(>=1023) 0.241%
+  periodo 41.653 ms (sd 0.003), 24.008 fps
+  rumore temporale 6.958 LSB (centro)
+[10704.787908] hardirqs last  enabled at (8219): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10704.787918] hardirqs last disabled at (8224): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10704.787925] softirqs last  enabled at (7284): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10704.787934] softirqs last disabled at (7277): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10704.787942] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-tp-vb48: gc8034 3264x2448 RGGB ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tp-vb48.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tp-vb48: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   134.84  sd   70.82
+  fase (0,1): media   145.39  sd   82.75
+  fase (1,0): media   144.87  sd   82.48
+  fase (1,1): media    99.20  sd   45.19
+  media 131.08, max 1023, saturi(>=1023) 0.121%
+  periodo 41.653 ms (sd 0.001), 24.008 fps
+  rumore temporale 6.623 LSB (centro)
+[10707.243371] hardirqs last  enabled at (83143): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10707.243377] hardirqs last disabled at (83148): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10707.243381] softirqs last  enabled at (82424): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10707.243385] softirqs last disabled at (82413): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10707.243390] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-tp-vb500: gc8034 3264x2448 RGGB ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tp-vb500.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tp-vb500: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   134.78  sd   70.79
+  fase (0,1): media   145.31  sd   82.72
+  fase (1,0): media   144.79  sd   82.46
+  fase (1,1): media    99.17  sd   45.21
+  media 131.01, max 1023, saturi(>=1023) 0.121%
+  periodo 49.197 ms (sd 0.001), 20.327 fps
+  rumore temporale 6.614 LSB (centro)
+[10709.858321] hardirqs last  enabled at (48475): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10709.858326] hardirqs last disabled at (48480): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10709.858330] softirqs last  enabled at (47760): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10709.858335] softirqs last disabled at (47751): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10709.858340] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-tp-vb1000: gc8034 3264x2448 RGGB ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tp-vb1000.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tp-vb1000: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   134.75  sd   70.79
+  fase (0,1): media   145.27  sd   82.75
+  fase (1,0): media   144.75  sd   82.47
+  fase (1,1): media    99.13  sd   45.20
+  media 130.98, max 1023, saturi(>=1023) 0.121%
+  periodo 57.540 ms (sd 0.001), 17.379 fps
+  rumore temporale 6.588 LSB (centro)
+[10712.567377] hardirqs last  enabled at (57649): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10712.567382] hardirqs last disabled at (57654): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10712.567386] softirqs last  enabled at (57512): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10712.567392] softirqs last disabled at (57505): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10712.567396] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-tc-vb1500: gc8034 3264x1000 RGGB (0 0x0a 0xfe 0 0x0d 0x03 0 0x0e 0xf8 0 0x95 0x03 0 0x96 0xe8)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tc-vb1500.raw: 39168000 byte (attesi 39168000)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tc-vb1500: 3264x1000 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   164.55  sd   91.42
+  fase (0,1): media   179.37  sd  105.73
+  fase (1,0): media   178.12  sd  105.42
+  fase (1,1): media   114.24  sd   61.70
+  media 159.07, max 1023, saturi(>=1023) 0.296%
+  periodo 37.482 ms (sd 0.000), 26.680 fps
+  rumore temporale 7.615 LSB (centro)
+[10715.288904] hardirqs last  enabled at (16575): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10715.288909] hardirqs last disabled at (16580): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10715.288913] softirqs last  enabled at (14986): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10715.288919] softirqs last disabled at (14637): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10715.288923] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-tc-vb1700: gc8034 3264x1000 RGGB (0 0x0a 0xfe 0 0x0d 0x03 0 0x0e 0xf8 0 0x95 0x03 0 0x96 0xe8)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tc-vb1700.raw: 39168000 byte (attesi 39168000)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tc-vb1700: 3264x1000 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   164.57  sd   91.43
+  fase (0,1): media   179.40  sd  105.83
+  fase (1,0): media   178.16  sd  105.49
+  fase (1,1): media   114.26  sd   61.76
+  media 159.09, max 1023, saturi(>=1023) 0.296%
+  periodo 37.481 ms (sd 0.001), 26.680 fps
+  rumore temporale 7.625 LSB (centro)
+[10717.228926] hardirqs last  enabled at (15605): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10717.228932] hardirqs last disabled at (15610): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10717.228936] softirqs last  enabled at (13196): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10717.228941] softirqs last disabled at (13143): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10717.228945] ---[ end trace 0000000000000000 ]---
+
+=== g8-R12-tc-vb2000: gc8034 3264x1000 RGGB (0 0x0a 0xfe 0 0x0d 0x03 0 0x0e 0xf8 0 0x95 0x03 0 0x96 0xe8)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tc-vb2000.raw: 39168000 byte (attesi 39168000)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538/g8-R12-tc-vb2000: 3264x1000 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   164.61  sd   91.47
+  fase (0,1): media   179.48  sd  105.87
+  fase (1,0): media   178.23  sd  105.62
+  fase (1,1): media   114.26  sd   61.79
+  media 159.15, max 1023, saturi(>=1023) 0.297%
+  periodo 37.482 ms (sd 0.002), 26.680 fps
+  rumore temporale 7.592 LSB (centro)
+[10719.200881] hardirqs last  enabled at (46931): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[10719.200887] hardirqs last disabled at (46936): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[10719.200891] softirqs last  enabled at (46208): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10719.200896] softirqs last disabled at (46201): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[10719.200901] ---[ end trace 0000000000000000 ]---
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-164538

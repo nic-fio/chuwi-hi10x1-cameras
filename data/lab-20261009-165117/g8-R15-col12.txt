@@ -1,0 +1,21 @@
+sensore gc8034 gc8034 1-0037 /dev/v4l-subdev5 Intel IPU6 CSI2 1 /dev/video8
+formato 3264x2448 RGGB bpl 6528 n 6
+regs:
+0 0x0c 0x0c
+controlli:
+exposure: 2246
+analogue_gain: 0
+vertical_blanking: 48
+horizontal_blanking: 1008
+pixel_rate: 255909888
+rilettura:
+# p reg scritto allo-stream-on(ret 0) ora(ret 0)
+0 0x0c 0x0c 0x04! 0x0c
+timestamp:
+11037.110818
+11037.152472
+11037.194124
+11037.235780
+11037.277435
+11037.319085
+[11036.360451] gc8034 i2c-GCTI8034:00: lab: 1 scritture, ret 0

@@ -1,0 +1,6 @@
+cap dqbuf: 0 seq:      0 bytesused: 81920 ts: 12252.115391 field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 1 seq:      1 bytesused: 81920 ts: 12252.117460 delta: 2.069 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 2 seq:      2 bytesused: 81920 ts: 12252.119328 delta: 1.868 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 3 seq:      3 bytesused: 81920 ts: 12252.121197 delta: 1.869 ms field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 0 seq:      4 bytesused: 81920 ts: 12252.123067 delta: 1.870 ms fps: 521.10 field: None (ts-monotonic, ts-src-eof)
+cap dqbuf: 1 seq:      5 bytesused: 81920 ts: 12252.124937 delta: 1.870 ms fps: 523.78 field: None (ts-monotonic, ts-src-eof)

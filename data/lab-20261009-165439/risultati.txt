@@ -1,0 +1,92 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g8-R16-base: gc8034 3264x2448 RGGB ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-base.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-base: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media    67.92  sd   10.53
+  fase (0,1): media    68.65  sd   11.68
+  fase (1,0): media    68.61  sd   11.30
+  fase (1,1): media    66.16  sd    6.46
+  media 67.84, max 1023, saturi(>=1023) 0.002%
+  periodo 41.653 ms (mediana; media 41.653), 24.008 fps, fotogrammi persi 0
+  rumore temporale 1.911 LSB (centro)
+[11209.405938] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[11209.405955] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Payload checksum (CRC) error
+[11209.405969] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Transfer FIFO overflow
+[11209.405982] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[11209.405995] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Frame sync error
+
+=== g8-R16-bounds: gc8034 3284x2510 RGGB (0 0x09 0x00 0 0x0a 0x06 0 0x0d 0x09 0 0x0e 0xde 0 0x91 0x00 0 0x92 0x08 0 0x93 0x00 0 0x94 0x00 0 0x95 0x09 0 0x96 0xce 0 0x97 0x0c 0 0x98 0xd4 3 0x12 0x09 3 0x13 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-bounds.raw: 0 byte (attesi 99275520)
+nessun fotogramma
+[11211.910807] hardirqs last  enabled at (241945): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[11211.910812] hardirqs last disabled at (241950): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[11211.910816] softirqs last  enabled at (240892): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[11211.910821] softirqs last disabled at (240389): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[11211.910825] ---[ end trace 0000000000000000 ]---
+
+=== g8-R16-default: gc8034 3264x2448 RGGB (0 0x09 0x00 0 0x0a 0x3a 0 0x0d 0x09 0 0x0e 0xa0 0 0x91 0x00 0 0x92 0x08 0 0x93 0x00 0 0x94 0x09 0 0x95 0x09 0 0x96 0x90 0 0x97 0x0c 0 0x98 0xc0 3 0x12 0xf0 3 0x13 0x0f)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-default.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-default: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   140.84  sd   77.67
+  fase (0,1): media   153.50  sd   93.10
+  fase (1,0): media   152.97  sd   92.87
+  fase (1,1): media   103.20  sd   50.39
+  media 137.63, max 1023, saturi(>=1023) 0.127%
+  periodo 41.654 ms (mediana; media 41.654), 24.007 fps, fotogrammi persi 0
+  rumore temporale 7.162 LSB (centro)
+[11228.416178] hardirqs last  enabled at (481389): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[11228.416183] hardirqs last disabled at (481394): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[11228.416187] softirqs last  enabled at (479448): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[11228.416193] softirqs last disabled at (478941): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[11228.416197] ---[ end trace 0000000000000000 ]---
+
+=== g8-R16-centro: gc8034 640x480 RGGB (0 0x09 0x03 0 0x0a 0x8a 0 0x0d 0x01 0 0x0e 0xf0 0 0x91 0x00 0 0x92 0x08 0 0x93 0x04 0 0x94 0xb1 0 0x95 0x01 0 0x96 0xe0 0 0x97 0x02 0 0x98 0x80 3 0x12 0x20 3 0x13 0x03)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-centro.raw: 3686400 byte (attesi 3686400)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-centro: 640x480 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media    92.20  sd   16.05
+  fase (0,1): media    95.68  sd   20.01
+  fase (1,0): media    95.52  sd   19.90
+  fase (1,1): media    77.64  sd    9.78
+  media 90.26, max 211, saturi(>=1023) 0.000%
+  periodo 112.678 ms (mediana; media 112.679), 8.875 fps, fotogrammi persi 0
+  rumore temporale 3.531 LSB (centro)
+[11230.906448] hardirqs last  enabled at (6667): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[11230.906453] hardirqs last disabled at (6672): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[11230.906457] softirqs last  enabled at (5938): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[11230.906462] softirqs last disabled at (5929): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[11230.906467] ---[ end trace 0000000000000000 ]---
+
+=== g8-R16-angolo: gc8034 128x96 RGGB (0 0x09 0x09 0 0x0a 0x74 0 0x0d 0x00 0 0x0e 0x70 0 0x91 0x00 0 0x92 0x08 0 0x93 0x0c 0 0x94 0x53 0 0x95 0x00 0 0x96 0x60 0 0x97 0x00 0 0x98 0x80 3 0x12 0xa0 3 0x13 0x00)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-angolo.raw: 49152 byte (attesi 147456)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-angolo: 128x96 RGGB, 2 fotogrammi, uso il 1
+  fase (0,0): media  1023.00  sd    0.00
+  fase (0,1): media  1023.00  sd    0.00
+  fase (1,0): media  1023.00  sd    0.00
+  fase (1,1): media  1023.00  sd    0.00
+  media 1023.00, max 1023, saturi(>=1023) 100.000%
+  periodo 2.305 ms (mediana; media 77.142), 433.839 fps, fotogrammi persi 6117
+  rumore temporale 0.000 LSB (centro)
+[11243.914563] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame long packet discarded
+[11244.014361] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Single packet header error corrected
+[11244.014404] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[11244.014422] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[11244.014436] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame short packet discarded
+
+=== g8-R16-minimo: gc8034 64x64 RGGB (0 0x09 0x00 0 0x0a 0x06 0 0x0d 0x00 0 0x0e 0x50 0 0x91 0x00 0 0x92 0x08 0 0x93 0x00 0 0x94 0x01 0 0x95 0x00 0 0x96 0x40 0 0x97 0x00 0 0x98 0x40 3 0x12 0x50 3 0x13 0x00)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-minimo.raw: 49152 byte (attesi 49152)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439/g8-R16-minimo: 64x64 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   124.65  sd  231.96
+  fase (0,1): media   124.59  sd  231.98
+  fase (1,0): media   145.28  sd  266.19
+  fase (1,1): media   145.75  sd  267.55
+  media 135.07, max 1023, saturi(>=1023) 7.300%
+  periodo 0.004 ms (mediana; media 61.745), 250000.000 fps, fotogrammi persi 740890
+  rumore temporale 1.325 LSB (centro)
+[11250.119744] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[11250.119751] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[11250.119757] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Frame sync error
+[11255.020347] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[11255.037010] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close error: 3
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-165439

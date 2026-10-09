@@ -189,3 +189,63 @@ dell'esposizione nella v2.
 Errore mio corretto in corsa: una «traslazione di dH/2» con la finestra più
 alta era un artefatto dell'analizzatore (spostamenti riferiti ai centri);
 mandata la correzione anche a ChatGPT, che ha scartato il modello.
+
+## Mappa per il crop della v2 (9/10 sera, R10-R24, due corse ciascuna)
+
+Coordinate del crop = «area valida» (la più grande area misurata non
+costante, non l'array fisico).
+
+GC5035 (R10, R16; posizioni esatte al pixel, tempi esatti):
+- Le righe/colonne anomale (1019, 1023, nero) sono del sensore, non della
+  finestra: con la tabella (row 4, col 3) e uscita da (0, 0) non ce n'è
+  nessuna e quel punto è l'origine dell'area.
+- area_y = R - 4 + oy, area_x = 4 * floor((C - 1) / 2) - 4 + ox
+  (R row start, C col start dispari, (ox, oy) crop d'uscita P1).
+- Algoritmo provato: R = top + 4, C = 1, finestra 2616 x height, uscita
+  (left + 4, 0) width x height. Limiti 2608x1964, default 2592x1944 a (8, 8)
+  = tabella v1. Crop provati: limiti, default, 640x480 al centro, 128x96
+  nell'angolo, 64x64: posizioni esatte, nessun errore CSI.
+- Tempi a risoluzione piena e col crop: periodo = (height + vblank) * 2920 /
+  168,96 MHz, esatto (64x64: 2,212 ms; 640x480: 9,401; 2608x1964: 35,050).
+- Binning (R10-R11): con l'uscita binned a (4, 4) il fotogramma è il default
+  dimezzato (area 8, 8) e la fase resta GRBG. Il registro della lunghezza del
+  fotogramma conta righe del sensore (17,28 us, come a risoluzione piena) e
+  il binned non scende sotto ~1996 righe (34,497 ms). Frequenza del
+  collegamento nel binned non nota (la tabella cambia PLL e timing MIPI; il
+  driver Intel dichiara la stessa LINK_FREQ e tempi che darebbero 57,6 fps,
+  sbagliati di 2x): binning rimandato.
+
+GC8034 (R12-R24):
+- Tempi: righe del fotogramma = finestra + 20 + blanking (P0 0x07/08),
+  riga 16,688 us. Con finestra = height + 16 e uscita a y = 8: blanking =
+  vblank - 36, periodo = (height + vblank) * 16,688 us, esatto da 64 a 2448
+  righe (1,869 / 2,403 / 2,937 / 4,005 / 5,073 / 7,210 / 8,811 / 41,654 ms).
+  Due «anomalie» erano fotogrammi persi in cattura (lab-analizza ora usa la
+  mediana e li conta).
+- Finestre oltre la riga 2521 del sensore: tempi fuori modello (altezze
+  2500/2510: +52/+62 righe; 128x96 in fondo all'area: -8). Area per il crop:
+  righe 14-2513 del sensore (2500), colonne della finestra di tabella
+  (col start 4, 3284). Righe valide misurate 14-2523 (13 più scura).
+- Uscita larga quanto la finestra (margine totale 0): CSI. Margine destro 0
+  con sinistro 4, o sinistro 0 con destro 4: ok. Larghezza massima 3280.
+- Col start P0 0x0c: solo 2, 4 (tabella), 6 danno immagini coerenti; gli
+  altri valori piani incoerenti e diversi fra le corse. Non si tocca.
+  Finestra stretta (col 801): funziona ma il registro ignora i 2 bit bassi.
+- Algoritmo provato: R = top + 6 (16 bit, P0 0x09/0a), finestra height + 16,
+  uscita (left, 8), LWC = width * 5 / 4. Default 3264x2448 a (9, 52) =
+  tabella v1 (dy 0 in tre confronti). Estremi provati: crop in cima 3264x2448
+  e 640x96, in fondo 640x96 e 640x480: tempi esatti, nessun errore.
+  Posizione del 640x480 in fondo non confermata (correlazione 0,38).
+- Trappola: la tabella v1 scrive solo i byte bassi di row start e crop
+  (0x0a, 0x92, 0x94); un byte alto lasciato da uno stream precedente
+  sopravvive finché il sensore resta acceso e rompe lo stream dopo (2 su 3;
+  0 su 3 riscrivendo i byte alti). La v2 scrive tutta la geometria a 16 bit
+  a ogni avvio.
+
+Regole per la v2 (entrambi):
+- geometria e controlli tutti riscritti a ogni stream on;
+- limiti di VBLANK ed esposizione ricalcolati a ogni cambio di formato o
+  crop; default dell'esposizione limitato al massimo;
+- crop, formato vietati durante lo stream;
+- left/top e larghezza/altezza ai passi che mantengono il codice Bayer
+  (left e top pari nelle coordinate dell'area) e larghezza multipla di 4.

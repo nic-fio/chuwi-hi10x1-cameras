@@ -45,7 +45,11 @@ for dy in (0, 1):
 print(f"  media {f.mean():.2f}, max {f.max():.0f}, saturi(>=1023) {(f >= 1023).mean()*100:.3f}%")
 if len(ts) >= 3:
     d = np.diff(ts[1:])
-    print(f"  periodo {d.mean()*1000:.3f} ms (sd {d.std()*1000:.3f}), {1/d.mean():.3f} fps")
+    med = float(np.median(d))
+    persi = int(np.sum(np.round(d / med) - 1))
+    # mediana: un fotogramma perso (intervallo doppio) non deve spostare il periodo
+    print(f"  periodo {med*1000:.3f} ms (mediana; media {d.mean()*1000:.3f}), "
+          f"{1/med:.3f} fps, fotogrammi persi {persi}")
 if nf >= 2:
     c = (slice(h // 4, 3 * h // 4), slice(w // 4, 3 * w // 4))
     dd = fr[-1][c] - fr[-2][c]

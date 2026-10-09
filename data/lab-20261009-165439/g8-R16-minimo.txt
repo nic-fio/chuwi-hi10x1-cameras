@@ -1,0 +1,95 @@
+sensore gc8034 gc8034 1-0037 /dev/v4l-subdev5 Intel IPU6 CSI2 1 /dev/video8
+formato 64x64 RGGB bpl 128 n 6
+regs:
+0 0x09 0x00
+0 0x0a 0x06
+0 0x0d 0x00
+0 0x0e 0x50
+0 0x91 0x00
+0 0x92 0x08
+0 0x93 0x00
+0 0x94 0x01
+0 0x95 0x00
+0 0x96 0x40
+0 0x97 0x00
+0 0x98 0x40
+3 0x12 0x50
+3 0x13 0x00
+controlli:
+exposure: 140
+analogue_gain: 0
+vertical_blanking: 48
+horizontal_blanking: 1008
+pixel_rate: 255909888
+rilettura:
+# p reg scritto allo-stream-on(ret 0) ora(ret 0)
+0 0x09 0x00 0x09! 0x00
+0 0x0a 0x06 0x3a! 0x06
+0 0x0d 0x00 0x09! 0x00
+0 0x0e 0x50 0xa0! 0x50
+0 0x91 0x00 0x00 0x00
+0 0x92 0x08 0x08 0x08
+0 0x93 0x00 0x00 0x00
+0 0x94 0x01 0x01 0x01
+0 0x95 0x00 0x00 0x00
+0 0x96 0x40 0x40 0x40
+0 0x97 0x00 0x00 0x00
+0 0x98 0x40 0x40 0x40
+3 0x12 0x50 0x50 0x50
+3 0x13 0x00 0x00 0x00
+timestamp:
+11250.691619
+11250.693376
+96.368398
+11250.792189
+11250.889206
+11250.890985
+11251.086791
+11251.088536
+96.368414
+96.368423
+11251.286140
+96.368423
+96.368431
+11251.582458
+11251.582519
+96.368435
+11251.780048
+11251.780112
+96.368444
+96.368448
+96.368448
+96.368452
+96.368452
+96.368456
+96.368460
+96.368461
+96.368461
+96.368464
+96.368469
+96.368469
+96.368473
+96.368473
+96.368477
+96.368481
+96.368481
+96.368486
+96.368490
+96.368494
+96.368498
+96.368498
+96.368502
+96.368503
+96.368506
+96.368507
+96.368507
+96.368511
+96.368515
+96.368515
+96.368519
+11253.657140
+[11250.119744] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[11250.119751] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[11250.119757] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Frame sync error
+[11255.020347] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[11255.037010] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close error: 3

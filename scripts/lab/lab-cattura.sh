@@ -46,6 +46,9 @@ v4l2-ctl -d $VID --set-fmt-video="width=$W,height=$H,pixelformat=$PIX" >/dev/nul
 def=$(v4l2-ctl -d $SUB -l 2>/dev/null | awk '/flags=read-only/ {next} / default=/ { for (i = 1; i <= NF; i++) if ($i ~ /^default=/) { sub(/default=/, "", $i); printf "%s %s\n", $1, $i } }')
 vb=$(printf '%s\n' "${LAB_CTRL:-}" | tr ',' '\n' | sed -n 's/^vertical_blanking=//p')
 [ -n "$vb" ] || vb=$(printf '%s\n' "$def" | awk '$1 == "vertical_blanking" {print $2}')
+# due scritture: se il valore non cambia il driver non ricalcola i limiti
+# dell'esposizione per la nuova altezza
+[ -n "$vb" ] && v4l2-ctl -d $SUB --set-ctrl="vertical_blanking=$((vb + 4))" 2>/dev/null
 [ -n "$vb" ] && v4l2-ctl -d $SUB --set-ctrl="vertical_blanking=$vb"
 def=$(printf '%s\n' "$def" | awk '$1 != "vertical_blanking" && NF == 2 {printf "%s%s=%s", sep, $1, $2; sep = ","}')
 [ -n "$def" ] && v4l2-ctl -d $SUB --set-ctrl="$def"
