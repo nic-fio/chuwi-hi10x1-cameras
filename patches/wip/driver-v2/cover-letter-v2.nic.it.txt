@@ -7,25 +7,28 @@ Oggetto: [PATCH v2 0/5] media: i2c: driver per i sensori GalaxyCore GC5035 e GC8
 
 Ciao Laurent, dopo aver letto il tuo messaggio ecco cosa ho fatto:
 
- - Niente più tabelle di modo: finestra di lettura e crop d'uscita si
-   calcolano dal rettangolo di crop a ogni avvio dello stream.
+ - Niente tabelle di modo: la geometria non è più nella tabella dei
+   registri, finestra di lettura e crop d'uscita si calcolano dal
+   rettangolo di crop a ogni avvio dello stream.
  - Crop con la selezione CROP. In verticale è analogico (si riduce la
    finestra di lettura e il fotogramma si accorcia: il GC5035 a 640x480
    arriva fino a 106 fps). In orizzontale è il crop d'uscita del sensore,
    perché restringere la finestra in orizzontale dà immagini nere sul
-   GC5035 e immagini corrotte sul GC8034.
- - Binning assente. Sul GC5035 funziona, ma cambia la PLL e non conosco la
-   frequenza del collegamento in quel modo, quindi non potrei dichiarare un
-   LINK_FREQ giusto. Sul GC8034 esiste solo nelle sequenze vendor a 2 lane;
-   a 4 lane rompe il flusso CSI-2.
- - Ho messo il crop nelle patch 4 e 5, separate, perché su IMX908 avete
-   deciso di rimandarlo al modello comune dei sensori raw
+   GC5035, e sul GC8034 il registro della colonna di partenza dà immagini
+   corrotte alla maggior parte dei valori.
+ - Binning assente. Sul GC5035 funziona, ma la sequenza vendor cambia la
+   PLL e i tempi MIPI, e non conosco la frequenza del collegamento in quel
+   modo, quindi non potrei dichiarare un LINK_FREQ giusto. Sul GC8034 l'ho
+   trovato solo in sequenze vendor a 2 lane; a 4 lane rompe il flusso
+   CSI-2.
+ - Ho messo il crop nelle patch 4 e 5, separate, dopo la discussione su
+   IMX908 sul rimandarlo al modello comune dei sensori raw
    (20261001133138.GM944070@killaraus.ideasonboard.com). Se volete fare lo
    stesso qui, le patch 1-3 stanno in piedi da sole, a risoluzione fissa
    come la v1.
- - Non ho il datasheet del dispositivo, quindi ho misurato tutto sul
-   tablet: l'area che dà immagine (2608x1964 e 3282x2500, riportata come
-   NATIVE_SIZE e CROP_BOUNDS: non è l'array fisico), il crop di default
+ - Non ho i datasheet di questi sensori, quindi ho misurato tutto sul
+   tablet: le aree che danno immagine (2608x1964 e 3282x2500, riportate
+   come NATIVE_SIZE e CROP_BOUNDS: non sono gli array fisici), il crop di default
    (uguale alla v1: stessa immagine), il modello dei tempi (che ha corretto
    PIXEL_RATE del GC8034 a 256 MHz) e i limiti di dimensione.
  - Test: v4l2-compliance da git 54/54 senza avvisi su tutti e due, una
@@ -40,7 +43,8 @@ Ciao Laurent, dopo aver letto il tuo messaggio ecco cosa ho fatto:
      a 256 MHz e registro di blanking calcolato da VBLANK.
    - patch 3: aggiunto il Reviewed-by di Dan.
    - patch 4 e 5: nuove.
- - Ho usato un LLM (Claude) per il codice e le misure, ed è indicato nei
-   tag; l'inglese di questa lettera è tradotto dal mio italiano.
+ - Ho usato un LLM (Claude) per il codice e per preparare e analizzare le
+   prove, ed è indicato nei tag; le misure le ho fatte tutte sul tablet.
+   L'inglese di questa lettera è tradotto dal mio italiano.
 
 Nicola

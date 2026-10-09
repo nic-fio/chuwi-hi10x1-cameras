@@ -2,25 +2,29 @@ Subject: [PATCH v2 0/5] media: i2c: Add GalaxyCore GC5035 and GC8034 sensor driv
 
 Hi Laurent, after reading your message, this is what I did:
 
- - No more mode tables: the readout window and the output crop are
-   computed from the crop rectangle every time streaming starts.
+ - No mode tables: the geometry is no longer in the register table, the
+   readout window and the output crop are computed from the crop rectangle
+   every time streaming starts.
  - Crop through the CROP selection. Vertically it is an analog crop (the
    readout window gets smaller and the frame gets shorter: the GC5035 at
    640x480 runs at up to 106 fps). Horizontally it is the sensor output
    crop, because narrowing the readout window horizontally gives black
-   images on the GC5035 and corrupted images on the GC8034.
- - No binning. On the GC5035 it works, but it changes the PLL and I don't
-   know the link frequency in that mode, so I couldn't report a correct
-   LINK_FREQ. On the GC8034 it only exists in the 2-lane vendor sequences;
-   with 4 lanes it breaks the CSI-2 stream.
- - I put the crop in patches 4 and 5, separately, because for the IMX908
-   you decided to postpone it until the common raw sensor model
+   images on the GC5035, and on the GC8034 the column start register gives
+   corrupted images at most values.
+ - No binning. On the GC5035 it works, but the vendor sequence changes the
+   PLL and the MIPI timing, and I don't know the link frequency in that
+   mode, so I couldn't report a correct LINK_FREQ. On the GC8034 I only
+   found it in 2-lane vendor sequences; with 4 lanes it breaks the CSI-2
+   stream.
+ - I put the crop in patches 4 and 5, separately, after the IMX908
+   discussion about postponing it until the common raw sensor model
    (<20261001133138.GM944070@killaraus.ideasonboard.com>). If you want to
    do the same here, patches 1-3 stand on their own, at a fixed resolution
    like v1.
- - I don't have the datasheet of the device, so I measured everything on
-   the tablet: the area that gives image data (2608x1964 and 3282x2500,
-   reported as NATIVE_SIZE and CROP_BOUNDS: it is not the physical array),
+ - I don't have datasheets for these sensors, so I measured everything on
+   the tablet: the areas that give image data (2608x1964 and 3282x2500,
+   reported as NATIVE_SIZE and CROP_BOUNDS: they are not the physical
+   arrays),
    the default crop (the same as v1: same image), the timing model (which
    corrected the GC8034 PIXEL_RATE to 256 MHz) and the size limits.
  - Testing: v4l2-compliance from git, 54/54 with no warnings on both, a
@@ -36,8 +40,9 @@ Hi Laurent, after reading your message, this is what I did:
      register computed from VBLANK.
    - patch 3: added Dan's Reviewed-by.
    - patches 4 and 5: new.
- - I used an LLM (Claude) for the code and the measurements, as stated in
-   the tags; the English of this letter is translated from my Italian.
+ - I used an LLM (Claude) for the code and to plan and analyse the tests,
+   as stated in the tags; the measurements were all taken on the tablet.
+   The English of this letter is translated from my Italian.
 
 Nicola
 

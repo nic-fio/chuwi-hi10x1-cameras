@@ -1,7 +1,10 @@
 # Messaggi di commit della v2 (italiano per Nic, inglese per i commit)
 
-Preparati da Claude su delega di Nic (9/10 sera). Ogni numero viene da
-docs/14 e fatti-per-i-messaggi.md. L'inglese è la traduzione dell'italiano.
+Preparati da Claude su delega di Nic (9/10 sera), rivisti con gpt-5.5
+(data/chatgpt/crop-binning/03-*: accolte le precisazioni, respinti la
+rimozione di Assisted-by, prescritto da coding-assistants.rst, e il ritocco
+della 3/5, già rivista da Dan). Ogni numero viene da docs/14 e
+fatti-per-i-messaggi.md. L'inglese è la traduzione dell'italiano.
 
 ---------------------------------------------------------------------------
 ## 1/5 media: i2c: Add GC5035 image sensor driver
@@ -12,14 +15,15 @@ Mpixel con interfaccia MIPI CSI-2 a due lane. Il driver supporta i
 controlli di esposizione, guadagno analogico, blanking verticale e test
 pattern, e produce 2592x1944 RAW10.
 
-Il datasheet non è disponibile. La sequenza di inizializzazione viene dal
+Non ho un datasheet del sensore. La sequenza di inizializzazione viene dal
 driver per Alder Lake-M di intel/ipu6-drivers, derivato da quello ChromeOS
 del 2020. Finestra di lettura e crop d'uscita non fanno parte della
 sequenza: si calcolano dal rettangolo di crop, nelle coordinate della più
-grande area misurata che dà immagine (2608x1964), riportata come
-dimensione nativa e limiti del crop. Il rettangolo di default dà la stessa
-immagine della sequenza vendor. Il periodo del fotogramma, (altezza +
-vblank) x 2920 / 168,96 MHz, coincide con le misure.
+grande area misurata che dà immagine (2608x1964). Il driver riporta
+quest'area come dimensione nativa e limiti del crop; non è l'array fisico.
+Il rettangolo di default dà la stessa immagine della sequenza vendor. Il
+periodo del fotogramma, (altezza + vblank) x 2920 / 168,96 MHz, coincide
+con le misure.
 
 EN:
 media: i2c: Add GC5035 image sensor driver
@@ -29,13 +33,14 @@ a two lane MIPI CSI-2 interface. The driver supports the exposure,
 analogue gain, vertical blanking and test pattern controls, and outputs
 2592x1944 RAW10.
 
-No datasheet is available. The initialisation sequence comes from the
-Alder Lake-M driver in intel/ipu6-drivers, which derives from the ChromeOS
-driver posted in 2020. The readout window and the output crop are not part
-of the sequence: they are computed from the crop rectangle, in the
-coordinates of the largest area measured to give image data (2608x1964),
-which is reported as the native size and the crop bounds. The default crop
-rectangle gives the same image as the vendor sequence. The frame period,
+I don't have a datasheet for the sensor. The initialisation sequence comes
+from the Alder Lake-M driver in intel/ipu6-drivers, which derives from the
+ChromeOS driver posted in 2020. The readout window and the output crop are
+not part of the sequence: they are computed from the crop rectangle, in
+the coordinates of the largest area measured to give image data
+(2608x1964). The driver reports that area as the native size and the crop
+bounds; it is not the physical pixel array. The default crop rectangle
+gives the same image as the vendor sequence. The frame period,
 (height + vblank) * 2920 / 168.96 MHz, matches the measurements.
 
 Assisted-by: claude-opus-5-5 coccinelle sparse smatch
@@ -50,15 +55,16 @@ Mpixel con interfaccia MIPI CSI-2 a quattro lane. Il driver supporta i
 controlli di esposizione, guadagno analogico e blanking verticale, e
 produce 3264x2448 RAW10.
 
-Il datasheet non è disponibile. La sequenza di inizializzazione viene dal
+Non ho un datasheet del sensore. La sequenza di inizializzazione viene dal
 driver del BSP Rockchip. Finestra di lettura, crop d'uscita e lunghezza
 delle righe CSI-2 si calcolano dal rettangolo di crop, nelle coordinate di
-un'area di 3282x2500 misurata come utilizzabile, riportata come dimensione
-nativa e limiti del crop; il rettangolo di default dà la stessa immagine
-della sequenza vendor. Il fotogramma dura la finestra di lettura più 20
-righe più il registro di blanking, che quindi vale vblank meno 36. Il
-pixel rate, 256 MHz, è quello che dà i periodi misurati, da 1,869 ms per
-112 righe a 41,653 ms per 2496.
+un'area di 3282x2500 misurata come contenente immagine; il driver la
+riporta come dimensione nativa e limiti del crop, e non è l'array fisico.
+Il rettangolo di default dà la stessa immagine della sequenza vendor. Il
+fotogramma dura la finestra di lettura più 20 righe più il registro di
+blanking, che quindi vale vblank meno 36. Il pixel rate, 256 MHz, è quello
+che dà i periodi misurati, da 1,869 ms per fotogrammi di 112 righe a
+41,653 ms per fotogrammi di 2496 righe.
 
 EN:
 media: i2c: Add GC8034 image sensor driver
@@ -68,15 +74,16 @@ a four lane MIPI CSI-2 interface. The driver supports the exposure,
 analogue gain and vertical blanking controls, and outputs 3264x2448
 RAW10.
 
-No datasheet is available. The initialisation sequence comes from the
-Rockchip BSP driver. The readout window, the output crop and the CSI-2
-line length are computed from the crop rectangle, in the coordinates of a
-3282x2500 area measured to be usable, which is reported as the native size
-and the crop bounds; the default crop rectangle gives the same image as
-the vendor sequence. A frame lasts the readout window plus 20 lines plus
-the blanking register, which therefore holds vblank minus 36. The pixel
-rate, 256 MHz, is the one that gives the measured frame periods, from
-1.869 ms for 112 lines to 41.653 ms for 2496 lines.
+I don't have a datasheet for the sensor. The initialisation sequence comes
+from the Rockchip BSP driver. The readout window, the output crop and the
+CSI-2 line length are computed from the crop rectangle, in the coordinates
+of a 3282x2500 area measured to contain image data. The driver reports
+that area as the native size and the crop bounds; it is not the physical
+pixel array. The default crop rectangle gives the same image as the vendor
+sequence. A frame lasts the readout window plus 20 lines plus the blanking
+register, which therefore holds vblank minus 36. The pixel rate, 256 MHz,
+is the one that gives the measured frame periods, from 1.869 ms for 112
+frame lines to 41.653 ms for 2496 frame lines.
 
 Assisted-by: claude-opus-5-5 coccinelle sparse smatch
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
@@ -98,42 +105,43 @@ Assisted-by: claude-opus-5-5
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 
 ---------------------------------------------------------------------------
-## 4/5 media: i2c: gc5035: Add analog crop support
+## 4/5 media: i2c: gc5035: Add crop support
 
 IT:
 Implementa la selezione CROP sul pad sorgente. Il crop verticale lo fa la
-finestra di lettura, che accorcia il fotogramma: a 640x480 si arriva a 106
-fps. Quello orizzontale lo fa il crop d'uscita del sensore, perché una
-finestra più stretta dà immagini nere e il registro della colonna di
-partenza si muove solo a passi di quattro colonne. Gli offset sono pari,
-per tenere l'ordine GRBG, e le dimensioni multiple di 4, da 64x64 a
+finestra di lettura, che accorcia il fotogramma: a 640x480 si arriva fino a
+106 fps con il blanking verticale minimo. Quello orizzontale lo fa il crop
+d'uscita del sensore, perché una finestra più stretta dà immagini nere e il
+registro della colonna di partenza si muove solo a passi di quattro
+colonne, con i valori pari che danno immagini corrotte. Gli offset sono
+pari, per tenere l'ordine GRBG, e le dimensioni multiple di 4, da 64x64 a
 2608x1964.
 
 Senza binning né scaler la dimensione del formato è quella del crop. Come
-in ov01a10, set_fmt centra il crop su quello di default per chi non
-imposta il crop prima, e come in imx219 una nuova dimensione riporta il
-blanking verticale al default. Crop e formato non si cambiano durante lo
-stream.
+in ov01a10, set_fmt centra il crop su CROP_DEFAULT per chi non imposta il
+crop prima, e come in imx219 cambiare dimensione riporta il blanking
+verticale al default. Crop e formato non si cambiano durante lo stream.
 
 Provato con v4l2-compliance (54/54, nessun avviso) e con crop ai limiti,
 negli angoli, alla dimensione minima e al centro: posizione verificata al
 pixel, periodo come calcolato.
 
 EN:
-media: i2c: gc5035: Add analog crop support
+media: i2c: gc5035: Add crop support
 
 Implement the crop selection on the source pad. The vertical crop is done
-by the readout window, which shortens the frame: 640x480 runs at 106 fps.
-The horizontal crop is done by the sensor output crop, as a narrower
-readout window gives black images and the column start register only
-moves in steps of four columns. Crop offsets are even, to keep the GRBG
-order, and sizes are multiples of 4, from 64x64 to 2608x1964.
+by the readout window, which shortens the frame: 640x480 runs at up to
+106 fps with the minimum vertical blanking. The horizontal crop is done by
+the sensor output crop, as a narrower readout window gives black images
+and the column start register only moves in steps of four columns, with
+even values giving corrupted images. Crop offsets are even, to keep the
+GRBG order, and sizes are multiples of 4, from 64x64 to 2608x1964.
 
 Without binning or scaling, the format size is the crop size. As in
-ov01a10, set_fmt centres the crop rectangle on the default one for
-userspace that does not set the crop first, and as in imx219 a new size
-resets the vertical blanking. The crop and the format can't be changed
-while streaming.
+ov01a10, set_fmt centres the crop rectangle on CROP_DEFAULT for userspace
+that does not set the crop first, and as in imx219 changing the size
+resets the vertical blanking to its default. The crop and the format
+can't be changed while streaming.
 
 Tested with v4l2-compliance (54/54, no warning) and with crop rectangles
 at the bounds, in the corners, at the minimum size and in the centre: the
@@ -144,7 +152,7 @@ Assisted-by: claude-opus-5-5 coccinelle sparse smatch
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
 
 ---------------------------------------------------------------------------
-## 5/5 media: i2c: gc8034: Add analog crop support
+## 5/5 media: i2c: gc8034: Add crop support
 
 IT:
 Implementa la selezione CROP sul pad sorgente, come per il GC5035: crop
@@ -152,29 +160,35 @@ verticale con la finestra di lettura, orizzontale con il crop d'uscita del
 sensore, perché il registro della colonna di partenza dà immagini valide
 solo ad alcuni valori. Gli offset sono pari, per tenere l'ordine RGGB, e
 le dimensioni multiple di 4. La larghezza va da 512 a 3280: fino a 384
-colonne il ricevitore CSI-2 riceve fotogrammi corrotti, e un'uscita larga
-quanto la finestra di lettura dà errori CSI-2. L'altezza va da 64 a 2448:
-con finestre più alte i fotogrammi si allungano oltre il calcolo.
+colonne il ricevitore CSI-2 riceve fotogrammi corrotti, 448 ha funzionato
+e 512 è un minimo prudente; un'uscita larga quanto la finestra di lettura
+dà errori CSI-2. L'altezza va da 64 a 2448: con finestre di lettura più
+alte di quella vendor (2464 righe) i fotogrammi si allungano oltre il
+calcolo.
 
 Set_fmt e blanking verticale si comportano come nel GC5035.
 
-Provato come il GC5035.
+Provato come il GC5035: v4l2-compliance e crop ai limiti, negli angoli,
+alla dimensione minima e al centro.
 
 EN:
-media: i2c: gc8034: Add analog crop support
+media: i2c: gc8034: Add crop support
 
 Implement the crop selection on the source pad, as for the GC5035: the
 vertical crop is done by the readout window, the horizontal crop by the
 sensor output crop, as the column start register only gives valid images
 at some values. Crop offsets are even, to keep the RGGB order, and sizes
 are multiples of 4. The width ranges from 512 to 3280: up to 384 columns
-the CSI-2 receiver gets corrupted frames, and an output as wide as the
-readout window causes CSI-2 errors. The height ranges from 64 to 2448:
-with taller readout windows the frames get longer than computed.
+the CSI-2 receiver gets corrupted frames, 448 worked and 512 is kept as a
+conservative minimum; an output as wide as the readout window causes
+CSI-2 errors. The height ranges from 64 to 2448: with readout windows
+taller than the vendor one (2464 rows) the frames get longer than
+computed.
 
 set_fmt and the vertical blanking behave as in the GC5035 driver.
 
-Tested in the same way as the GC5035.
+Tested in the same way as the GC5035: v4l2-compliance and crop rectangles
+at the bounds, in the corners, at the minimum size and in the centre.
 
 Assisted-by: claude-opus-5-5 coccinelle sparse smatch
 Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
