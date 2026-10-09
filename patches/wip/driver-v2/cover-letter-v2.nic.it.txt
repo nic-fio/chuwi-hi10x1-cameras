@@ -34,7 +34,8 @@ Ciao Laurent, dopo aver letto il tuo messaggio ecco cosa ho fatto:
  - Test: v4l2-compliance da git 54/54 senza avvisi su tutti e due, una
    batteria di crop in due sessioni di test (rettangolo, tempi, posizione
    al pixel), libcamera 60/60 fotogrammi, e W=1, sparse, smatch, checkpatch
-   e coccinelle puliti su ogni patch.
+   e coccinelle puliti su ogni patch. Gli script delle prove e le misure
+   grezze sono disponibili, se servono.
  - Rispetto alla versione v1:
    - patch 1 e 2: geometria tolta dalla tabella e calcolata dal crop,
      scritta tutta a 16 bit; NATIVE_SIZE e CROP_BOUNDS sono l'area misurata

@@ -30,7 +30,8 @@ Hi Laurent, after reading your message, this is what I did:
  - Testing: v4l2-compliance from git, 54/54 with no warnings on both, a
    set of crop tests in two test sessions (rectangle, timing, position to
    the pixel), libcamera 60/60 frames, and W=1, sparse, smatch, checkpatch
-   and coccinelle clean on every patch.
+   and coccinelle clean on every patch. The test scripts and the raw
+   measurements are available if useful.
  - Changes since v1:
    - patches 1 and 2: geometry removed from the register table and
      computed from the crop, all written as 16-bit values; NATIVE_SIZE and
