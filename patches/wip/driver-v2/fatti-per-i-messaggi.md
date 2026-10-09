@@ -82,5 +82,8 @@ quello che segue viene dal datasheet riservato.
   configurazioni per camera.
 - Limite osservato del ricevitore, non dei driver: oltre ~500 fps (GC8034 a
   64 righe) l'IPU6 restituisce timestamp nulli; GC5035 a 452 fps pulito.
-- Controlli statici: W=1 + sparse, smatch, checkpatch --strict, coccinelle
-  (esito della verifica in corso al momento della stesura: da aggiornare).
+- Controlli statici sulla serie finale (worktree driver-v2 sul server,
+  commit fde89a1db 02944132d d5ea2b3bd sopra next 8e26d4c20): W=1 + sparse
+  e smatch 0 avvisi su ogni commit; checkpatch --strict --codespell nessuna
+  segnalazione; coccinelle (76 script, controprova ifnullfree ok) nessuna
+  segnalazione sui driver; i386 allmodconfig W=1 0 avvisi.
