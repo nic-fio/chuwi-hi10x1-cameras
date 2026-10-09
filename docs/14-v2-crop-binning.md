@@ -313,3 +313,26 @@ che tocca il crop. Lasciato: stato già scritto se update_ctrls fallisce
 (scripts/v2/prova-completa-v2.sh): tutto OK tranne il WARN noto IPU6
 ipu6-isys-queue.c:203 (19 volte, come la v1) e l'esposizione dispari non
 decidibile per luce.
+
+## Stato dell'arte verificato (ricerca del 9/10 sera, patchwork API)
+
+- IMX908 v3, 1/10/2026: Sakari `<ar5RFpomHbdAAMLx@kekkonen.localdomain>`
+  «We don't really have cropping behaviour documented before the common raw
+  sensor model. I'd just postpone this...»; Laurent
+  `<20261001133138.GM944070@killaraus.ideasonboard.com>` «drop the
+  .set_selection() handler and hardcode full resolution ... We'll add it
+  back one kernel version later by adding crop support based on the raw
+  camera sensor model.»; Sakari `<ar5kBpv8hdkpldp9@kekkonen.localdomain>`
+  d'accordo. Citazioni ricontrollate da Claude sul JSON di patchwork 157102.
+- Laurent a noi, 9/10 `<20261009094818.GB693830@killaraus.ideasonboard.com>`:
+  crop analogico richiesto 8 giorni dopo. Ambiguo.
+- Modello comune: v12 (86 patch) tutte «New»; preparazione (argomento
+  client_info) accettata; data d'ingresso ignota. Col modello il formato del
+  pad interno = array fisico, che non conosciamo.
+- Accettati nel 2026 senza set_selection né binning: imx678, imx576,
+  os02g10, s5kjn5, ov05c10. Con crop in mainline: ov01a10, t4ka3.
+- Assisted-by: formato di Documentation/process/coding-assistants.rst
+  dell'albero di destinazione; Sakari chiede se è rilevante.
+Decisione proposta a Nic: chiedere a Laurent prima della v2 (crop ora come
+ov01a10 o dopo come IMX908) e preparare la serie divisa: patch base senza
+tabelle di modo a risoluzione fissa + patch separata col crop.
