@@ -422,3 +422,29 @@ Prossimi passi: rispondere a ogni commento; sollecito solo dopo circa due
 settimane di silenzio (dal 23 ottobre); una v2 per ogni giro di
 osservazioni, nello stesso thread. Intanto, di giorno: AE di libcamera a
 metà scala, poi la patch libcamera.
+
+## AE di libcamera alla finestra (9 ottobre 2026, 9:37-9:39)
+
+Luce del giorno, una camera per volta, 90 fotogrammi per corsa, due corse
+per caso in ordine inverso (con/senza, poi senza/con), così che un cambio
+di luce si veda. Script `scripts/ae-finestra.sh`, log e riassunto in
+`data/ae-finestra-20261009`.
+
+- gc5035, con helper: 1,68x (indice 3) e 34,4 ms, fermo dal fotogramma 13
+  e dal 29. Senza helper: indice 9 (4,73x veri) e 34,4 ms; nella prima corsa
+  ci arriva salendo da 4 di un indice ogni 8 fotogrammi, nella seconda
+  oscilla 9-10 fino al 21.
+- gc8034, con helper: 1x e 16,8 ms dal fotogramma 9-10 in tutte e due le
+  corse, che fanno da cornice a quelle senza (la luce non è cambiata).
+  Senza helper: indice 0 e l'esposizione sale senza fermarsi, da 17,4 a
+  29,9 ms in 180 fotogrammi.
+
+Perché: senza `CameraSensorHelper` libcamera non usa `AgcMeanLuminance` ma
+`AgcMSV` (src/ipa/libipa/agc.cpp, commit 4412643bd «Work without
+CameraSensorHelper»): bersaglio diverso (media su 5 classi dell'istogramma,
+2,5 ± 0,2), passo proporzionale dell'1-4% e una correzione ogni ~8
+fotogrammi. Il confronto con/senza, quindi, è tra due algoritmi, non solo
+tra due modelli di guadagno. Quello che si può dire nella patch libcamera:
+con l'helper l'AE a metà scala converge in 10-30 fotogrammi e resta fermo;
+senza, in 180 fotogrammi non converge (gc8034) o si ferma su un punto 2,8
+volte più luminoso (gc5035).
