@@ -85,5 +85,7 @@ quello che segue viene dal datasheet riservato.
 - Controlli statici sulla serie finale (worktree driver-v2 sul server,
   commit fde89a1db 02944132d d5ea2b3bd sopra next 8e26d4c20): W=1 + sparse
   e smatch 0 avvisi su ogni commit; checkpatch --strict --codespell nessuna
-  segnalazione; coccinelle (76 script, controprova ifnullfree ok) nessuna
-  segnalazione sui driver; i386 allmodconfig W=1 0 avvisi.
+  segnalazione; coccinelle (76 script, controprova ifnullfree ok) nessun
+  rilievo sul codice: 6 script non applicabili e avvisi interni di
+  stream_open.cocci, identici anche su ipu-bridge.c (problemi degli script,
+  come per la v1); i386 allmodconfig W=1 0 avvisi.
