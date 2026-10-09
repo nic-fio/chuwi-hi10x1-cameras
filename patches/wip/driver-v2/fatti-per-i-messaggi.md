@@ -14,13 +14,33 @@ quello che segue viene dal datasheet riservato.
   la finestra di lettura (fotogrammi più corti, fps più alti), orizzontale
   col crop d'uscita del sensore.
 - set_fmt: niente binning né scaler, la dimensione del formato è quella del
-  crop; una nuova larghezza o altezza ricentra il crop su quell'asse (come
-  ov01a10, per chi non imposta il crop prima).
+  crop; una nuova larghezza o altezza centra il crop, su quell'asse, sul
+  centro del crop di default (dentro l'area): alla dimensione di default si
+  torna esattamente al default. Precedente per un set_fmt che tocca il crop:
+  ov01a10 («Center image for userspace which does not set the crop first»).
+  Va detto, perché dev-subdev.rst descrive la propagazione dal crop al
+  formato, non il contrario.
+- A ogni cambio di dimensione VBLANK torna al default, come imx219 e
+  ov01a10: lo stato non dipende dalla storia.
 - I limiti di HBLANK, VBLANK ed esposizione seguono il crop; il default
   dell'esposizione non supera mai il massimo (bug latente della v1).
 - Crop e formato vietati durante lo stream (EBUSY).
 - Al crop di default l'immagine è identica alla v1 (confronto v1-v2-v1).
 - Binning non incluso (motivo sotto).
+
+## Da dire esplicitamente a Laurent (rilievi della revisione avversaria)
+
+- Il crop verticale è analogico (finestra di lettura, il fotogramma si
+  accorcia). L'orizzontale no: è il crop d'uscita interno al sensore,
+  perché restringere la finestra in orizzontale dà immagini nere (GC5035) o
+  passa per un col start inaffidabile (GC8034). HBLANK = HTS - larghezza, e
+  i periodi tornano. Non chiamare «analogico» il crop orizzontale.
+- Sakari su imx678 ha chiesto di rimandare set_selection al modello comune
+  dei sensori raw, che non è in next. La v2 lo aggiunge perché lo chiede
+  Laurent sulla 1/3; precedente nel tree: ov01a10. Offrire uno split (patch
+  base + patch del crop scartabile da sola) se preferiscono.
+- CROP_DEFAULT è diverso da CROP_BOUNDS: il default è l'immagine della
+  sequenza vendor e della v1 (compatibilità), i limiti sono l'area misurata.
 
 ## GC5035 (2 lane)
 
@@ -45,7 +65,9 @@ quello che segue viene dal datasheet riservato.
   3264x2448, l'immagine vendor.
 - Passi come il GC5035 (ordine RGGB fisso). Larghezza 512..3280: fino a 384
   colonne il ricevitore riceve fotogrammi rotti, da 448 va; un'uscita larga
-  quanto la finestra dà errori CSI-2. Altezza 64..2448.
+  quanto la finestra dà errori CSI-2. Altezza 64..2448: con finestre più
+  alte delle 2464 righe vendor il fotogramma si allunga di tante righe
+  quante quelle in più (2500: +52, 2510: +62), fuori dal modello.
 - Col start valido solo ad alcuni valori: finestra di tabella, orizzontale
   col crop d'uscita.
 - Tempi: righe = finestra + 20 + registro di blanking; con finestra alta

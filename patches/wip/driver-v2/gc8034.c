@@ -8,6 +8,7 @@
  * The registers and sequences come from the Rockchip BSP driver,
  * rockchip-linux/kernel, branch develop-5.10.
  */
+#include <linux/align.h>
 #include <linux/array_size.h>
 #include <linux/clk.h>
 #include <linux/container_of.h>
@@ -17,6 +18,7 @@
 #include <linux/gpio/consumer.h>
 #include <linux/i2c.h>
 #include <linux/math.h>
+#include <linux/minmax.h>
 #include <linux/mod_devicetable.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
@@ -92,7 +94,10 @@
  * sequence, at (8, 52) in the area.
  *
  * Output widths up to 384 pixels gave corrupted frames on the CSI-2 receiver,
- * 448 pixels and above worked; 512 is kept as the minimum.
+ * 448 pixels and above worked; 512 is kept as the minimum. With a readout
+ * window taller than the 2464 rows of the vendor sequence, the frames were
+ * longer than the timing model below by the extra rows, so the output height
+ * is limited to 2448.
  */
 #define GC8034_AREA_WIDTH		3282
 #define GC8034_AREA_HEIGHT		2500
@@ -522,9 +527,14 @@ static int gc8034_update_ctrls(struct gc8034 *gc8034,
 	if (ret)
 		return ret;
 
+	/* Like imx219 and ov01a10, a new size resets the vertical blanking. */
 	ret = __v4l2_ctrl_modify_range(gc8034->vblank, GC8034_VBLANK_MIN,
 				       GC8034_VTS_MAX - format->height, 1,
 				       GC8034_VBLANK_MIN);
+	if (ret)
+		return ret;
+
+	ret = __v4l2_ctrl_s_ctrl(gc8034->vblank, GC8034_VBLANK_MIN);
 	if (ret)
 		return ret;
 
@@ -627,8 +637,9 @@ static int gc8034_set_selection(struct v4l2_subdev *sd,
 
 /*
  * No binning or scaling: the output size is the size of the crop rectangle. A
- * new width or height centres the crop rectangle in the area along that axis,
- * for userspace that does not set the crop rectangle first.
+ * new width or height centres the crop rectangle on the default crop
+ * rectangle along that axis, within the area, for userspace that does not set
+ * the crop rectangle first. The default size gives the default rectangle back.
  */
 static int gc8034_set_fmt(struct v4l2_subdev *sd,
 			  const struct v4l2_subdev_client_info *ci,
@@ -639,6 +650,7 @@ static int gc8034_set_fmt(struct v4l2_subdev *sd,
 	struct v4l2_mbus_framefmt *format;
 	struct v4l2_rect *crop;
 	u32 width, height;
+	int pos;
 
 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE &&
 	    v4l2_subdev_is_streaming(sd))
@@ -651,11 +663,15 @@ static int gc8034_set_fmt(struct v4l2_subdev *sd,
 
 	crop = v4l2_subdev_state_get_crop(state, 0);
 	if (width != crop->width) {
-		crop->left = ALIGN_DOWN((GC8034_AREA_WIDTH - width) / 2, 2);
+		pos = GC8034_CROP_LEFT + (GC8034_WIDTH - (int)width) / 2;
+		pos = clamp(pos, 0, GC8034_AREA_WIDTH - (int)width);
+		crop->left = ALIGN_DOWN(pos, 2);
 		crop->width = width;
 	}
 	if (height != crop->height) {
-		crop->top = ALIGN_DOWN((GC8034_AREA_HEIGHT - height) / 2, 2);
+		pos = GC8034_CROP_TOP + (GC8034_HEIGHT - (int)height) / 2;
+		pos = clamp(pos, 0, GC8034_AREA_HEIGHT - (int)height);
+		crop->top = ALIGN_DOWN(pos, 2);
 		crop->height = height;
 	}
 
@@ -970,7 +986,8 @@ static int gc8034_init_controls(struct gc8034 *gc8034)
 					   GC8034_HTS - GC8034_WIDTH, 1,
 					   GC8034_HTS - GC8034_WIDTH);
 
-	exposure_max = GC8034_HEIGHT + GC8034_VBLANK_MIN - GC8034_EXP_MARGIN;
+	exposure_max = round_down(GC8034_HEIGHT + GC8034_VBLANK_MIN -
+				  GC8034_EXP_MARGIN, GC8034_EXP_STEP);
 	gc8034->exposure = v4l2_ctrl_new_std(ctrl_hdlr, &gc8034_ctrl_ops,
 					     V4L2_CID_EXPOSURE, GC8034_EXP_MIN,
 					     exposure_max, GC8034_EXP_STEP,

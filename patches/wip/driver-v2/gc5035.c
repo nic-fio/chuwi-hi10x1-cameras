@@ -11,6 +11,7 @@
  * Liang Wang <liang1.wang@intel.com>, derived from the ChromeOS series by
  * Tomasz Figa <tfiga@chromium.org>.
  */
+#include <linux/align.h>
 #include <linux/array_size.h>
 #include <linux/clk.h>
 #include <linux/container_of.h>
@@ -20,6 +21,7 @@
 #include <linux/gpio/consumer.h>
 #include <linux/i2c.h>
 #include <linux/math.h>
+#include <linux/minmax.h>
 #include <linux/mod_devicetable.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
@@ -84,8 +86,7 @@
  * size of the full pixel array is not known, so this area is reported as the
  * native size. Its first row is read out with the row start register at 4.
  * Its first column is the fifth column of a readout window starting at column
- * start 1, which is the first column of the window of the vendor sequence
- * (column start 3).
+ * start 1, and the first column of the vendor window (column start 3).
  *
  * The row start register moves the image by one row per unit. The column
  * start register moves it in steps of four columns, and its even values give
@@ -497,9 +498,14 @@ static int gc5035_update_ctrls(struct gc5035 *gc5035,
 	vblank_max = GC5035_VBLANK_MIN +
 		     round_down(GC5035_VTS_MAX - format->height -
 				GC5035_VBLANK_MIN, GC5035_VBLANK_STEP);
+	/* Like imx219 and ov01a10, a new size resets the vertical blanking. */
 	ret = __v4l2_ctrl_modify_range(gc5035->vblank, GC5035_VBLANK_MIN,
 				       vblank_max, GC5035_VBLANK_STEP,
 				       GC5035_VBLANK_MIN);
+	if (ret)
+		return ret;
+
+	ret = __v4l2_ctrl_s_ctrl(gc5035->vblank, GC5035_VBLANK_MIN);
 	if (ret)
 		return ret;
 
@@ -598,8 +604,9 @@ static int gc5035_set_selection(struct v4l2_subdev *sd,
 
 /*
  * No binning or scaling: the output size is the size of the crop rectangle. A
- * new width or height centres the crop rectangle in the area along that axis,
- * for userspace that does not set the crop rectangle first.
+ * new width or height centres the crop rectangle on the default crop
+ * rectangle along that axis, within the area, for userspace that does not set
+ * the crop rectangle first. The default size gives the default rectangle back.
  */
 static int gc5035_set_fmt(struct v4l2_subdev *sd,
 			  const struct v4l2_subdev_client_info *ci,
@@ -610,6 +617,7 @@ static int gc5035_set_fmt(struct v4l2_subdev *sd,
 	struct v4l2_mbus_framefmt *format;
 	struct v4l2_rect *crop;
 	u32 width, height;
+	int pos;
 
 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE &&
 	    v4l2_subdev_is_streaming(sd))
@@ -622,11 +630,15 @@ static int gc5035_set_fmt(struct v4l2_subdev *sd,
 
 	crop = v4l2_subdev_state_get_crop(state, 0);
 	if (width != crop->width) {
-		crop->left = ALIGN_DOWN((GC5035_AREA_WIDTH - width) / 2, 2);
+		pos = GC5035_CROP_LEFT + (GC5035_WIDTH - (int)width) / 2;
+		pos = clamp(pos, 0, GC5035_AREA_WIDTH - (int)width);
+		crop->left = ALIGN_DOWN(pos, 2);
 		crop->width = width;
 	}
 	if (height != crop->height) {
-		crop->top = ALIGN_DOWN((GC5035_AREA_HEIGHT - height) / 2, 2);
+		pos = GC5035_CROP_TOP + (GC5035_HEIGHT - (int)height) / 2;
+		pos = clamp(pos, 0, GC5035_AREA_HEIGHT - (int)height);
+		crop->top = ALIGN_DOWN(pos, 2);
 		crop->height = height;
 	}
 

@@ -297,3 +297,19 @@ Revisione del codice v2 di gpt-5.5 (data/chatgpt/crop-binning/02-*):
   non validi, qui validi per costruzione); lock (state_lock = lock dei
   controlli dal probe della v1); controllo del pad (lo fa il core).
 - checkpatch: una riga di 81 colonne nel GC8034, corretta.
+
+Revisione avversaria (agente con contesto pulito, 9/10 sera): nessun bug
+bloccante. Corretto: set_fmt ricentrava sul centro dell'area e non tornava
+al default (GC8034: default -> 1920x1080 -> 3264x2448 finiva 26 righe più
+su; GC5035 2); ora centra sul crop di default, provato (torna a (8, 8) e
+(8, 52)). Allineato a imx219/ov01a10: VBLANK al default a ogni cambio di
+dimensione. Aggiunti include minmax.h/align.h, commento sul massimo di 2448
+righe del GC8034 (motivo misurato), round_down dell'esposizione al probe del
+GC8034, frase ambigua del commento GC5035. Da dire nei messaggi: crop
+orizzontale digitale (uscita del sensore), set_selection prima del modello
+comune (precedente ov01a10), CROP_DEFAULT diverso da CROP_BOUNDS, set_fmt
+che tocca il crop. Lasciato: stato già scritto se update_ctrls fallisce
+(limiti validi per costruzione, ov01a10 ignora l'errore). Prova completa v2
+(scripts/v2/prova-completa-v2.sh): tutto OK tranne il WARN noto IPU6
+ipu6-isys-queue.c:203 (19 volte, come la v1) e l'esposizione dispari non
+decidibile per luce.
