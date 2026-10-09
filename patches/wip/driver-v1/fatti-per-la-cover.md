@@ -3,7 +3,7 @@
 Per Nic. Non è un testo da copiare: sono i fatti, controllati l'8/10 sera
 sulla serie finale. La cover e i messaggi li scrivi tu con parole tue.
 
-Serie: `70f2a0b04..bce5c5710`, 3 patch, base media `next` `8e26d4c20`
+Serie: `35478bd01..7b3ed03b4`, 3 patch, base media `next` `8e26d4c20`
 (ancora la punta di `next` alle 19 dell'8/10).
 
 1. gc5035, driver
@@ -49,11 +49,12 @@ NATIVE_SIZE = finestra letta (2608x1960 e 3284x2464), crop (8,8) e (9,8).
 (5 patch, binding, 45/46):** non usarla, è superata.
 
 
-## 2. Numeri delle prove (8/10, 18:50)
+## 2. Numeri delle prove (8/10, 19:47, serie finale)
 
-Kernel: `next` `8e26d4c20` + la serie, build di debug (KASAN, lockdep).
+Kernel: `next` `8e26d4c20` + la serie finale (`7.3.0-rc1-intelcam-debug-g7b3ed03b4963`),
+build di debug (KASAN, lockdep).
 Tablet CHUWI Hi10 X1, Intel N100, IPU6. Uscita in
-`data/prova-20261008-185040/`.
+`data/prova-20261008-194731/`.
 
 Frame rate (atteso dalle costanti del driver, misurato):
 - gc5035: 28,82 contro 28,81 fps
@@ -63,8 +64,8 @@ Frame rate (atteso dalle costanti del driver, misurato):
   una riga (-0,8).
 
 Guadagno analogico, dal primo all'ultimo gradino:
-- gc5035: 17 gradini, chiesto 15,6x, misurato 15,3x (1,9%)
-- gc8034: 7 gradini, chiesto 7,66x, misurato 7,37x (3,8%)
+- gc5035: 17 gradini, chiesto 15,6x, misurato 15,35x (1,6%)
+- gc8034: 7 gradini, chiesto 7,66x, misurato 7,74x (1,0%)
 
 Altre verifiche:
 - esposizione e VBLANK scritti a 16 bit e riletti dal sensore: giusti
@@ -105,7 +106,7 @@ gc08a3, imx283, hi846 in mainline. Conviene dirlo in una riga, prima che lo
 chieda qualcuno.
 
 L'output completo da mettere in fondo alla cover:
-`data/prova-20261008-185040/04-compliance-gc5035.txt` e `...-gc8034.txt`.
+`data/prova-20261008-194731/04-compliance-gc5035.txt` e `...-gc8034.txt`.
 
 
 ## 4. Cose da dire che non sono coperte
@@ -131,12 +132,12 @@ L'output completo da mettere in fondo alla cover:
 ## 5. Firme e tag
 
 - Le patch **non hanno il Signed-off-by**. Va aggiunto da te, a tutte e 3.
-- `Assisted-by:` oggi dice `LLM coccinelle sparse smatch` (1 e 2) e `LLM`
-  (3). Sakari ha chiesto «Which one?»: va messo il nome del modello.
-- La sezione «Use of an LLM» della bozza è segnata
-  [[DA CONFERMARE DA NICOLA]]: cosa hai fatto tu e cosa lo strumento.
-  Laurent ha un bot contro i testi da LLM: quella sezione e tutto il resto
-  scrivili tu.
+- `Assisted-by:` ora dice `claude-opus-5-5 coccinelle sparse smatch` (1 e 2)
+  e `claude-opus-5-5` (3), col nome del modello come ha chiesto Sakari.
+  Va subito dopo il tuo Signed-off-by.
+- La sezione «Use of an LLM» della cover ora ha il tuo testo. Laurent ha un
+  bot contro i testi da LLM: anche il resto della cover e i messaggi di
+  commit scrivili tu.
 
 
 ## 6. Controlli fatti stasera
@@ -147,5 +148,6 @@ L'output completo da mettere in fondo alla cover:
 - I file in `patches/wip/driver-v1/gc5035.c` e `gc8034.c` sono identici a
   quelli della serie sul server.
 - Rilettura da capo della serie finale: nessun difetto bloccante; 6 correzioni
-  piccole prima di spedire (docs/13, «Rilettura da capo di bce5c5710»). Dopo le
-  correzioni i numeri di questo foglio vanno rifatti con la prova completa.
+  piccole prima di spedire (docs/13, «Rilettura da capo di bce5c5710»), applicate
+  in `7b3ed03b4`. I numeri della sezione 2 vengono dalla prova completa rifatta
+  su questa versione.
