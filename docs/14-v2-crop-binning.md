@@ -67,17 +67,27 @@ GC5035, geometria:
   1 px per unità (x 8->7: dx -1).
 - Row start P0 0x0a: lineare, 1 riga per unità (0 -> -4, 5 -> +1, 6 -> +2,
   12 -> +8 rispetto a 4).
-- Col start P0 0x0c: valori dispari = 2 colonne per unità, immagine
-  coerente (5: +4,0 px su tutti e quattro i piani Bayer; 11: +16). Valori
-  pari = immagine incoerente: i piani delle colonne pari restano fermi, quelli
-  delle dispari si spostano di quantità diverse (col 2: 0 / -4 / 0 / -32 px);
-  la correlazione globale dava un falso spostamento dispari. Usare solo
-  valori dispari (i vendor usano 3).
+- Col start P0 0x0c (R9, due corse, piani Bayer separati su 6 fotogrammi
+  mediati): dx(c) = 4 * (floor((c - 1) / 2) - 1) colonne rispetto a c = 3
+  (1 e 2: -4; 3 e 4: 0; 5 e 6: +4; 7: +8; 11: +16). Passi di 4
+  colonne: la fase Bayer non cambia mai. I valori pari danno la stessa
+  posizione del dispari precedente ma un'immagine degradata (correlazione
+  0,38-0,49 contro 0,85 dei dispari e 0,87 fra due basi; in una corsa un
+  piano incoerente). Usare solo valori dispari (i vendor usano 3). Le misure
+  del primo giro (spostamenti dispari, piani incoerenti) erano su un solo
+  fotogramma e su valori pari: superate.
 - Altezza della finestra P0 0x0d/0e: non sposta l'immagine (1962..2000 a row
-  start 0: sempre dy -4). Righe attive fino a circa la 1968 della finestra
-  (row start 0), poi livello del nero (64) e una riga isolata a 1023.
-- Colonne attive: con col start 0 l'immagine finisce alla colonna 2611 della
-  finestra; seguono due colonne fisse a 1023, poi nero. Circa 2612 colonne.
+  start 0: sempre dy -4).
+- Area valida (R8, due corse identiche; row start 0, col start 1, finestra
+  2040x2640, uscita da 0,0): righe 0-3 fisse a 1019, immagine nelle righe
+  4-1967 (1964), poi nero con una banda di 10 righe (1972-1981) e una riga a
+  1023 (1992); colonne 0-1 nere, 2-3 a 1023, immagine nelle colonne 4-2611
+  (2608), poi 2612-2613 a 1023 e nero. Le misure precedenti con col start 0
+  (pari) sono superate. Il fotogramma della tabella (row 4, col 3, uscita
+  2592x1944 da 8,8) sta a (8, 8) dentro quest'area: dx = dy = +12 rispetto
+  alla cattura dell'area, due corse; restano 8 colonne a destra e 12 righe
+  sotto. «Area valida» = la più grande area misurata non costante, non
+  l'array fisico.
 - Margine fra finestra e uscita: verticale anche 0; orizzontale serve
   x + w <= larghezza finestra - 2 (destra 0 e 1 falliscono, sinistra 0 va).
   Tutti i fallimenti del primo E9 avevano margine destro 0.
@@ -119,6 +129,24 @@ GC8034:
   usa già 0xea, 0x9a e 0x06. Nessuna fonte nota per il binning a 4 lane:
   fuori dalla v2 salvo una fonte nuova.
 
+Rilettura dei registri (driver da laboratorio con debugfs «rilettura»,
+R8, 9/10 sera): ogni registro della lista viene riletto subito dopo lo
+stream on e di nuovo a cattura finita.
+- GC5035: subito dopo lo stream on molti registri di pagina 0 e 2 (row/col
+  start, finestra, 0x1f, 0x21, 0x29, 0x33, 0x44, 0x4e, 0x8c, 0xd0, 0xd5, P2
+  0x14/15) restituiscono ancora il valore della tabella; a cattura finita
+  hanno quello scritto. Sono a doppio buffer, applicati a un confine di
+  fotogramma: la verifica valida è quella successiva.
+- GC5035 P0 0xf9: scritto 0x12 (tabella vendor del binning), riletto 0x10
+  sempre, in tutte e quattro le catture binned. Il bit 1 non resta; il
+  binning funziona lo stesso.
+- GC8034 P0 0xad: scritto 0x30, riletto 0x30: la scrittura arriva. In una
+  corsa, dopo il flusso fallito, la rilettura successiva dava 0x00: non
+  spiegato.
+- Tutte le scritture delle prove R8 risultano applicate (a parte 0xf9), e i
+  fallimenti di E4-noP3, margine destro 0/1 e 0xad si ripetono identici nelle
+  due corse: non sono scritture perse o sulla pagina sbagliata.
+
 Strumenti:
 - Bug del driver da laboratorio (ereditato da driver-v1, latente lì perché
   l'altezza è fissa): con VBLANK il range dell'esposizione viene modificato
@@ -139,10 +167,24 @@ pixel su 64 fotogrammi, piani Bayer separati. Concordato:
 - get_selection restituisce il rettangolo programmato davvero; codice Bayer
   misurato per ogni modo e orientamento;
 - GC8034 0xad: correlazione causale forte ma manca la rilettura.
-Da fare: rilettura hardware dei registri a fine sequenza (serve ricompilare
-il driver da laboratorio: albero di build su /media/INTEL-CAMERA, non montato
-il 9/10); limite inferiore dell'area valida GC5035 (riga ~1968 della
-finestra, colonna 2611) da fissare con margine; correggere il default
+Revisione di gpt-5.5 via API (data/chatgpt/crop-binning/01-*), accolta:
+- crop orizzontale con il crop d'uscita a passi di 1 px (codice Bayer
+  calcolato) o 2 px, col start fisso a 3; i passi di 4 del col start non
+  vincolano il left;
+- NATIVE_SIZE/CROP_BOUNDS = 2608x1964 (area misurata), CROP_DEFAULT =
+  2592x1944 a (8, 8) misurato; binning solo su CROP_DEFAULT finché non è
+  provato altrove;
+- crop, formato e binning vietati durante lo stream (-EBUSY);
+- codice Bayer da parità di left/top, mirror, flip e dalla riga in più del
+  flip GC5035;
+- formulazioni prudenti: «consistent with averaging four same-colour
+  samples», «registers appear to be shadowed», niente funzioni attribuite a
+  0xad o al bit 1 di 0xf9; P3 0x22 del GC8034 non si cita.
+
+Fatto la sera del 9/10: rilettura hardware (driver da laboratorio
+ricompilato sul server 192.168.0.2, albero driver-v1-tablet, immagine podman
+intelcam-build; ricaricato con unbind/rmmod/modprobe a stream fermo, senza
+riavvio), area valida e col start (R8, R9). Da fare: correggere il default
 dell'esposizione nella v2.
 Errore mio corretto in corsa: una «traslazione di dH/2» con la finestra più
 alta era un artefatto dell'analizzatore (spostamenti riferiti ai centri);

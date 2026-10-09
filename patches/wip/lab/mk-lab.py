@@ -41,6 +41,9 @@ sub("\tstruct regmap *regmap;\n};\n",
     "\tstruct mutex lab_lock;\n"
     "\tunsigned int lab_nregs;\n"
     "\tu8 lab_regs[256][3];\n"
+    "\tu8 lab_rb[256];\n"
+    "\tint lab_rb_ret;\n"
+    "\tbool lab_rb_ok;\n"
     "};\n")
 
 # enum_mbus_code: i quattro ordini Bayer
@@ -172,6 +175,7 @@ static ssize_t lab_regs_write(struct file *file, const char __user *ubuf,
 	mutex_lock(&s->lab_lock);
 	memcpy(s->lab_regs, regs, sizeof(regs[0]) * n);
 	s->lab_nregs = n;
+	s->lab_rb_ok = false;
 	mutex_unlock(&s->lab_lock);
 
 	return count;
@@ -182,6 +186,76 @@ static const struct file_operations lab_regs_fops = {{
 	.open = simple_open,
 	.read = lab_regs_read,
 	.write = lab_regs_write,
+	.llseek = default_llseek,
+}};
+
+/* rilegge dal sensore i registri della lista (pagina per pagina) */
+static int lab_rileggi(struct {name} *s, u8 *out)
+{{
+	unsigned int i;
+	int ret = 0;
+	u64 v;
+
+	for (i = 0; i < s->lab_nregs; i++) {{
+		cci_write(s->regmap, {P}_REG_PAGE_SELECT, s->lab_regs[i][0], &ret);
+		v = 0;
+		cci_read(s->regmap, CCI_REG8(s->lab_regs[i][1]), &v, &ret);
+		out[i] = v;
+	}}
+	cci_write(s->regmap, {P}_REG_PAGE_SELECT, 0, &ret);
+
+	return ret;
+}}
+
+static ssize_t lab_rb_read(struct file *file, char __user *ubuf,
+			   size_t count, loff_t *ppos)
+{{
+	struct {name} *s = file->private_data;
+	unsigned int i, len = 0;
+	u8 viva[256];
+	int ret_viva = -EAGAIN;
+	ssize_t ret;
+	char *buf;
+
+	buf = kzalloc(256 * 48 + 128, GFP_KERNEL);
+	if (!buf)
+		return -ENOMEM;
+
+	mutex_lock(&s->lab_lock);
+	if (pm_runtime_get_if_active(s->dev) > 0) {{
+		ret_viva = lab_rileggi(s, viva);
+		pm_runtime_put_autosuspend(s->dev);
+	}}
+	len += scnprintf(buf + len, 256 * 48 + 128 - len,
+			 "# p reg scritto allo-stream-on(ret %d%s) ora(ret %d)\\n",
+			 s->lab_rb_ret, s->lab_rb_ok ? "" : ", assente", ret_viva);
+	for (i = 0; i < s->lab_nregs; i++) {{
+		len += scnprintf(buf + len, 256 * 48 + 128 - len,
+				 "%u 0x%02x 0x%02x", s->lab_regs[i][0],
+				 s->lab_regs[i][1], s->lab_regs[i][2]);
+		if (s->lab_rb_ok)
+			len += scnprintf(buf + len, 256 * 48 + 128 - len, " 0x%02x%s",
+					 s->lab_rb[i],
+					 s->lab_rb[i] != s->lab_regs[i][2] ? "!" : "");
+		else
+			len += scnprintf(buf + len, 256 * 48 + 128 - len, " -");
+		if (!ret_viva)
+			len += scnprintf(buf + len, 256 * 48 + 128 - len, " 0x%02x%s",
+					 viva[i], viva[i] != s->lab_regs[i][2] ? "!" : "");
+		len += scnprintf(buf + len, 256 * 48 + 128 - len, "\\n");
+	}}
+	mutex_unlock(&s->lab_lock);
+
+	ret = simple_read_from_buffer(ubuf, count, ppos, buf, len);
+	kfree(buf);
+
+	return ret;
+}}
+
+static const struct file_operations lab_rb_fops = {{
+	.owner = THIS_MODULE,
+	.open = simple_open,
+	.read = lab_rb_read,
 	.llseek = default_llseek,
 }};
 
@@ -226,7 +300,9 @@ sub("\tpm_runtime_idle(dev);\n\n\treturn 0;\n",
     f"\tmutex_init(&{name}->lab_lock);\n"
     f"\t{name}->lab_dir = debugfs_create_dir(\"{name}-lab\", NULL);\n"
     f"\tdebugfs_create_file(\"regs\", 0600, {name}->lab_dir, {name},\n"
-    "\t\t\t    &lab_regs_fops);\n\n"
+    "\t\t\t    &lab_regs_fops);\n"
+    f"\tdebugfs_create_file(\"rilettura\", 0400, {name}->lab_dir, {name},\n"
+    "\t\t\t    &lab_rb_fops);\n\n"
     "\tpm_runtime_idle(dev);\n\n\treturn 0;\n")
 
 sub("\tv4l2_async_unregister_subdev(sd);\n",
@@ -234,6 +310,25 @@ sub("\tv4l2_async_unregister_subdev(sd);\n",
     "\tv4l2_async_unregister_subdev(sd);\n")
 
 sub('MODULE_LICENSE("GPL");', 'MODULE_LICENSE("GPL");\nMODULE_INFO(lab, "SOLO ESPERIMENTI");')
+
+# rilettura a fine sequenza: subito dopo lo stream on (tabella, lista,
+# controlli e stream on sono gia' stati scritti)
+for old in (f"\tret = cci_write({name}->regmap, {P}_REG_STREAM, {P}_STREAM_ON,\n\t\t\tNULL);\n\tif (ret)\n\t\tgoto err_rpm_put;\n",
+            f"\tret = cci_write({name}->regmap, {P}_REG_STREAM,\n\t\t\t{P}_STREAM_ON, NULL);\n\tif (ret)\n\t\tgoto err_rpm_put;\n"):
+    if s.count(old) == 1:
+        sub(old, old + f"\n\tmutex_lock(&{name}->lab_lock);\n"
+            f"\t{name}->lab_rb_ret = lab_rileggi({name}, {name}->lab_rb);\n"
+            f"\t{name}->lab_rb_ok = true;\n"
+            f"\tmutex_unlock(&{name}->lab_lock);\n")
+        break
+else:
+    sys.exit(f"{name}: stream on non trovato")
+
+# il default dell'esposizione non puo' superare il massimo (bug di driver-v1,
+# latente li' perche' l'altezza e' fissa)
+sub(f"\t\t\t\t\t       {P}_EXP_STEP, {P}_EXP_DEF);\n",
+    f"\t\t\t\t\t       {P}_EXP_STEP,\n"
+    f"\t\t\t\t\t       min_t(s64, {P}_EXP_DEF, exposure_max));\n")
 
 open(dst, "w", encoding="utf-8").write(s)
 print(f"{dst}: scritto")

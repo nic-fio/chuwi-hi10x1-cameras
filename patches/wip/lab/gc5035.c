@@ -196,6 +196,9 @@ struct gc5035 {
 	struct mutex lab_lock;
 	unsigned int lab_nregs;
 	u8 lab_regs[256][3];
+	u8 lab_rb[256];
+	int lab_rb_ret;
+	bool lab_rb_ok;
 };
 
 /*
@@ -531,6 +534,7 @@ static ssize_t lab_regs_write(struct file *file, const char __user *ubuf,
 	mutex_lock(&s->lab_lock);
 	memcpy(s->lab_regs, regs, sizeof(regs[0]) * n);
 	s->lab_nregs = n;
+	s->lab_rb_ok = false;
 	mutex_unlock(&s->lab_lock);
 
 	return count;
@@ -541,6 +545,76 @@ static const struct file_operations lab_regs_fops = {
 	.open = simple_open,
 	.read = lab_regs_read,
 	.write = lab_regs_write,
+	.llseek = default_llseek,
+};
+
+/* rilegge dal sensore i registri della lista (pagina per pagina) */
+static int lab_rileggi(struct gc5035 *s, u8 *out)
+{
+	unsigned int i;
+	int ret = 0;
+	u64 v;
+
+	for (i = 0; i < s->lab_nregs; i++) {
+		cci_write(s->regmap, GC5035_REG_PAGE_SELECT, s->lab_regs[i][0], &ret);
+		v = 0;
+		cci_read(s->regmap, CCI_REG8(s->lab_regs[i][1]), &v, &ret);
+		out[i] = v;
+	}
+	cci_write(s->regmap, GC5035_REG_PAGE_SELECT, 0, &ret);
+
+	return ret;
+}
+
+static ssize_t lab_rb_read(struct file *file, char __user *ubuf,
+			   size_t count, loff_t *ppos)
+{
+	struct gc5035 *s = file->private_data;
+	unsigned int i, len = 0;
+	u8 viva[256];
+	int ret_viva = -EAGAIN;
+	ssize_t ret;
+	char *buf;
+
+	buf = kzalloc(256 * 48 + 128, GFP_KERNEL);
+	if (!buf)
+		return -ENOMEM;
+
+	mutex_lock(&s->lab_lock);
+	if (pm_runtime_get_if_active(s->dev) > 0) {
+		ret_viva = lab_rileggi(s, viva);
+		pm_runtime_put_autosuspend(s->dev);
+	}
+	len += scnprintf(buf + len, 256 * 48 + 128 - len,
+			 "# p reg scritto allo-stream-on(ret %d%s) ora(ret %d)\n",
+			 s->lab_rb_ret, s->lab_rb_ok ? "" : ", assente", ret_viva);
+	for (i = 0; i < s->lab_nregs; i++) {
+		len += scnprintf(buf + len, 256 * 48 + 128 - len,
+				 "%u 0x%02x 0x%02x", s->lab_regs[i][0],
+				 s->lab_regs[i][1], s->lab_regs[i][2]);
+		if (s->lab_rb_ok)
+			len += scnprintf(buf + len, 256 * 48 + 128 - len, " 0x%02x%s",
+					 s->lab_rb[i],
+					 s->lab_rb[i] != s->lab_regs[i][2] ? "!" : "");
+		else
+			len += scnprintf(buf + len, 256 * 48 + 128 - len, " -");
+		if (!ret_viva)
+			len += scnprintf(buf + len, 256 * 48 + 128 - len, " 0x%02x%s",
+					 viva[i], viva[i] != s->lab_regs[i][2] ? "!" : "");
+		len += scnprintf(buf + len, 256 * 48 + 128 - len, "\n");
+	}
+	mutex_unlock(&s->lab_lock);
+
+	ret = simple_read_from_buffer(ubuf, count, ppos, buf, len);
+	kfree(buf);
+
+	return ret;
+}
+
+static const struct file_operations lab_rb_fops = {
+	.owner = THIS_MODULE,
+	.open = simple_open,
+	.read = lab_rb_read,
 	.llseek = default_llseek,
 };
 
@@ -698,7 +772,8 @@ static int gc5035_set_ctrl(struct v4l2_ctrl *ctrl)
 			       GC5035_EXP_MARGIN;
 		ret = __v4l2_ctrl_modify_range(gc5035->exposure,
 					       GC5035_EXP_MIN, exposure_max,
-					       GC5035_EXP_STEP, GC5035_EXP_DEF);
+					       GC5035_EXP_STEP,
+					       min_t(s64, GC5035_EXP_DEF, exposure_max));
 		if (ret)
 			return ret;
 	}
@@ -787,6 +862,11 @@ static int gc5035_enable_streams(struct v4l2_subdev *sd,
 			GC5035_STREAM_ON, NULL);
 	if (ret)
 		goto err_rpm_put;
+
+	mutex_lock(&gc5035->lab_lock);
+	gc5035->lab_rb_ret = lab_rileggi(gc5035, gc5035->lab_rb);
+	gc5035->lab_rb_ok = true;
+	mutex_unlock(&gc5035->lab_lock);
 
 	return 0;
 
@@ -1037,6 +1117,8 @@ static int gc5035_probe(struct i2c_client *client)
 	gc5035->lab_dir = debugfs_create_dir("gc5035-lab", NULL);
 	debugfs_create_file("regs", 0600, gc5035->lab_dir, gc5035,
 			    &lab_regs_fops);
+	debugfs_create_file("rilettura", 0400, gc5035->lab_dir, gc5035,
+			    &lab_rb_fops);
 
 	pm_runtime_idle(dev);
 

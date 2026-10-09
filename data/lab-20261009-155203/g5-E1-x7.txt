@@ -1,0 +1,21 @@
+sensore gc5035 gc5035 2-003f /dev/v4l-subdev4 Intel IPU6 CSI2 2 /dev/video16
+formato 2592x1944 GRBG bpl 5184 n 6
+regs:
+1 0x94 0x07
+controlli:
+exposure: 984
+analogue_gain: 0
+vertical_blanking: 64
+horizontal_blanking: 328
+pixel_rate: 168960000
+rilettura:
+# p reg scritto allo-stream-on(ret 0) ora(ret 0)
+1 0x94 0x07 0x07 0x07
+timestamp:
+7454.099989
+7454.134692
+7454.169397
+7454.204103
+7454.238806
+7454.273509
+[ 7453.465773] gc5035 i2c-GCTI5035:00: lab: 1 scritture, ret 0

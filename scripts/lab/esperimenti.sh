@@ -142,6 +142,23 @@ if [ "$CHI" = gc5035 ] || [ "$CHI" = tutti ]; then
     # rumore per pixel: 64 fotogrammi, modo pieno e binned
     LAB_N=64 es g5-R3-n-base $S 2592 1944 GRBG ""
     LAB_N=64 es g5-R3-n-bin $S 1296 972 GRBG "" "${PLLC[@]}" "${T0[@]}" "${P3[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
+    # R8 (9/10 sera): prove decisive con la rilettura dei registri, da ripetere
+    es g5-R8-base $S 2592 1944 GRBG ""
+    es g5-R9-base $S 2592 1944 GRBG ""
+    es g5-R8-E4-A $S 1296 972 GRBG "" "${PLLC[@]}" "${T0[@]}" "${P3[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
+    es g5-R8-E4-noP3 $S 1296 972 GRBG "" "${PLLC[@]}" "${T0[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
+    es g5-R8-col2 $S 2592 1944 GRBG g5-R8-base "0 0x0c 2"
+    es g5-R8-col5 $S 2592 1944 GRBG g5-R8-base "0 0x0c 5"
+    es g5-R8-destra2 $S 2592 1944 GRBG "" "0 0x0f 0x0a" "0 0x10 0x22" "1 0x94 0"
+    es g5-R8-destra1 $S 2592 1944 GRBG "" "0 0x0f 0x0a" "0 0x10 0x22" "1 0x94 1"
+    es g5-R8-destra0 $S 2592 1944 GRBG "" "0 0x0f 0x0a" "0 0x10 0x22" "1 0x94 2"
+    for c in 1 2 4 6 7; do
+        es g5-R9-col$c $S 2592 1944 GRBG g5-R9-base "0 0x0c $c"
+    done
+    # area valida: row 0, col 1 (dispari), finestra 2040x2640, uscita da (0,0)
+    LAB_CTRL=vertical_blanking=200 es g5-R8-area $S 2624 2040 GRBG "" "0 0x0a 0" "0 0x0c 1" \
+        "0 0x0d 0x07" "0 0x0e 0xf8" "0 0x0f 0x0a" "0 0x10 0x50" \
+        "1 0x92 0" "1 0x94 0" "1 0x95 0x07" "1 0x96 0xf8" "1 0x97 0x0a" "1 0x98 0x40"
 fi
 
 if [ "$CHI" = gc8034 ] || [ "$CHI" = tutti ]; then
@@ -181,6 +198,11 @@ if [ "$CHI" = gc8034 ] || [ "$CHI" = tutti ]; then
         LAB_CTRL=vertical_blanking=1280 es g8-R3-E6-A$k $S 1632 1224 RGGB "" "${B8[@]}"
         LAB_CTRL=vertical_blanking=1280 es g8-R3-E6-C$k $S 1632 1224 RGGB "" "${B8[@]}" "0 0xad 0x00"
     done
+    # R8 (9/10 sera): 0xad con la rilettura dei registri
+    es g8-R8-base $S 3264 2448 RGGB ""
+    es g8-R8-ad-pieno $S 3264 2448 RGGB "" "0 0xad 0x30"
+    LAB_CTRL=vertical_blanking=1280 es g8-R8-E6-A $S 1632 1224 RGGB "" "${B8[@]}"
+    LAB_CTRL=vertical_blanking=1280 es g8-R8-E6-C $S 1632 1224 RGGB "" "${B8[@]}" "0 0xad 0x00"
     # E9 righe da 0, uscita = finestra 3284x2464 da (0,0); poi 2522 righe
     es g8-E9-r0 $S 3280 2464 RGGB "" "0 0x0a 0x00" "0 0x92 0x00" "0 0x94 0x00" \
         "0 0x95 0x09" "0 0x96 0xa0" "0 0x97 0x0c" "0 0x98 0xd0" "3 0x12 0x04" "3 0x13 0x10"

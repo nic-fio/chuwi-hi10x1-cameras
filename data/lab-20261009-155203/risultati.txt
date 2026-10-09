@@ -1,0 +1,19 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g5-E1-x7: gc5035 2592x1944 GRBG (1 0x94 7)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-155203/g5-E1-x7.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-155203/g5-E1-x7: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    70.41  sd   32.43
+  fase (0,1): media    75.44  sd   58.57
+  fase (1,0): media    75.37  sd   58.48
+  fase (1,1): media    74.90  sd   58.90
+  media 74.03, max 1023, saturi(>=1023) 0.114%
+  periodo 34.704 ms (sd 0.001), 28.815 fps
+  rumore temporale 1.345 LSB (centro)
+[ 7453.347604] hardirqs last  enabled at (9257): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 7453.347610] hardirqs last disabled at (9262): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 7453.347614] softirqs last  enabled at (8550): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 7453.347619] softirqs last disabled at (8543): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 7453.347624] ---[ end trace 0000000000000000 ]---
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-155203

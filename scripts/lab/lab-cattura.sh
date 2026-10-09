@@ -63,6 +63,10 @@ if ! timeout 15 v4l2-ctl -d $VID --stream-mmap --stream-count=$N --stream-to=$OU
         | grep -E "ts:|error|Error" > $OUT.ts; then
     true
 fi
+# rilettura dal sensore subito dopo lo stream on (driver da laboratorio con
+# il file rilettura; "!" = valore diverso da quello scritto)
+RB=/sys/kernel/debug/$S-lab/rilettura
+if [ -r $RB ]; then { echo "rilettura:"; cat $RB; } >> $OUT.txt; fi
 echo "timestamp:" >> $OUT.txt
 grep -o "ts: [0-9.]*" $OUT.ts | awk '{print $2}' >> $OUT.txt || true
 dmesg | tail -5 | grep -E "$S|lab|csi|isys" >> $OUT.txt || true
