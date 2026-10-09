@@ -346,3 +346,17 @@ mosaico grezzo: con la media 2x2 due crop del GC8034 davano pareggi a +1
 colonna (0,9476 contro 0,9469); sul grezzo +1 dà r circa 0 e il massimo è
 nel punto atteso con margine netto. Anche i +1 della prova sulla larghezza
 minima erano questo artefatto.
+
+Serie divisa (9/10 sera), ramo driver-v2-diviso nel worktree driver-v2 sul
+server; la serie completa resta in driver-v2-completa:
+1. media: i2c: Add GC5035 image sensor driver (base: niente tabella di
+   geometria, registri calcolati dallo stato, crop fisso = default, come la
+   v1; PIXEL_RATE e default dell'esposizione corretti)
+2. media: i2c: Add GC8034 image sensor driver (idem)
+3. media: ipu-bridge: Add GalaxyCore GC5035 and GC8034 (invariata)
+4. media: i2c: gc5035: Add analog crop support (+143 -11)
+5. media: i2c: gc8034: Add analog crop support (+143 -9)
+L'albero dopo la 5 è identico alla v2 completa. Base provata sul tablet con
+prova-completa-v2.sh: tutto OK, compliance 54/54 con i 2 avvisi attesi della
+v1 (CROP non scrivibile), WARN IPU6 19 volte. Sorgenti base in
+patches/wip/driver-v2-base/.
