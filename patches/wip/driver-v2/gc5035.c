@@ -82,8 +82,10 @@
  * pixel array that was measured to give image data, 2608x1964. The rows and
  * columns around it are constant (black, or stuck at full scale), and the
  * size of the full pixel array is not known, so this area is reported as the
- * native size. Its origin is read out with the row start register at 4 and
- * the column start register at 3.
+ * native size. Its first row is read out with the row start register at 4.
+ * Its first column is the fifth column of a readout window starting at column
+ * start 1, which is the first column of the window of the vendor sequence
+ * (column start 3).
  *
  * The row start register moves the image by one row per unit. The column
  * start register moves it in steps of four columns, and its even values give
@@ -596,8 +598,8 @@ static int gc5035_set_selection(struct v4l2_subdev *sd,
 
 /*
  * No binning or scaling: the output size is the size of the crop rectangle. A
- * new size moves the crop rectangle to the centre of the area, for userspace
- * that does not set the crop rectangle first.
+ * new width or height centres the crop rectangle in the area along that axis,
+ * for userspace that does not set the crop rectangle first.
  */
 static int gc5035_set_fmt(struct v4l2_subdev *sd,
 			  const struct v4l2_subdev_client_info *ci,
@@ -619,10 +621,12 @@ static int gc5035_set_fmt(struct v4l2_subdev *sd,
 				    GC5035_AREA_HEIGHT), 4);
 
 	crop = v4l2_subdev_state_get_crop(state, 0);
-	if (width != crop->width || height != crop->height) {
+	if (width != crop->width) {
 		crop->left = ALIGN_DOWN((GC5035_AREA_WIDTH - width) / 2, 2);
-		crop->top = ALIGN_DOWN((GC5035_AREA_HEIGHT - height) / 2, 2);
 		crop->width = width;
+	}
+	if (height != crop->height) {
+		crop->top = ALIGN_DOWN((GC5035_AREA_HEIGHT - height) / 2, 2);
 		crop->height = height;
 	}
 

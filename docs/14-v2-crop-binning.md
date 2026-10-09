@@ -283,3 +283,17 @@ Esiti (data/v2-*):
   (spariti i due avvisi della v1 sul CROP non scrivibile).
 - libcamera (build in ~/src/libcamera): 60/60 fotogrammi, 0 errori, in tre
   configurazioni per camera.
+
+Revisione del codice v2 di gpt-5.5 (data/chatgpt/crop-binning/02-*):
+- accolto: set_fmt ricentrava entrambi gli assi anche cambiandone uno solo
+  (GC5035: 2608x1944 spostava il top da 8 a 10); ora per asse, provato.
+- accolto: commento GC5035 sull'origine (diceva col start 3, il codice usa 1
+  con uscita + 4: equivalenti, riscritto).
+- verificato sul tablet: esposizione al massimo e poi crop di 64 righe ->
+  esposizione portata al nuovo massimo (112 / 108); vblank al massimo e poi
+  crop pieno -> vblank portato al nuovo massimo (14416 / 5743).
+- respinto: aggiornare i controlli prima dello stato (il gestore di VBLANK
+  legge l'altezza dallo stato attivo; modify_range fallisce solo con limiti
+  non validi, qui validi per costruzione); lock (state_lock = lock dei
+  controlli dal probe della v1); controllo del pad (lo fa il core).
+- checkpatch: una riga di 81 colonne nel GC8034, corretta.

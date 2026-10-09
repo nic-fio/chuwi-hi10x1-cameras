@@ -587,6 +587,7 @@ static int gc8034_set_selection(struct v4l2_subdev *sd,
 	struct gc8034 *gc8034 = to_gc8034(sd);
 	struct v4l2_mbus_framefmt *format;
 	struct v4l2_rect rect;
+	u32 max_width, max_height;
 
 	if (sel->target != V4L2_SEL_TGT_CROP)
 		return -EINVAL;
@@ -604,12 +605,12 @@ static int gc8034_set_selection(struct v4l2_subdev *sd,
 				     GC8034_AREA_WIDTH - GC8034_MIN_WIDTH), 2);
 	rect.top = ALIGN_DOWN(clamp(sel->r.top, 0,
 				    GC8034_AREA_HEIGHT - GC8034_MIN_HEIGHT), 2);
+	max_width = min(GC8034_MAX_WIDTH, GC8034_AREA_WIDTH - rect.left);
+	max_height = min(GC8034_MAX_HEIGHT, GC8034_AREA_HEIGHT - rect.top);
 	rect.width = ALIGN_DOWN(clamp_t(u32, sel->r.width, GC8034_MIN_WIDTH,
-					min(GC8034_MAX_WIDTH,
-					    GC8034_AREA_WIDTH - rect.left)), 4);
+					max_width), 4);
 	rect.height = ALIGN_DOWN(clamp_t(u32, sel->r.height, GC8034_MIN_HEIGHT,
-					 min(GC8034_MAX_HEIGHT,
-					     GC8034_AREA_HEIGHT - rect.top)), 4);
+					 max_height), 4);
 
 	*v4l2_subdev_state_get_crop(state, 0) = rect;
 	sel->r = rect;
@@ -626,8 +627,8 @@ static int gc8034_set_selection(struct v4l2_subdev *sd,
 
 /*
  * No binning or scaling: the output size is the size of the crop rectangle. A
- * new size moves the crop rectangle to the centre of the area, for userspace
- * that does not set the crop rectangle first.
+ * new width or height centres the crop rectangle in the area along that axis,
+ * for userspace that does not set the crop rectangle first.
  */
 static int gc8034_set_fmt(struct v4l2_subdev *sd,
 			  const struct v4l2_subdev_client_info *ci,
@@ -649,10 +650,12 @@ static int gc8034_set_fmt(struct v4l2_subdev *sd,
 				    GC8034_MAX_HEIGHT), 4);
 
 	crop = v4l2_subdev_state_get_crop(state, 0);
-	if (width != crop->width || height != crop->height) {
+	if (width != crop->width) {
 		crop->left = ALIGN_DOWN((GC8034_AREA_WIDTH - width) / 2, 2);
-		crop->top = ALIGN_DOWN((GC8034_AREA_HEIGHT - height) / 2, 2);
 		crop->width = width;
+	}
+	if (height != crop->height) {
+		crop->top = ALIGN_DOWN((GC8034_AREA_HEIGHT - height) / 2, 2);
 		crop->height = height;
 	}
 
