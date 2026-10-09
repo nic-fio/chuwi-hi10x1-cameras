@@ -1,0 +1,370 @@
+From 2af62fcf292b0cb293b563bf11f532e316a57524 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Fri, 9 Oct 2026 07:24:49 +0000
+Subject: [PATCH 0/3] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
+
+This series adds drivers for the GalaxyCore GC5035 and GC8034 raw Bayer
+sensors, and the ipu-bridge entries needed to use them on Intel IPU6. Both
+are found on the CHUWI Hi10 X1, an Intel N100 (Alder Lake-N) tablet:
+
+  GC5035, 5 Mpixel, front, 2 CSI-2 lanes, ACPI HID GCTI5035
+  GC8034, 8 Mpixel, rear,  4 CSI-2 lanes, ACPI HID GCTI8034
+
+The drivers are ACPI only. I have no device tree system with either sensor,
+so I have not added bindings I cannot test.
+
+Link frequencies
+----------------
+
+Both drivers accept only the 19.2 MHz external clock they have been tested
+with. The link frequencies in the vendor code are for a 24 MHz clock:
+
+  - GC5035: Intel's 438 MHz is correct with a 24 MHz clock. For 19.2 MHz
+    Intel changed the PLL but not the constant. With the new PLL the link
+    frequency is 422.4 MHz, which matches the measurement.
+  - GC8034: the vendor code declares 336 MHz for a 24 MHz clock. At
+    19.2 MHz everything scales by 0.8: 268.8 MHz, and 24 fps instead of
+    30.
+
+The same values are used in the ipu-bridge entries in patch 3.
+
+Gain, power sequencing and geometry
+-----------------------------------
+
+V4L2_CID_ANALOGUE_GAIN is the index of the analogue gain step, 17 steps
+on the GC5035 and 7 on the GC8034, and the digital gain is left at the
+1.0x the register tables program. The vendor drivers fill the gap between
+two steps with digital gain; that is left to userspace.
+
+No datasheet is available for either sensor. The GC5035 power sequence
+follows the one Tomasz Figa described in the 2020 series (IOVDD first,
+MCLK cycles before the first I2C transaction and after streaming stops),
+the GC8034 one follows the Rockchip driver. On this machine only AVDD is
+a real, GPIO switched regulator: DVDD and DOVDD are dummies, and the
+GC8034 has no reset or powerdown GPIO.
+
+The register tables read out a window slightly larger than the output
+size and crop it: 2608x1960 cropped at (8, 8) on the GC5035, 3284x2464
+cropped at (9, 8) on the GC8034. The size of the full pixel arrays is not
+documented, so the readout windows are reported as the native sizes.
+
+The GC8034 blanking register holds the frame length minus the height
+and 36 lines. The 36 lines value comes from the Rockchip driver, and is
+confirmed by the measurement with VBLANK set to 2000: the difference is
+less than one line.
+
+Provenance
+----------
+
+The GC5035 register tables come from the Alder Lake-M driver in
+intel/ipu6-drivers, which derives from the ChromeOS driver posted in 2020
+by Tomasz Figa [1]. That series got as far as v4 and was not merged. The
+GC8034 register tables come from the Rockchip BSP driver (rockchip-linux
+kernel, develop-5.10). The copyright lines of the original authors are
+kept in both files. The register tables have been shortened: the GC5035
+one from 323 to 160 writes, the GC8034 one from 233 to 182. Registers
+written twice and those already written by the controls have been
+removed. The final register state is identical to the one of the original
+tables. There is no public documentation for the PLL and CSI-2 settings.
+
+The driver code follows gc05a2.c and gc08a3.c: CCI helpers, subdev active
+state, enable_streams/disable_streams and runtime PM with autosuspend.
+
+Use of an LLM
+-------------
+
+I speak Italian and I use Claude to translate.
+
+I used an LLM (Claude Opus 5.5) to collect the main points of the sensor
+driver reviews posted to this list recently. Claude wrote the driver code
+and updated it based on those points, and wrote the test scripts. I ran
+the tests on the tablet with the hardware, and the results are listed
+below. The code, the measurements and the notes (in Italian) are at
+https://github.com/nic-fio/chuwi-hi10x1-cameras
+
+The use of LLMs follows Documentation/process/coding-assistants.rst and
+generated-content.rst.
+
+Not covered
+-----------
+
+  - One mode per sensor: 2592x1944 on the GC5035, 3264x2448 on the GC8034.
+    The binned modes of the vendor drivers have not been tested and were
+    left out.
+  - The sensor OTP is not read. On the GC5035 it holds factory register
+    settings and defect pixel tables, which the 2020 series applied.
+  - The GC8034 module has a dw9714 VCM, instantiated by ipu-bridge; focus
+    has not been tested.
+  - Tested on one machine, with one sample of each sensor.
+
+Testing
+-------
+
+Based on media-committers next, commit 8e26d4c20ed2 ("media: hantro:
+disable runtime PM before hardware teardown"), and tested on the CHUWI
+Hi10 X1 with that kernel and these patches:
+
+  - both sensors stream at full resolution
+  - frame rate: the frame rates expected from the driver match the
+    measured ones: 28.82 fps on the GC5035, 24.01 fps against 24.00 on
+    the GC8034. They also match with VBLANK set to 2000: 14.67 fps on
+    the GC5035 and 13.47 fps on the GC8034.
+  - analogue gain, from the first to the last step: 15.6x requested and
+    15.35x measured on the GC5035, 7.66x requested and 7.74x measured on
+    the GC8034.
+  - GC5035 test pattern: two consecutive frames are 100% identical.
+  - v4l2-compliance from git (1616bf9e3c81), run with -z on the media
+    device: 54 out of 54 tests pass on both sensors, with 2 warnings on
+    S_SELECTION. The warnings are there because the crop is fixed;
+    imx219, gc05a2 and gc08a3 do the same. Output below.
+
+[1] https://lore.kernel.org/linux-media/20200902224813.14283-1-tfiga@chromium.org/
+
+GC5035:
+
+v4l2-compliance 1.33.0-5515, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 1616bf9e3c81 2026-10-06 07:30:20
+
+Compliance test for intel-ipu6 device /dev/v4l-subdev4:
+
+Driver Info:
+	Driver version   : 7.3.0
+	Capabilities     : 0x00000000
+	Client Capabilities: 0x0000000000000002
+interval-uses-which Media Driver Info:
+	Driver name      : intel-ipu6
+	Model            : ipu6
+	Serial           :
+	Bus info         : PCI:0000:00:05.0
+	Media version    : 7.3.0
+	Hardware revision: 0x00000000 (0)
+	Driver version   : 7.3.0
+Interface Info:
+	ID               : 0x030000f5
+	Type             : V4L Sub-Device
+Entity Info:
+	ID               : 0x000000e9 (233)
+	Name             : gc5035 2-003f
+	Function         : Camera Sensor
+	Pad 0x010000ea   : 0: Source
+	  Link 0x020000eb: to remote pad 0x1000096 of entity 'Intel IPU6 CSI2 2' (Video Interface Bridge): Data, Enabled, Immutable
+
+Required ioctls:
+	test MC information (see 'Media Driver Info' above): OK
+	test VIDIOC_SUDBEV_QUERYCAP: OK
+	test invalid ioctls: OK
+
+Allow for multiple opens:
+	test second /dev/v4l-subdev4 open: OK
+	test VIDIOC_SUBDEV_QUERYCAP: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Sub-Device ioctls (Source Pad 0):
+	Try Stream 0
+	test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+	test Try VIDIOC_SUBDEV_G/S_FMT: OK
+		warn: v4l2-test-subdevs.cpp(566): VIDIOC_SUBDEV_G_SELECTION is supported for target 0 but not VIDIOC_SUBDEV_S_SELECTION
+	test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
+	Active Stream 0
+	test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+	test Active VIDIOC_SUBDEV_G/S_FMT: OK
+		warn: v4l2-test-subdevs.cpp(566): VIDIOC_SUBDEV_G_SELECTION is supported for target 0 but not VIDIOC_SUBDEV_S_SELECTION
+	test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
+	test Active VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 13 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK (Not Supported)
+	test VIDIOC_TRY_FMT: OK (Not Supported)
+	test VIDIOC_S_FMT: OK (Not Supported)
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+	test CREATE_BUFS maximum buffers: OK
+	test VIDIOC_REMOVE_BUFS: OK
+	test VIDIOC_EXPBUF: OK (Not Supported)
+	test Requests: OK (Not Supported)
+	test blocking wait: OK (Not Supported)
+
+Total for intel-ipu6 device /dev/v4l-subdev4: 54, Succeeded: 54, Failed: 0, Warnings: 2
+
+GC8034:
+
+v4l2-compliance 1.33.0-5515, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 1616bf9e3c81 2026-10-06 07:30:20
+
+Compliance test for intel-ipu6 device /dev/v4l-subdev5:
+
+Driver Info:
+	Driver version   : 7.3.0
+	Capabilities     : 0x00000000
+	Client Capabilities: 0x0000000000000002
+interval-uses-which Media Driver Info:
+	Driver name      : intel-ipu6
+	Model            : ipu6
+	Serial           :
+	Bus info         : PCI:0000:00:05.0
+	Media version    : 7.3.0
+	Hardware revision: 0x00000000 (0)
+	Driver version   : 7.3.0
+Interface Info:
+	ID               : 0x030000fb
+	Type             : V4L Sub-Device
+Entity Info:
+	ID               : 0x000000f7 (247)
+	Name             : gc8034 1-0037
+	Function         : Camera Sensor
+	Pad 0x010000f8   : 0: Source
+	  Link 0x020000f9: to remote pad 0x100008c of entity 'Intel IPU6 CSI2 1' (Video Interface Bridge): Data, Enabled, Immutable
+
+Required ioctls:
+	test MC information (see 'Media Driver Info' above): OK
+	test VIDIOC_SUDBEV_QUERYCAP: OK
+	test invalid ioctls: OK
+
+Allow for multiple opens:
+	test second /dev/v4l-subdev5 open: OK
+	test VIDIOC_SUBDEV_QUERYCAP: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Sub-Device ioctls (Source Pad 0):
+	Try Stream 0
+	test Try VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+	test Try VIDIOC_SUBDEV_G/S_FMT: OK
+		warn: v4l2-test-subdevs.cpp(566): VIDIOC_SUBDEV_G_SELECTION is supported for target 0 but not VIDIOC_SUBDEV_S_SELECTION
+	test Try VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
+	Active Stream 0
+	test Active VIDIOC_SUBDEV_ENUM_MBUS_CODE/FRAME_SIZE/FRAME_INTERVAL: OK
+	test Active VIDIOC_SUBDEV_G/S_FMT: OK
+		warn: v4l2-test-subdevs.cpp(566): VIDIOC_SUBDEV_G_SELECTION is supported for target 0 but not VIDIOC_SUBDEV_S_SELECTION
+	test Active VIDIOC_SUBDEV_G/S_SELECTION/CROP: OK
+	test Active VIDIOC_SUBDEV_G/S_FRAME_INTERVAL: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 12 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK (Not Supported)
+	test VIDIOC_TRY_FMT: OK (Not Supported)
+	test VIDIOC_S_FMT: OK (Not Supported)
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+	test CREATE_BUFS maximum buffers: OK
+	test VIDIOC_REMOVE_BUFS: OK
+	test VIDIOC_EXPBUF: OK (Not Supported)
+	test Requests: OK (Not Supported)
+	test blocking wait: OK (Not Supported)
+
+Total for intel-ipu6 device /dev/v4l-subdev5: 54, Succeeded: 54, Failed: 0, Warnings: 2
+
+Nicola Fiorillo (3):
+  media: i2c: Add GC5035 image sensor driver
+  media: i2c: Add GC8034 image sensor driver
+  media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+
+ MAINTAINERS                          |  12 +
+ drivers/media/i2c/Kconfig            |  20 +
+ drivers/media/i2c/Makefile           |   2 +
+ drivers/media/i2c/gc5035.c           | 953 ++++++++++++++++++++++++++
+ drivers/media/i2c/gc8034.c           | 969 +++++++++++++++++++++++++++
+ drivers/media/pci/intel/ipu-bridge.c |   4 +
+ 6 files changed, 1960 insertions(+)
+ create mode 100644 drivers/media/i2c/gc5035.c
+ create mode 100644 drivers/media/i2c/gc8034.c
+
+
+base-commit: 8e26d4c20ed218db6c3123480a4a4e2545680566
+-- 
+2.47.3
+

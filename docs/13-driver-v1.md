@@ -409,3 +409,16 @@ Da fare, non nel codice:
   il blanking), PLL non documentata.
 - Facoltativi: HFLIP/VFLIP gc8034 (registro 0x17 noto dal BSP), pagine con i
   bit privati CCI.
+
+## Spedita (9 ottobre 2026, 9:27)
+
+Cover e messaggi: testo di Nic in italiano, tradotto da Claude. Signed-off-by
+aggiunto da Nic con `firma-e-prepara.sh` (checkpatch --strict: 0/0/0 su tutte
+e tre). Prova a sé stesso alle 9:25, invio vero alle 9:27 a linux-media con
+Sakari, Laurent, Mauro, Hans Verkuil, Dan Scally, Hans de Goede e
+linux-kernel. Copia in `upstream/driver-v1-20261009/`.
+
+Prossimi passi: rispondere a ogni commento; sollecito solo dopo circa due
+settimane di silenzio (dal 23 ottobre); una v2 per ogni giro di
+osservazioni, nello stesso thread. Intanto, di giorno: AE di libcamera a
+metà scala, poi la patch libcamera.
