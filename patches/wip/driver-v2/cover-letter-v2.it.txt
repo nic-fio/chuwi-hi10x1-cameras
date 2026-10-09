@@ -1,0 +1,73 @@
+BOZZA IN ITALIANO della cover letter della v2 (preparata da Claude come
+scaletta di fatti; Nic la riscrive con parole sue, poi Claude traduce e la
+traduzione si dichiara). Ogni numero viene da docs/14 e da
+fatti-per-i-messaggi.md.
+
+Oggetto: [PATCH v2 0/5] media: i2c: driver per i sensori GalaxyCore GC5035 e GC8034
+
+Ciao a tutti,
+
+questa è la v2 dei driver per i sensori GalaxyCore GC5035 (camera frontale,
+2 lane) e GC8034 (posteriore, 4 lane) del tablet Chuwi Hi10 X1, con IPU6.
+
+Laurent, sulla v1 avevi chiesto di rendere i driver liberamente
+configurabili, con il crop analogico e il binning se il sensore lo supporta.
+Questa versione fa così:
+
+- Niente più tabelle di modo per la geometria: finestra di lettura e crop
+  d'uscita del sensore si calcolano dal rettangolo di crop a ogni avvio
+  dello stream (patch 1 e 2).
+- Il crop si imposta con la selezione CROP sul pad sorgente (patch 4 e 5).
+  In verticale è analogico: si riduce la finestra di lettura e il
+  fotogramma si accorcia (il GC5035 a 640x480 arriva a 106 fps). In
+  orizzontale invece è il crop d'uscita interno al sensore: restringere la
+  finestra in orizzontale dà immagini nere sul GC5035, e sul GC8034 passa
+  per un registro di colonna che dà immagini corrotte a molti valori.
+- Il binning non c'è. Sul GC5035 la sequenza vendor a 1296x972 funziona ed è
+  una media di quattro campioni dello stesso colore, ma cambia la PLL e i
+  tempi MIPI, e la frequenza del collegamento in quel modo non la conosco:
+  non potrei dichiarare un LINK_FREQ corretto. Sul GC8034 il binning esiste
+  solo nelle sequenze vendor a 2 lane; a 4 lane rompe il flusso CSI-2.
+
+Ho tenuto il crop nelle patch 4 e 5, separate, perché ho visto che su
+IMX908 avete deciso di rimandare il crop al modello comune dei sensori raw
+(<20261001133138.GM944070@killaraus.ideasonboard.com>). Se preferite fare
+lo stesso qui, le patch 1-3 stanno in piedi da sole, a risoluzione fissa
+come la v1, e il crop lo rifaccio sul modello comune quando entra.
+
+Non ho il datasheet: la geometria, i limiti e i tempi li ho misurati sul
+tablet, e i commenti nel codice dicono cosa è misurato. In breve:
+
+- Le dimensioni riportate come NATIVE_SIZE e CROP_BOUNDS (2608x1964 e
+  3282x2500) sono l'area più grande che dà immagine; intorno ci sono righe e
+  colonne costanti. Non sono l'array fisico, che non è documentato.
+- CROP_DEFAULT è l'immagine della sequenza vendor, la stessa della v1: al
+  crop di default la v2 produce la stessa immagine della v1.
+- I tempi seguono un modello che torna con le misure da 64 righe
+  all'altezza piena; per il GC8034 questo ha corretto PIXEL_RATE a 256 MHz
+  (la v1 dichiarava 255,9 MHz).
+- I limiti di dimensione (GC8034 largo almeno 512 e al massimo 3280, alto
+  al massimo 2448; GC5035 almeno 64x64) vengono da prove in cui fuori da
+  quei limiti il flusso si rompe o i tempi escono dal modello.
+
+Come l'ho provato, sul kernel next (base 8e26d4c20):
+- v4l2-compliance da git (1616bf9e3c81) con -z: 54/54, nessun avviso, su
+  tutti e due; output completo in fondo.
+- Una batteria di crop (default, limiti, centro, angoli, minimi, richieste
+  da arrotondare o fuori area): rettangolo applicato, periodo misurato,
+  fotogrammi completi e posizione al pixel, tutto come previsto, in due
+  corse per sensore.
+- libcamera (pipeline simple): 60 fotogrammi su 60 in tre configurazioni
+  per camera.
+- W=1, sparse, smatch, checkpatch --strict e coccinelle puliti su ogni
+  patch; build i386 pulita.
+
+Cambiamenti rispetto alla v1:
+- [elenco breve per patch, da fatti-per-i-messaggi.md]
+- Aggiunto il Reviewed-by di Dan sulla patch 3.
+
+Per scrivere il codice e fare le misure mi sono aiutato con un modello
+linguistico (Claude); l'ho indicato nei tag Assisted-by. L'inglese di
+questa lettera è una traduzione dal mio italiano.
+
+Nicola
