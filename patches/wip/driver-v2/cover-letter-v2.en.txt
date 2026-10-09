@@ -1,0 +1,45 @@
+Subject: [PATCH v2 0/5] media: i2c: Add GalaxyCore GC5035 and GC8034 sensor drivers
+
+Hi Laurent, after reading your message, this is what I did:
+
+ - No more mode tables: the readout window and the output crop are
+   computed from the crop rectangle every time streaming starts.
+ - Crop through the CROP selection. Vertically it is an analog crop (the
+   readout window gets smaller and the frame gets shorter: the GC5035 at
+   640x480 runs at up to 106 fps). Horizontally it is the sensor output
+   crop, because narrowing the readout window horizontally gives black
+   images on the GC5035 and corrupted images on the GC8034.
+ - No binning. On the GC5035 it works, but it changes the PLL and I don't
+   know the link frequency in that mode, so I couldn't report a correct
+   LINK_FREQ. On the GC8034 it only exists in the 2-lane vendor sequences;
+   with 4 lanes it breaks the CSI-2 stream.
+ - I put the crop in patches 4 and 5, separately, because for the IMX908
+   you decided to postpone it until the common raw sensor model
+   (<20261001133138.GM944070@killaraus.ideasonboard.com>). If you want to
+   do the same here, patches 1-3 stand on their own, at a fixed resolution
+   like v1.
+ - I don't have the datasheet of the device, so I measured everything on
+   the tablet: the area that gives image data (2608x1964 and 3282x2500,
+   reported as NATIVE_SIZE and CROP_BOUNDS: it is not the physical array),
+   the default crop (the same as v1: same image), the timing model (which
+   corrected the GC8034 PIXEL_RATE to 256 MHz) and the size limits.
+ - Testing: v4l2-compliance from git, 54/54 with no warnings on both, a
+   set of crop tests in two test sessions (rectangle, timing, position to
+   the pixel), libcamera 60/60 frames, and W=1, sparse, smatch, checkpatch
+   and coccinelle clean on every patch.
+ - Changes since v1:
+   - patches 1 and 2: geometry removed from the register table and
+     computed from the crop, all written as 16-bit values; NATIVE_SIZE and
+     CROP_BOUNDS are the measured area instead of the vendor readout
+     window; the default exposure no longer exceeds the maximum when
+     VBLANK is reduced; GC8034: PIXEL_RATE set to 256 MHz and the blanking
+     register computed from VBLANK.
+   - patch 3: added Dan's Reviewed-by.
+   - patches 4 and 5: new.
+ - I used an LLM (Claude) for the code and the measurements, as stated in
+   the tags; the English of this letter is translated from my Italian.
+
+Nicola
+
+[base-commit, diffstat e output di v4l2-compliance aggiunti da
+git format-patch --cover-letter / dalla prova al momento dell'invio]

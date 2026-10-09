@@ -1,6 +1,7 @@
 Versione di Nic (9/10 sera). Correzioni di Claude: frase sui tempi
-ricomposta (era troncata nel copia-incolla: «il modello > ha corretto») e
-firma aggiunta. Nient'altro cambiato.
+ricomposta (era troncata nel copia-incolla: «il modello > ha corretto»),
+firma aggiunta, elenco «Rispetto alla versione v1» riempito su delega di
+Nic dai messaggi di commit.
 
 Oggetto: [PATCH v2 0/5] media: i2c: driver per i sensori GalaxyCore GC5035 e GC8034
 
@@ -31,8 +32,14 @@ Ciao Laurent, dopo aver letto il tuo messaggio ecco cosa ho fatto:
    batteria di crop in due sessioni di test (rettangolo, tempi, posizione
    al pixel), libcamera 60/60 fotogrammi, e W=1, sparse, smatch, checkpatch
    e coccinelle puliti su ogni patch.
- - Rispetto alla versione v1: [qui l'elenco breve per patch, dopo i
-   messaggi di commit]. Ho aggiunto il Reviewed-by di Dan sulla patch 3.
+ - Rispetto alla versione v1:
+   - patch 1 e 2: geometria tolta dalla tabella e calcolata dal crop,
+     scritta tutta a 16 bit; NATIVE_SIZE e CROP_BOUNDS sono l'area misurata
+     invece della finestra di lettura vendor; il default dell'esposizione
+     non supera più il massimo quando VBLANK si riduce; GC8034: PIXEL_RATE
+     a 256 MHz e registro di blanking calcolato da VBLANK.
+   - patch 3: aggiunto il Reviewed-by di Dan.
+   - patch 4 e 5: nuove.
  - Ho usato un LLM (Claude) per il codice e le misure, ed è indicato nei
    tag; l'inglese di questa lettera è tradotto dal mio italiano.
 
