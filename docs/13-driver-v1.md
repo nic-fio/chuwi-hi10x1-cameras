@@ -458,3 +458,39 @@ volte più luminoso (gc5035).
   Nessuna osservazione, nessuna risposta dovuta; il tag va nella 3/3 della
   v2 (o lo raccoglie il maintainer se la serie entra così). Su 1/3 e 2/3
   ancora niente.
+- 9 ottobre 2026, 11:48: Laurent sulla 1/3 (gc5035), una frase sotto la
+  descrizione del commit: «Please make the driver freely configurable, with
+  support for analog crop (and binning if supported by the device).» Nessun
+  commento sul codice. Vale con ogni probabilità anche per il gc8034.
+- 9 ottobre 2026, 11:48, thread v3 subdev (ritirata): sotto «On 6.12.86:
+  agreed»: «Why was it there in the first place ? It gives me very little
+  confidence on the quality of your contribution.» Domanda diretta, da
+  rispondere (Nic, parole sue).
+- 9 ottobre 2026, 12:37 (10:37 UTC): risposta di Nic spedita con
+  `patches/wip/invia-risposta-a-laurent-6.12.86.sh`, testo in
+  `patches/wip/risposta-a-laurent-6.12.86.txt` (testo proposto da Claude,
+  approvato da Nic; scuse, perché la frase era lì, driver provati solo su
+  next, dichiarazione della traduzione con LLM). In Gmail è nel thread
+  giusto. Il «non parlo inglese come prima lingua» è tenuto separato dalle
+  scuse: l'errore era di contenuto, non di lingua.
+
+## v2: crop analogico e binning (dal 9 ottobre 2026)
+
+Stato dell'arte (ricerca del 9/10, frasi controllate sui JSON di patchwork):
+- Laurent chiede a ogni nuovo driver niente tabelle di modo, crop analogico
+  con set_selection, binning dal rapporto crop/formato (ov05c10 06/2025,
+  os02g10 04-06/2026 «You can delay implementation of binning», imx576
+  05-06/2026 «No mode tables please», «Nack on v2»).
+- Sakari su imx678 v3, 21/05/2026 `<ag7oq5jO5G0rwvzb@kekkonen.localdomain>`:
+  binning «I'd postpone adding this before the common raw sensor model»,
+  set_selection «This, too, I'd postpone until the common raw sensor
+  model». Il modello comune (v12, 86 patch) non è in next.
+- Fusi da Sakari a modo unico: ov05c10, s5kjn5, imx576 (ee2e9bf41).
+- Modelli: imx296 (stato tutto nel subdev, set_selection allinea e riporta
+  il formato al crop, binning = DIV_ROUND_CLOSEST(crop/fmt) in {1,2});
+  t4ka3 (senza datasheet, fuso nel 2026, crop e binning).
+
+Piano: serie con (1) driver senza tabelle di modo, registri di finestra e
+uscita calcolati dallo stato; (2) set_selection per il crop analogico in
+patch a parte; (3) binning in patch a parte. Nella risposta a Laurent
+citare la frase di Sakari su imx678 e lasciare a loro la scelta su 2 e 3.

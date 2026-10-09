@@ -1,0 +1,22 @@
+Hi Laurent,
+
+On Fri, Oct 09, 2026 at 11:48:10AM +0200, Laurent Pinchart wrote:
+> On Thu, Oct 08, 2026 at 09:06:01AM +0200, Nicola Fiorillo wrote:
+> > On 6.12.86: agreed, that line does not belong in the commit message.
+>
+> Why was it there in the first place ? It gives me very little confidence
+> on the quality of your contribution.
+
+Sorry, that was my mistake. The sentence came from v1. I first hit the
+oops on the 6.12.86 kernel I use every day on the tablet. When I
+repeated the tests on media next, I updated the cover letter but not
+the commit message, and the sentence went unchanged into v2 and v3. I
+did not catch it when I reread the patch.
+
+The GC5035 and GC8034 drivers I sent today were developed and tested
+only on media next (8e26d4c20), on the tablet.
+
+English is not my first language: I write in Italian and translate
+with the help of an LLM.
+
+Nicola
