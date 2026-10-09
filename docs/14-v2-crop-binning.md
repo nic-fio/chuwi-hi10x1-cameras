@@ -360,3 +360,27 @@ L'albero dopo la 5 è identico alla v2 completa. Base provata sul tablet con
 prova-completa-v2.sh: tutto OK, compliance 54/54 con i 2 avvisi attesi della
 v1 (CROP non scrivibile), WARN IPU6 19 volte. Sorgenti base in
 patches/wip/driver-v2-base/.
+
+## Lunedì 12/10 mattina: invio della v2 (deciso con Nic il 9/10 sera)
+
+Pronto: serie in upstream/driver-v2-invio/ (generata dal ramo
+driver-v2-diviso, worktree driver-v2 sul server, base next 8e26d4c20),
+lettera inglese dentro v2-0000 con un segnaposto per la compliance, script
+patches/wip/invia-driver-v2.sh (prova a vuoto fatta: thread sulla lettera
+v1 <20261009072733.39877-1-nicfio@gmail.com>, destinatari della v1).
+
+Lista di controllo, in ordine, con Nic:
+1. Thread della v1 (patchwork serie 31804, Gmail): commenti arrivati nel
+   weekend? Se sì, integrarli, rifare le prove toccate e rigenerare la
+   serie (format-patch -v2 --cover-letter --base=8e26d4c20, poi rimettere
+   la lettera).
+2. Moduli finali sul tablet (patches/wip/driver-v2/*.ko =
+   driver-v2-completa) e prova completa: scripts/v2/prova-completa-v2.sh,
+   prova-crop.py su entrambi; tablet in cucina con luce.
+3. Output di v4l2-compliance (git 1616bf9e3c81, -z) dei due sensori al
+   posto del segnaposto «DA COMPLETARE» nella lettera.
+4. Nic rilegge la lettera inglese (le sue parole tradotte) e la italiana.
+5. ./patches/wip/invia-driver-v2.sh --prova, poi l'invio vero solo col via
+   di Nic (SI, conferma per messaggio, password per le app).
+6. Dopo: Message-ID nel diario, copia in upstream/driver-v2-<data>/,
+   controllo su lore e patchwork.

@@ -3,7 +3,11 @@ ricomposta (era troncata nel copia-incolla: «il modello > ha corretto»),
 firma aggiunta, elenco «Rispetto alla versione v1» riempito su delega di
 Nic dai messaggi di commit.
 
-Oggetto: [PATCH v2 0/5] media: i2c: driver per i sensori GalaxyCore GC5035 e GC8034
+Oggetto: [PATCH v2 0/5] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
+
+Questa serie aggiunge i driver per i sensori GalaxyCore GC5035 e GC8034,
+la camera frontale e quella posteriore del tablet CHUWI Hi10 X1 con IPU6,
+e le voci corrispondenti in ipu-bridge.
 
 Ciao Laurent, dopo aver letto il tuo messaggio ecco cosa ho fatto:
 

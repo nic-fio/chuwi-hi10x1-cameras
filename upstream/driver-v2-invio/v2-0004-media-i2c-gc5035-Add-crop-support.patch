@@ -1,0 +1,245 @@
+From 3e9a2def4efc328fa5dac3febc962bf47300a3b1 Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Fri, 9 Oct 2026 18:16:29 +0000
+Subject: [PATCH v2 4/5] media: i2c: gc5035: Add crop support
+
+Implement the crop selection on the source pad. The vertical crop is done
+by the readout window, which shortens the frame: 640x480 runs at up to
+106 fps with the minimum vertical blanking. The horizontal crop is done by
+the sensor output crop, as a narrower readout window gives black images
+and the column start register only moves in steps of four columns, with
+even values giving corrupted images. Crop offsets are even, to keep the
+GRBG order, and sizes are multiples of 4, from 64x64 to 2608x1964.
+
+Without binning or scaling, the format size is the crop size. As in
+ov01a10, set_fmt centres the crop rectangle on CROP_DEFAULT for userspace
+that does not set the crop first, and as in imx219 changing the size
+resets the vertical blanking to its default. The crop and the format
+can't be changed while streaming.
+
+Tested with v4l2-compliance (54/54, no warning) and with crop rectangles
+at the bounds, in the corners, at the minimum size and in the centre: the
+position was checked to the pixel and the frame period is the computed
+one.
+
+Assisted-by: claude-opus-5-5 coccinelle sparse smatch
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
+---
+ drivers/media/i2c/gc5035.c | 154 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 143 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/media/i2c/gc5035.c b/drivers/media/i2c/gc5035.c
+index c4f2aceec..505ab2b49 100644
+--- a/drivers/media/i2c/gc5035.c
++++ b/drivers/media/i2c/gc5035.c
+@@ -84,7 +84,8 @@
+  * size of the full pixel array is not known, so this area is reported as the
+  * native size. Its first row is read out with the row start register at 4.
+  * Its first column is the fifth column of a readout window starting at column
+- * start 1, and the first column of the vendor window (column start 3).
++ * start 1, which is the first column of the window of the vendor sequence
++ * (column start 3).
+  *
+  * The row start register moves the image by one row per unit. The column
+  * start register moves it in steps of four columns, and its even values give
+@@ -107,6 +108,8 @@
+ #define GC5035_CROP_TOP			8
+ #define GC5035_WIDTH			2592
+ #define GC5035_HEIGHT			1944
++#define GC5035_MIN_WIDTH		64
++#define GC5035_MIN_HEIGHT		64
+ 
+ /*
+  * The line length register counts units of 4 pixels. The frame length is the
+@@ -208,6 +211,7 @@ struct gc5035 {
+ 
+ 	struct v4l2_ctrl_handler ctrls;
+ 	struct v4l2_ctrl *exposure;
++	struct v4l2_ctrl *vblank;
+ 	struct v4l2_ctrl *hblank;
+ 
+ 	struct regmap *regmap;
+@@ -464,14 +468,50 @@ static int gc5035_enum_frame_size(struct v4l2_subdev *sd,
+ 	if (fse->index > 0)
+ 		return -EINVAL;
+ 
+-	fse->min_width = GC5035_WIDTH;
+-	fse->max_width = GC5035_WIDTH;
+-	fse->min_height = GC5035_HEIGHT;
+-	fse->max_height = GC5035_HEIGHT;
++	/* The output size is the size of the crop rectangle. */
++	fse->min_width = GC5035_MIN_WIDTH;
++	fse->max_width = GC5035_AREA_WIDTH;
++	fse->min_height = GC5035_MIN_HEIGHT;
++	fse->max_height = GC5035_AREA_HEIGHT;
+ 
+ 	return 0;
+ }
+ 
++/*
++ * Update the controls that depend on the output size. Called with the state
++ * lock held, which is also the control handler lock.
++ */
++static int gc5035_update_ctrls(struct gc5035 *gc5035,
++			       const struct v4l2_mbus_framefmt *format)
++{
++	s64 vblank_max, exposure_max;
++	int ret;
++
++	ret = __v4l2_ctrl_modify_range(gc5035->hblank,
++				       GC5035_HTS - format->width,
++				       GC5035_HTS - format->width, 1,
++				       GC5035_HTS - format->width);
++	if (ret)
++		return ret;
++
++	vblank_max = GC5035_VBLANK_MIN +
++		     round_down(GC5035_VTS_MAX - format->height -
++				GC5035_VBLANK_MIN, GC5035_VBLANK_STEP);
++	ret = __v4l2_ctrl_modify_range(gc5035->vblank, GC5035_VBLANK_MIN,
++				       vblank_max, GC5035_VBLANK_STEP,
++				       GC5035_VBLANK_MIN);
++	if (ret)
++		return ret;
++
++	exposure_max = format->height + gc5035->vblank->val -
++		       GC5035_EXP_MARGIN;
++
++	return __v4l2_ctrl_modify_range(gc5035->exposure, GC5035_EXP_MIN,
++					exposure_max, GC5035_EXP_STEP,
++					min_t(s64, GC5035_EXP_DEF,
++					      exposure_max));
++}
++
+ static void gc5035_fill_format(struct v4l2_mbus_framefmt *fmt,
+ 			       const struct v4l2_rect *crop)
+ {
+@@ -514,6 +554,92 @@ static int gc5035_get_selection(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
++static int gc5035_set_selection(struct v4l2_subdev *sd,
++				const struct v4l2_subdev_client_info *ci,
++				struct v4l2_subdev_state *state,
++				struct v4l2_subdev_selection *sel)
++{
++	struct gc5035 *gc5035 = to_gc5035(sd);
++	struct v4l2_mbus_framefmt *format;
++	struct v4l2_rect rect;
++
++	if (sel->target != V4L2_SEL_TGT_CROP)
++		return -EINVAL;
++
++	if (sel->which == V4L2_SUBDEV_FORMAT_ACTIVE &&
++	    v4l2_subdev_is_streaming(sd))
++		return -EBUSY;
++
++	/*
++	 * Even offsets keep the GRBG order. The sizes are multiples of 4: the
++	 * sensor rounds the frame length to a multiple of 4 lines.
++	 */
++	rect.left = ALIGN_DOWN(clamp(sel->r.left, 0,
++				     GC5035_AREA_WIDTH - GC5035_MIN_WIDTH), 2);
++	rect.top = ALIGN_DOWN(clamp(sel->r.top, 0,
++				    GC5035_AREA_HEIGHT - GC5035_MIN_HEIGHT), 2);
++	rect.width = ALIGN_DOWN(clamp_t(u32, sel->r.width, GC5035_MIN_WIDTH,
++					GC5035_AREA_WIDTH - rect.left), 4);
++	rect.height = ALIGN_DOWN(clamp_t(u32, sel->r.height, GC5035_MIN_HEIGHT,
++					 GC5035_AREA_HEIGHT - rect.top), 4);
++
++	*v4l2_subdev_state_get_crop(state, 0) = rect;
++	sel->r = rect;
++
++	/* No binning or scaling: the output size is the crop size. */
++	format = v4l2_subdev_state_get_format(state, 0);
++	gc5035_fill_format(format, &rect);
++
++	if (sel->which == V4L2_SUBDEV_FORMAT_ACTIVE)
++		return gc5035_update_ctrls(gc5035, format);
++
++	return 0;
++}
++
++/*
++ * No binning or scaling: the output size is the size of the crop rectangle. A
++ * new width or height centres the crop rectangle in the area along that axis,
++ * for userspace that does not set the crop rectangle first.
++ */
++static int gc5035_set_fmt(struct v4l2_subdev *sd,
++			  const struct v4l2_subdev_client_info *ci,
++			  struct v4l2_subdev_state *state,
++			  struct v4l2_subdev_format *fmt)
++{
++	struct gc5035 *gc5035 = to_gc5035(sd);
++	struct v4l2_mbus_framefmt *format;
++	struct v4l2_rect *crop;
++	u32 width, height;
++
++	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE &&
++	    v4l2_subdev_is_streaming(sd))
++		return -EBUSY;
++
++	width = ALIGN_DOWN(clamp_t(u32, fmt->format.width, GC5035_MIN_WIDTH,
++				   GC5035_AREA_WIDTH), 4);
++	height = ALIGN_DOWN(clamp_t(u32, fmt->format.height, GC5035_MIN_HEIGHT,
++				    GC5035_AREA_HEIGHT), 4);
++
++	crop = v4l2_subdev_state_get_crop(state, 0);
++	if (width != crop->width) {
++		crop->left = ALIGN_DOWN((GC5035_AREA_WIDTH - width) / 2, 2);
++		crop->width = width;
++	}
++	if (height != crop->height) {
++		crop->top = ALIGN_DOWN((GC5035_AREA_HEIGHT - height) / 2, 2);
++		crop->height = height;
++	}
++
++	format = v4l2_subdev_state_get_format(state, 0);
++	gc5035_fill_format(format, crop);
++	fmt->format = *format;
++
++	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE)
++		return gc5035_update_ctrls(gc5035, format);
++
++	return 0;
++}
++
+ static int gc5035_init_state(struct v4l2_subdev *sd,
+ 			     struct v4l2_subdev_state *state)
+ {
+@@ -725,7 +851,9 @@ static const struct v4l2_subdev_pad_ops gc5035_pad_ops = {
+ 	.enum_mbus_code = gc5035_enum_mbus_code,
+ 	.enum_frame_size = gc5035_enum_frame_size,
+ 	.get_fmt = v4l2_subdev_get_fmt,
++	.set_fmt = gc5035_set_fmt,
+ 	.get_selection = gc5035_get_selection,
++	.set_selection = gc5035_set_selection,
+ 	.get_frame_desc = gc5035_get_frame_desc,
+ 	.enable_streams = gc5035_enable_streams,
+ 	.disable_streams = gc5035_disable_streams,
+@@ -800,12 +928,16 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
+ 			  GC5035_PIXEL_RATE, GC5035_PIXEL_RATE, 1,
+ 			  GC5035_PIXEL_RATE);
+ 
+-	v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops, V4L2_CID_VBLANK,
+-			  GC5035_VBLANK_MIN,
+-			  GC5035_VBLANK_MIN +
+-			  round_down(GC5035_VTS_MAX - GC5035_HEIGHT -
+-				     GC5035_VBLANK_MIN, GC5035_VBLANK_STEP),
+-			  GC5035_VBLANK_STEP, GC5035_VBLANK_MIN);
++	/* Ranges for the default crop rectangle, see gc5035_update_ctrls(). */
++	gc5035->vblank = v4l2_ctrl_new_std(ctrl_hdlr, &gc5035_ctrl_ops,
++					   V4L2_CID_VBLANK, GC5035_VBLANK_MIN,
++					   GC5035_VBLANK_MIN +
++					   round_down(GC5035_VTS_MAX -
++						      GC5035_HEIGHT -
++						      GC5035_VBLANK_MIN,
++						      GC5035_VBLANK_STEP),
++					   GC5035_VBLANK_STEP,
++					   GC5035_VBLANK_MIN);
+ 
+ 	gc5035->hblank = v4l2_ctrl_new_std(ctrl_hdlr, NULL, V4L2_CID_HBLANK,
+ 					   GC5035_HTS - GC5035_WIDTH,
+-- 
+2.47.3
+

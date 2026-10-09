@@ -1,3 +1,6 @@
+From efba9d3e6a040389041bd1d368849236985e643d Mon Sep 17 00:00:00 2001
+From: Nicola Fiorillo <nicfio@gmail.com>
+Date: Fri, 9 Oct 2026 18:29:02 +0000
 Subject: [PATCH v2 0/5] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
 
 This series adds drivers for the GalaxyCore GC5035 and GC8034 sensors,
@@ -51,5 +54,30 @@ Hi Laurent, after reading your message, this is what I did:
 
 Nicola
 
-[base-commit, diffstat e output di v4l2-compliance aggiunti da
-git format-patch --cover-letter / dalla prova al momento dell'invio]
+v4l2-compliance (git 1616bf9e3c81, -z PCI:0000:00:05.0 -u <subdev>):
+
+DA COMPLETARE lunedi' con l'output della prova rifatta sui moduli finali
+
+
+Nicola Fiorillo (5):
+  media: i2c: Add GC5035 image sensor driver
+  media: i2c: Add GC8034 image sensor driver
+  media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+  media: i2c: gc5035: Add crop support
+  media: i2c: gc8034: Add crop support
+
+ MAINTAINERS                          |   12 +
+ drivers/media/i2c/Kconfig            |   20 +
+ drivers/media/i2c/Makefile           |    2 +
+ drivers/media/i2c/gc5035.c           | 1135 +++++++++++++++++++++++++
+ drivers/media/i2c/gc8034.c           | 1156 ++++++++++++++++++++++++++
+ drivers/media/pci/intel/ipu-bridge.c |    4 +
+ 6 files changed, 2329 insertions(+)
+ create mode 100644 drivers/media/i2c/gc5035.c
+ create mode 100644 drivers/media/i2c/gc8034.c
+
+
+base-commit: 8e26d4c20ed218db6c3123480a4a4e2545680566
+-- 
+2.47.3
+
