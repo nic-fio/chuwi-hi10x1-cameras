@@ -418,7 +418,9 @@ e tre). Prova a sé stesso alle 9:25, invio vero alle 9:27 a linux-media con
 Sakari, Laurent, Mauro, Hans Verkuil, Dan Scally, Hans de Goede e
 linux-kernel. Copia in `upstream/driver-v1-20261009/`.
 
-Prossimi passi: rispondere a ogni commento; sollecito solo dopo circa due
+Prossimi passi: rispondere a ogni commento (decisione del 9/10: la patch
+libcamera aspetta il primo giro di risposte, fatti in
+patches/wip/libcamera/fatti-per-il-commit.md); sollecito solo dopo circa due
 settimane di silenzio (dal 23 ottobre); una v2 per ogni giro di
 osservazioni, nello stesso thread. Intanto, di giorno: AE di libcamera a
 metà scala, poi la patch libcamera.
