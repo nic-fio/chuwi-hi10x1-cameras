@@ -450,3 +450,11 @@ tra due modelli di guadagno. Quello che si può dire nella patch libcamera:
 con l'helper l'AE a metà scala converge in 10-30 fotogrammi e resta fermo;
 senza, in 180 fotogrammi non converge (gc8034) o si ferma su un punto 2,8
 volte più luminoso (gc5035).
+
+## Revisioni ricevute
+
+- 9 ottobre 2026, 11:24: Dan Scally sulla 3/3 (ipu-bridge), «These entries
+  look ok», `Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>`.
+  Nessuna osservazione, nessuna risposta dovuta; il tag va nella 3/3 della
+  v2 (o lo raccoglie il maintainer se la serie entra così). Su 1/3 e 2/3
+  ancora niente.
