@@ -49,14 +49,13 @@ def migliore(a, b, r=int(os.environ.get("LAB_R", 64))):
     i2 = np.cumsum(np.cumsum(np.pad(s * s, ((1, 0), (1, 0))), 0), 1)
     def box(I, y, x):
         return I[y + 2 * hy, x + 2 * hx] - I[y, x + 2 * hx] - I[y + 2 * hy, x] + I[y, x]
-    best = (-2, 0, 0)
-    for y in range(2 * ry + 1):
-        for x in range(2 * rx + 1):
-            m = box(ii, y, x) / n
-            v = box(i2, y, x) / n - m * m
-            r_ = c[y, x] / n / (np.sqrt(max(v, 1e-12)))
-            if r_ > best[0]:
-                best = (r_, y - ry, x - rx)
+    ys = np.arange(2 * ry + 1)[:, None]
+    xs = np.arange(2 * rx + 1)[None, :]
+    m = box(ii, ys, xs) / n
+    v = box(i2, ys, xs) / n - m * m
+    rr = c[: 2 * ry + 1, : 2 * rx + 1] / n / np.sqrt(np.maximum(v, 1e-12))
+    y, x = np.unravel_index(np.argmax(rr), rr.shape)
+    best = (float(rr[y, x]), int(y) - ry, int(x) - rx)
     # da spostamento fra i centri a spostamento fra gli angoli in alto a sinistra
     return best[0], best[1] + ay - cy, best[2] + ax - cx
 
