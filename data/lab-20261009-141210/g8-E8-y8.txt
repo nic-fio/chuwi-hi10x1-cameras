@@ -1,0 +1,19 @@
+sensore gc8034 gc8034 1-0037 /dev/v4l-subdev5 Intel IPU6 CSI2 1 /dev/video8
+formato 3264x2176 RGGB bpl 6528 n 6
+regs:
+0 0x95 0x08
+0 0x96 0x80
+controlli:
+exposure: 2246
+analogue_gain: 0
+vertical_blanking: 328
+horizontal_blanking: 1008
+pixel_rate: 255909888
+timestamp:
+1461.290579
+1461.332366
+1461.374153
+1461.415941
+1461.457729
+1461.499515
+[ 1460.955289] gc8034 i2c-GCTI8034:00: lab: 2 scritture, ret 0

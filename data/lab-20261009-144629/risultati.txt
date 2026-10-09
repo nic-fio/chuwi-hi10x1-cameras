@@ -1,0 +1,53 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g8-R3-E6-A1: gc8034 1632x1224 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49 0 0x92 0x04 0 0x94 0x05 0 0x95 0x04 0 0x96 0xc8 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144629/g8-R3-E6-A1.raw: 0 byte (attesi 23970816)
+nessun fotogramma
+[ 3530.188767] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Single packet header error corrected
+[ 3530.188788] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[ 3536.952520] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[ 3538.999613] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 3539.000497] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
+
+=== g8-R3-E6-C1: gc8034 1632x1224 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49 0 0x92 0x04 0 0x94 0x05 0 0x95 0x04 0 0x96 0xc8 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07 0 0xad 0x00)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144629/g8-R3-E6-C1.raw: 23970816 byte (attesi 23970816)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144629/g8-R3-E6-C1: 1632x1224 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   127.35  sd   61.54
+  fase (0,1): media   129.07  sd   62.50
+  fase (1,0): media   128.34  sd   62.27
+  fase (1,1): media    89.37  sd   24.92
+  media 118.53, max 1023, saturi(>=1023) 0.001%
+  periodo 41.788 ms (sd 0.003), 23.930 fps
+  rumore temporale 4.491 LSB (centro)
+[ 3540.299115] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[ 3540.299130] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Frame sync error
+[ 3540.299145] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Line sync error
+[ 3540.299160] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame short packet discarded
+[ 3540.299175] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame long packet discarded
+
+=== g8-R3-E6-A2: gc8034 1632x1224 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49 0 0x92 0x04 0 0x94 0x05 0 0x95 0x04 0 0x96 0xc8 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144629/g8-R3-E6-A2.raw: 0 byte (attesi 23970816)
+nessun fotogramma
+[ 3545.327646] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Single packet header error corrected
+[ 3545.327681] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[ 3558.966699] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[ 3561.014744] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 3561.015965] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
+
+=== g8-R3-E6-C2: gc8034 1632x1224 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49 0 0x92 0x04 0 0x94 0x05 0 0x95 0x04 0 0x96 0xc8 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07 0 0xad 0x00)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144629/g8-R3-E6-C2.raw: 23970816 byte (attesi 23970816)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144629/g8-R3-E6-C2: 1632x1224 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   127.46  sd   61.62
+  fase (0,1): media   129.12  sd   62.54
+  fase (1,0): media   128.66  sd   62.34
+  fase (1,1): media    89.40  sd   24.92
+  media 118.66, max 1023, saturi(>=1023) 0.001%
+  periodo 41.787 ms (sd 0.002), 23.931 fps
+  rumore temporale 4.518 LSB (centro)
+[ 3562.282251] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[ 3562.282255] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Frame sync error
+[ 3562.282259] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Line sync error
+[ 3562.282263] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame short packet discarded
+[ 3562.282267] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame long packet discarded
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144629

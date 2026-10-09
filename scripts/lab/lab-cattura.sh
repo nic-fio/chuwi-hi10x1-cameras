@@ -34,15 +34,22 @@ CSI=$(printf '%s\n' "$TOPO" | sed -n "/^- entity .*: $ENT /,/^$/p" | sed -n 's/.
 CAP=$(printf '%s\n' "$TOPO" | sed -n "/^- entity .*: $CSI /,/^$/p" | sed -n 's/.*-> "\(Intel IPU6 ISYS Capture [0-9]*\)":0.*/\1/p' | head -1)
 VID=$(printf '%s\n' "$TOPO" | sed -n "/^- entity .*: $CAP /,/^$/p" | sed -n 's|.*device node name \(/dev/video[0-9]*\).*|\1|p')
 
-def=$(v4l2-ctl -d $SUB -l 2>/dev/null | awk '/flags=read-only/ {next} / default=/ { for (i = 1; i <= NF; i++) if ($i ~ /^default=/) { sub(/default=/, "", $i); printf "%s%s=%s", sep, $1, $i; sep = "," } }')
-[ -n "$def" ] && v4l2-ctl -d $SUB --set-ctrl="$def"
-[ -n "${LAB_CTRL:-}" ] && v4l2-ctl -d $SUB --set-ctrl="$LAB_CTRL"
-
 media-ctl -l "\"$CSI\":1 -> \"$CAP\":0 [1]"
 for pad in "\"$ENT\":0" "\"$CSI\":0" "\"$CSI\":1"; do
     media-ctl -V "$pad [fmt:$MBUS/${W}x${H}]"
 done
 v4l2-ctl -d $VID --set-fmt-video="width=$W,height=$H,pixelformat=$PIX" >/dev/null
+
+# Controlli dopo il formato (i limiti dipendono dall'altezza). Il vblank va
+# per primo: il driver da laboratorio rifiuta un vblank che porta il massimo
+# dell'esposizione sotto il suo default (fisso, pensato per l'altezza piena).
+def=$(v4l2-ctl -d $SUB -l 2>/dev/null | awk '/flags=read-only/ {next} / default=/ { for (i = 1; i <= NF; i++) if ($i ~ /^default=/) { sub(/default=/, "", $i); printf "%s %s\n", $1, $i } }')
+vb=$(printf '%s\n' "${LAB_CTRL:-}" | tr ',' '\n' | sed -n 's/^vertical_blanking=//p')
+[ -n "$vb" ] || vb=$(printf '%s\n' "$def" | awk '$1 == "vertical_blanking" {print $2}')
+[ -n "$vb" ] && v4l2-ctl -d $SUB --set-ctrl="vertical_blanking=$vb"
+def=$(printf '%s\n' "$def" | awk '$1 != "vertical_blanking" && NF == 2 {printf "%s%s=%s", sep, $1, $2; sep = ","}')
+[ -n "$def" ] && v4l2-ctl -d $SUB --set-ctrl="$def"
+[ -n "${LAB_CTRL:-}" ] && v4l2-ctl -d $SUB --set-ctrl="$LAB_CTRL"
 BPL=$(v4l2-ctl -d $VID --get-fmt-video | awk -F: '/Bytes per Line/ {gsub(/ /,"",$2); print $2}')
 
 {
@@ -52,7 +59,7 @@ BPL=$(v4l2-ctl -d $VID --get-fmt-video | awk -F: '/Bytes per Line/ {gsub(/ /,"",
     echo "controlli:"; v4l2-ctl -d $SUB -C exposure,analogue_gain,vertical_blanking,horizontal_blanking,pixel_rate 2>/dev/null
 } > $OUT.txt
 
-if ! v4l2-ctl -d $VID --stream-mmap --stream-count=$N --stream-to=$OUT.raw --verbose 2>&1 \
+if ! timeout 15 v4l2-ctl -d $VID --stream-mmap --stream-count=$N --stream-to=$OUT.raw --verbose 2>&1 \
         | grep -E "ts:|error|Error" > $OUT.ts; then
     true
 fi

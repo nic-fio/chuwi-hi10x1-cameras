@@ -1,0 +1,19 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g8-base: gc8034 3264x2448 RGGB ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-135003/g8-base.raw: 95883264 byte (attesi 95883264)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-135003/g8-base: 3264x2448 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media    64.29  sd    1.65
+  fase (0,1): media    64.44  sd    1.60
+  fase (1,0): media    64.44  sd    1.59
+  fase (1,1): media    64.28  sd    1.65
+  media 64.36, max 203, saturi(>=1023) 0.000%
+  periodo 52.067 ms (sd 18.037), 19.206 fps
+  rumore temporale 1.545 LSB (centro)
+[  133.915441] hardirqs last  enabled at (12617): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[  133.915451] hardirqs last disabled at (12622): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[  133.915458] softirqs last  enabled at (12438): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[  133.915468] softirqs last disabled at (12423): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[  133.915476] ---[ end trace 0000000000000000 ]---
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-135003

@@ -1,0 +1,30 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g8-R6-ad-pieno: gc8034 3264x2448 RGGB (0 0xad 0x30)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-145552/g8-R6-ad-pieno.raw: 0 byte (attesi 95883264)
+nessun fotogramma
+[ 4093.165022] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Line sync error
+[ 4093.165039] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame short packet discarded
+[ 4093.165057] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame long packet discarded
+[ 4093.206492] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Single packet header error corrected
+[ 4093.206520] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+
+=== g8-R6-ad4-pieno: gc8034 3264x2448 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-145552/g8-R6-ad4-pieno.raw: 0 byte (attesi 95883264)
+nessun fotogramma
+[ 4104.301980] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Payload checksum (CRC) error
+[ 4104.301985] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[ 4116.127207] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[ 4118.174045] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 4118.174484] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
+
+=== g8-R6-ad-1632: gc8034 1632x2448 RGGB (0 0xad 0x30 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-145552/g8-R6-ad-1632.raw: 0 byte (attesi 47941632)
+nessun fotogramma
+[ 4124.555424] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Single packet header error corrected
+[ 4124.555443] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[ 4136.285388] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[ 4138.333192] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 4138.333936] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-145552

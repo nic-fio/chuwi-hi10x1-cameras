@@ -1,0 +1,30 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g5-E9-r0: gc5035 2608x1960 GRBG (0 0x0a 0x00 1 0x92 0x00 1 0x94 0x00 1 0x95 0x07 1 0x96 0xa8 1 0x97 0x0a 1 0x98 0x30)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141316/g5-E9-r0.raw: 0 byte (attesi 61716480)
+nessun fotogramma
+[ 1537.060880] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Single packet header error corrected
+[ 1537.060932] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+[ 1537.060953] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Incomplete long packet detected
+[ 1537.060970] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+[ 1537.060986] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame long packet discarded
+
+=== g5-E9-h2020: gc5035 2608x2020 GRBG (0 0x0a 0x00 0 0x0d 0x07 0 0x0e 0xe4 1 0x92 0x00 1 0x94 0x00 1 0x95 0x07 1 0x96 0xe4 1 0x97 0x0a 1 0x98 0x30)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141316/g5-E9-h2020.raw: 0 byte (attesi 63605760)
+nessun fotogramma
+[ 1543.135123] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Incomplete long packet detected
+[ 1543.135137] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame long packet discarded
+[ 1559.882984] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[ 1561.930968] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 1561.931870] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
+
+=== g5-E9-c0: gc5035 2616x1944 GRBG (0 0x0c 0x00 0 0x0f 0x0a 0 0x10 0x38 1 0x94 0x00 1 0x97 0x0a 1 0x98 0x38)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141316/g5-E9-c0.raw: 0 byte (attesi 61212672)
+nessun fotogramma
+[ 1573.427820] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Single packet header error corrected
+[ 1573.427838] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+[ 1573.427843] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Payload checksum (CRC) error
+[ 1573.427848] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+[ 1573.496633] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Single packet header error corrected
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141316

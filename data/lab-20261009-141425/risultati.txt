@@ -1,0 +1,12 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g5-E4-D: gc5035 1296x972 GRBG (0 0x33 0x20 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141425/g5-E4-D.raw: 0 byte (attesi 15303168)
+nessun fotogramma
+[ 1607.355292] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 1607.424942] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 1607.459583] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 1607.667869] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 1607.980107] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141425

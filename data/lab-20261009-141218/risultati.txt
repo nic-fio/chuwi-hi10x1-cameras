@@ -1,0 +1,37 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g8-E6-A: gc8034 1632x1224 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49 0 0x92 0x04 0 0x94 0x05 0 0x95 0x04 0 0x96 0xc8 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141218/g8-E6-A.raw: 0 byte (attesi 23970816)
+nessun fotogramma
+[ 1486.534905] input: MX KEYS S as /devices/virtual/misc/uhid/0005:046D:B378.0007/input/input19
+[ 1486.554978] input: MX KEYS S as /devices/virtual/misc/uhid/0005:046D:B378.0007/input/input20
+[ 1486.566704] hid-generic 0005:046D:B378.0007: input,hidraw0: BLUETOOTH HID v0.18 Keyboard [MX KEYS S] on b0:47:e9:4f:ee:e3
+[ 1487.822002] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 1487.822554] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
+
+=== g8-E6-B: gc8034 1632x1224 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49 0 0x92 0x04 0 0x94 0x05 0 0x95 0x04 0 0x96 0xc8 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07 0 0xfc 0xee 3 0x03 0x9a 3 0x22 0x06)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141218/g8-E6-B.raw: 0 byte (attesi 23970816)
+nessun fotogramma
+[ 1494.153677] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Single packet header error corrected
+[ 1494.153695] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Multiple packet header errors detected
+[ 1505.934310] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[ 1507.981178] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 1507.981951] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
+
+=== g8-E6-C: gc8034 1632x1224 RGGB (0 0x66 0x2c 0 0x80 0x10 0 0xad 0x30 0 0xbc 0x49 0 0x92 0x04 0 0x94 0x05 0 0x95 0x04 0 0x96 0xc8 0 0x97 0x06 0 0x98 0x60 3 0x12 0xf8 3 0x13 0x07 0 0xad 0x00)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141218/g8-E6-C.raw: 23970816 byte (attesi 23970816)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141218/g8-E6-C: 1632x1224 RGGB, 6 fotogrammi, uso il 5
+  fase (0,0): media   126.27  sd   60.03
+  fase (0,1): media   128.28  sd   61.12
+  fase (1,0): media   127.54  sd   60.97
+  fase (1,1): media    89.21  sd   24.31
+  media 117.82, max 1023, saturi(>=1023) 0.001%
+  periodo 41.787 ms (sd 0.001), 23.931 fps
+  rumore temporale 4.575 LSB (centro)
+[ 1509.266882] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Payload checksum (CRC) error
+[ 1509.266899] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[ 1509.266914] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Line sync error
+[ 1509.266930] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame short packet discarded
+[ 1509.266945] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame long packet discarded
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-141218

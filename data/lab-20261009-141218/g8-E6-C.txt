@@ -1,0 +1,34 @@
+sensore gc8034 gc8034 1-0037 /dev/v4l-subdev5 Intel IPU6 CSI2 1 /dev/video8
+formato 1632x1224 RGGB bpl 3264 n 6
+regs:
+0 0x66 0x2c
+0 0x80 0x10
+0 0xad 0x30
+0 0xbc 0x49
+0 0x92 0x04
+0 0x94 0x05
+0 0x95 0x04
+0 0x96 0xc8
+0 0x97 0x06
+0 0x98 0x60
+3 0x12 0xf8
+3 0x13 0x07
+0 0xad 0x00
+controlli:
+exposure: 2246
+analogue_gain: 0
+vertical_blanking: 1280
+horizontal_blanking: 1008
+pixel_rate: 255909888
+timestamp:
+1509.501751
+1509.580418
+1509.622205
+1509.663992
+1509.705777
+1509.747564
+[ 1509.266882] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Payload checksum (CRC) error
+[ 1509.266899] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Incomplete long packet detected
+[ 1509.266914] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Line sync error
+[ 1509.266930] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame short packet discarded
+[ 1509.266945] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-1 error: Inter-frame long packet discarded

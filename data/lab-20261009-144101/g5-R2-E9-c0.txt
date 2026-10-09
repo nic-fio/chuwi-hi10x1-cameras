@@ -1,0 +1,18 @@
+sensore gc5035 gc5035 2-003f /dev/v4l-subdev4 Intel IPU6 CSI2 2 /dev/video16
+formato 2592x1944 GRBG bpl 5184 n 6
+regs:
+0 0x0c 0x00
+controlli:
+exposure: 984
+analogue_gain: 0
+vertical_blanking: 64
+horizontal_blanking: 328
+pixel_rate: 168960000
+timestamp:
+3197.407081
+3197.441787
+3197.476489
+3197.511195
+3197.545897
+3197.580603
+[ 3196.954792] gc5035 i2c-GCTI5035:00: lab: 1 scritture, ret 0

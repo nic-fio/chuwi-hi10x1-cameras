@@ -1,0 +1,37 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g5-R4-sx0: gc5035 2592x1944 GRBG (0 0x0f 0x0a 0 0x10 0x22 1 0x94 0)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144732/g5-R4-sx0.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144732/g5-R4-sx0: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    92.92  sd   19.13
+  fase (0,1): media    93.39  sd   18.60
+  fase (1,0): media    76.26  sd    8.35
+  fase (1,1): media    92.60  sd   19.24
+  media 88.79, max 680, saturi(>=1023) 0.000%
+  periodo 34.704 ms (sd 0.001), 28.815 fps
+  rumore temporale 2.555 LSB (centro)
+[ 3583.032778] hardirqs last  enabled at (9385): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3583.032796] hardirqs last disabled at (9390): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3583.032811] softirqs last  enabled at (8664): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3583.032828] softirqs last disabled at (8649): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3583.032843] ---[ end trace 0000000000000000 ]---
+
+=== g5-R4-dx0: gc5035 2592x1944 GRBG (0 0x0f 0x0a 0 0x10 0x22 1 0x94 2)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144732/g5-R4-dx0.raw: 0 byte (attesi 60466176)
+nessun fotogramma
+[ 3595.413334] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+[ 3595.413346] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Payload checksum (CRC) error
+[ 3595.413355] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+[ 3595.448048] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+[ 3595.448076] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Payload checksum (CRC) error
+
+=== g5-R4-sx1: gc5035 2592x1944 GRBG (0 0x0f 0x0a 0 0x10 0x22 1 0x94 1)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144732/g5-R4-sx1.raw: 0 byte (attesi 60466176)
+nessun fotogramma
+[ 3611.503953] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame long packet discarded
+[ 3611.538428] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+[ 3611.538448] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Payload checksum (CRC) error
+[ 3611.538454] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+[ 3611.573178] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144732

@@ -1,0 +1,201 @@
+7.3.0-rc1-intelcam-debug-g7b3ed03b4963
+
+=== g5-R2-base: gc5035 2592x1944 GRBG ()
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-base.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-base: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    93.12  sd   19.22
+  fase (0,1): media    93.54  sd   18.69
+  fase (1,0): media    76.34  sd    8.39
+  fase (1,1): media    92.78  sd   19.33
+  media 88.94, max 696, saturi(>=1023) 0.000%
+  periodo 34.704 ms (sd 0.002), 28.815 fps
+  rumore temporale 2.560 LSB (centro)
+[ 3192.153125] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Single packet header error corrected
+[ 3192.153166] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+[ 3192.153186] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Payload checksum (CRC) error
+[ 3192.153203] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Incomplete long packet detected
+[ 3192.153219] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame long packet discarded
+
+=== g5-R2-E9-r0: gc5035 2592x1944 GRBG (0 0x0a 0x00)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-r0.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-r0: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    93.21  sd   19.28
+  fase (0,1): media    93.63  sd   18.75
+  fase (1,0): media    76.39  sd    8.39
+  fase (1,1): media    92.88  sd   19.37
+  media 89.03, max 698, saturi(>=1023) 0.000%
+  periodo 34.705 ms (sd 0.002), 28.814 fps
+  rumore temporale 2.570 LSB (centro)
+  rispetto a /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-base: dx +0 px (r 1.000), dy +0 px (r 0.999)
+  (passo 2 px: la correlazione e' sulle celle 2x2; il pixel singolo si legge dalle fasi)
+[ 3193.987450] hardirqs last  enabled at (11721): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3193.987457] hardirqs last disabled at (11726): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3193.987463] softirqs last  enabled at (11020): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3193.987471] softirqs last disabled at (11013): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3193.987477] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E9-c0: gc5035 2592x1944 GRBG (0 0x0c 0x00)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-c0.raw: 60466176 byte (attesi 60466176)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-c0: 2592x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    93.19  sd   19.28
+  fase (0,1): media    93.61  sd   18.73
+  fase (1,0): media    76.36  sd    8.42
+  fase (1,1): media    92.89  sd   19.38
+  media 89.01, max 670, saturi(>=1023) 0.000%
+  periodo 34.704 ms (sd 0.002), 28.815 fps
+  rumore temporale 2.554 LSB (centro)
+  rispetto a /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-base: dx +0 px (r 0.998), dy +0 px (r 1.000)
+  (passo 2 px: la correlazione e' sulle celle 2x2; il pixel singolo si legge dalle fasi)
+[ 3196.845771] hardirqs last  enabled at (9389): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3196.845777] hardirqs last disabled at (9394): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3196.845781] softirqs last  enabled at (8546): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3196.845786] softirqs last disabled at (8071): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3196.845791] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E9-h2000: gc5035 2592x1984 GRBG (0 0x0a 0x00 0 0x0d 0x07 0 0x0e 0xd0 1 0x95 0x07 1 0x96 0xc0)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-h2000.raw: 61710336 byte (attesi 61710336)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-h2000: 2592x1984 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    92.83  sd   19.35
+  fase (0,1): media    93.27  sd   18.86
+  fase (1,0): media    76.18  sd    8.42
+  fase (1,1): media    92.52  sd   19.45
+  media 88.70, max 681, saturi(>=1023) 0.000%
+  periodo 37.747 ms (sd 0.001), 26.492 fps
+  rumore temporale 2.557 LSB (centro)
+[ 3199.190965] hardirqs last  enabled at (11313): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3199.190970] hardirqs last disabled at (11318): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3199.191000] softirqs last  enabled at (11346): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3199.191008] softirqs last disabled at (11325): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3199.191013] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E9-h2040: gc5035 2592x2024 GRBG (0 0x0a 0x00 0 0x0d 0x07 0 0x0e 0xf8 1 0x95 0x07 1 0x96 0xe8)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-h2040.raw: 62954496 byte (attesi 62954496)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-h2040: 2592x2024 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    93.25  sd   35.18
+  fase (0,1): media    93.72  sd   34.92
+  fase (1,0): media    75.97  sd    8.51
+  fase (1,1): media    92.02  sd   19.69
+  media 88.74, max 1023, saturi(>=1023) 0.049%
+  periodo 38.438 ms (sd 0.002), 26.016 fps
+  rumore temporale 2.549 LSB (centro)
+[ 3201.280938] hardirqs last  enabled at (9301): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3201.280945] hardirqs last disabled at (9306): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3201.280950] softirqs last  enabled at (8602): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3201.280957] softirqs last disabled at (8595): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3201.280962] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E9-w2624: gc5035 2608x1944 GRBG (0 0x0c 0x00 0 0x0f 0x0a 0 0x10 0x40 1 0x97 0x0a 1 0x98 0x30)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-w2624.raw: 61212672 byte (attesi 61212672)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-w2624: 2608x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    93.83  sd   32.22
+  fase (0,1): media    94.29  sd   31.89
+  fase (1,0): media    76.97  sd   27.53
+  fase (1,1): media    93.54  sd   32.28
+  media 89.66, max 1023, saturi(>=1023) 0.077%
+  periodo 34.705 ms (sd 0.001), 28.814 fps
+  rumore temporale 2.553 LSB (centro)
+[ 3203.429253] hardirqs last  enabled at (9639): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3203.429262] hardirqs last disabled at (9644): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3203.429269] softirqs last  enabled at (9414): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3203.429278] softirqs last disabled at (9409): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3203.429286] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E9-w2640: gc5035 2624x1944 GRBG (0 0x0c 0x00 0 0x0f 0x0a 0 0x10 0x50 1 0x97 0x0a 1 0x98 0x40)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-w2640.raw: 61212672 byte (attesi 61212672)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E9-w2640: 2624x1944 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    94.01  sd   35.94
+  fase (0,1): media    94.18  sd   32.22
+  fase (1,0): media    77.23  sd   31.72
+  fase (1,1): media    93.48  sd   32.59
+  media 89.72, max 1023, saturi(>=1023) 0.092%
+  periodo 34.704 ms (sd 0.002), 28.815 fps
+  rumore temporale 2.551 LSB (centro)
+[ 3205.694560] hardirqs last  enabled at (9599): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3205.694565] hardirqs last disabled at (9604): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3205.694569] softirqs last  enabled at (7730): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3205.694575] softirqs last disabled at (7651): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3205.694579] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E4-A: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-A.raw: 15303168 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-A: 1296x972 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media    93.91  sd   19.08
+  fase (0,1): media    93.39  sd   19.60
+  fase (1,0): media    93.14  sd   19.69
+  fase (1,1): media    76.17  sd    8.39
+  media 89.15, max 669, saturi(>=1023) 0.000%
+  periodo 34.497 ms (sd 0.001), 28.988 fps
+  rumore temporale 1.347 LSB (centro)
+[ 3207.769663] hardirqs last  enabled at (9197): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3207.769672] hardirqs last disabled at (9202): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3207.769679] softirqs last  enabled at (9174): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3207.769687] softirqs last disabled at (9167): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3207.769695] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E4-noP3: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-noP3.raw: 0 byte (attesi 15303168)
+nessun fotogramma
+[ 3219.912216] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Lane deskew
+[ 3219.912233] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: SOT sync error
+[ 3219.980992] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Single packet header error corrected
+[ 3219.981046] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: DPHY fatal error
+[ 3219.981067] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame short packet discarded
+
+=== g5-R2-E4-noT0: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-noT0.raw: 15303168 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-noT0: 1296x972 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media   123.24  sd   37.86
+  fase (0,1): media   122.22  sd   38.79
+  fase (1,0): media   121.63  sd   38.94
+  fase (1,1): media    88.03  sd   16.61
+  media 113.78, max 1023, saturi(>=1023) 0.005%
+  periodo 34.705 ms (sd 0.001), 28.814 fps
+  rumore temporale 2.566 LSB (centro)
+[ 3225.966543] softirqs last  enabled at (7514): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3225.966548] softirqs last disabled at (7503): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3225.966553] ---[ end trace 0000000000000000 ]---
+[ 3226.263862] ipu6_isys_csi2_error: 404 callbacks suppressed
+[ 3226.263890] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: DPHY fatal error
+
+=== g5-R2-E4-noPLL: gc5035 1296x972 GRBG (0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x1f 0x19 0 0x33 0x20 1 0x44 0x02 1 0x49 0x00 1 0x4a 0x01 1 0x4b 0xf8 1 0x4e 0x06 2 0x14 0x02 2 0x15 0x00 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-noPLL.raw: 7651328 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-noPLL: 1296x972 GRBG, 2 fotogrammi, uso il 1
+  fase (0,0): media  1023.00  sd    0.00
+  fase (0,1): media  1023.00  sd    0.00
+  fase (1,0): media  1023.00  sd    0.00
+  fase (1,1): media  1023.00  sd    0.00
+  media 1023.00, max 1023, saturi(>=1023) 100.000%
+  periodo 3.747 ms (sd 122291.073), 266.904 fps
+  rumore temporale 0.000 LSB (centro)
+[ 3242.343012] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 3242.423607] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 3242.521259] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 3242.649781] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+[ 3242.711612] intel-ipu6 0000:00:05.0: too many consecutive IRQs
+
+=== g5-R2-E4-solo33: gc5035 1296x972 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06 0 0x33 0x20 1 0x92 0x04 1 0x94 0x03 1 0x95 0x03 1 0x96 0xcc 1 0x97 0x05 1 0x98 0x10)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-solo33.raw: 15303168 byte (attesi 15303168)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-solo33: 1296x972 GRBG, 6 fotogrammi, uso il 5
+  fase (0,0): media   100.35  sd   23.10
+  fase (0,1): media   100.05  sd   24.15
+  fase (1,0): media    99.74  sd   24.33
+  fase (1,1): media    78.76  sd   10.33
+  media 94.73, max 681, saturi(>=1023) 0.000%
+  periodo 68.994 ms (sd 0.002), 14.494 fps
+  rumore temporale 1.424 LSB (centro)
+[ 3243.855390] hardirqs last  enabled at (9207): [<ffffffff9f29ab0d>] __up_console_sem+0x4d/0x60
+[ 3243.855409] hardirqs last disabled at (9212): [<ffffffff9f29aaf2>] __up_console_sem+0x32/0x60
+[ 3243.855425] softirqs last  enabled at (9036): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3243.855443] softirqs last disabled at (9015): [<ffffffff9f115541>] __irq_exit_rcu+0xd1/0x1e0
+[ 3243.855459] ---[ end trace 0000000000000000 ]---
+
+=== g5-R2-E4-pieno: gc5035 2592x1944 GRBG (0 0xf5 0xe4 0 0xf7 0x11 0 0xf9 0x12 0 0xfa 0x01 0 0x21 0x60 0 0x29 0x30 0 0x44 0x18 0 0x4e 0x20 0 0x8c 0x20 0 0x91 0x15 0 0x92 0x3a 0 0x95 0x45 0 0x96 0x35 0 0x97 0x20 0 0x9d 0x0c 0 0xd0 0xb3 0 0xd5 0xf0 3 0x01 0x87 3 0x02 0x58 3 0x22 0x03 3 0x26 0x06 3 0x29 0x03 3 0x2b 0x06)
+/home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101/g5-R2-E4-pieno.raw: 0 byte (attesi 60466176)
+nessun fotogramma
+[ 3257.041635] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+[ 3257.180374] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Payload checksum (CRC) error
+[ 3257.180429] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+[ 3257.319204] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Payload checksum (CRC) error
+[ 3257.319261] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+
+Risultati in /home/nicfio/Documenti/INTEL-CAMERA/data/lab-20261009-144101

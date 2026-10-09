@@ -28,7 +28,7 @@ es() {
     [ -n "$SOLO" ] && [[ "$nome" != $SOLO* ]] && return 0
     printf '%s\n' "$@" > "$D/$nome.regs"
     echo; echo "=== $nome: $s ${w}x${h} $c ($*)"
-    if ! "$CATT" "$s" "$w" "$h" "$c" 6 "$D/$nome" "$D/$nome.regs" > "$D/$nome.log" 2>&1; then
+    if ! "$CATT" "$s" "$w" "$h" "$c" "${LAB_N:-6}" "$D/$nome" "$D/$nome.regs" > "$D/$nome.log" 2>&1; then
         echo "   CATTURA FALLITA:"; tail -5 "$D/$nome.log"
     fi
     tail -1 "$D/$nome.log"
@@ -94,11 +94,60 @@ if [ "$CHI" = gc5035 ] || [ "$CHI" = tutti ]; then
     # E9c colonne: col 0, larghezza 2616, uscita 2616
     es g5-E9-c0 $S 2616 1944 GRBG "" "0 0x0c 0x00" "0 0x0f 0x0a" "0 0x10 0x38" "1 0x94 0x00" \
         "1 0x97 0x0a" "1 0x98 0x38"
+
+    # --- secondo giro (9/10) ---
+    # E9 con margine 8 fra finestra e uscita (il primo E9 lo violava)
+    es g5-R2-base $S 2592 1944 GRBG ""
+    es g5-R2-E9-r0 $S 2592 1944 GRBG g5-R2-base "0 0x0a 0x00"
+    es g5-R2-E9-c0 $S 2592 1944 GRBG g5-R2-base "0 0x0c 0x00"
+    LAB_CTRL=vertical_blanking=200 es g5-R2-E9-h2000 $S 2592 1984 GRBG "" "0 0x0a 0x00" \
+        "0 0x0d 0x07" "0 0x0e 0xd0" "1 0x95 0x07" "1 0x96 0xc0"
+    LAB_CTRL=vertical_blanking=200 es g5-R2-E9-h2040 $S 2592 2024 GRBG "" "0 0x0a 0x00" \
+        "0 0x0d 0x07" "0 0x0e 0xf8" "1 0x95 0x07" "1 0x96 0xe8"
+    es g5-R2-E9-w2624 $S 2608 1944 GRBG "" "0 0x0c 0x00" "0 0x0f 0x0a" "0 0x10 0x40" \
+        "1 0x97 0x0a" "1 0x98 0x30"
+    es g5-R2-E9-w2640 $S 2624 1944 GRBG "" "0 0x0c 0x00" "0 0x0f 0x0a" "0 0x10 0x50" \
+        "1 0x97 0x0a" "1 0x98 0x40"
+    # E4 per ablazione: la tabella A divisa in PLL, timing di pagina 0,
+    # MIPI di pagina 3, ISP del binning; se ne toglie un gruppo alla volta
+    PLLC=("0 0xf5 0xe4" "0 0xf7 0x11" "0 0xf9 0x12" "0 0xfa 0x01")
+    T0=("0 0x21 0x60" "0 0x29 0x30" "0 0x44 0x18" "0 0x4e 0x20" "0 0x8c 0x20"
+        "0 0x91 0x15" "0 0x92 0x3a" "0 0x95 0x45" "0 0x96 0x35" "0 0x97 0x20"
+        "0 0x9d 0x0c" "0 0xd0 0xb3" "0 0xd5 0xf0")
+    P3=("3 0x01 0x87" "3 0x02 0x58" "3 0x22 0x03" "3 0x26 0x06" "3 0x29 0x03" "3 0x2b 0x06")
+    es g5-R2-E4-A $S 1296 972 GRBG "" "${PLLC[@]}" "${T0[@]}" "${P3[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
+    es g5-R2-E4-noP3 $S 1296 972 GRBG "" "${PLLC[@]}" "${T0[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
+    es g5-R2-E4-noT0 $S 1296 972 GRBG "" "${PLLC[@]}" "${P3[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
+    es g5-R2-E4-noPLL $S 1296 972 GRBG "" "${T0[@]}" "${P3[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
+    es g5-R2-E4-solo33 $S 1296 972 GRBG "" "${PLLC[@]}" "${T0[@]}" "${P3[@]}" "0 0x33 0x20" "${BIN_OUT[@]}"
+    es g5-R2-E4-pieno $S 2592 1944 GRBG "" "${PLLC[@]}" "${T0[@]}" "${P3[@]}"
+    # margine fra finestra e uscita, un lato alla volta (uscita fissa 2592x1944)
+    for m in 0 2 4 8; do
+        hh=$((1944 + 2 * m)); ww=$((2592 + 2 * m))
+        es g5-R3-mv$m $S 2592 1944 GRBG "" "0 0x0d $((hh >> 8))" "0 0x0e $((hh & 255))" "1 0x92 $m"
+        es g5-R3-mh$m $S 2592 1944 GRBG "" "0 0x0f $((ww >> 8))" "0 0x10 $((ww & 255))" "1 0x94 $m"
+    done
+    # quale lato: finestra 2594, uscita a x=0 (sinistro 0, destro 2) o x=2 (sinistro 2, destro 0)
+    es g5-R4-sx0 $S 2592 1944 GRBG "" "0 0x0f 0x0a" "0 0x10 0x22" "1 0x94 0"
+    es g5-R4-dx0 $S 2592 1944 GRBG "" "0 0x0f 0x0a" "0 0x10 0x22" "1 0x94 2"
+    es g5-R4-sx1 $S 2592 1944 GRBG "" "0 0x0f 0x0a" "0 0x10 0x22" "1 0x94 1"
+    # finestra piu' alta: spostamento in funzione di dH (row start 0) e del row start (H 2000)
+    es g5-R5-base $S 2592 1944 GRBG ""
+    for hh in 1962 1964 1970 1980 2000; do
+        LAB_CTRL=vertical_blanking=200 es g5-R5-h$hh $S 2592 1944 GRBG "" "0 0x0a 0" \
+            "0 0x0d $((hh >> 8))" "0 0x0e $((hh & 255))"
+    done
+    LAB_CTRL=vertical_blanking=200 es g5-R5-h2000-r4 $S 2592 1944 GRBG "" "0 0x0d 7" "0 0x0e 208"
+    LAB_CTRL=vertical_blanking=200 es g5-R5-h2000-r10 $S 2592 1944 GRBG "" "0 0x0a 10" "0 0x0d 7" "0 0x0e 208"
+    # rumore per pixel: 64 fotogrammi, modo pieno e binned
+    LAB_N=64 es g5-R3-n-base $S 2592 1944 GRBG ""
+    LAB_N=64 es g5-R3-n-bin $S 1296 972 GRBG "" "${PLLC[@]}" "${T0[@]}" "${P3[@]}" "${BIN_ISP[@]}" "${BIN_OUT[@]}"
 fi
 
 if [ "$CHI" = gc8034 ] || [ "$CHI" = tutti ]; then
     S=gc8034
     es g8-base $S 3264 2448 RGGB ""
+    es g8-R7-base $S 3264 2448 RGGB ""
     es g8-E1-x8 $S 3264 2448 RGGB g8-base "0 0x94 8"
     es g8-E1-y9 $S 3264 2448 RGGB g8-base "0 0x92 9"
     # E7 mirror (scuola A: offset fissi)
@@ -118,6 +167,20 @@ if [ "$CHI" = gc8034 ] || [ "$CHI" = tutti ]; then
     LAB_CTRL=vertical_blanking=1280 es g8-E6-A $S 1632 1224 RGGB "" "${B8[@]}"
     LAB_CTRL=vertical_blanking=1280 es g8-E6-B $S 1632 1224 RGGB "" "${B8[@]}" "0 0xfc 0xee" "3 0x03 0x9a" "3 0x22 0x06"
     LAB_CTRL=vertical_blanking=1280 es g8-E6-C $S 1632 1224 RGGB "" "${B8[@]}" "0 0xad 0x00"
+    # 0xad = 0x30 a uscita piena (LWC e crop della tabella): cambia la riga emessa?
+    es g8-R6-ad-pieno $S 3264 2448 RGGB "" "0 0xad 0x30"
+    es g8-R6-ad4-pieno $S 3264 2448 RGGB "" "0 0x66 0x2c" "0 0x80 0x10" "0 0xad 0x30" "0 0xbc 0x49"
+    es g8-R6-ad-1632 $S 1632 2448 RGGB "" "0 0xad 0x30" "0 0x97 0x06" "0 0x98 0x60" "3 0x12 0xf8" "3 0x13 0x07"
+    # 0xad = 0x30 con P3 0x22 = 0x03 (coppia della prima sezione della tabella globale
+    # Rockchip a 4 lane), a uscita piena e col binning
+    es g8-R7-ad22-pieno $S 3264 2448 RGGB g8-R7-base "0 0xad 0x30" "3 0x22 0x03"
+    LAB_CTRL=vertical_blanking=1280 es g8-R7-ad22-bin $S 1632 1224 RGGB "" "${B8[@]}" "3 0x22 0x03"
+    es g8-R7-22-pieno $S 3264 2448 RGGB g8-R7-base "3 0x22 0x03"
+    # secondo giro: A e C alternati
+    for k in 1 2; do
+        LAB_CTRL=vertical_blanking=1280 es g8-R3-E6-A$k $S 1632 1224 RGGB "" "${B8[@]}"
+        LAB_CTRL=vertical_blanking=1280 es g8-R3-E6-C$k $S 1632 1224 RGGB "" "${B8[@]}" "0 0xad 0x00"
+    done
     # E9 righe da 0, uscita = finestra 3284x2464 da (0,0); poi 2522 righe
     es g8-E9-r0 $S 3280 2464 RGGB "" "0 0x0a 0x00" "0 0x92 0x00" "0 0x94 0x00" \
         "0 0x95 0x09" "0 0x96 0xa0" "0 0x97 0x0c" "0 0x98 0xd0" "3 0x12 0x04" "3 0x13 0x10"

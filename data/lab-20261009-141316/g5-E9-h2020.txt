@@ -1,0 +1,25 @@
+sensore gc5035 gc5035 2-003f /dev/v4l-subdev4 Intel IPU6 CSI2 2 /dev/video16
+formato 2608x2020 GRBG bpl 5248 n 6
+regs:
+0 0x0a 0x00
+0 0x0d 0x07
+0 0x0e 0xe4
+1 0x92 0x00
+1 0x94 0x00
+1 0x95 0x07
+1 0x96 0xe4
+1 0x97 0x0a
+1 0x98 0x30
+controlli:
+exposure: 984
+analogue_gain: 0
+vertical_blanking: 64
+horizontal_blanking: 328
+pixel_rate: 168960000
+timestamp:
+1543.347865
+[ 1543.135123] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Incomplete long packet detected
+[ 1543.135137] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame long packet discarded
+[ 1559.882984] intel_ipu6_isys.isys intel_ipu6.isys.40: stream stop time out
+[ 1561.930968] intel_ipu6_isys.isys intel_ipu6.isys.40: stream close time out
+[ 1561.931870] intel_ipu6_isys.isys intel_ipu6.isys.40: buffer list not empty, needs isys reset
