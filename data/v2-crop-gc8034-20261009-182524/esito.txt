@@ -1,0 +1,34 @@
+default    crop       OK  (8, 52, 3264, 2448) atteso (8, 52, 3264, 2448)
+default    periodo    OK  41.654 ms modello 41.652
+default    fotogrammi OK  95883264 byte, persi in cattura 0
+limiti     crop       OK  (0, 0, 3280, 2448) atteso (0, 0, 3280, 2448)
+limiti     periodo    OK  41.654 ms modello 41.652
+limiti     fotogrammi OK  96823296 byte, persi in cattura 0
+limiti     posizione  OK  (-8,-52) attesa (-8, -52) r 0.995
+cima       crop       OK  (8, 0, 3264, 2448) atteso (8, 0, 3264, 2448)
+cima       periodo    OK  41.656 ms modello 41.652
+cima       fotogrammi OK  95883264 byte, persi in cattura 11
+cima       posizione  OK  (0,-52) attesa (0, -52) r 0.989
+striscia   crop       OK  (0, 2436, 3280, 64) atteso (0, 2436, 3280, 64)
+striscia   periodo    OK  1.868 ms modello 1.869
+striscia   fotogrammi OK  2531328 byte, persi in cattura 0
+striscia   posizione  --  non misurabile (r 0.56), (-10,2382) attesa (-8, 2384)
+centro     crop       OK  (1200, 900, 640, 480) atteso (1200, 900, 640, 480)
+centro     periodo    OK  8.812 ms modello 8.811
+centro     fotogrammi OK  3686400 byte, persi in cattura 0
+centro     posizione  --  non misurabile (r 0.591), (1194,849) attesa (1192, 848)
+fondo      crop       OK  (1200, 2404, 640, 96) atteso (1200, 2404, 640, 96)
+fondo      periodo    OK  2.403 ms modello 2.403
+fondo      fotogrammi OK  737280 byte, persi in cattura 0
+minimo     crop       OK  (0, 0, 512, 64) atteso (0, 0, 512, 64)
+minimo     periodo    OK  1.87 ms modello 1.869
+minimo     fotogrammi OK  393216 byte, persi in cattura 0
+arrotonda  crop       OK  (8, 52, 3264, 2448) atteso (8, 52, 3264, 2448)
+arrotonda  periodo    OK  41.655 ms modello 41.652
+arrotonda  fotogrammi OK  95883264 byte, persi in cattura 0
+arrotonda  posizione  KO  (0,1) attesa (0, 0) r 0.994
+fuori      crop       OK  (2770, 2436, 512, 64) atteso (2770, 2436, 512, 64)
+fuori      periodo    OK  1.87 ms modello 1.869
+fuori      fotogrammi OK  393216 byte, persi in cattura 0
+fuori      posizione  --  non misurabile (r 0.194), (2074,1755) attesa (2762, 2384)
+KO: 1

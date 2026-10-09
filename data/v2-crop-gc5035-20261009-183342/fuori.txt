@@ -1,0 +1,17 @@
+sensore gc5035 gc5035 2-003f /dev/v4l-subdev4 Intel IPU6 CSI2 2 /dev/video16
+formato 64x64 GRBG bpl 128 n 6
+chiesto 3000 3000 5000 5000
+crop Left 2544, Top 1900, Width 64, Height 64
+controlli:
+exposure: 112
+analogue_gain: 0
+vertical_blanking: 64
+horizontal_blanking: 2856
+pixel_rate: 168960000
+timestamp:
+17202.258119
+17202.260331
+17202.262542
+17202.264755
+17202.266966
+17202.269178

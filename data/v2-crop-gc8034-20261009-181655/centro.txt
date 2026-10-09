@@ -1,0 +1,17 @@
+sensore gc8034 gc8034 1-0037 /dev/v4l-subdev5 Intel IPU6 CSI2 1 /dev/video8
+formato 640x480 RGGB bpl 1280 n 6
+chiesto 1200 900 640 480
+crop Left 1200, Top 900, Width 640, Height 480
+controlli:
+exposure: 524
+analogue_gain: 0
+vertical_blanking: 48
+horizontal_blanking: 3632
+pixel_rate: 256000000
+timestamp:
+16189.565260
+16189.574070
+16189.582881
+16189.591693
+16189.600502
+16189.609313

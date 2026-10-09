@@ -1,0 +1,34 @@
+default    crop       OK  (8, 52, 3264, 2448) atteso (8, 52, 3264, 2448)
+default    periodo    KO  124.961 ms modello 41.667
+default    fotogrammi OK  95883264 byte, persi 0
+limiti     crop       OK  (0, 0, 3280, 2448) atteso (0, 0, 3280, 2448)
+limiti     periodo    KO  41.655 ms modello 41.667
+limiti     fotogrammi OK  96823296 byte, persi 0
+limiti     posizione  OK  (-8,-52) attesa (-8, -52) r 0.995
+cima       crop       OK  (8, 0, 3264, 2448) atteso (8, 0, 3264, 2448)
+cima       periodo    KO  41.654 ms modello 41.667
+cima       fotogrammi OK  95883264 byte, persi 0
+cima       posizione  OK  (0,-52) attesa (0, -52) r 0.994
+striscia   crop       OK  (0, 2436, 3280, 64) atteso (0, 2436, 3280, 64)
+striscia   periodo    OK  1.869 ms modello 1.870
+striscia   fotogrammi OK  2531328 byte, persi 0
+striscia   posizione  --  non misurabile (r 0.612), (-9,2385) attesa (-8, 2384)
+centro     crop       OK  (1200, 900, 640, 480) atteso (1200, 900, 640, 480)
+centro     periodo    OK  8.813 ms modello 8.814
+centro     fotogrammi OK  3686400 byte, persi 0
+centro     posizione  --  non misurabile (r 0.893), (1192,848) attesa (1192, 848)
+fondo      crop       OK  (1200, 2404, 640, 96) atteso (1200, 2404, 640, 96)
+fondo      periodo    OK  2.404 ms modello 2.404
+fondo      fotogrammi OK  737280 byte, persi 0
+fondo      posizione  --  non misurabile (r 0.141), (626,1142) attesa (1192, 2352)
+minimo     crop       OK  (0, 0, 64, 64) atteso (0, 0, 64, 64)
+minimo     periodo    KO  None ms modello 1.870
+minimo     fotogrammi KO  49152 byte, persi None
+arrotonda  crop       OK  (8, 52, 3264, 2448) atteso (8, 52, 3264, 2448)
+arrotonda  periodo    KO  41.654 ms modello 41.667
+arrotonda  fotogrammi OK  95883264 byte, persi 0
+arrotonda  posizione  KO  (-1,0) attesa (0, 0) r 0.987
+fuori      crop       OK  (3218, 2436, 64, 64) atteso (3218, 2436, 64, 64)
+fuori      periodo    KO  None ms modello 1.870
+fuori      fotogrammi KO  49152 byte, persi None
+KO: 9

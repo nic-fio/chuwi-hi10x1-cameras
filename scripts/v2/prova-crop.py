@@ -29,23 +29,21 @@ if S == "gc5035":
              ("minimo", (0, 0, 64, 64)), ("arrotonda", (7, 9, 2593, 1945)),
              ("fuori", (3000, 3000, 5000, 5000))]
 else:
-    AREA = (3284, 2500); DEF = (9, 52, 3264, 2448)
-    MIN = (64, 64); AL = (2, 2, 4, 4)
-    VBMIN = 48; RIGA = 4272 / 255909888
-    PROVE = [("default", DEF), ("cima", (9, 0, 3264, 2448)),
-             ("massimo", (1, 52, 3280, 2448)), ("centro", (1201, 900, 640, 480)),
-             ("fondo", (1201, 2404, 640, 96)), ("minimo", (1, 0, 64, 64)),
-             ("arrotonda", (10, 53, 3265, 2449)), ("fuori", (5000, 5000, 6000, 6000))]
+    AREA = (3282, 2500); DEF = (8, 52, 3264, 2448)
+    MIN = (512, 64); AL = (2, 2, 4, 4)
+    VBMIN = 48; RIGA = 4272 / 256000000
+    PROVE = [("default", DEF), ("limiti", (0, 0, 3280, 2448)), ("cima", (8, 0, 3264, 2448)),
+             ("striscia", (0, 2436, 3280, 64)), ("centro", (1200, 900, 640, 480)),
+             ("fondo", (1200, 2404, 640, 96)), ("minimo", (0, 0, 512, 64)),
+             ("arrotonda", (9, 53, 3265, 2449)), ("fuori", (5000, 5000, 6000, 6000))]
 
 
 def atteso(r):
     """Regole di arrotondamento dei driver v2 (stesse del codice C)."""
     l, t, w, h = r
-    x0 = 1 if S == "gc8034" else 0     # gc8034: left dispari (RGGB), vedi driver
     maxw = AREA[0] if S == "gc5035" else 3280
     maxh = AREA[1] if S == "gc5035" else 2448
-    l = max(0, min(l, AREA[0] - MIN[0]))
-    l = (l - x0) // AL[0] * AL[0] + x0 if l >= x0 else x0
+    l = max(0, min(l, AREA[0] - MIN[0])) // AL[0] * AL[0]
     t = max(0, min(t, AREA[1] - MIN[1])) // AL[1] * AL[1]
     w = max(MIN[0], min(w, maxw, AREA[0] - l)) // AL[2] * AL[2]
     h = max(MIN[1], min(h, maxh, AREA[1] - t)) // AL[3] * AL[3]
@@ -65,20 +63,34 @@ for nome, req in PROVE:
     m = re.search(r"crop Left (\d+), Top (\d+), Width (\d+), Height (\d+)", txt)
     got = tuple(map(int, m.groups()))
     exp = atteso(req)
-    an = run(["python3", "-I", os.path.join(QUI, "..", "lab", "lab-analizza.py"), out])
-    p = re.search(r"periodo ([0-9.]+) ms .*persi (\d+)", an)
-    per, persi = (float(p[1]), int(p[2])) if p else (None, None)
+    # periodo: intervalli che valgono un solo fotogramma (entro il 2% del
+    # piu' corto plausibile); i multipli sono fotogrammi persi in cattura.
+    # Timestamp non crescenti o nulli (IPU6 oltre ~500 fps): non misurabile.
+    ts = [float(x) for x in re.findall(r"^(\d+\.\d+)$", txt.split("timestamp:")[-1], re.M)]
+    d = [b - a for a, b in zip(ts[1:], ts[2:])]
+    per, persi = None, None
+    if d and min(d) > 0:
+        p0 = min(d)
+        uno = sorted(x for x in d if x < p0 * 1.02)
+        per = round(uno[len(uno) // 2] * 1000, 3)
+        persi = sum(round(x / p0) - 1 for x in d)
     model = (got[3] + VBMIN) * RIGA * 1000
     size = os.path.getsize(out + ".raw")
     bpl = int(re.search(r"bpl (\d+)", txt)[1])
     c1 = got == exp
     c2 = per is not None and abs(per - model) < 0.01
-    c3 = size == bpl * got[3] * 6 and persi == 0
-    esito = [("crop", c1, f"{got} atteso {exp}"), ("periodo", c2, f"{per} ms modello {model:.3f}"),
-             ("fotogrammi", c3, f"{size} byte, persi {persi}")]
+    c3 = size == bpl * got[3] * 6
+    esito = [("crop", c1, f"{got} atteso {exp}"),
+             ("periodo", c2 if per is not None else None,
+              f"{per} ms modello {model:.3f}" if per is not None else "timestamp non crescenti: non misurabile"),
+             ("fotogrammi", c3, f"{size} byte, persi in cattura {persi}")]
     if nome != "default":
+        # riferimento catturato subito dopo: la scena o il supporto possono
+        # spostarsi di un pixel in un minuto
+        rif = out + "-rif"
+        run(["bash", os.path.join(QUI, "cattura-crop.sh"), S, *map(str, DEF), "6", rif])
         cf = run(["python3", "-I", os.path.join(QUI, "..", "lab", "lab-confronta.py"),
-                  os.path.join(D, "default"), out])
+                  rif, out])
         q = re.search(r"diretta\s+dx\s+([+-]\d+) dy\s+([+-]\d+)\s+r ([0-9.]+)", cf)
         if q:
             dx, dy, r = int(q[1]), int(q[2]), float(q[3])

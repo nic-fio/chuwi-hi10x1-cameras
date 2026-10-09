@@ -249,3 +249,37 @@ Regole per la v2 (entrambi):
 - crop, formato vietati durante lo stream;
 - left/top e larghezza/altezza ai passi che mantengono il codice Bayer
   (left e top pari nelle coordinate dell'area) e larghezza multipla di 4.
+
+## Driver v2 sul tablet (9/10 sera)
+
+`patches/wip/driver-v2/gc5035.c`, `gc8034.c` (copie della v1 modificate).
+Geometria calcolata dal crop a ogni stream on, `set_selection` (CROP),
+`set_fmt` che centra il crop come ov01a10 (Hans de Goede: «Center image for
+userspace which does not set the crop first»), limiti di HBLANK/VBLANK/
+esposizione aggiornati a ogni cambio, crop e formato vietati in stream
+(EBUSY). Binning non incluso. Strumenti: `scripts/v2/` (cattura-crop.sh,
+scambia-modulo.sh = ricarica a stream fermo senza riavvio, prova-crop.py con
+esito automatico e riferimento catturato subito prima di ogni crop,
+verifica-posizione.py).
+
+Esiti (data/v2-*):
+- A/B v1 -> v2 -> v1 al crop di default: stessa immagine (medie per fase
+  uguali al centesimo, spostamento 0) e stesso periodo, su entrambi.
+- prova-crop.py, due corse per sensore, 0 KO: rettangolo applicato uguale a
+  quello atteso dalle regole (anche per richieste dispari o fuori area),
+  periodo uguale al modello, fotogrammi completi, posizione al pixel dove
+  la scena ha dettaglio (crop piccoli in zone uniformi: massimo nel punto
+  atteso in 9 confronti su 9 ma correlazione 0,3-0,5, quindi prova debole).
+- GC8034 PIXEL_RATE corretto a 256 MHz (era 255,91, scelto per 24 fps
+  tondi): i periodi misurati, da 1,869 a 41,653 ms, tornano solo così.
+- GC8034: larghezze di uscita <= 384 danno flussi rotti (centinaia di buffer
+  scartati, fotogrammi saturi, timestamp nulli) anche a 24 fps; >= 448 ok.
+  Minimo nel driver: 512. GC5035 a 64 colonne funziona.
+- IPU6 oltre ~500 fps (GC8034 64 righe): timestamp nulli o non crescenti;
+  GC5035 a 452 fps pulito. Limite del ricevitore, non del driver.
+- Deriva lenta di un pixel della scena del GC8034 fra catture distanti un
+  minuto (consecutive: 0): per questo il riferimento adiacente.
+- v4l2-compliance da git 1616bf9e3c81 con -z: 54/54, 0 avvisi su entrambi
+  (spariti i due avvisi della v1 sul CROP non scrivibile).
+- libcamera (build in ~/src/libcamera): 60/60 fotogrammi, 0 errori, in tre
+  configurazioni per camera.
