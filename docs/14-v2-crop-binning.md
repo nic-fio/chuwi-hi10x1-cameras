@@ -336,3 +336,13 @@ decidibile per luce.
 Decisione proposta a Nic: chiedere a Laurent prima della v2 (crop ora come
 ov01a10 o dopo come IMX908) e preparare la serie divisa: patch base senza
 tabelle di modo a risoluzione fissa + patch separata col crop.
+
+Posizione al pixel con scena di dettaglio (tazza scura, 9/10 sera,
+scripts/v2/prova-posizione.py: crop piccoli scelti dove c'è più gradiente,
+riferimento dell'area intera catturato subito prima di ogni crop):
+18 crop su 18 esatti (64x64, 128x96, 640x480 sul GC5035; 512x64, 512x256,
+640x480 sul GC8034), r 0,91-0,99. verifica-posizione.py ora confronta il
+mosaico grezzo: con la media 2x2 due crop del GC8034 davano pareggi a +1
+colonna (0,9476 contro 0,9469); sul grezzo +1 dà r circa 0 e il massimo è
+nel punto atteso con margine netto. Anche i +1 della prova sulla larghezza
+minima erano questo artefatto.

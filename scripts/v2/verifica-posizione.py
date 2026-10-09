@@ -4,9 +4,12 @@
 #   verifica-posizione.py LIMITI CROP LEFT TOP [LEFT_LIMITI TOP_LIMITI]
 #
 # LIMITI e' una cattura dell'area intera (crop = limiti), CROP una cattura
-# con crop (LEFT, TOP). Confronta tutto CROP (media dei fotogrammi, media
-# mobile 2x2) con la regione di LIMITI nel punto atteso e negli spostamenti
-# fino a +-4 px. Esito OK se la correlazione massima e' nel punto atteso.
+# con crop (LEFT, TOP). Confronta tutto CROP (media dei fotogrammi, mosaico
+# Bayer grezzo) con la regione di LIMITI nel punto atteso e negli spostamenti
+# fino a +-4 px. Sul mosaico grezzo uno spostamento di un pixel scambia i
+# colori e la correlazione crolla; con una media 2x2 i vicini quasi si
+# equivalgono (pareggi a +1 visti il 9/10). Esito OK se la correlazione
+# massima e' nel punto atteso.
 import re, sys
 import numpy as np
 
@@ -17,8 +20,7 @@ def carica(base):
     r = np.fromfile(base + ".raw", dtype=np.uint16)
     per = bpl * h // 2
     n = r.size // per
-    f = r[: n * per].reshape(n, h, bpl // 2)[:, :, :w].astype(np.float64).mean(0)
-    return (f[:-1, :-1] + f[1:, :-1] + f[:-1, 1:] + f[1:, 1:]) / 4
+    return r[: n * per].reshape(n, h, bpl // 2)[:, :, :w].astype(np.float64).mean(0)
 
 A = carica(sys.argv[1])
 B = carica(sys.argv[2])

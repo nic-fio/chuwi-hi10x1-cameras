@@ -1,0 +1,10 @@
+512x64-1088-1936       crop (1088, 1936, 512, 64) dettaglio   9.1: OK massimo a (+0,+0) r 0.9965; nel punto atteso r 0.9965; secondo valore 0.9963
+512x64-1216-1264       crop (1216, 1264, 512, 64) dettaglio   5.5: KO massimo a (+0,+0) r 0.8395; nel punto atteso r 0.8395; secondo valore 0.8393
+512x64-1776-1248       crop (1776, 1248, 512, 64) dettaglio   5.2: KO massimo a (+0,+0) r 0.8936; nel punto atteso r 0.8936; secondo valore 0.8884
+512x256-1088-1904      crop (1088, 1904, 512, 256) dettaglio   4.6: OK massimo a (+0,+0) r 0.9958; nel punto atteso r 0.9958; secondo valore 0.9954
+512x256-1872-1200      crop (1872, 1200, 512, 256) dettaglio   3.9: OK massimo a (+0,+0) r 0.9846; nel punto atteso r 0.9846; secondo valore 0.9823
+512x256-1104-1056      crop (1104, 1056, 512, 256) dettaglio   3.7: KO massimo a (+1,+0) r 0.9476; nel punto atteso r 0.9469; secondo valore 0.9469
+640x480-1712-960       crop (1712, 960, 640, 480) dettaglio   3.4: OK massimo a (+0,+0) r 0.9887; nel punto atteso r 0.9887; secondo valore 0.9874
+640x480-1056-992       crop (1056, 992, 640, 480) dettaglio   3.2: KO massimo a (+1,+0) r 0.9811; nel punto atteso r 0.9804; secondo valore 0.9804
+640x480-1072-1840      crop (1072, 1840, 640, 480) dettaglio   3.1: OK massimo a (+0,+0) r 0.9975; nel punto atteso r 0.9975; secondo valore 0.9972
+KO: 4
