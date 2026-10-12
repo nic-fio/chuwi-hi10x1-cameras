@@ -23,7 +23,7 @@ CAP=$(printf '%s\n' "$TOPO" | sed -n "/^- entity .*: $CSI /,/^$/p" | sed -n 's/.
 VID=$(printf '%s\n' "$TOPO" | sed -n "/^- entity .*: $CAP /,/^$/p" | sed -n 's|.*device node name \(/dev/video[0-9]*\).*|\1|p')
 MB=$(media-ctl -p 2>/dev/null | awk '/^bus info/ {print $3; exit}')
 
-ctrl() { v4l2-ctl -d $SUB -C $1 2>/dev/null | awk -F': ' '{print $2}'; }
+ctrl() { v4l2-ctl -d $SUB -C $1 2>/dev/null | awk -F': ' '{split($2, v, " "); print v[1]}'; }
 
 # formato: crop di default, poi set_fmt; pipeline al formato risultante
 formato() { # LARG ALT
@@ -43,7 +43,17 @@ cattura() { # N USCITA
         grep -oE "ts: [0-9.]+" | awk '{print $2}' > $2.ts || true
 }
 periodo() { python3 -I -c 'import sys,statistics; t=[float(x) for x in open(sys.argv[1])]; print("%d %.4f" % (len(t), statistics.median([b-a for a,b in zip(t,t[1:])])*1e3 if len(t)>1 else 0))' $1; }
+# legge N fotogrammi HxW a 16 bit col passo di riga dell'ISYS (allineato a 64 byte)
+LEGGI='import numpy as np
+def leggi(f, h, w):
+    bpl = int(open(f[:-4] + ".txt").read().split("bpl")[-1])
+    return np.fromfile(f, np.uint16).reshape(-1, h, bpl // 2)[:, :, :w]
+'
 vicino() { python3 -I -c 'import sys; a,b,t=map(float,sys.argv[1:]); sys.exit(0 if abs(a-b) <= t*abs(b) else 1)' "$@"; }
+
+# la v4l2-compliance lascia i controlli dove li ha provati (test_pattern
+# compreso): si parte sempre dai valori noti
+v4l2-ctl -d $SUB --set-ctrl=test_pattern=0,analogue_gain=0,exposure=984
 
 echo "===== A. SCELTA DEL BINNING"
 v4l2-ctl -d $SUB --list-ctrls-menus 2>/dev/null | grep -A3 link_frequency > $D/menu.txt
@@ -75,11 +85,11 @@ echo "===== E. ESPOSIZIONE IN RIGHE DEL SENSORE"
 v4l2-ctl -d $SUB --set-ctrl=exposure=300; cattura 4 $D/bin-e300
 v4l2-ctl -d $SUB --set-ctrl=exposure=600; cattura 4 $D/bin-e600
 v4l2-ctl -d $SUB --set-ctrl=exposure=984
-r=$(python3 -I - $D/bin-e300.raw $D/bin-e600.raw <<'EOF'
-import sys, numpy as np
+r=$(python3 -I - $D/bin-e300.raw $D/bin-e600.raw "$LEGGI" <<'EOF'
+import sys
+exec(sys.argv.pop())
 def m(f):
-    a = np.fromfile(f, np.uint16).reshape(-1, 972, 1296)[-1].astype(float)
-    return a
+    return leggi(f, 972, 1296)[-1].astype(float)
 a, b = m(sys.argv[1]), m(sys.argv[2])
 sel = (b < 900)            # niente pixel vicini alla saturazione
 print("%.3f %.1f" % (((b[sel] - 64).mean()) / ((a[sel] - 64).mean()), (b[sel] - 64).mean()))
@@ -98,10 +108,11 @@ att=$(python3 -I -c "print('%.4f' % ((2592+328)*(1944+64)/168.96e6*1e3))")
 vicino $p $att 0.005 && OK "F. periodo a piena risoluzione $p ms, modello $att" || KO "F. periodo a piena risoluzione $p ms, modello $att"
 formato 1296 972
 cattura 8 $D/bin2
-res=$(python3 -I - $D/pieno.raw $D/bin2.raw <<'EOF'
-import sys, numpy as np
-P = np.fromfile(sys.argv[1], np.uint16).reshape(-1, 1944, 2592)[2:].astype(float).mean(0)
-B = np.fromfile(sys.argv[2], np.uint16).reshape(-1, 972, 1296)[2:].astype(float).mean(0)
+res=$(python3 -I - $D/pieno.raw $D/bin2.raw "$LEGGI" <<'EOF'
+import sys
+exec(sys.argv.pop())
+P = leggi(sys.argv[1], 1944, 2592)[2:].astype(float).mean(0)
+B = leggi(sys.argv[2], 972, 1296)[2:].astype(float).mean(0)
 # media dei quattro pixel dello stesso colore: blocchi 4x4 del mosaico pieno
 M = np.zeros_like(B)
 for py in (0, 1):
@@ -142,7 +153,7 @@ for i in $(seq 20); do
     cattura 3 $D/ciclo
     read -r n p <<<"$(periodo $D/ciclo.ts)"
     [ "$n" = 3 ] || bad=$((bad + 1))
-    python3 -I -c 'import sys,numpy as np; a=np.fromfile(sys.argv[1],np.uint16).reshape(-1,972,1296); sys.exit(0 if a.shape[0]==3 and a[0].max()>0 and abs(float(a[0].mean())-float(a[2].mean()))<0.1*float(a[2].mean())+5 else 1)' $D/ciclo.raw || bad=$((bad + 1))
+    python3 -I -c 'import sys; exec(sys.argv.pop()); a=leggi(sys.argv[1],972,1296); sys.exit(0 if a.shape[0]==3 and a[0].max()>0 and abs(float(a[0].mean())-float(a[2].mean()))<0.1*float(a[2].mean())+5 else 1)' $D/ciclo.raw "$LEGGI" || bad=$((bad + 1))
 done
 [ $bad = 0 ] && OK "20 cicli di avvio/arresto in binning, primo fotogramma come il terzo" || KO "20 cicli: $bad problemi"
 # binning -> pieno -> binning senza spegnere il sensore

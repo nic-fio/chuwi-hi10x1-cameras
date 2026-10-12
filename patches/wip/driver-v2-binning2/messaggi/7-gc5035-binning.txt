@@ -1,0 +1,39 @@
+media: i2c: gc5035: Add 2x2 binning support
+
+Setting the format to half the size of the default crop rectangle
+selects 2x2 binning of that rectangle: 1296x972 with the same field of
+view as 2592x1944, averaging four pixels of the same colour. The crop
+rectangle goes back to the default one, so that the size alone selects
+the mode, whatever crop rectangle earlier calls left; only a crop
+rectangle of that size, set first, keeps 1296x972 unbinned. The register
+settings are the ones of the vendor sequence for that mode, which only
+work as a whole. Any other format, or a new crop rectangle, gives the
+unbinned output as before. enum_frame_size lists 1296x972 as a second,
+discrete size.
+
+The vendor sequence changes the PLL. The link frequency in this mode is
+175.2 MHz: the time needed to send a line of a given width, found from
+the shortest line length that gives complete frames, gives 176.3 +/- 0.9
+MHz (and 420.7 +/- 1.5 MHz at full resolution, where it is 422.4 MHz).
+LINK_FREQ and PIXEL_RATE follow the mode. The timings are expressed in
+sensor lines, as at full resolution: the sensor reads one row of the pixel
+array per line and outputs one row every two lines. This keeps the frame
+length and exposure registers in their own unit, with a one line exposure
+step, and the frame period computed from HBLANK and VBLANK is the measured
+one. With the vendor readout window a frame lasts at least 1996 lines, so
+binning runs at up to 24 fps, against 28.8 fps at 2592x1944: it is meant
+for lower noise and bandwidth, not for speed.
+
+Binning is only offered when the firmware lists the 175.2 MHz link
+frequency.
+
+Tested with v4l2-compliance (54/54, no warning, in both modes) and
+libcamera, which picks the mode for 1280x960 at 24 fps: the frame period
+is the computed one, also with a longer VBLANK and at the maximum
+exposure, the signal doubles with the exposure in sensor lines, and the
+output matches the 2x2 average per colour of a full resolution frame,
+with no offset.
+
+Assisted-by: claude-opus-5-5 coccinelle sparse smatch
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>
+

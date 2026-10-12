@@ -1,0 +1,7 @@
+exposure: 984
+analogue_gain: 0
+vertical_blanking: 64
+horizontal_blanking: 328
+pixel_rate: 168960000
+link_frequency: 0 (422400000 0x192d5000)
+formato 2592x1944 bpl 5184

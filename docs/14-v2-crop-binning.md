@@ -509,3 +509,45 @@ kernel, per ora»; niente in camera-sensor.rst né nel core dei subdev. La
 serie si applica pulita su quel next (ramo prova-rebase-next, file dei
 driver identici): all'invio usare come base il next più recente e rifare il
 controllo statico.
+
+## Dopo il riavvio del 12/10 (15:40): prove del binning e libcamera
+
+Al boot: moduli di diviso3 da updates/, «Connected 2 cameras», menu
+LINK_FREQ con 422,4 e 175,2 MHz, nessun errore dei sensori (i soli WARNING
+sono quelli noti di i915 intel_tc.c). Registro della verifica statica di
+diviso3 sul server: W=1, sparse, smatch, checkpatch puliti su tutti e 7.
+
+prova-binning.sh non era mai girato davvero e aveva due difetti, corretti:
+- i dati numpy ignoravano il passo di riga dell'ISYS (1296 pixel ->
+  bytesperline 2624, allineato a 64 byte): ora `leggi()` lo prende dal .txt;
+- `ctrl()` confrontava «1 (175200000 ...)» con «1» sui controlli intmenu.
+Inoltre la v4l2-compliance lascia test_pattern=1 (Test Chart): il giro
+successivo misurava il pattern (esposizione x1,000, r 0,036). Lo script ora
+parte con test_pattern=0, analogue_gain=0, exposure=984. Esito:
+data/v2-binning-20261012-154338, 20/20.
+
+Regressione (diviso3): prova-completa-v2 (data/prova-20261012-154426) come
+stamattina, KO solo per i 19 avvisi noti di ipu6-isys-queue.c:203, esposizione
+dispari non misurabile per poca luce; prova-crop gc8034 0 KO; gc5035 1 KO
+«limiti posizione (92,68)», falso picco di lab-confronta su scena scura (media
+86, std 20): verifica-posizione.py dà (0,0) nel punto atteso, r 0,983.
+
+DIFETTO TROVATO con libcamera: in configure() fa set_fmt ACTIVE 1296x972,
+poi 2608x1964 (crop all'area intera), poi 1296x972. Con la regola «binning
+solo se il crop è quello di default» il terzo passo dava un crop centrale
+1296x972 non binnato: con libcamera il binning non arrivava mai (28,8 fps).
+Correzione (ramo driver-v2-diviso4 sul server, commit 7 = 522de6a47):
+set_fmt a 1296x972 sceglie il binning e riporta il crop al default, tranne
+se il crop è già 1296x972 (crop -> fmt alla media-ctl resta non binnato);
+tolto l'include v4l2-rect.h, non più usato. Messaggio del commit 7
+aggiornato con la riga dei test al posto di «DA COMPLETARE». Sorgente e
+messaggio in patches/wip/driver-v2-binning2/. Seconda opinione di gpt-5.5
+(data/chatgpt/crop-binning/04-*): regola difendibile (S_FMT(G_FMT)
+idempotente, TRY e ACTIVE uguali, il crop esplicito prevale); accolto: il
+commento non giustifica la regola con libcamera. Il modo si ricava già
+dallo stato (gc5035_is_binned: formato più piccolo del crop).
+Col modulo nuovo (updates/gc5035.ko): libcamera 1280x960 a 24,01 fps
+(binning) anche partendo da un crop 64x64; crop 1296x972 + fmt 1296x972
+non binnato; 2608x1964 -> 1296x972 binning; ripetere 1296x972 non cambia
+nulla; 2592x1944 torna al pieno. prova-binning 20/20
+(data/v2-binning-20261012-155619), prova-crop gc5035 0 KO.

@@ -1,0 +1,7 @@
+exposure: 600
+analogue_gain: 0
+vertical_blanking: 1024
+horizontal_blanking: 164
+pixel_rate: 70080000
+link_frequency: 1 (175200000 0xa715700)
+formato 1296x972 bpl 2624
