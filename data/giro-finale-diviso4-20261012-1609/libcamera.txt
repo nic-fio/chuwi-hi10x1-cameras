@@ -1,0 +1,6 @@
+camera 1 []: fotogrammi 60, ERROR 0, fps finali (28.53 fps), stream 
+camera 1 [-s role=viewfinder,width=1280,height=960]: fotogrammi 60, ERROR 0, fps finali (24.05 fps), stream 
+camera 1 [-s role=raw]: fotogrammi 60, ERROR 0, fps finali (24.05 fps), stream 
+camera 2 []: fotogrammi 60, ERROR 0, fps finali (24.01 fps), stream 
+camera 2 [-s role=viewfinder,width=1280,height=960]: fotogrammi 60, ERROR 0, fps finali (24.01 fps), stream 
+camera 2 [-s role=raw]: fotogrammi 60, ERROR 0, fps finali (24.01 fps), stream 
