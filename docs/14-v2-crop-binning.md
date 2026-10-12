@@ -590,6 +590,7 @@ server, base media next d7e7bca71, file in upstream/driver-v2-invio7/.
 To: Laurent, Sakari; Cc: Mauro, Hans Verkuil (kernel.org), Dan, Hans de
 Goede, Uwe, linux-media, linux-kernel. Gmail: tutte e 8 in Posta inviata,
 agganciate ai thread della v1.
-Message-ID della lettera: DA COPIARE dall'uscita di git send-email nel
-terminale di Nicola. lore e patchwork rispondono con un controllo anti-bot
+Message-ID della lettera: <20261012143443.34897-1-nicfio@gmail.com> (letto
+dalle intestazioni della mail in Posta inviata; patch 1-7: -2 ... -8).
+lore e patchwork rispondono con un controllo anti-bot
 (Anubis) ai comandi automatici: da guardare nel browser.
