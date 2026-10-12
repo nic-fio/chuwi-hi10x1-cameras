@@ -1,0 +1,27 @@
+sensore gc5035 gc5035 2-003f /dev/v4l-subdev4 Intel IPU6 CSI2 2 /dev/video16
+formato 2592x480 GRBG bpl 5184 n 10
+regs:
+controlli:
+exposure: 528
+analogue_gain: 0
+vertical_blanking: 64
+horizontal_blanking: 328
+pixel_rate: 168960000
+rilettura:
+# p reg scritto allo-stream-on(ret 0) ora(ret 0)
+timestamp:
+4380.956422
+4380.991123
+4381.025827
+4381.060534
+4381.095236
+4381.129940
+4381.164643
+4381.199349
+4381.234052
+4381.268756
+[ 4379.844040] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Single packet header error corrected
+[ 4379.844085] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Multiple packet header errors detected
+[ 4379.844108] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Incomplete long packet detected
+[ 4379.844127] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame short packet discarded
+[ 4379.844145] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame long packet discarded

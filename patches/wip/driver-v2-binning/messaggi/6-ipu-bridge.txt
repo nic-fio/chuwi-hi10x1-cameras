@@ -1,0 +1,8 @@
+media: ipu-bridge: Add the GC5035 binning link frequency
+
+In its 2x2 binned mode the GC5035 uses a 175.2 MHz link frequency, set by
+the PLL of the vendor register sequence for that mode. List it, so that
+the driver can offer binning.
+
+Assisted-by: claude-opus-5-5
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>

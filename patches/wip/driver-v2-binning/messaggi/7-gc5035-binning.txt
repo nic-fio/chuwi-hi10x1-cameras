@@ -1,0 +1,24 @@
+media: i2c: gc5035: Add 2x2 binning support
+
+Setting the format to half the size of the default crop rectangle, while
+it is the current one, selects 2x2 binning: 1296x972 with the same field
+of view as 2592x1944, averaging four pixels of the same colour. The
+register settings are the ones of the vendor sequence for that mode,
+which only work as a whole. Any other format, or a new crop rectangle,
+gives the unbinned output as before.
+
+The vendor sequence changes the PLL. The link frequency in this mode is
+175.2 MHz: the time needed to send a line of a given width, found from
+the shortest line length that gives complete frames, gives 176.3 +/- 0.9
+MHz (and 420.7 +/- 1.5 MHz at full resolution, where it is 422.4 MHz).
+LINK_FREQ and PIXEL_RATE follow the mode. The timings are expressed in
+sensor lines, as at full resolution: the sensor reads one row of the pixel
+array per line and outputs one row every two lines.
+
+Binning is only offered when the firmware lists the 175.2 MHz link
+frequency.
+
+DA COMPLETARE: prove sul tablet dopo il riavvio.
+
+Assisted-by: claude-opus-5-5 coccinelle sparse smatch
+Signed-off-by: Nicola Fiorillo <nicfio@gmail.com>

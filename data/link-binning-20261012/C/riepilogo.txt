@@ -1,0 +1,13 @@
+C0-normale2592 larghezza=2592 fotogrammi=0/30 byte=0/ errori=
+C1-1000 larghezza=1000 fotogrammi=0/30 byte=0/29491200 errori=0
+C-1020 larghezza=1020 fotogrammi=0/30 byte=0/29491200 errori=0
+C-dopo1020-1000 larghezza=1000 fotogrammi=0/30 byte=0/29491200 errori=0
+C-1040 larghezza=1040 fotogrammi=0/30 byte=0/30412800 errori=0
+C-dopo1040-1000 larghezza=1000 fotogrammi=0/30 byte=0/29491200 errori=0
+C-1060 larghezza=1060 fotogrammi=0/30 byte=0/31334400 errori=0
+C-dopo1060-1000 larghezza=1000 fotogrammi=0/30 byte=0/29491200 errori=0
+C-1080 larghezza=1080 fotogrammi=0/30 byte=0/31334400 errori=0
+C-dopo1080-1000 larghezza=1000 fotogrammi=0/30 byte=0/29491200 errori=0
+C-1100 larghezza=1100 fotogrammi=0/30 byte=0/32256000 errori=0
+C-dopo1100-1000 larghezza=1000 fotogrammi=0/30 byte=0/29491200 errori=0
+C9-normale2592 larghezza=2592 fotogrammi=0/30 byte=0/ errori=

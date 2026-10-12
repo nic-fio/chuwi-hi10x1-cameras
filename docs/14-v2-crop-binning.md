@@ -384,3 +384,112 @@ Lista di controllo, in ordine, con Nic:
    di Nic (SI, conferma per messaggio, password per le app).
 6. Dopo: Message-ID nel diario, copia in upstream/driver-v2-<data>/,
    controllo su lore e patchwork.
+
+## Frequenza del collegamento in binning (12/10, prima dell'invio della v2)
+
+Laurent sulla 1/3 della v1 chiede il crop analogico «e il binning se il
+sensore lo supporta». Sul GC5035 il binning funziona, ma per dichiarare
+LINK_FREQ serve la frequenza del collegamento in quel modo. Nicola ha deciso
+di provarci prima di spedire (12/10 mattina). Script
+`scripts/lab/esperimento-link-binning.sh`, dati in
+`data/link-binning-20261012/`, driver da laboratorio caricato al posto del v2.
+
+Metodo: una riga di uscita deve partire sul collegamento entro il tempo
+disponibile per lei. Quindi la soglia (la riga più corta che regge una
+larghezza data, o il contrario) segue tempo = larghezza * 10 / (4 f) + t0,
+2 lane DDR, RAW10. Dalla pendenza si ricava f, e t0 si elimina.
+
+- Verifica del metodo a frequenza nota (fase G, PLL normale, 422,4 MHz):
+  soglie di riga 714/666/616/566/515 unità per 2592/2400/2200/2000/1800
+  pixel. Un'unità del registro 0x05/06 vale 23,6753 ns (dal periodo).
+  Risultato f = 420,7 ± 1,0 MHz, t0 = 1,505 us: il metodo funziona.
+- Col PLL del binning (0xf5/f8/f9/fa + pagina 3) e lettura piena (fasi
+  B, C, E, F): soglia fissa fra 1020 e 1028 pixel, a qualunque lunghezza di
+  riga (730, 910, 1090; periodi 83,7, 104,3, 124,9 ms). È un limite di
+  larghezza, non di banda: con quella configurazione parziale non misura f.
+  Dopo un guasto anche le prove buone falliscono, finché non si cattura col
+  PLL normale (fase C): da lì in poi ogni prova parte da una cattura normale.
+- Con quel PLL il periodo è 83,670 ms contro 34,704: rapporto 2,41097 =
+  2 * 88/73 (2,41096). L'orologio di riga segue 0xf8 e 0xfa = 1 divide per 2.
+- Il «binning completo» del 9/10 non scriveva 0xf8 = 0x49 e scriveva
+  0xf7 = 0x11 sulla pagina 0 invece che sulla 3: non era la tabella del
+  produttore. Rigenerata da reference/gc5035-intel.c:
+  `scripts/lab/binning-produttore.regs` (39 scritture). Funziona: 30/30
+  fotogrammi 1296x972 RGGB, periodo 41,585 ms (24,05 fps); rispetto ai
+  34,497 ms del 9/10 il rapporto è 88/73.
+- Binning completo, metodo della pendenza (fase H): soglie di riga
+  388/339/289/240 unità per 1296/1100/900/700 pixel, lineari (residui sotto
+  0,4 unità). Unità di riga in binning 23,6753 * 88/73 = 28,540 ns (1996
+  righe per fotogramma, come il 9/10). Righe disponibili per riga d'uscita:
+  c = 2, misurato riducendo la finestra a 980 righe fisiche: 21,168 ms =
+  1016,0 righe = 980 + 36 (col PLL normale 1032,1 = 980 + 52). Quindi una
+  riga fisica per tempo di riga anche in binning.
+- Risultato: f = 176,3 ± 0,9 MHz in binning, contro 19,2 * 73 / 8 =
+  175,2 MHz della formula del PLL (0xf8 moltiplica, 0xfa = 1 divide per 2);
+  verifica del metodo 420,7 ± 1,5 contro 422,4. LINK_FREQ in binning:
+  175,2 MHz. PIXEL_RATE = 0,4 * LINK_FREQ = 70,08 MHz, con una riga
+  d'uscita ogni due righe del sensore: HTS 2920 come a piena risoluzione.
+
+ATTENZIONE (12/10, trovato preparando il binning): la serie in
+upstream/driver-v2-invio/ (ramo driver-v2-diviso, commit delle 18:21 del
+9/10) NON contiene le correzioni delle 18:52 e delle 19:18 (revisione e
+revisione avversaria: set_fmt che centra sul crop di default, VBLANK al
+default a ogni nuovo formato, include align.h/minmax.h, limite di altezza
+del GC8034 commentato, exposure_max arrotondato). I .ko delle 19:17,
+provati il 9/10 e il 12/10, sono compilati dai sorgenti di
+patches/wip/driver-v2/, che le contengono. La serie va rigenerata da quei
+sorgenti prima di qualunque invio.
+
+Ricaricamento della catena IPU6 (12/10, per provare ipu-bridge con la
+frequenza del binning): con `scripts/v2/ricarica-ipu6.sh` (unbind dei
+sensori, rmmod gc5035 gc8034 intel_ipu6_isys intel_ipu6 ipu_bridge, poi
+modprobe) il probe del gc5035 va in oops: page fault leggendo
+ffffffffc013b0f8 in memcpy, da software_node_read_int_array <-
+v4l2_fwnode_endpoint_alloc_parse <- gc5035_parse_fwnode. L'indirizzo è nella
+memoria del vecchio modulo ipu_bridge già scaricato: il nodo software del
+sensore resta al suo posto dopo la rimozione di intel_ipu6, e le sue
+proprietà (link-frequencies) puntano ai dati del modulo liberato. Difetto
+del percorso di scaricamento ipu-bridge/IPU6, non del driver: da guardare a
+parte (possibile patch). Il modulo gc5035 resta nello stato «coming», le
+camere servono di nuovo solo dopo un riavvio. Non ricaricare intel_ipu6 per
+le prove: installare i moduli in updates/ e riavviare.
+
+## Binning nel driver (12/10 pomeriggio) e cosa resta
+
+Ramo driver-v2-diviso2 sul server (worktree driver-v2), 7 commit su next
+8e26d4c20: 1-3 invariati; 4 e 5 col codice provato (le correzioni delle
+18:52/19:18 mancanti nella serie del 9/10); 6 «media: ipu-bridge: Add the
+GC5035 binning link frequency» (GCTI5035: 175200000, 422400000); 7 «media:
+i2c: gc5035: Add 2x2 binning support» (260a33b84). Sorgente e messaggi in
+patches/wip/driver-v2-binning/. Controlli statici sulla serie: W=1, sparse,
+smatch puliti su tutti e 7, checkpatch --strict pulito (dopo aver accorciato
+due righe del 7), coccinelle niente (registro
+/media/INTEL-CAMERA/tablet/driver-v2-binning-verifica.log sul server).
+
+Scelte del driver: set_fmt a metà del crop di default (1296x972), col crop
+di default attivo, sceglie il binning; un altro formato o un nuovo crop
+tornano al modo pieno. Sequenza vendor del binning (32 scritture, senza la
+geometria), finestra vendor (3, 4) 2608x1960, uscita (4, 4) 1296x972 in
+coordinate binnate. LINK_FREQ 175,2 MHz (voce 1 del menu), PIXEL_RATE 70,08
+MHz, HTS 1460, VTS minimo 1996: tempi in righe del sensore, come a piena
+risoluzione (periodo previsto 41,585 ms = misurato col binning vendor).
+Binning offerto solo se il firmware elenca 175,2 MHz.
+
+In /lib/modules/$(uname -r)/updates del tablet, per il prossimo avvio: i tre
+moduli compilati dalla serie (gc5035 col binning, gc8034, ipu-bridge con
+175,2 MHz). Dopo il riavvio:
+1. dmesg: «Found supported sensor», «Connected 2 cameras», nessun errore
+   del gc5035; v4l2-ctl --list-ctrls-menus sul subdev: due frequenze.
+2. sudo V4L2_COMPLIANCE=~/src/v4l-utils/build/utils/v4l2-compliance/v4l2-compliance
+   scripts/v2/prova-binning.sh (binning: controlli, tempi, VBLANK,
+   esposizione in righe, posizione contro la media 2x2 del pieno,
+   compliance nei due modi).
+3. Regressione: prova-completa-v2.sh (con V4L2_COMPLIANCE) e prova-crop.py
+   su entrambi; libcamera.
+4. Riga dei test nel messaggio del commit 7 al posto di «DA COMPLETARE»,
+   lettera secondo patches/wip/driver-v2-binning/proposta-lettera.md (da
+   approvare da Nicola), format-patch -v2 --cover-letter --base=8e26d4c20,
+   compliance nella lettera, controllo statico finale, --prova, invio solo
+   col SI di Nicola.
+Per tornare al v2 senza binning: copiare patches/wip/driver-v2/gc5035.ko in
+updates/, cancellare updates/ipu-bridge.ko, depmod, riavviare.

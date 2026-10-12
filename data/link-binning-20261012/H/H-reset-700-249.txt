@@ -1,0 +1,55 @@
+sensore gc5035 gc5035 2-003f /dev/v4l-subdev4 Intel IPU6 CSI2 2 /dev/video16
+formato 2592x480 GRBG bpl 5184 n 30
+regs:
+1 0x95 0x01
+1 0x96 0xe0
+1 0x97 0x0a
+1 0x98 0x20
+controlli:
+exposure: 528
+analogue_gain: 0
+vertical_blanking: 64
+horizontal_blanking: 328
+pixel_rate: 168960000
+rilettura:
+# p reg scritto allo-stream-on(ret 0) ora(ret 0)
+1 0x95 0x01 0x01 0x01
+1 0x96 0xe0 0xe0 0xe0
+1 0x97 0x0a 0x0a 0x0a
+1 0x98 0x20 0x20 0x20
+timestamp:
+4280.696285
+4280.730992
+4280.765694
+4280.800397
+4280.835100
+4280.869804
+4280.904508
+4280.939212
+4280.973917
+4281.008621
+4281.043324
+4281.078030
+4281.112735
+4281.147436
+4281.182144
+4281.216849
+4281.251550
+4281.286256
+4281.320959
+4281.355664
+4281.390367
+4281.425072
+4281.459774
+4281.494478
+4281.529185
+4281.563887
+4281.598591
+4281.633297
+4281.668001
+4281.702705
+[ 4279.588233] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Incomplete long packet detected
+[ 4279.588249] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Frame sync error
+[ 4279.588264] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Line sync error
+[ 4279.588279] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame short packet discarded
+[ 4279.588294] intel_ipu6_isys.isys intel_ipu6.isys.40: csi2-2 error: Inter-frame long packet discarded
