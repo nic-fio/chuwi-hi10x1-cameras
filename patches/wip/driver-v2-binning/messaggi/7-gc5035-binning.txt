@@ -5,7 +5,8 @@ it is the current one, selects 2x2 binning: 1296x972 with the same field
 of view as 2592x1944, averaging four pixels of the same colour. The
 register settings are the ones of the vendor sequence for that mode,
 which only work as a whole. Any other format, or a new crop rectangle,
-gives the unbinned output as before.
+gives the unbinned output as before. enum_frame_size lists 1296x972 as a
+second, discrete size.
 
 The vendor sequence changes the PLL. The link frequency in this mode is
 175.2 MHz: the time needed to send a line of a given width, found from
@@ -13,7 +14,12 @@ the shortest line length that gives complete frames, gives 176.3 +/- 0.9
 MHz (and 420.7 +/- 1.5 MHz at full resolution, where it is 422.4 MHz).
 LINK_FREQ and PIXEL_RATE follow the mode. The timings are expressed in
 sensor lines, as at full resolution: the sensor reads one row of the pixel
-array per line and outputs one row every two lines.
+array per line and outputs one row every two lines. This keeps the frame
+length and exposure registers in their own unit, with a one line exposure
+step, and the frame period computed from HBLANK and VBLANK is the measured
+one. With the vendor readout window a frame lasts at least 1996 lines, so
+binning runs at up to 24 fps, against 28.8 fps at 2592x1944: it is meant
+for lower noise and bandwidth, not for speed.
 
 Binning is only offered when the firmware lists the 175.2 MHz link
 frequency.

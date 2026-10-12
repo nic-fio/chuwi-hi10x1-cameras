@@ -127,6 +127,30 @@ else
     KO "spostamento ($dy,$dx), r $rr"
 fi
 
+echo "===== H. ENUMERAZIONE, ESPOSIZIONE MASSIMA, CICLI"
+v4l2-ctl -d $SUB --list-subdev-framesizes pad=0,code=0x300a > $D/framesizes.txt 2>&1
+grep -q '1296x972' $D/framesizes.txt && OK "enum_frame_size elenca 1296x972" || KO "enum_frame_size: $(tr '\n' ' ' < $D/framesizes.txt)"
+formato 1296 972
+v4l2-ctl -d $SUB --set-ctrl=exposure=1980
+cattura 10 $D/bin-emax
+read -r n p <<<"$(periodo $D/bin-emax.ts)"
+vicino $p 41.585 0.005 && [ "$n" = 10 ] && OK "esposizione massima 1980: $n fotogrammi, periodo $p ms" || KO "esposizione massima 1980: $n fotogrammi, periodo $p ms"
+v4l2-ctl -d $SUB --set-ctrl=exposure=984
+# 20 avvii e arresti di fila (dentro il secondo di autosuspend)
+bad=0
+for i in $(seq 20); do
+    cattura 3 $D/ciclo
+    read -r n p <<<"$(periodo $D/ciclo.ts)"
+    [ "$n" = 3 ] || bad=$((bad + 1))
+    python3 -I -c 'import sys,numpy as np; a=np.fromfile(sys.argv[1],np.uint16).reshape(-1,972,1296); sys.exit(0 if a.shape[0]==3 and a[0].max()>0 and abs(float(a[0].mean())-float(a[2].mean()))<0.1*float(a[2].mean())+5 else 1)' $D/ciclo.raw || bad=$((bad + 1))
+done
+[ $bad = 0 ] && OK "20 cicli di avvio/arresto in binning, primo fotogramma come il terzo" || KO "20 cicli: $bad problemi"
+# binning -> pieno -> binning senza spegnere il sensore
+formato 2592 1944; cattura 3 $D/salto-pieno
+formato 1296 972; cattura 3 $D/salto-bin
+read -r n1 p1 <<<"$(periodo $D/salto-pieno.ts)"; read -r n2 p2 <<<"$(periodo $D/salto-bin.ts)"
+[ "$n1" = 3 ] && [ "$n2" = 3 ] && vicino $p2 41.585 0.005 && OK "pieno -> binning senza spegnimento: periodo $p2 ms" || KO "salto di modo: $n1 e $n2 fotogrammi, periodo $p2 ms"
+
 echo "===== G. V4L2-COMPLIANCE"
 formato 1296 972
 timeout 300 $VC -z $MB -u $SUB > $D/compliance-binning.txt 2>&1

@@ -493,3 +493,19 @@ moduli compilati dalla serie (gc5035 col binning, gc8034, ipu-bridge con
    col SI di Nicola.
 Per tornare al v2 senza binning: copiare patches/wip/driver-v2/gc5035.ko in
 updates/, cancellare updates/ipu-bridge.ko, depmod, riavviare.
+
+Revisione avversaria del binning (agente con contesto pulito, 12/10): nessun
+difetto bloccante. Accolti: P1 enum_frame_size elenca 1296x972 come seconda
+dimensione discreta (altrimenti libcamera non vede il binning); P2 il menu
+LINK_FREQ arriva a 175,2 MHz solo se il firmware la elenca; P3 nel messaggio
+del commit 7 perché i tempi sono in righe del sensore e che il binning va a
+24 fps contro 28,8 (rumore e banda, non velocità). Prove aggiunte a
+prova-binning.sh: esposizione massima (1980), 20 cicli di avvio/arresto,
+pieno -> binning senza spegnimento (D1, D2). Commit 7 ora b6cd86b7d,
+checkpatch, W=1, sparse, smatch puliti; modulo installato in updates/.
+D3, modello comune dei sensori raw: su media next (d7e7bca71, 12/10) c'è
+solo il flag MEDIA_PAD_FL_INTERNAL, per il framework Maxim e «solo per il
+kernel, per ora»; niente in camera-sensor.rst né nel core dei subdev. La
+serie si applica pulita su quel next (ramo prova-rebase-next, file dei
+driver identici): all'invio usare come base il next più recente e rifare il
+controllo statico.

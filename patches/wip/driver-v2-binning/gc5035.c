@@ -556,17 +556,31 @@ static int gc5035_enum_frame_size(struct v4l2_subdev *sd,
 				  struct v4l2_subdev_state *sd_state,
 				  struct v4l2_subdev_frame_size_enum *fse)
 {
+	struct gc5035 *gc5035 = to_gc5035(sd);
+
 	if (fse->code != GC5035_MBUS_CODE)
 		return -EINVAL;
 
-	if (fse->index > 0)
+	switch (fse->index) {
+	case 0:
+		/* Without binning, the output size is the crop size. */
+		fse->min_width = GC5035_MIN_WIDTH;
+		fse->max_width = GC5035_AREA_WIDTH;
+		fse->min_height = GC5035_MIN_HEIGHT;
+		fse->max_height = GC5035_AREA_HEIGHT;
+		break;
+	case 1:
+		/* 2x2 binning of the default crop rectangle. */
+		if (!gc5035->binning)
+			return -EINVAL;
+		fse->min_width = GC5035_WIDTH / 2;
+		fse->max_width = GC5035_WIDTH / 2;
+		fse->min_height = GC5035_HEIGHT / 2;
+		fse->max_height = GC5035_HEIGHT / 2;
+		break;
+	default:
 		return -EINVAL;
-
-	/* The output size is the size of the crop rectangle. */
-	fse->min_width = GC5035_MIN_WIDTH;
-	fse->max_width = GC5035_AREA_WIDTH;
-	fse->min_height = GC5035_MIN_HEIGHT;
-	fse->max_height = GC5035_AREA_HEIGHT;
+	}
 
 	return 0;
 }
@@ -1110,9 +1124,12 @@ static int gc5035_init_controls(struct gc5035 *gc5035)
 	ctrl_hdlr = &gc5035->ctrls;
 	v4l2_ctrl_handler_init(ctrl_hdlr, 9);
 
+	/* The binned mode frequency is only listed when the firmware has it. */
 	gc5035->link_freq =
 		v4l2_ctrl_new_int_menu(ctrl_hdlr, NULL, V4L2_CID_LINK_FREQ,
-				       ARRAY_SIZE(gc5035_link_freq_menu) - 1,
+				       gc5035->binning ?
+				       GC5035_LINK_FREQ_BIN_INDEX :
+				       GC5035_LINK_FREQ_FULL_INDEX,
 				       GC5035_LINK_FREQ_FULL_INDEX,
 				       gc5035_link_freq_menu);
 
