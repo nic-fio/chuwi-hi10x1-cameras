@@ -1,0 +1,107 @@
+Oggetto: [PATCH v2 0/7] media: Add GalaxyCore GC5035 and GC8034 sensor drivers
+
+Ciao a tutti,
+
+questa è la v2 dei driver per i sensori GalaxyCore GC5035 (camera frontale,
+2 lane) e GC8034 (posteriore, 4 lane) del tablet Chuwi Hi10 X1, con IPU6.
+
+Laurent, sulla v1 avevi chiesto di rendere i driver configurabili, con il crop analogico e il binning
+se il sensore lo supporta.
+
+Questa versione fa così:
+
+- Niente più tabelle di modo per la geometria: finestra di lettura e crop
+  d'uscita del sensore si calcolano dal rettangolo di crop a ogni avvio
+  dello stream (patch 1 e 2).
+- Il crop si imposta con la selezione CROP sul pad sorgente (patch 4 e 5).
+  In verticale è analogico: si riduce la finestra di lettura e il
+  fotogramma si accorcia (il GC5035 a 640x480 arriva a 106 fps). In
+  orizzontale invece è il crop d'uscita interno al sensore: restringere la
+  finestra in orizzontale dà immagini nere sul GC5035, e sul GC8034 passa
+  per un registro di colonna che dà immagini corrotte a molti valori.
+- Il binning 2x2 c'è sul GC5035 (patch 6 e 7): il formato 1296x972 dà la
+  media di quattro campioni dello stesso colore, con lo stesso campo visivo
+  del crop di default. La sequenza vendor cambia la PLL, quindi ho misurato
+  la frequenza del collegamento in quel modo: 176,3 ± 0,9 MHz, contro i
+  175,2 MHz che danno i registri della PLL (con lo stesso metodo, a
+  risoluzione piena, 420,7 ± 1,5 contro 422,4). La patch 6 aggiunge questa
+  frequenza in ipu-bridge. Sul GC8034 il binning esiste solo nelle
+  sequenze vendor a 2 lane; a 4 lane rompe il flusso CSI-2, quindi non
+  c'è.
+
+Ho mantenuto il crop nelle patch 4 e 5 e il binning nelle 6 e 7, separate,
+perché ho visto che su IMX908 avete deciso di rimandare il crop al modello
+comune dei sensori raw
+(<20261001133138.GM944070@killaraus.ideasonboard.com>). Se volete fare
+lo stesso qui, le patch 1-3 funzionano da sole, a risoluzione fissa
+come la v1, e crop e binning li rifaccio sul modello comune quando entra.
+
+Alcune scelte su cui potreste non essere d'accordo, e che cambio volentieri:
+
+- set_fmt cambia il crop: per chi non imposta il crop prima, lo centra sul
+  crop di default, come fa ov01a10. E 1296x972 sceglie il binning e
+  riporta il crop al default, a meno che il crop sia già 1296x972:
+  libcamera imposta prima la dimensione più grande e poi quella che vuole,
+  e con il binning legato al crop corrente non lo otteneva mai. Se
+  preferite il binning con COMPOSE, o aspettare il modello comune, lo
+  cambio.
+- In binning i tempi sono in righe del sensore (il sensore legge una riga
+  dell'array per linea e ne emette una ogni due): esposizione e VBLANK
+  restano nell'unità dei registri, con passo di una riga, e il periodo
+  calcolato da HBLANK e VBLANK è quello misurato. Per questo PIXEL_RATE è
+  70,08 MHz, HBLANK 164 e VBLANK almeno 1024.
+- enum_frame_size elenca 1296x972 a parte, anche se sta nell'intervallo
+  del modo pieno, perché libcamera veda il binning.
+- PIXEL_RATE del GC8034 (256 MHz) è quello che dà i periodi misurati con
+  la lunghezza di riga del sensore; è più di quanto porta il collegamento
+  a 4 lane (215 Mpixel/s), ma sulla riga intera, blanking compreso, la
+  banda media è di circa 196 Mpixel/s.
+- Il guadagno analogico è l'indice dei gradini del sensore, che non sono
+  lineari, come nel codice vendor.
+
+Non ho il datasheet: la geometria, i limiti e i tempi li ho misurati sul
+tablet, e i commenti nel codice dicono cosa è misurato. In breve:
+
+- Le dimensioni riportate come NATIVE_SIZE e CROP_BOUNDS (2608x1964 e
+  3282x2500) sono l'area più grande che dà immagine; intorno ci sono righe e
+  colonne costanti. Non sono l'array fisico, che non è documentato.
+- CROP_DEFAULT è l'immagine della sequenza vendor, la stessa della v1: al
+  crop di default la v2 produce la stessa immagine della v1.
+- I tempi seguono un modello che torna con le misure da 64 righe
+  all'altezza piena; per il GC8034 questo ha corretto PIXEL_RATE a 256 MHz
+  (la v1 dichiarava 255,9 MHz).
+- I limiti di dimensione (GC8034 largo almeno 512 e al massimo 3280, alto
+  al massimo 2448; GC5035 almeno 64x64) vengono da prove in cui fuori da
+  quei limiti il flusso si rompe o i tempi escono dal modello.
+
+Come l'ho provato, sul kernel next (base 8e26d4c20):
+- v4l2-compliance da git (1616bf9e3c81) con -z: 54/54, nessun avviso, su
+  tutti e due, e sul GC5035 sia a risoluzione piena sia in binning; output
+  completo in fondo.
+- Una batteria di crop (default, limiti, centro, angoli, minimi, richieste
+  da arrotondare o fuori area): rettangolo applicato, periodo misurato,
+  fotogrammi completi e posizione al pixel, tutto come previsto, in due
+  corse per sensore.
+- Il binning: controlli, periodo (anche con VBLANK lungo e all'esposizione
+  massima), segnale doppio con esposizione doppia, uscita uguale alla media
+  2x2 per colore di un fotogramma a risoluzione piena, senza spostamento,
+  20 avvii e arresti di fila e passaggio dal modo pieno al binning.
+- libcamera (pipeline simple): 60 fotogrammi su 60 in tre configurazioni
+  per camera; sul GC5035 a 1280x960 sceglie il binning.
+- W=1, sparse, smatch, checkpatch --strict e coccinelle puliti su ogni
+  patch; build i386 pulita.
+
+I cambiamenti che ho fatto rispetto alla v1 sono i seguenti:
+- Patch 1 e 2: geometria tolta dalla tabella e calcolata dal crop, scritta
+  tutta a 16 bit; NATIVE_SIZE e CROP_BOUNDS sono l'area misurata invece
+  della finestra di lettura vendor; il default dell'esposizione non supera
+  più il massimo quando VBLANK si riduce; GC8034: PIXEL_RATE a 256 MHz e
+  registro di blanking calcolato da VBLANK; tolto linux/mod_devicetable.h
+  e tabella ACPI con inizializzatore con nome, come chiesto da Uwe.
+- Aggiunto il Reviewed-by di Dan sulla patch 3.
+- Patch 4, 5, 6 e 7: nuove.
+
+Per scrivere il codice e fare le misure ho usato un LLM di frontiera (Claude); l'ho scritto nei tag Assisted-by.
+L'inglese di questa lettera è una traduzione dal mio italiano.
+
+Nicola
