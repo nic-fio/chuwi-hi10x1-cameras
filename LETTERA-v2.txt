@@ -74,7 +74,8 @@ tablet, e i commenti nel codice dicono cosa è misurato. In breve:
   al massimo 2448; GC5035 almeno 64x64) vengono da prove in cui fuori da
   quei limiti il flusso si rompe o i tempi escono dal modello.
 
-Come l'ho provato, sul kernel next (base 8e26d4c20):
+La serie è su media next (d7e7bca71). L'ho provata sul tablet, con il
+kernel 7.3-rc1 e i moduli compilati da queste patch:
 - v4l2-compliance da git (1616bf9e3c81) con -z: 54/54, nessun avviso, su
   tutti e due, e sul GC5035 sia a risoluzione piena sia in binning; output
   completo in fondo.
