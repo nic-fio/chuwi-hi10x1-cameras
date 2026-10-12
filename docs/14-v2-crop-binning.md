@@ -579,3 +579,17 @@ Lettera: bozza in patches/wip/driver-v2-diviso5/cover-letter-v2.{it,en}.txt
 cambiare» per anticipare i rilievi 5-9 della revisione. Restano: approvazione
 della lettera, serie sul next più recente, .patch della lettera con la
 compliance, script d'invio a 7 patch, --prova, invio col SI di Nicola.
+
+## SPEDITA la v2 (12/10, 16:34)
+
+[PATCH v2 0/7] media: Add GalaxyCore GC5035 and GC8034 sensor drivers,
+lettera + 7 patch spedite da Nicola con patches/wip/invia-driver-v2-7.sh
+alle 16:34:36-43 (ora italiana), in risposta alla lettera della v1
+<20261009072733.39877-1-nicfio@gmail.com>. Serie: ramo driver-v2-invio7 sul
+server, base media next d7e7bca71, file in upstream/driver-v2-invio7/.
+To: Laurent, Sakari; Cc: Mauro, Hans Verkuil (kernel.org), Dan, Hans de
+Goede, Uwe, linux-media, linux-kernel. Gmail: tutte e 8 in Posta inviata,
+agganciate ai thread della v1.
+Message-ID della lettera: DA COPIARE dall'uscita di git send-email nel
+terminale di Nicola. lore e patchwork rispondono con un controllo anti-bot
+(Anubis) ai comandi automatici: da guardare nel browser.
