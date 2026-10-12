@@ -1,0 +1,75 @@
+===== A. SCELTA DEL BINNING
+  [OK] LINK_FREQ elenca 175,2 MHz
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+  [OK] set_fmt 1296x972 sul crop di default: formato 1296x972
+  [OK] crop invariato: Left 8, Top 8, Width 2592, Height 1944
+  [OK] LINK_FREQ alla voce 1 (175,2 MHz)
+  [OK] PIXEL_RATE 70080000
+  [OK] HBLANK 164 (riga di 1460)
+  [OK] VBLANK 1024 (1996 righe)
+===== B. CATTURA E TEMPI
+  [OK] 30/30 fotogrammi
+  [OK] periodo 41.5850 ms, modello 41.5833
+  [OK] C. VBLANK 2000: periodo 61.9190 ms, modello 61.9167
+===== E. ESPOSIZIONE IN RIGHE DEL SENSORE
+  [OK] esposizione 600/300: segnale x2.011 (atteso 2, segnale 13.2)
+===== D. POSIZIONE E MEDIA (contro il modo pieno)
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+  [OK] F. ritorno a 2592x1944: LINK_FREQ voce 0, PIXEL_RATE 168960000
+  [OK] F. periodo a piena risoluzione 34.7040 ms, modello 34.7027
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+  [OK] binning = media 2x2 per colore del pieno, spostamento (0,0), r 0.9654
+===== H. ENUMERAZIONE, ESPOSIZIONE MASSIMA, CICLI
+  [OK] enum_frame_size elenca 1296x972
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+  [OK] esposizione massima 1980: 10 fotogrammi, periodo 41.5850 ms
+  [OK] 20 cicli di avvio/arresto in binning, primo fotogramma come il terzo
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+  [OK] pieno -> binning senza spegnimento: periodo 41.5835 ms
+===== G. V4L2-COMPLIANCE
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+  [OK] binning: Total for intel-ipu6 device /dev/v4l-subdev4: 54, Succeeded: 54, Failed: 0, Warnings: 0
+Note: --set-subdev-selection is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_SELECTION (pad=0,stream=0)
+Note: --set-subdev-fmt is only for testing.
+Normally media-ctl is used to configure the video pipeline.
+ioctl: VIDIOC_SUBDEV_S_FMT (pad=0,stream=0)
+  [OK] pieno: Total for intel-ipu6 device /dev/v4l-subdev4: 54, Succeeded: 54, Failed: 0, Warnings: 0
+===== VERDETTO: 20 superate, 0 fallite — data/v2-binning-20261012-162316

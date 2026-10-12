@@ -551,3 +551,31 @@ Col modulo nuovo (updates/gc5035.ko): libcamera 1280x960 a 24,01 fps
 non binnato; 2608x1964 -> 1296x972 binning; ripetere 1296x972 non cambia
 nulla; 2592x1944 torna al pieno. prova-binning 20/20
 (data/v2-binning-20261012-155619), prova-crop gc5035 0 KO.
+
+## Giro finale e driver-v2-diviso5 (12/10, 16:00-16:30)
+
+Richiesta di Uwe verificata su tutti e 7 i commit (mod_devicetable.h
+assente, `{ .id = "GCTI5035" }` e `{ .id = "GCTI8034" }`). Giro completo
+sui moduli ricompilati da diviso4: binning 20/20, prova completa come
+sempre (solo i 19 WARNING IPU6), crop 0 KO su entrambi, libcamera 60/60 e
+0 errori in 3 configurazioni per camera (gc5035 a 1280x960 e raw: 24 fps,
+binning). Esito in data/giro-finale-diviso4-20261012-1609/esito.md.
+
+Revisione avversaria a contesto pulito: nessun difetto bloccante.
+Respinto il formato «Claude:modello» di Assisted-by (coding-assistants.rst
+di questo albero: «LLM [TOOL1] [TOOL2]»). Accolto: VBLANK torna al default
+a ogni set_fmt/set_selection ACTIVE, come ov01a10 (imx219 solo su
+set_fmt); commento nei due driver e messaggio del commit 4 corretti nel
+ramo driver-v2-diviso5 (5ef58c168, c10a5bcfe, d881d8bc8, 119fdd10c; 1-3
+invariati). Rispetto a diviso4 cambiano solo commenti e un messaggio: codice
+macchina identico (objdump), nei .ko cambiano solo i numeri di riga dei
+metadati lockdep/KASAN del kernel di debug. Statica di diviso5 pulita su
+tutti e 7 (patches/wip/driver-v2-diviso5/driver-v2-diviso5-verifica.log);
+moduli diviso5 installati e riprovati: binning 20/20
+(data/v2-binning-20261012-162316), compliance gc8034 54/54, libcamera 60/60.
+
+Lettera: bozza in patches/wip/driver-v2-diviso5/cover-letter-v2.{it,en}.txt
+(da approvare da Nicola), con la voce «Alcune scelte che potreste voler
+cambiare» per anticipare i rilievi 5-9 della revisione. Restano: approvazione
+della lettera, serie sul next più recente, .patch della lettera con la
+compliance, script d'invio a 7 patch, --prova, invio col SI di Nicola.

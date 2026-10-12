@@ -1,0 +1,4 @@
+                 link_frequency 0x009f0901 (intmenu): min=0 max=1 default=0 value=0 (422400000 0x192d5000) flags=read-only, has-min-max
+				0: 422400000 (0x192d5000)
+				1: 175200000 (0xa715700)
+                     pixel_rate 0x009f0902 (int64)  : min=70080000 max=168960000 step=1 default=168960000 value=168960000 flags=read-only, has-min-max

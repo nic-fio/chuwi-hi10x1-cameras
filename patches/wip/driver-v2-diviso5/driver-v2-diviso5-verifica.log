@@ -1,0 +1,91 @@
+CONFIG_VIDEO_V4L2_SUBDEV_API=y
+CONFIG_IPU_BRIDGE=m
+CONFIG_VIDEO_GC5035=m
+CONFIG_VIDEO_GC8034=m
+f3aa44f8b media: i2c: Add GC5035 image sensor driver
+   oggetti: drivers/media/i2c/gc5035.o drivers/media/pci/intel/ipu-bridge.o  (CC [M]: 2, CHECK: 2)
+   W=1+sparse exit=0 warning=0 error=0
+   smatch     exit=0 warn=0
+29da7e5dc media: i2c: Add GC8034 image sensor driver
+   oggetti: drivers/media/i2c/gc5035.o drivers/media/i2c/gc8034.o drivers/media/pci/intel/ipu-bridge.o  (CC [M]: 3, CHECK: 3)
+   W=1+sparse exit=0 warning=0 error=0
+   smatch     exit=0 warn=0
+2a510bfe3 media: ipu-bridge: Add GalaxyCore GC5035 and GC8034
+   oggetti: drivers/media/i2c/gc5035.o drivers/media/i2c/gc8034.o drivers/media/pci/intel/ipu-bridge.o  (CC [M]: 3, CHECK: 3)
+   W=1+sparse exit=0 warning=0 error=0
+   smatch     exit=0 warn=0
+5ef58c168 media: i2c: gc5035: Add crop support
+   oggetti: drivers/media/i2c/gc5035.o drivers/media/i2c/gc8034.o drivers/media/pci/intel/ipu-bridge.o  (CC [M]: 3, CHECK: 3)
+   W=1+sparse exit=0 warning=0 error=0
+   smatch     exit=0 warn=0
+c10a5bcfe media: i2c: gc8034: Add crop support
+   oggetti: drivers/media/i2c/gc5035.o drivers/media/i2c/gc8034.o drivers/media/pci/intel/ipu-bridge.o  (CC [M]: 3, CHECK: 3)
+   W=1+sparse exit=0 warning=0 error=0
+   smatch     exit=0 warn=0
+d881d8bc8 media: ipu-bridge: Add the GC5035 binning link frequency
+   oggetti: drivers/media/i2c/gc5035.o drivers/media/i2c/gc8034.o drivers/media/pci/intel/ipu-bridge.o  (CC [M]: 3, CHECK: 3)
+   W=1+sparse exit=0 warning=0 error=0
+   smatch     exit=0 warn=0
+119fdd10c media: i2c: gc5035: Add 2x2 binning support
+   oggetti: drivers/media/i2c/gc5035.o drivers/media/i2c/gc8034.o drivers/media/pci/intel/ipu-bridge.o  (CC [M]: 3, CHECK: 3)
+   W=1+sparse exit=0 warning=0 error=0
+   smatch     exit=0 warn=0
+== patch generate = patch da spedire
+0001-media-i2c-Add-GC5035-image-sensor-driver.patch: DIVERSA da v2-0001-media-i2c-Add-GC5035-image-sensor-driver.patch
+0002-media-i2c-Add-GC8034-image-sensor-driver.patch: DIVERSA da v2-0002-media-i2c-Add-GC8034-image-sensor-driver.patch
+0003-media-ipu-bridge-Add-GalaxyCore-GC5035-and-GC8034.patch: identica
+0004-media-i2c-gc5035-Add-crop-support.patch: DIVERSA da v2-0004-media-i2c-gc5035-Add-crop-support.patch
+0005-media-i2c-gc8034-Add-crop-support.patch: DIVERSA da v2-0005-media-i2c-gc8034-Add-crop-support.patch
+ls: cannot access '/media/INTEL-CAMERA/tablet/v2-invio/v2-0006-*.patch': No such file or directory
+basename: missing operand
+Try 'basename --help' for more information.
+0006-media-ipu-bridge-Add-the-GC5035-binning-link-frequen.patch: DIVERSA da 
+ls: cannot access '/media/INTEL-CAMERA/tablet/v2-invio/v2-0007-*.patch': No such file or directory
+basename: missing operand
+Try 'basename --help' for more information.
+0007-media-i2c-gc5035-Add-2x2-binning-support.patch: DIVERSA da 
+== get_maintainer
+Mauro Carvalho Chehab <mchehab@kernel.org>
+Nicola Fiorillo <nicfio@gmail.com>
+Sakari Ailus <sakari.ailus@linux.intel.com>
+Dan Scally <dan.scally@ideasonboard.com>
+Hans de Goede <hansg@kernel.org>
+Heiko Stuebner <heiko@sntech.de>
+Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
+Antti Laakso <antti.laakso@linux.intel.com>
+Hao Yao <hao.yao@intel.com>
+Sergey Lebedev <lsa.uz@pm.me>
+linux-kernel@vger.kernel.org
+linux-media@vger.kernel.org
+linux-arm-kernel@lists.infradead.org
+linux-rockchip@lists.infradead.org
+== checkpatch
+0001-media-i2c-Add-GC5035-image-sensor-driver.patch: 
+0002-media-i2c-Add-GC8034-image-sensor-driver.patch: 
+0003-media-ipu-bridge-Add-GalaxyCore-GC5035-and-GC8034.patch: 
+0004-media-i2c-gc5035-Add-crop-support.patch: 
+0005-media-i2c-gc8034-Add-crop-support.patch: 
+0006-media-ipu-bridge-Add-the-GC5035-binning-link-frequen.patch: 
+0007-media-i2c-gc5035-Add-2x2-binning-support.patch: 
+== coccinelle
+controprova: ok
+non applicabile: ff_race.cocci drivers/media/i2c/gc5035.c: Position variable r.p2 on line 20 must be attached to some other token using @.
+non applicabile: ff_race.cocci drivers/media/i2c/gc8034.c: Position variable r.p2 on line 20 must be attached to some other token using @.
+non applicabile: ff_race.cocci drivers/media/pci/intel/ipu-bridge.c: Position variable r.p2 on line 20 must be attached to some other token using @.
+stream_open.cocci drivers/media/i2c/gc5035.c: warning: line 140: should noop_llseek be a metavariable?
+warning: line 222: should nonseekable_open be a metavariable?
+warning: line 289: should nonseekable_open be a metavariable?
+warning: line 337: should nonseekable_open be a metavariable?
+stream_open.cocci drivers/media/i2c/gc8034.c: warning: line 140: should noop_llseek be a metavariable?
+warning: line 222: should nonseekable_open be a metavariable?
+warning: line 289: should nonseekable_open be a metavariable?
+warning: line 337: should nonseekable_open be a metavariable?
+stream_open.cocci drivers/media/pci/intel/ipu-bridge.c: warning: line 140: should noop_llseek be a metavariable?
+warning: line 222: should nonseekable_open be a metavariable?
+warning: line 289: should nonseekable_open be a metavariable?
+warning: line 337: should nonseekable_open be a metavariable?
+non applicabile: kmalloc_objs.cocci drivers/media/i2c/gc5035.c: virtual rule report not supported
+non applicabile: kmalloc_objs.cocci drivers/media/i2c/gc8034.c: virtual rule report not supported
+non applicabile: kmalloc_objs.cocci drivers/media/pci/intel/ipu-bridge.c: virtual rule report not supported
+script=76 errori=6
+FINE
