@@ -456,7 +456,7 @@ le prove: installare i moduli in updates/ e riavviare.
 
 ## Binning nel driver (12/10 pomeriggio) e cosa resta
 
-Ramo driver-v2-diviso2 sul server (worktree driver-v2), 7 commit su next
+Ramo driver-v2-diviso2 sul server (worktree driver-v2; dal 12/10 sera driver-v2-diviso3, con le correzioni di Uwe), 7 commit su next
 8e26d4c20: 1-3 invariati; 4 e 5 col codice provato (le correzioni delle
 18:52/19:18 mancanti nella serie del 9/10); 6 «media: ipu-bridge: Add the
 GC5035 binning link frequency» (GCTI5035: 175200000, 422400000); 7 «media:

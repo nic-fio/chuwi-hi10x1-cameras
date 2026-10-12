@@ -494,3 +494,9 @@ Piano: serie con (1) driver senza tabelle di modo, registri di finestra e
 uscita calcolati dallo stato; (2) set_selection per il crop analogico in
 patch a parte; (3) binning in patch a parte. Nella risposta a Laurent
 citare la frase di Sakari su imx678 e lasciare a loro la scelta su 2 e 3.
+- 12 ottobre 2026, 13:20: Uwe Kleine-König sulla 1/3 (gc5035), in lista:
+  1) niente `#include <linux/mod_devicetable.h>`, le strutture *_device_id
+  vengono dagli header dei sottosistemi; 2) tabella ACPI con inizializzatore
+  con nome, `{ .id = "GCTI5035" }`. Vale anche per il gc8034. Da integrare
+  nelle patch 1 e 2 della v2 prima dell'invio; nella lettera, «Rispetto alla
+  v1», va citato.

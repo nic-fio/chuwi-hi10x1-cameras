@@ -61,13 +61,24 @@ tutti e due i modi).
 
 ## «Rispetto alla versione v1»
 
-IT, in coda:
+IT, in fondo alla voce «patch 1 e 2»:
+
+     tolto linux/mod_devicetable.h e tabella ACPI con inizializzatore con
+     nome, come chiesto da Uwe.
+
+e in coda:
 
    - patch 6 e 7: nuove.
 
 EN:
 
+     dropped linux/mod_devicetable.h and used a designated initializer in
+     the ACPI table, as Uwe asked.
+
    - patches 6 and 7: new.
+
+(Uwe Kleine-König ha risposto alla 1/3 il 12/10 alle 13:20; vale anche per
+il GC8034, quindi la correzione è nelle patch 1 e 2.)
 
 ## Nota per Nicola
 

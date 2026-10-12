@@ -19,7 +19,6 @@
 #include <linux/i2c.h>
 #include <linux/math.h>
 #include <linux/minmax.h>
-#include <linux/mod_devicetable.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
 #include <linux/property.h>
@@ -1152,7 +1151,7 @@ static const struct dev_pm_ops gc8034_pm_ops = {
 };
 
 static const struct acpi_device_id gc8034_acpi_ids[] = {
-	{ "GCTI8034" },
+	{ .id = "GCTI8034" },
 	{ }
 };
 MODULE_DEVICE_TABLE(acpi, gc8034_acpi_ids);

@@ -23,7 +23,6 @@
 #include <linux/i2c.h>
 #include <linux/math.h>
 #include <linux/minmax.h>
-#include <linux/mod_devicetable.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
 #include <linux/property.h>
@@ -1324,7 +1323,7 @@ static const struct dev_pm_ops gc5035_pm_ops = {
 };
 
 static const struct acpi_device_id gc5035_acpi_ids[] = {
-	{ "GCTI5035" },
+	{ .id = "GCTI5035" },
 	{ }
 };
 MODULE_DEVICE_TABLE(acpi, gc5035_acpi_ids);
