@@ -27,6 +27,7 @@ delle condizioni in fondo.
 | 3 | `ipu6-lock-fix/` — **2 patch dal 2026-08-22** | non inviato | trattenuto — **O7 fatto**, la modifica che mancava c'e' |
 | 4 | `serie/` — i due driver, 5 patch | non inviato | trattenuto |
 | 5 | `int3472-leak-fix/` + `int3472/` | non inviato | trattenuto |
+| 6 | `upstream/driver-v2-invio7/` — driver v2, 7 patch + cover | inviato 2026-10-12 16:34 | **2 patch su 7 accettate il 2026-11-12** (3/7 e 6/7, `ipu-bridge`); le altre 5 vedi in fondo |
 
 L'invio 1 e' su lore:
 <https://lore.kernel.org/linux-media/20260812105305.32447-1-nicfio@gmail.com/T/#u>
@@ -709,3 +710,35 @@ Si aspetta. Se entro sette-dieci giorni non arriva niente, **rispedire la patch
 ripresa: e' la strada con la probabilita' piu' alta, e il silenzio di Sakari
 non la ostacola. Le altre della coda (`int3472-leak-fix` in particolare) non
 sono toccate da questa obiezione.
+
+## PRIME PATCH ACCETTATE — 2026-11-12
+
+Notifica di Patchwork (patchwork.linuxtv.org, 14:32): due patch della serie
+driver v2 (invio 6 della tabella, cartella `upstream/driver-v2-invio7/`,
+spedita il 2026-10-12) passano da **Under Review** ad
+**Accepted**:
+
+| Patch | Patchwork |
+|---|---|
+| v2 3/7 media: ipu-bridge: Add GalaxyCore GC5035 and GC8034 | `patch/20261012143443.34897-4-nicfio@gmail.com/` |
+| v2 6/7 media: ipu-bridge: Add the GC5035 binning link frequency | `patch/20261012143443.34897-7-nicfio@gmail.com/` |
+
+Sono le due voci di `ipu-bridge` (semaforo 4 del README): il kernel imparera'
+a riconoscere i due sensori `GCTI*`. I due driver veri e propri (1/7, 2/7) e le
+patch di crop e binning (4/7, 5/7, 7/7) **non** sono nella notifica: il loro
+stato va controllato su Patchwork.
+
+### Quando arrivano in mainline
+
+Quel giorno mainline era a `v7.4-rc2`: la merge window della 7.4 e' chiusa.
+Accettate cosi' presto nel ciclo, entrano con ogni probabilita' nella pull
+request dei media per la **7.5** — merge window a gennaio 2027, `v7.5-rc1`
+subito dopo, release attorno a marzo 2027. La 7.6 solo in caso di intoppi.
+
+Verifica (Fase 6 della `ROADMAP.md`), da fare a gennaio 2027:
+
+```bash
+git log --oneline --author=Fiorillo -- drivers/media/pci/intel/ipu-bridge.c
+git describe --contains <sha>     # versione in cui sono entrate
+```
+

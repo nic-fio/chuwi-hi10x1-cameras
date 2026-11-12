@@ -38,9 +38,14 @@ value to within 1.0% and 3.7%, compliance unchanged.
 
 **This is not the goal.** The goal is the code being in Linus' tree, so that
 support reaches everyone through their distribution. The drivers currently run
-as out-of-tree modules. Nothing has been submitted yet: see
-`docs/09-revisione-preinvio.md` finding B1 — the submitter's real identity for
-the `Signed-off-by` is not settled, and that is a decision, not a task.
+as out-of-tree modules.
+
+**2026-11-12 — first patches accepted upstream.** The two `ipu-bridge` entries
+of the v2 driver series (patches 3/7 and 6/7, sent on 2026-10-12) were accepted
+by the linux-media maintainers. They are expected in Linus' tree with **7.5**
+(January 2027 merge window). The other five patches (the two
+drivers, crop and binning) were not in the notification; their status is still
+open.
 
 ## Two mainline bugs found on the way, with patches
 
@@ -59,8 +64,8 @@ at cycle 7 with `scripts/riproduci-oops-subdev.sh`. Full analysis, including
 the disassembly that identifies the pointer, is in **`FINDINGS.en.md`**.
 
 Both patches compile against 7.2-rc7, apply cleanly, carry a `Fixes:` tag, and
-`checkpatch --strict` is clean on them apart from the deliberately missing
-`Signed-off-by`. Neither has been submitted, for the reason above.
+`checkpatch --strict` is clean on them. Both were sent to linux-media on
+2026-08-12.
 
 ## Reproducing this
 
