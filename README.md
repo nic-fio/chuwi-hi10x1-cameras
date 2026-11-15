@@ -80,7 +80,8 @@ un sensore viene tolto mentre qualcuno lo sta usando. Sono **A1** e **A2** di
 
 **2026-11-12 — prime patch accettate upstream.** Le due voci di `ipu-bridge`
 della serie driver v2 (patch 3/7 e 6/7, inviata il 2026-10-12) sono state
-accettate dai manutentori di linux-media. Attese nel tree di Linus con la
+accettate dai manutentori di linux-media e il 2026-11-14 Sakari Ailus le ha
+committate nel ramo `next` di media.git. Attese nel tree di Linus con la
 **7.5** (merge window di gennaio 2027). Le altre cinque patch (i due driver,
 crop e binning) non erano nella notifica: il loro stato e' ancora aperto. Dettagli in `docs/11-osservazioni-review.md`.
 
@@ -91,7 +92,7 @@ Cinque semafori, aggiornati da `collect-diag.sh` (`data/20260811-201501/`):
 | 1 | `pinctrl-alderlake` compilato | **OK** | risolto dal kernel Debian |
 | 2 | `gpiochip` presente | **OK** | conseguenza di 1 |
 | 3 | `INT3472:01/:02` agganciati | **OK** | conseguenza di 1 |
-| 4 | `ipu-bridge` conosce i `GCTI*` | KO | **upstream** — Serie 3; accettato 2026-11-12, atteso in 7.5 |
+| 4 | `ipu-bridge` conosce i `GCTI*` | KO | **upstream** — Serie 3; accettato 2026-11-12, in media.git/next dal 2026-11-14, atteso in 7.5 |
 | 5 | driver `gc5035`/`gc8034` presenti | KO | **upstream** — Serie 1 e 2 |
 
 I semafori 1-3 erano un difetto del kernel 7.0 compilato a mano, **non**

@@ -42,7 +42,8 @@ as out-of-tree modules.
 
 **2026-11-12 — first patches accepted upstream.** The two `ipu-bridge` entries
 of the v2 driver series (patches 3/7 and 6/7, sent on 2026-10-12) were accepted
-by the linux-media maintainers. They are expected in Linus' tree with **7.5**
+by the linux-media maintainers, and on 2026-11-14 Sakari Ailus committed them
+to the `next` branch of media.git. They are expected in Linus' tree with **7.5**
 (January 2027 merge window). The other five patches (the two
 drivers, crop and binning) were not in the notification; their status is still
 open.
