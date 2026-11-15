@@ -742,3 +742,20 @@ git log --oneline --author=Fiorillo -- drivers/media/pci/intel/ipu-bridge.c
 git describe --contains <sha>     # versione in cui sono entrate
 ```
 
+
+## COMMIT IN media.git/next — 2026-11-14
+
+Due mail di `media-ci@linuxtv.org` (lista `linuxtv-commits`), sabato
+14/11 alle 23:05 e 23:06: Sakari Ailus ha messo le due patch nel ramo
+`next` di media.git («Patch committed. Thanks, Sakari Ailus»). Nessuna
+richiesta, niente a cui rispondere.
+
+| Patch | Ora | Tag nel commit | Blob `ipu-bridge.c` |
+|---|---|---|---|
+| v2 3/7 media: ipu-bridge: Add GalaxyCore GC5035 and GC8034 | 23:05 | Reviewed-by Daniel Scally, SoB Nicola, SoB Sakari | `c2ed7ea70dc2..7ccbbf88e524` |
+| v2 6/7 media: ipu-bridge: Add the GC5035 binning link frequency | 23:06 | SoB Nicola, SoB Sakari | `7ccbbf88e524..5e419c7b9287` |
+
+Il contenuto è identico a quello inviato: `GCTI5035` con 175200000 e
+422400000, `GCTI8034` con 268800000. Le mail non riportano gli SHA dei
+commit: si ricavano a gennaio con i comandi qui sopra. Le altre cinque
+patch della serie (1/7, 2/7, 4/7, 5/7, 7/7) restano aperte.
